@@ -1,0 +1,38 @@
+
+rename T3DLIB2.71.ncb T3DLIB2.80.ncb
+rename T3DLIB2.71.sln T3DLIB2.80.sln
+rename T3DLIB2.71.suo T3DLIB2.80.suo
+
+rename T3DLIB2.71.ncb.old T3DLIB2.71.ncb
+rename T3DLIB2.71.sln.old T3DLIB2.71.sln
+rename T3DLIB2.71.suo.old T3DLIB2.71.suo
+
+rename T3DLIB2\scripts\T3DLIB2.71.vcproj T3DLIB2.80.vcproj
+rename T3DLIB2\scripts\T3DLIB2.71.vcproj.AP.tangyin.user T3DLIB2.80.vcproj.AP.tangyin.user
+rename T3DLIB2\scripts\T3DLIB2.71.vcproj.7.10.old T3DLIB2.71.vcproj
+
+rename console1_1\scripts\console1_1.71.vcproj console1_1.80.vcproj
+rename console1_1\scripts\console1_1.71.vcproj.AP.tangyin.user console1_1.80.vcproj.AP.tangyin.user
+rename console1_1\scripts\console1_1.71.vcproj.7.10.old console1_1.71.vcproj
+
+rename console1_2\scripts\console1_2.71.vcproj console1_2.80.vcproj
+rename console1_2\scripts\console1_2.71.vcproj.AP.tangyin.user console1_2.80.vcproj.AP.tangyin.user
+rename console1_2\scripts\console1_2.71.vcproj.7.10.old console1_2.71.vcproj
+
+rename demo1_1\scripts\demo1_1.71.vcproj demo1_1.80.vcproj
+rename demo1_1\scripts\demo1_1.71.vcproj.AP.tangyin.user demo1_1.80.vcproj.AP.tangyin.user
+rename demo1_1\scripts\demo1_1.71.vcproj.7.10.old demo1_1.71.vcproj
+
+rename demo1_2\scripts\demo1_2.71.vcproj demo1_2.80.vcproj
+rename demo1_2\scripts\demo1_2.71.vcproj.AP.tangyin.user demo1_2.80.vcproj.AP.tangyin.user
+rename demo1_2\scripts\demo1_2.71.vcproj.7.10.old demo1_2.71.vcproj
+
+rename demo1_3\scripts\demo1_3.71.vcproj demo1_3.80.vcproj
+rename demo1_3\scripts\demo1_3.71.vcproj.AP.tangyin.user demo1_3.80.vcproj.AP.tangyin.user
+rename demo1_3\scripts\demo1_3.71.vcproj.7.10.old demo1_3.71.vcproj
+
+rename demo1_4\scripts\demo1_4.71.vcproj demo1_4.80.vcproj
+rename demo1_4\scripts\demo1_4.71.vcproj.AP.tangyin.user demo1_4.80.vcproj.AP.tangyin.user
+rename demo1_4\scripts\demo1_4.71.vcproj.7.10.old demo1_4.71.vcproj
+
+pause

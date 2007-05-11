@@ -1,0 +1,29 @@
+
+rename T3DLIB2.71.ncb T3DLIB2.71.ncb.old
+
+del T3DLIB2.80.ncb
+del T3DLIB2.80.sln
+del T3DLIB2.80.suo
+
+del T3DLIB2\scripts\T3DLIB2.80.vcproj
+del T3DLIB2\scripts\T3DLIB2.80.vcproj.AP.tangyin.user
+
+del console1_1\scripts\console1_1.80.vcproj
+del console1_1\scripts\console1_1.80.vcproj.AP.tangyin.user
+
+del console1_2\scripts\console1_2.80.vcproj
+del console1_2\scripts\console1_2.80.vcproj.AP.tangyin.user
+
+del demo1_1\scripts\demo1_1.80.vcproj
+del demo1_1\scripts\demo1_1.80.vcproj.AP.tangyin.user
+
+del demo1_2\scripts\demo1_2.80.vcproj
+del demo1_2\scripts\demo1_2.80.vcproj.AP.tangyin.user
+
+del demo1_3\scripts\demo1_3.80.vcproj
+del demo1_3\scripts\demo1_3.80.vcproj.AP.tangyin.user
+
+del demo1_4\scripts\demo1_4.80.vcproj
+del demo1_4\scripts\demo1_4.80.vcproj.AP.tangyin.user
+
+pause
