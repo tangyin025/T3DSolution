@@ -543,11 +543,11 @@ bool Game_Frame(void)
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 200, 200, 0, 0);
 	VECTOR4D_InitXYZW(&v3._VECTOR4D, 100, 200, 0, 0);
 
-	//v0.c_diff = Create_RGBI(255, 0, 0);
-	//v1.c_diff = Create_RGBI(255, 0, 0);
-	//v2.c_diff = Create_RGBI(255, 0, 0);
-	//v3.c_diff = Create_RGBI(255, 0, 0);
-	rc.c_ambi = Create_RGBI(255, 0, 0);
+	v0.c_diff = Create_RGBI(255, 0, 0);
+	v1.c_diff = Create_RGBI(255, 0, 0);
+	v2.c_diff = Create_RGBI(255, 0, 0);
+	v3.c_diff = Create_RGBI(255, 0, 0);
+	//rc.c_ambi = Create_RGBI(255, 0, 0);
 
 	Draw_HLine(&rc, &v0, &v1);
 	Draw_VLine(&rc, &v1, &v2);
@@ -556,8 +556,8 @@ bool Game_Frame(void)
 
 	VECTOR3D_Add(&v0._VECTOR4D._3D, 50);
 	VECTOR3D_Add(&v2._VECTOR4D._3D, 50);
-	//v0.c_diff = Create_RGBI(0, 255, 255);
-	rc.c_ambi = Create_RGBI(0, 255, 255);
+	v0.c_diff = Create_RGBI(0, 255, 255);
+	//rc.c_ambi = Create_RGBI(0, 255, 255);
 	//Draw_Rectangle(&rc, &v0, &v2);
 
 	rc.fmin_clip_x = 101.0f;
@@ -575,8 +575,15 @@ bool Game_Frame(void)
 
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 50, 0, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 150, 200, 0, 0);
-	rc.c_ambi = Create_RGBI(255, 255, 255);
+	//rc.c_ambi = Create_RGBI(255, 255, 255);
+	v0.c_diff = Create_RGBI(255, 255, 255);
 	Draw_Clipped_Line(&rc, &v0, &v2);
+
+	VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 150, 0, 0);
+	VECTOR4D_InitXYZW(&v2._VECTOR4D, 250, 250, 0, 0);
+	v0.c_diff = Create_RGBI(0, 255, 0);
+	Draw_HLine_Alpha(&rc, &v0, &v2);
+	Draw_VLine_Alpha(&rc, &v0, &v2);
 
 	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
 	//VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);

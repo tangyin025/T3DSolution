@@ -10,45 +10,57 @@
 _CTOR_IMPLEMENT(RENDERCONTEXTV1_TYP);
 _DTOR_IMPLEMENT(RENDERCONTEXTV1_TYP, foo);
 
-T3DLIB_API void (* Draw_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
-T3DLIB_API void (* Draw_Rectangle_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
-T3DLIB_API void (* Draw_Clipped_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
-T3DLIB_API void (* Draw_Clipped_Rectangle_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_HLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_VLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_HLine_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_VLine_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_Clipped_HLine_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_Clipped_VLine_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_HLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_VLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Line)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Line)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_Rectangle_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_Clipped_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
+T3DLIB_API void (* Draw_Clipped_Rectangle_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 
 T3DLIB_API bool Init_T3dlib5(int bpp)
 {
 	switch(bpp)
 	{
 	case 16:
+		Draw_HLine						= Draw_HLine16;
+		Draw_VLine						= Draw_VLine16;
+		Draw_HLine_Alpha				= Draw_HLine_Alpha16;
+		Draw_VLine_Alpha				= Draw_VLine_Alpha16;
+		Draw_Clipped_HLine				= Draw_Clipped_HLine16;
+		Draw_Clipped_VLine				= Draw_Clipped_VLine16;
+		Draw_Clipped_HLine_Alpha		= Draw_Clipped_HLine_Alpha16;
+		Draw_Clipped_VLine_Alpha		= Draw_Clipped_VLine_Alpha16;
+		Draw_Line						= Draw_Line16;
+		Draw_Clipped_Line				= Draw_Clipped_Line16;
 		Draw_Rectangle					= Draw_Rectangle16;
 		Draw_Rectangle_Alpha			= Draw_Rectangle_Alpha16;
 		Draw_Clipped_Rectangle			= Draw_Clipped_Rectangle16;
 		Draw_Clipped_Rectangle_Alpha	= Draw_Clipped_Rectangle_Alpha16;
-		Draw_HLine						= Draw_HLine16;
-		Draw_VLine						= Draw_VLine16;
-		Draw_Clipped_HLine				= Draw_Clipped_HLine16;
-		Draw_Clipped_VLine				= Draw_Clipped_VLine16;
-		Draw_Line						= Draw_Line16;
-		Draw_Clipped_Line				= Draw_Clipped_Line16;
 		break;
 
 	case 32:
+		Draw_HLine						= Draw_HLine32;
+		Draw_VLine						= Draw_VLine32;
+		Draw_HLine_Alpha				= Draw_HLine_Alpha32;
+		Draw_VLine_Alpha				= Draw_VLine_Alpha32;
+		Draw_Clipped_HLine				= Draw_Clipped_HLine32;
+		Draw_Clipped_VLine				= Draw_Clipped_VLine32;
+		Draw_Clipped_HLine_Alpha		= Draw_Clipped_HLine_Alpha32;
+		Draw_Clipped_VLine_Alpha		= Draw_Clipped_VLine_Alpha32;
+		Draw_Line						= Draw_Line32;
+		Draw_Clipped_Line				= Draw_Clipped_Line32;
 		Draw_Rectangle					= Draw_Rectangle32;
 		Draw_Rectangle_Alpha			= Draw_Rectangle_Alpha32;
 		Draw_Clipped_Rectangle			= Draw_Clipped_Rectangle32;
 		Draw_Clipped_Rectangle_Alpha	= Draw_Clipped_Rectangle_Alpha32;
-		Draw_HLine						= Draw_HLine32;
-		Draw_VLine						= Draw_VLine32;
-		Draw_Clipped_HLine				= Draw_Clipped_HLine32;
-		Draw_Clipped_VLine				= Draw_Clipped_VLine32;
-		Draw_Line						= Draw_Line32;
-		Draw_Clipped_Line				= Draw_Clipped_Line32;
 		break;
 
 	default:
@@ -74,7 +86,7 @@ T3DLIB_API void Draw_HLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, 
 		dx = -dx;
 	}
 
-	Mem_Set_Word(p, (unsigned short)prc->c_ambi, dx);
+	Mem_Set_Word(p, (unsigned short)pv0->c_diff, dx);
 }
 
 T3DLIB_API void Draw_HLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
@@ -91,7 +103,7 @@ T3DLIB_API void Draw_HLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, 
 		dx = -dx;
 	}
 
-	Mem_Set_Quad(p, prc->c_ambi, dx);
+	Mem_Set_Quad(p, pv0->c_diff, dx);
 }
 
 T3DLIB_API void Draw_VLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
@@ -110,7 +122,7 @@ T3DLIB_API void Draw_VLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, 
 
 	while(dy--)
 	{
-		*(unsigned short *)p = (unsigned short)prc->c_ambi;
+		*(unsigned short *)p = (unsigned short)pv0->c_diff;
 		p += prc->s_pitch;
 	}
 }
@@ -131,7 +143,99 @@ T3DLIB_API void Draw_VLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, 
 
 	while(dy--)
 	{
-		*(unsigned int *)p = prc->c_ambi;
+		*(unsigned int *)p = pv0->c_diff;
+		p += prc->s_pitch;
+	}
+}
+
+T3DLIB_API void Draw_HLine_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	int x0 = (int)pv0->x;
+	int x1 = (int)pv1->x;
+	int y0 = (int)pv0->y;
+
+	unsigned char * p = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_SHIFT);
+	int dx = x1 - x0;
+	if(dx < 0)
+	{
+		p += (dx + 1) << _16BIT_SHIFT;
+		dx = -dx;
+	}
+
+	while(dx--)
+	{
+		*(unsigned int *)p = ALPHA16_COMB(
+				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)p);
+
+		p += _16BIT_BYTES;
+	}
+}
+
+T3DLIB_API void Draw_HLine_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	int x0 = (int)pv0->x;
+	int x1 = (int)pv1->x;
+	int y0 = (int)pv0->y;
+
+	unsigned char * p = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_SHIFT);
+	int dx = x1 - x0;
+	if(dx < 0)
+	{
+		p += (dx + 1) << _32BIT_SHIFT;
+		dx = -dx;
+	}
+
+	while(dx--)
+	{
+		*(unsigned int *)p = ALPHA32_COMB(
+				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)p);
+
+		p += _32BIT_BYTES;
+	}
+}
+
+T3DLIB_API void Draw_VLine_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	int x0 = (int)pv0->x;
+	int y0 = (int)pv0->y;
+	int y1 = (int)pv1->y;
+
+	unsigned char * p = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_SHIFT);
+	int dy = y1 - y0;
+	if(dy < 0)
+	{
+		p += (dy + 1) << prc->s_pitch_shift;
+		dy = -dy;
+	}
+
+	while(dy--)
+	{
+		*(unsigned int *)p = ALPHA16_COMB(
+				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)p);
+
+		p += prc->s_pitch;
+	}
+}
+
+T3DLIB_API void Draw_VLine_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	int x0 = (int)pv0->x;
+	int y0 = (int)pv0->y;
+	int y1 = (int)pv1->y;
+
+	unsigned char * p = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_SHIFT);
+	int dy = y1 - y0;
+	if(dy < 0)
+	{
+		p += (dy + 1) << prc->s_pitch_shift;
+		dy = -dy;
+	}
+
+	while(dy--)
+	{
+		*(unsigned int *)p = ALPHA32_COMB(
+				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)p);
+
 		p += prc->s_pitch;
 	}
 }
@@ -352,6 +456,222 @@ T3DLIB_API void Draw_Clipped_VLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1
 		Draw_VLine32(prc, &cv0, &cv1);
 }
 
+T3DLIB_API void Draw_Clipped_HLine_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	VERTEXV1 cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	int reg0 = CLIP_REGION_C;
+	int reg1 = CLIP_REGION_C;
+
+	if(cv0.x < prc->fmin_clip_x)
+		reg0 |= CLIP_REGION_W;
+	else if(cv0.x > prc->fmax_clip_x)
+		reg0 |= CLIP_REGION_E;
+
+	if(cv1.x < prc->fmin_clip_x - 1.0f)
+		reg1 |= CLIP_REGION_W;
+	else if(cv1.x > prc->fmax_clip_x + 1.0f)
+		reg1 |= CLIP_REGION_E;
+
+	if(reg0 & reg1)
+		return;
+
+	switch(reg0)
+	{
+	case CLIP_REGION_W:
+		cv0.x = prc->fmin_clip_x;
+		break;
+
+	case CLIP_REGION_E:
+		cv0.x = prc->fmax_clip_x;
+		break;
+
+	default:
+		break;
+	}
+
+	switch(reg1)
+	{
+	case CLIP_REGION_W:
+		cv1.x = prc->fmin_clip_x - 1.0f;
+		break;
+
+	case CLIP_REGION_E:
+		cv1.x = prc->fmax_clip_x + 1.0f;
+		break;
+
+	default:
+		break;
+	}
+
+	if(cv0.y >= prc->fmin_clip_y && cv0.y <= prc->fmax_clip_y)
+		Draw_HLine_Alpha16(prc, &cv0, &cv1);
+}
+
+T3DLIB_API void Draw_Clipped_HLine_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	VERTEXV1 cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	int reg0 = CLIP_REGION_C;
+	int reg1 = CLIP_REGION_C;
+
+	if(cv0.x < prc->fmin_clip_x)
+		reg0 |= CLIP_REGION_W;
+	else if(cv0.x > prc->fmax_clip_x)
+		reg0 |= CLIP_REGION_E;
+
+	if(cv1.x < prc->fmin_clip_x - 1.0f)
+		reg1 |= CLIP_REGION_W;
+	else if(cv1.x > prc->fmax_clip_x + 1.0f)
+		reg1 |= CLIP_REGION_E;
+
+	if(reg0 & reg1)
+		return;
+
+	switch(reg0)
+	{
+	case CLIP_REGION_W:
+		cv0.x = prc->fmin_clip_x;
+		break;
+
+	case CLIP_REGION_E:
+		cv0.x = prc->fmax_clip_x;
+		break;
+
+	default:
+		break;
+	}
+
+	switch(reg1)
+	{
+	case CLIP_REGION_W:
+		cv1.x = prc->fmin_clip_x - 1.0f;
+		break;
+
+	case CLIP_REGION_E:
+		cv1.x = prc->fmax_clip_x + 1.0f;
+		break;
+
+	default:
+		break;
+	}
+
+	if(cv0.y >= prc->fmin_clip_y && cv0.y <= prc->fmax_clip_y)
+		Draw_HLine_Alpha32(prc, &cv0, &cv1);
+}
+
+T3DLIB_API void Draw_Clipped_VLine_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	VERTEXV1 cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	int reg0 = CLIP_REGION_C;
+	int reg1 = CLIP_REGION_C;
+
+	if(cv0.y < prc->fmin_clip_y)
+		reg0 |= CLIP_REGION_W;
+	else if(cv0.y > prc->fmax_clip_y)
+		reg0 |= CLIP_REGION_E;
+
+	if(cv1.y < prc->fmin_clip_y - 1.0f)
+		reg1 |= CLIP_REGION_W;
+	else if(cv1.y > prc->fmax_clip_y + 1.0f)
+		reg1 |= CLIP_REGION_E;
+
+	if(reg0 & reg1)
+		return;
+
+	switch(reg0)
+	{
+	case CLIP_REGION_W:
+		cv0.y = prc->fmin_clip_y;
+		break;
+
+	case CLIP_REGION_E:
+		cv0.y = prc->fmax_clip_y;
+		break;
+
+	default:
+		break;
+	}
+
+	switch(reg1)
+	{
+	case CLIP_REGION_W:
+		cv1.y = prc->fmin_clip_y - 1.0f;
+		break;
+
+	case CLIP_REGION_E:
+		cv1.y = prc->fmax_clip_y + 1.0f;
+		break;
+
+	default:
+		break;
+	}
+
+	if(cv0.x >= prc->fmin_clip_x && cv0.x <= prc->fmax_clip_x)
+		Draw_VLine_Alpha16(prc, &cv0, &cv1);
+}
+
+T3DLIB_API void Draw_Clipped_VLine_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
+{
+	VERTEXV1 cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	int reg0 = CLIP_REGION_C;
+	int reg1 = CLIP_REGION_C;
+
+	if(cv0.y < prc->fmin_clip_y)
+		reg0 |= CLIP_REGION_W;
+	else if(cv0.y > prc->fmax_clip_y)
+		reg0 |= CLIP_REGION_E;
+
+	if(cv1.y < prc->fmin_clip_y - 1.0f)
+		reg1 |= CLIP_REGION_W;
+	else if(cv1.y > prc->fmax_clip_y + 1.0f)
+		reg1 |= CLIP_REGION_E;
+
+	if(reg0 & reg1)
+		return;
+
+	switch(reg0)
+	{
+	case CLIP_REGION_W:
+		cv0.y = prc->fmin_clip_y;
+		break;
+
+	case CLIP_REGION_E:
+		cv0.y = prc->fmax_clip_y;
+		break;
+
+	default:
+		break;
+	}
+
+	switch(reg1)
+	{
+	case CLIP_REGION_W:
+		cv1.y = prc->fmin_clip_y - 1.0f;
+		break;
+
+	case CLIP_REGION_E:
+		cv1.y = prc->fmax_clip_y + 1.0f;
+		break;
+
+	default:
+		break;
+	}
+
+	if(cv0.x >= prc->fmin_clip_x && cv0.x <= prc->fmax_clip_x)
+		Draw_VLine_Alpha32(prc, &cv0, &cv1);
+}
+
 T3DLIB_API void Draw_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
 {
 	int x0 = (int)pv0->x;
@@ -375,7 +695,7 @@ T3DLIB_API void Draw_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 		error = dy2 - dx;
 		for(i = 0; i < dx; i++)
 		{
-			*(unsigned short *)p = (unsigned short)prc->c_ambi;
+			*(unsigned short *)p = (unsigned short)pv0->c_diff;
 			if(error >= 0)
 			{
 				p += iy;
@@ -390,7 +710,7 @@ T3DLIB_API void Draw_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 		error = dx2 - dy;
 		for(i = 0; i < dy; i++)
 		{
-			*(unsigned short *)p = (unsigned short)prc->c_ambi;
+			*(unsigned short *)p = (unsigned short)pv0->c_diff;
 			if(error >= 0)
 			{
 				p += ix;
@@ -425,7 +745,7 @@ T3DLIB_API void Draw_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 		error = dy2 - dx;
 		for(i = 0; i < dx; i++)
 		{
-			*(unsigned int *)p = prc->c_ambi;
+			*(unsigned int *)p = pv0->c_diff;
 			if(error >= 0)
 			{
 				p += iy;
@@ -440,7 +760,7 @@ T3DLIB_API void Draw_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 		error = dx2 - dy;
 		for(i = 0; i < dy; i++)
 		{
-			*(unsigned int *)p = prc->c_ambi;
+			*(unsigned int *)p = pv0->c_diff;
 			if(error >= 0)
 			{
 				p += ix;
@@ -677,7 +997,7 @@ T3DLIB_API void Draw_Rectangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * p
 	}
 	while(dy--)
 	{
-		Mem_Set_Word(p, (unsigned short)prc->c_ambi, dx);
+		Mem_Set_Word(p, (unsigned short)pv0->c_diff, dx);
 		p += prc->s_pitch;
 	}
 }
@@ -704,7 +1024,7 @@ T3DLIB_API void Draw_Rectangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * p
 	}
 	while(dy--)
 	{
-		Mem_Set_Quad(p, prc->c_ambi, dx);
+		Mem_Set_Quad(p, pv0->c_diff, dx);
 		p += prc->s_pitch;
 	}
 }
@@ -736,7 +1056,7 @@ T3DLIB_API void Draw_Rectangle_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEX
 		while(c--)
 		{
 			*(unsigned short *)s = ALPHA16_COMB(
-					prc->c_src_alpha, prc->c_ambi, prc->c_dst_alpha, *(unsigned short *)s);
+					prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)s);
 
 			s += _16BIT_BYTES;
 		}
@@ -771,7 +1091,7 @@ T3DLIB_API void Draw_Rectangle_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEX
 		while(c--)
 		{
 			*(unsigned int *)s = ALPHA32_COMB(
-					prc->c_src_alpha, prc->c_ambi, prc->c_dst_alpha, *(unsigned int *)s);
+					prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)s);
 
 			s += _32BIT_BYTES;
 		}
