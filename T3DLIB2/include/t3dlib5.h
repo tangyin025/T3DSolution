@@ -10,6 +10,18 @@
 #define MAX_VERTEX_NUM			(3)
 #define MAX_TEXTURE_NUM			(2)
 
+#define CLIP_REGION_C			(0x00)
+#define CLIP_REGION_N			(0x01)
+#define CLIP_REGION_S			(0x02)
+#define CLIP_REGION_W			(0x04)
+#define CLIP_REGION_E			(0x08)
+#define CLIP_REGION_NW			(0x05)
+#define CLIP_REGION_NE			(0x09)
+#define CLIP_REGION_SW			(0x06)
+#define CLIP_REGION_SE			(0x0A)
+
+#define LINE2D_INTERSECT(ca, a0, a1, b0, b1)	((b0) + ((b1) - (b0)) * ((ca) - (a0)) / ((a1) - (a0)))
+
 #pragma warning(disable : 4201)
 typedef struct T3DLIB_API TEXTCOORV1_TYP
 {

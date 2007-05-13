@@ -309,11 +309,20 @@ bool Game_Init(void)
 	 * ...									|
 	 * [EOF]								|	[EOF]
 	 **********************************************************************************/
+
 	char szConfigFile[MAX_PATH];
 	GetCurrentDirectoryA(MAX_PATH, szConfigFile);
 	strcat(szConfigFile, "Config.ini");
-	resolution_index = GetPrivateProfileInt(CLASS_NAME,
+	resolution_index = GetPrivateProfileInt(WND_NAME,
 			"resolution", DEFAULT_RESOLUTION, szConfigFile);
+
+	// ================================================================================
+	// TODO: Game config here
+	// ================================================================================
+
+	// ================================================================================
+	// END TODO.
+	// ================================================================================
 
 	assert(resolution_index >= 0
 			&& resolution_index < sizeof(resolutions) / sizeof(RESOLUTION));

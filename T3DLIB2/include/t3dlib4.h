@@ -1623,21 +1623,61 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 #define MAX_COLOR_INTENSITY16G		(0x0040)
 #define MAX_COLOR_INTENSITY32		(0x0100)
 
-#define COLOR_ADD_16R(c0, c1)		(COLOR_TABLE_ADD16[(c0)][(c1)])
-#define COLOR_ADD_16G(c0, c1)		(COLOR_TABLE_ADD16G[(c0)][(c1)])
-#define COLOR_ADD_16B(c0, c1)		(COLOR_TABLE_ADD16[(c0)][(c1)])
+#define COLOR_ADD_16R(r0, r1)		(COLOR_TABLE_ADD16[(r0)][(r1)])
+#define COLOR_ADD_16G(g0, g1)		(COLOR_TABLE_ADD16G[(g0)][(g1)])
+#define COLOR_ADD_16B(b0, b1)		(COLOR_TABLE_ADD16[(b0)][(b1)])
 
-#define COLOR_ADD_32R(c0, c1)		(COLOR_TABLE_ADD32[(c0)][(c1)])
-#define COLOR_ADD_32G(c0, c1)		(COLOR_TABLE_ADD32[(c0)][(c1)])
-#define COLOR_ADD_32B(c0, c1)		(COLOR_TABLE_ADD32[(c0)][(c1)])
+#define COLOR_ADD_32R(r0, r1)		(COLOR_TABLE_ADD32[(r0)][(r1)])
+#define COLOR_ADD_32G(g0, g1)		(COLOR_TABLE_ADD32[(g0)][(g1)])
+#define COLOR_ADD_32B(b0, b1)		(COLOR_TABLE_ADD32[(b0)][(b1)])
 
-#define COLOR_MUL_16R(c0, c1)		(COLOR_TABLE_MUL16[(c0)][(c1)])
-#define COLOR_MUL_16G(c0, c1)		(COLOR_TABLE_MUL16G[(c0)][(c1)])
-#define COLOR_MUL_16B(c0, c1)		(COLOR_TABLE_MUL16[(c0)][(c1)])
+#define COLOR_MUL_16R(r0, r1)		(COLOR_TABLE_MUL16[(r0)][(r1)])
+#define COLOR_MUL_16G(g0, g1)		(COLOR_TABLE_MUL16G[(g0)][(g1)])
+#define COLOR_MUL_16B(b0, b1)		(COLOR_TABLE_MUL16[(b0)][(b1)])
 
-#define COLOR_MUL_32R(c0, c1)		(COLOR_TABLE_MUL32[(c0)][(c1)])
-#define COLOR_MUL_32G(c0, c1)		(COLOR_TABLE_MUL32[(c0)][(c1)])
-#define COLOR_MUL_32B(c0, c1)		(COLOR_TABLE_MUL32[(c0)][(c1)])
+#define COLOR_MUL_32R(r0, r1)		(COLOR_TABLE_MUL32[(r0)][(r1)])
+#define COLOR_MUL_32G(g0, g1)		(COLOR_TABLE_MUL32[(g0)][(g1)])
+#define COLOR_MUL_32B(b0, b1)		(COLOR_TABLE_MUL32[(b0)][(b1)])
+
+#define ALPHA_COMB_16R(sar, sr, dar, dr)	(COLOR_ADD_16R(COLOR_MUL_16R((sar), (sr)), COLOR_MUL_16R((dar), (dr))))
+#define ALPHA_COMB_16G(sar, sr, dar, dr)	(COLOR_ADD_16G(COLOR_MUL_16G((sar), (sr)), COLOR_MUL_16G((dar), (dr))))
+#define ALPHA_COMB_16B(sar, sr, dar, dr)	(COLOR_ADD_16B(COLOR_MUL_16B((sar), (sr)), COLOR_MUL_16B((dar), (dr))))
+
+#define ALPHA_COMB_32R(sar, sr, dar, dr)	(COLOR_ADD_32R(COLOR_MUL_32R((sar), (sr)), COLOR_MUL_32R((dar), (dr))))
+#define ALPHA_COMB_32G(sar, sr, dar, dr)	(COLOR_ADD_32G(COLOR_MUL_32G((sar), (sr)), COLOR_MUL_32G((dar), (dr))))
+#define ALPHA_COMB_32B(sar, sr, dar, dr)	(COLOR_ADD_32B(COLOR_MUL_32B((sar), (sr)), COLOR_MUL_32B((dar), (dr))))
+
+#define RGB16_ADD(c0, c1)			(_RGB16BIT( \
+											COLOR_ADD_16R(_16BIT_GETR(c0), _16BIT_GETR(c1)), \
+											COLOR_ADD_16G(_16BIT_GETG(c0), _16BIT_GETG(c1)), \
+											COLOR_ADD_16B(_16BIT_GETB(c0), _16BIT_GETB(c1))))
+
+#define RGB16_MUL(c0, c1)			(_RGB16BIT( \
+											COLOR_MUL_16R(_16BIT_GETR(c0), _16BIT_GETR(c1)), \
+											COLOR_MUL_16G(_16BIT_GETG(c0), _16BIT_GETG(c1)), \
+											COLOR_MUL_16B(_16BIT_GETB(c0), _16BIT_GETB(c1))))
+
+#define RGB32_ADD(c0, c1)			(_RGB32BIT( \
+											COLOR_ADD_32R(_32BIT_GETR(c0), _32BIT_GETR(c1)), \
+											COLOR_ADD_32G(_32BIT_GETG(c0), _32BIT_GETG(c1)), \
+											COLOR_ADD_32B(_32BIT_GETB(c0), _32BIT_GETB(c1))))
+
+#define RGB32_MUL(c0, c1)			(_RGB32BIT( \
+											COLOR_MUL_32R(_32BIT_GETR(c0), _32BIT_GETR(c1)), \
+											COLOR_MUL_32G(_32BIT_GETG(c0), _32BIT_GETG(c1)), \
+											COLOR_MUL_32B(_32BIT_GETB(c0), _32BIT_GETB(c1))))
+
+#define ALPHA16_COMB(sa, sc, da, dc) \
+									(_RGB16BIT( \
+											ALPHA_COMB_16R(_16BIT_GETR(sa), _16BIT_GETR(sc), _16BIT_GETR(da), _16BIT_GETR(dc)), \
+											ALPHA_COMB_16G(_16BIT_GETG(sa), _16BIT_GETG(sc), _16BIT_GETG(da), _16BIT_GETG(dc)), \
+											ALPHA_COMB_16B(_16BIT_GETB(sa), _16BIT_GETB(sc), _16BIT_GETB(da), _16BIT_GETB(dc))))
+
+#define ALPHA32_COMB(sa, sc, da, dc) \
+									(_RGB32BIT( \
+											ALPHA_COMB_32R(_32BIT_GETR(sa), _32BIT_GETR(sc), _32BIT_GETR(da), _32BIT_GETR(dc)), \
+											ALPHA_COMB_32G(_32BIT_GETG(sa), _32BIT_GETG(sc), _32BIT_GETG(da), _32BIT_GETG(dc)), \
+											ALPHA_COMB_32B(_32BIT_GETB(sa), _32BIT_GETB(sc), _32BIT_GETB(da), _32BIT_GETB(dc))))
 
 #define FIXP16_SHIFT				(16)
 #define FIXP16_MAG					(0x00010000)
@@ -1731,81 +1771,5 @@ inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
 			COLOR_MUL_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
 	return pcres;
 }
-//
-//inline VECTOR2D * Line2D_IntersectX(VECTOR2D * pvres, const VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_x)
-//{
-//	pvres->y = pv0->y + (pv1->y - pv0->y) * (axis_x - pv0->x) / (pv1->x - pv0->x);
-//	pvres->x = axis_x;
-//	return pvres;
-//}
-//
-//inline VECTOR2D * Line2D_IntersectX(VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_x)
-//{
-//	pv0->y = pv0->y + (pv1->y - pv0->y) * (axis_x - pv0->x) / (pv1->x - pv0->x);
-//	pv0->x = axis_x;
-//	return pv0;
-//}
-//
-//inline VECTOR2D * Line2D_IntersectY(VECTOR2D * pvres, const VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_y)
-//{
-//	pvres->x = pv0->x + (pv1->x - pv0->x) * (axis_y - pv0->y) / (pv1->y - pv0->y);
-//	pvres->y = axis_y;
-//	return pvres;
-//}
-//
-//inline VECTOR2D * Line2D_IntersectY(VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_y)
-//{
-//	pv0->x = pv0->x + (pv1->x - pv0->x) * (axis_y - pv0->y) / (pv1->y - pv0->y);
-//	pv0->y = axis_y;
-//	return pv0;
-//}
-//
-//inline VECTOR3D * Line3D_IntersectX(VECTOR3D * pvres, const VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_x)
-//{
-//	pvres->y = pv0->y + (pv1->y - pv0->y) * (plan_x - pv0->x) / (pv1->x - pv0->x);
-//	pvres->z = pv0->z + (pv1->z - pv0->z) * (plan_x - pv0->x) / (pv1->x - pv0->x);
-//	pvres->x = plan_x;
-//	return pvres;
-//}
-//
-//inline VECTOR3D * Line3D_IntersectX(VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_x)
-//{
-//	pv0->y = pv0->y + (pv1->y - pv0->y) * (plan_x - pv0->x) / (pv1->x - pv0->x);
-//	pv0->z = pv0->z + (pv1->z - pv0->z) * (plan_x - pv0->x) / (pv1->x - pv0->x);
-//	pv0->x = plan_x;
-//	return pv0;
-//}
-//
-//inline VECTOR3D * Line3D_IntersectY(VECTOR3D * pvres, const VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_y)
-//{
-//	pvres->x = pv0->x + (pv1->x - pv0->x) * (plan_y - pv0->y) / (pv1->y - pv0->y);
-//	pvres->z = pv0->z + (pv1->z - pv0->z) * (plan_y - pv0->y) / (pv1->y - pv0->y);
-//	pvres->y = plan_y;
-//	return pvres;
-//}
-//
-//inline VECTOR3D * Line3D_IntersectY(VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_y)
-//{
-//	pv0->x = pv0->x + (pv1->x - pv0->x) * (plan_y - pv0->y) / (pv1->y - pv0->y);
-//	pv0->z = pv0->z + (pv1->z - pv0->z) * (plan_y - pv0->y) / (pv1->y - pv0->y);
-//	pv0->y = plan_y;
-//	return pv0;
-//}
-//
-//inline VECTOR3D * Line3D_IntersectZ(VECTOR3D * pvres, const VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_z)
-//{
-//	pvres->x = pv0->x + (pv1->x - pv0->x) * (plan_z - pv0->z) / (pv1->z - pv0->z);
-//	pvres->y = pv0->y + (pv1->y - pv0->y) * (plan_z - pv0->z) / (pv1->z - pv0->z);
-//	pvres->z = plan_z;
-//	return pvres;
-//}
-//
-//inline VECTOR3D * Line3D_IntersectZ(VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_z)
-//{
-//	pv0->x = pv0->x + (pv1->x - pv0->x) * (plan_z - pv0->z) / (pv1->z - pv0->z);
-//	pv0->y = pv0->y + (pv1->y - pv0->y) * (plan_z - pv0->z) / (pv1->z - pv0->z);
-//	pv0->z = plan_z;
-//	return pv0;
-//}
 
 #endif // __T3DLIB4_H__

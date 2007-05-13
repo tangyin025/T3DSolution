@@ -7,18 +7,6 @@
 #include "t3dlib4.h"
 #include "t3dlib5.h"
 
-#define CLIP_REGION_C			(0x00)
-#define CLIP_REGION_N			(0x01)
-#define CLIP_REGION_S			(0x02)
-#define CLIP_REGION_W			(0x04)
-#define CLIP_REGION_E			(0x08)
-#define CLIP_REGION_NW			(0x05)
-#define CLIP_REGION_NE			(0x09)
-#define CLIP_REGION_SW			(0x06)
-#define CLIP_REGION_SE			(0x0A)
-
-#define LINE2D_INTERSECT(ca, a0, a1, b0, b1)	((b0) + ((b1) - (b0)) * ((ca) - (a0)) / ((a1) - (a0)))
-
 _CTOR_IMPLEMENT(RENDERCONTEXTV1_TYP);
 _DTOR_IMPLEMENT(RENDERCONTEXTV1_TYP, foo);
 
@@ -747,26 +735,8 @@ T3DLIB_API void Draw_Rectangle_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEX
 		unsigned char * s = p;
 		while(c--)
 		{
-			//((XRGB16 *)s)->r = COLOR_ADD_16R(
-			//		COLOR_MUL_16R(((XRGB16 *)&prc->c_src_alpha)->r, ((XRGB16 *)&prc->c_ambi)->r),
-			//		COLOR_MUL_16R(((XRGB16 *)&prc->c_dst_alpha)->r, ((XRGB16 *)s)->r));
-			//((XRGB16 *)s)->g = COLOR_ADD_16G(
-			//		COLOR_MUL_16G(((XRGB16 *)&prc->c_src_alpha)->g, ((XRGB16 *)&prc->c_ambi)->g),
-			//		COLOR_MUL_16G(((XRGB16 *)&prc->c_dst_alpha)->g, ((XRGB16 *)s)->g));
-			//((XRGB16 *)s)->b = COLOR_ADD_16B(
-			//		COLOR_MUL_16B(((XRGB16 *)&prc->c_src_alpha)->b, ((XRGB16 *)&prc->c_ambi)->b),
-			//		COLOR_MUL_16B(((XRGB16 *)&prc->c_dst_alpha)->b, ((XRGB16 *)s)->b));
-
-			*(unsigned short *)s = (unsigned short)_RGB16BIT(
-					COLOR_ADD_16R(
-						COLOR_MUL_16R(_16BIT_GETR((unsigned short)prc->c_src_alpha), _16BIT_GETR((unsigned short)prc->c_ambi)),
-						COLOR_MUL_16R(_16BIT_GETR((unsigned short)prc->c_dst_alpha), _16BIT_GETR(*(unsigned short *)s))),
-					COLOR_ADD_16G(
-						COLOR_MUL_16G(_16BIT_GETG((unsigned short)prc->c_src_alpha), _16BIT_GETG((unsigned short)prc->c_ambi)),
-						COLOR_MUL_16G(_16BIT_GETG((unsigned short)prc->c_dst_alpha), _16BIT_GETG(*(unsigned short *)s))),
-					COLOR_ADD_16B(
-						COLOR_MUL_16B(_16BIT_GETB((unsigned short)prc->c_src_alpha), _16BIT_GETB((unsigned short)prc->c_ambi)),
-						COLOR_MUL_16B(_16BIT_GETB((unsigned short)prc->c_dst_alpha), _16BIT_GETB(*(unsigned short *)s))));
+			*(unsigned short *)s = ALPHA16_COMB(
+					prc->c_src_alpha, prc->c_ambi, prc->c_dst_alpha, *(unsigned short *)s);
 
 			s += _16BIT_BYTES;
 		}
@@ -800,26 +770,8 @@ T3DLIB_API void Draw_Rectangle_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEX
 		unsigned char * s = p;
 		while(c--)
 		{
-			//((XRGB32 *)s)->r = COLOR_ADD_32R(
-			//		COLOR_MUL_32R(((XRGB32 *)&prc->c_src_alpha)->r, ((XRGB32 *)&prc->c_ambi)->r),
-			//		COLOR_MUL_32R(((XRGB32 *)&prc->c_dst_alpha)->r, ((XRGB32 *)s)->r));
-			//((XRGB32 *)s)->g = COLOR_ADD_32G(
-			//		COLOR_MUL_32G(((XRGB32 *)&prc->c_src_alpha)->g, ((XRGB32 *)&prc->c_ambi)->g),
-			//		COLOR_MUL_32G(((XRGB32 *)&prc->c_dst_alpha)->g, ((XRGB32 *)s)->g));
-			//((XRGB32 *)s)->b = COLOR_ADD_32B(
-			//		COLOR_MUL_32B(((XRGB32 *)&prc->c_src_alpha)->b, ((XRGB32 *)&prc->c_ambi)->b),
-			//		COLOR_MUL_32B(((XRGB32 *)&prc->c_dst_alpha)->b, ((XRGB32 *)s)->b));
-
-			*(unsigned int *)s = (unsigned int)_RGB32BIT(
-					COLOR_ADD_32R(
-						COLOR_MUL_32R(_32BIT_GETR((unsigned int)prc->c_src_alpha), _32BIT_GETR((unsigned int)prc->c_ambi)),
-						COLOR_MUL_32R(_32BIT_GETR((unsigned int)prc->c_dst_alpha), _32BIT_GETR(*(unsigned int *)s))),
-					COLOR_ADD_32G(
-						COLOR_MUL_32G(_32BIT_GETG((unsigned int)prc->c_src_alpha), _32BIT_GETG((unsigned int)prc->c_ambi)),
-						COLOR_MUL_32G(_32BIT_GETG((unsigned int)prc->c_dst_alpha), _32BIT_GETG(*(unsigned int *)s))),
-					COLOR_ADD_32B(
-						COLOR_MUL_32B(_32BIT_GETB((unsigned int)prc->c_src_alpha), _32BIT_GETB((unsigned int)prc->c_ambi)),
-						COLOR_MUL_32B(_32BIT_GETB((unsigned int)prc->c_dst_alpha), _32BIT_GETB(*(unsigned int *)s))));
+			*(unsigned int *)s = ALPHA32_COMB(
+					prc->c_src_alpha, prc->c_ambi, prc->c_dst_alpha, *(unsigned int *)s);
 
 			s += _32BIT_BYTES;
 		}
