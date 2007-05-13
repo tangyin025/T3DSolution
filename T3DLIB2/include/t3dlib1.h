@@ -376,32 +376,32 @@ inline void Mem_Set_Quad(void * dest, unsigned int value, long count)
 	} // _asm
 }
 
-inline void Mem_Cpy_Word(void * dest, void * src, long count)
-{
-	assert(abs((long)((short *)dest - (short *)src)) >= count);
+//inline void Mem_Cpy_Word(void * dest, const void * src, long count)
+//{
+//	assert(abs((long)((short *)dest - (short *)src)) >= count);
+//
+//	_asm
+//	{
+//		mov		edi,	dest;
+//		mov		esi,	src;
+//		mov		ecx,	count;
+//		rep		movsw;
+//
+//	} // _asm
+//}
 
-	_asm
-	{
-		mov		edi,	dest;
-		mov		esi,	src;
-		mov		ecx,	count;
-		rep		movsw;
-
-	} // _asm
-}
-
-inline void Mem_Cpy_Quad(void * dest, void * src, long count)
-{
-	assert(abs((long)((int *)dest - (int *)src)) >= count);
-
-	_asm
-	{
-		mov		edi,	dest;
-		mov		esi,	src;
-		mov		ecx,	count;
-		rep		movsd;
-
-	} // _asm
-}
+//inline void Mem_Cpy_Quad(void * dest, const void * src, long count)
+//{
+//	assert(abs((long)((int *)dest - (int *)src)) >= count);
+//
+//	_asm
+//	{
+//		mov		edi,	dest;
+//		mov		esi,	src;
+//		mov		ecx,	count;
+//		rep		movsd;
+//
+//	} // _asm
+//}
 
 #endif // __T3DLIB1_H__

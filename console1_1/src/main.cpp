@@ -4,6 +4,7 @@
 
 #include <iostream>
 using namespace std;
+#include <xmmintrin.h>
 
 #include "t3dheaders.h"
 #include "t3dlib1.h"
@@ -86,13 +87,45 @@ int main(int argc, char ** argv)
 	//cout << b << " : " << b[100] << endl;
 	//cout << &b[104] << " : " << b[104] << endl;
 
+	//Init_T3dlib4(32);
+	//RGB32 c1, c2, c3;
+	//c1 = _RGB32BIT(123, 0, 255);
+	//c2 = _RGB32BIT(25, 25, 255);
+	//RGB32_Mul(&c3, &c1, &c2);
+	//cout << _32BIT_GETR(c3) << endl;
+	//cout << _32BIT_GETG(c3) << endl;
+	//cout << _32BIT_GETB(c3) << endl;
+
 	Init_T3dlib4(32);
-	RGB32 c1, c2, c3;
-	c1 = _RGB32BIT(123, 0, 255);
-	c2 = _RGB32BIT(25, 25, 255);
-	RGB32_Mul(&c3, &c1, &c2);
-	cout << _32BIT_GETR(c3) << endl;
-	cout << _32BIT_GETG(c3) << endl;
-	cout << _32BIT_GETB(c3) << endl;
+	cout << "PF_MMX_INSTRUCTIONS_AVAILABLE == "
+		<< IsProcessorFeaturePresent(PF_MMX_INSTRUCTIONS_AVAILABLE) << endl;
+	cout << "PF_XMMI_INSTRUCTIONS_AVAILABLE == "
+		<< IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE) << endl;
+
+	VECTOR4D v0, v1, v2;
+	VECTOR4D_InitXYZ(&v0, 1.0, 2.0, 3.0);
+	VECTOR4D_InitXYZ(&v1, 2.0, 3.0, 4.0);
+	VECTOR3D_Print(&v0._3D);
+	VECTOR4D_Print(&v0);
+	_asm
+	{
+		movaps	xmm0,	v0._M
+		addps	xmm0,	v1._M
+		movaps	v2._M,	xmm0
+	}
+	VECTOR4D_Print(&v1);
+	VECTOR4D_Print(&v2);
+
+	MATRIX4X4 m = {	1.0, 2.0, 3.0, 1.0,
+					1.0, 2.0, 3.0, 1.0,
+					1.0, 2.0, 3.0, 1.0,
+					1.0, 2.0, 3.0, 1.0, };
+	VECTOR3D_Mul(&v1._3D, 2.0);
+	Mat_Mul_VECTOR4D_4X4(&v2, &v1, &m);
+	VECTOR4D_Print(&v1);
+	VECTOR4D_Print(&v2);
+	REAL rad = (REAL)3.1415968489;
+	REAL deg = RAD_TO_DEG(rad);
+	cout << deg << endl;
 	return 0;
 }

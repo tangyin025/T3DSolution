@@ -7,22 +7,22 @@
 
 #include "t3dcommons.h"
 
-#define PI					(3.1415926535897932384626433832795f)
+#define PI					(3.1415926535897932384626433832795)
 #define EPSILON_E3			(1.0e-3)
 #define EPSILON_E4			(1.0e-4)
 #define EPSILON_E5			(1.0e-5)
 #define EPSILON_E6			(1.0e-6)
 
 #define IS_ZERO_FLOAT(f)	(abs((REAL)(f)) < EPSILON_E6)
-#define DEG_TO_RAD(deg)		(((deg) / 180.0f) * PI)
-#define RAD_TO_DEG(rad)		(((rad) / PI) * 180.0f)
+#define DEG_TO_RAD(deg)		(((deg) / (REAL)180.0) * (REAL)PI)
+#define RAD_TO_DEG(rad)		(((rad) / (REAL)PI) * (REAL)180.0)
 
 #pragma warning(disable : 4201)
 typedef struct T3DLIB_API VECTOR2D_TYP
 {
 	union
 	{
-		REAL M[2];
+		_declspec(align(16)) REAL _M[2];
 
 		struct
 		{
@@ -36,7 +36,7 @@ typedef struct T3DLIB_API VECTOR3D_TYP
 {
 	union
 	{
-		REAL M[3];
+		_declspec(align(16)) REAL _M[3];
 
 		struct
 		{
@@ -55,7 +55,7 @@ typedef struct T3DLIB_API VECTOR4D_TYP
 {
 	union
 	{
-		REAL M[4];
+		_declspec(align(16)) REAL _M[4];
 
 		struct
 		{
@@ -79,7 +79,7 @@ typedef struct T3DLIB_API VECTOR2DI_TYP
 {
 	union
 	{
-		int M[2];
+		_declspec(align(16)) int _M[2];
 
 		struct
 		{
@@ -93,7 +93,7 @@ typedef struct T3DLIB_API VECTOR3DI_TYP
 {
 	union
 	{
-		int M[3];
+		_declspec(align(16)) int _M[3];
 
 		struct
 		{
@@ -112,7 +112,7 @@ typedef struct T3DLIB_API VECTOR4DI_TYP
 {
 	union
 	{
-		int M[4];
+		_declspec(align(16)) int _M[4];
 
 		struct
 		{
@@ -136,12 +136,12 @@ typedef struct T3DLIB_API MATRIX2X2_TYP
 {
 	union
 	{
-		REAL M[2][2];
+		_declspec(align(16)) REAL _M[2][2];
 
 		struct
 		{
-			REAL m00, m01;
-			REAL m10, m11;
+			REAL m00, m10;
+			REAL m01, m11;
 		};
 	};
 
@@ -153,18 +153,12 @@ typedef struct T3DLIB_API MATRIX3X2_TYP
 {
 	union
 	{
-		REAL M[3][2];
+		_declspec(align(16)) REAL _M[3][2];
 
 		struct
 		{
-			REAL m00, m01;
-			REAL m10, m11;
-			REAL m20, m21;
-		};
-
-		struct
-		{
-			MATRIX2X2 _2X2;
+			REAL m00, m10, m20;
+			REAL m01, m11, m21;
 		};
 	};
 
@@ -172,40 +166,23 @@ typedef struct T3DLIB_API MATRIX3X2_TYP
 
 } MATRIX3X2, * MATRIX3X2_PTR;
 
-//typedef struct T3DLIB_API MATRIX2X3_TYP
-//{
-//	union
-//	{
-//		REAL M[2][3];
-
-//		struct
-//		{
-//			REAL m00, m01, m02;
-//			REAL m10, m11, m12;
-//		};
-//	};
-
-//	static const MATRIX2X3_TYP IDENTITY;
-
-//} MATRIX2X3, * MATRIX2X3_PTR;
-
 typedef struct T3DLIB_API MATRIX3X3_TYP
 {
 	union
 	{
-		REAL M[3][3];
+		_declspec(align(16)) REAL _M[3][3];
 
 		struct
 		{
-			REAL m00, m01, m02;
-			REAL m10, m11, m12;
-			REAL m20, m21, m22;
+			REAL m00, m10, m20;
+			REAL m01, m11, m21;
+			REAL m02, m12, m22;
 		};
 
-		//struct
-		//{
-		//	MATRIX2X3 _2X3;
-		//};
+		struct
+		{
+			MATRIX3X2 _3X2;
+		};
 	};
 
 	static const MATRIX3X3_TYP IDENTITY;
@@ -216,24 +193,13 @@ typedef struct T3DLIB_API MATRIX4X3_TYP
 {
 	union
 	{
-		REAL M[4][3];
+		_declspec(align(16)) REAL _M[4][3];
 
 		struct
 		{
-			REAL m00, m01, m02;
-			REAL m10, m11, m12;
-			REAL m20, m21, m22;
-			REAL m30, m31, m32;
-		};
-
-		//struct
-		//{
-		//	MATRIX2X3 _2X3;
-		//};
-
-		struct
-		{
-			MATRIX3X3 _3X3;
+			REAL m00, m10, m20, m30;
+			REAL m01, m11, m21, m31;
+			REAL m02, m12, m22, m32;
 		};
 	};
 
@@ -241,69 +207,24 @@ typedef struct T3DLIB_API MATRIX4X3_TYP
 
 } MATRIX4X3, * MATRIX4X3_PTR;
 
-//typedef struct T3DLIB_API MATRIX2X4_TYP
-//{
-//	union
-//	{
-//		REAL M[2][4];
-
-//		struct
-//		{
-//			REAL m00, m01, m02, m03;
-//			REAL m10, m11, m12, m13;
-//		};
-//	};
-
-//	static const MATRIX2X4_TYP IDENTITY;
-
-//} MATRIX2X4, * MATRIX2X4_PTR;
-
-//typedef struct T3DLIB_API MATRIX3X4_TYP
-//{
-//	union
-//	{
-//		REAL M[3][4];
-
-//		struct
-//		{
-//			REAL m00, m01, m02, m03;
-//			REAL m10, m11, m12, m13;
-//			REAL m20, m21, m22, m23;
-//		};
-
-//		struct
-//		{
-//			MATRIX2X4 _2X4;
-//		};
-//	};
-
-//	static const MATRIX3X4_TYP IDENTITY;
-
-//} MATRIX3X4, * MATRIX3X4_PTR;
-
 typedef struct T3DLIB_API MATRIX4X4_TYP
 {
 	union
 	{
-		REAL M[4][4];
+		_declspec(align(16)) REAL _M[4][4];
 
 		struct
 		{
-			REAL m00, m01, m02, m03;
-			REAL m10, m11, m12, m13;
-			REAL m20, m21, m22, m23;
-			REAL m30, m31, m32, m33;
+			REAL m00, m10, m20, m30;
+			REAL m01, m11, m21, m31;
+			REAL m02, m12, m22, m32;
+			REAL m03, m13, m23, m33;
 		};
 
-		//struct
-		//{
-		//	MATRIX2X4 _2X4;
-		//};
-
-		//struct
-		//{
-		//	MATRIX3X4 _3X4;
-		//};
+		struct
+		{
+			MATRIX4X3 _4X3;
+		};
 	};
 
 	static const MATRIX4X4_TYP IDENTITY;
@@ -496,7 +417,7 @@ inline REAL VECTOR2D_CosTheta(const VECTOR2D * pv0, const VECTOR2D * pv1)
 
 inline void VECTOR2D_Print(const VECTOR2D * pv0)
 {
-	printf("VECTOR2D {%f : %f}", pv0->x, pv0->y);
+	printf("VECTOR2D {%f : %f}\n", pv0->x, pv0->y);
 }
 
 inline VECTOR3D * VECTOR3D_Zero(VECTOR3D * pv0)
@@ -728,7 +649,7 @@ inline REAL VECTOR3D_CosTheta(const VECTOR3D * pv0, const VECTOR3D * pv1)
 
 inline void VECTOR3D_Print(const VECTOR3D * pv0)
 {
-	printf("VECTOR3D {%f : %f : %f}", pv0->x, pv0->y, pv0->z);
+	printf("VECTOR3D {%f : %f : %f}\n", pv0->x, pv0->y, pv0->z);
 }
 
 inline VECTOR4D * VECTOR4D_Zero(VECTOR4D * pv0)
@@ -770,7 +691,7 @@ inline VECTOR4D * VECTOR4D_InitXYZW(VECTOR4D * pvres, const REAL x, const REAL y
 
 inline void VECTOR4D_Print(const VECTOR4D * pv0)
 {
-	printf("VECTOR4D {%f : %f : %f : %f}", pv0->x, pv0->y, pv0->z, pv0->w);
+	printf("VECTOR4D {%f : %f : %f : %f}\n", pv0->x, pv0->y, pv0->z, pv0->w);
 }
 
 inline VECTOR2DI * VECTOR2DI_Zero(VECTOR2DI * pv0)
@@ -916,7 +837,7 @@ inline VECTOR2DI * VECTOR2DI_Div(VECTOR2DI * pv0, const int scale)
 
 inline void VECTOR2DI_Print(const VECTOR2DI * pv0)
 {
-	printf("VECTOR2DI {%d : %d}", pv0->x, pv0->y);
+	printf("VECTOR2DI {%d : %d}\n", pv0->x, pv0->y);
 }
 
 inline VECTOR3DI * VECTOR3DI_Zero(VECTOR3DI * pv0)
@@ -1081,7 +1002,7 @@ inline VECTOR3DI * VECTOR3DI_Div(VECTOR3DI * pv0, const int scale)
 
 inline void VECTOR3DI_Print(const VECTOR3DI * pv0)
 {
-	printf("VECTOR3DI {%d : %d : %d}", pv0->x, pv0->y, pv0->z);
+	printf("VECTOR3DI {%d : %d : %d}\n", pv0->x, pv0->y, pv0->z);
 }
 
 inline VECTOR4DI * VECTOR4DI_Zero(VECTOR4DI * pv0)
@@ -1107,7 +1028,7 @@ inline VECTOR4DI * VECTOR4DI_InitXYZW(VECTOR4DI * pvres, const int x, const int 
 
 inline void VECTOR4DI_Print(const VECTOR4DI * pv0)
 {
-	printf("VECTOR4DI {%d : %d : %d : %d}", pv0->x, pv0->y, pv0->z, pv0->w);
+	printf("VECTOR4DI {%d : %d : %d : %d}\n", pv0->x, pv0->y, pv0->z, pv0->w);
 }
 
 inline MATRIX2X2 * MATRIX2X2_Zero(MATRIX2X2 * pmres)
@@ -1135,7 +1056,7 @@ inline MATRIX2X2 * MATRIX2X2_Init2X2(MATRIX2X2 * pmres, const REAL f00, const RE
 inline void MATRIX2X2_Print(const MATRIX2X2 * pm0)
 {
 	printf(	"MATRIX2X2 { %f, %f,\n"
-			"            %f, %f, }", pm0->m00, pm0->m01, pm0->m10, pm0->m11);
+			"            %f, %f, }\n", pm0->m00, pm0->m01, pm0->m10, pm0->m11);
 }
 
 inline MATRIX3X2 * MATRIX3X2_Zero(MATRIX3X2 * pmres)
@@ -1187,7 +1108,7 @@ inline void MATRIX3X2_Print(const MATRIX3X2 * pm0)
 {
 	printf(	"MATRIX3X2 { %f, %f,\n"
 			"            %f, %f,\n"
-			"            %f, %f, }", pm0->m00, pm0->m01, pm0->m10, pm0->m11, pm0->m20, pm0->m21);
+			"            %f, %f, }\n", pm0->m00, pm0->m01, pm0->m10, pm0->m11, pm0->m20, pm0->m21);
 }
 
 inline MATRIX3X3 * MATRIX3X3_Zero(MATRIX3X3 * pmres)
@@ -1233,7 +1154,7 @@ inline void MATRIX3X3_Print(const MATRIX3X3 * pm0)
 {
 	printf(	"MATRIX3X3 { %f, %f, %f,\n"
 			"            %f, %f, %f,\n"
-			"            %f, %f, %f, }",	pm0->m00, pm0->m01, pm0->m02,
+			"            %f, %f, %f, }\n",	pm0->m00, pm0->m01, pm0->m02,
 											pm0->m10, pm0->m11, pm0->m12,
 											pm0->m20, pm0->m21, pm0->m22);
 }
@@ -1287,7 +1208,7 @@ inline void MATRIX4X3_Print(const MATRIX4X3 * pm0)
 	printf(	"MATRIX4X3 { %f, %f, %f,\n"
 			"            %f, %f, %f,\n"
 			"            %f, %f, %f,\n"
-			"            %f, %f, %f, }",	pm0->m00, pm0->m01, pm0->m02,
+			"            %f, %f, %f, }\n",	pm0->m00, pm0->m01, pm0->m02,
 											pm0->m10, pm0->m11, pm0->m12,
 											pm0->m20, pm0->m21, pm0->m22,
 											pm0->m30, pm0->m31, pm0->m32);
@@ -1342,7 +1263,7 @@ inline void MATRIX4X4_Print(const MATRIX4X4 * pm0)
 	printf(	"MATRIX4X4 { %f, %f, %f, %f,\n"
 			"            %f, %f, %f, %f,\n"
 			"            %f, %f, %f, %f,\n"
-			"            %f, %f, %f, %f, }",	pm0->m00, pm0->m01, pm0->m02, pm0->m03,
+			"            %f, %f, %f, %f, }\n",	pm0->m00, pm0->m01, pm0->m02, pm0->m03,
 												pm0->m10, pm0->m11, pm0->m12, pm0->m13,
 												pm0->m20, pm0->m21, pm0->m22, pm0->m23,
 												pm0->m30, pm0->m31, pm0->m32, pm0->m33);
@@ -1702,10 +1623,6 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 #define MAX_COLOR_INTENSITY16G		(0x0040)
 #define MAX_COLOR_INTENSITY32		(0x0100)
 
-//#define MAX_COLOR_INTENSITY16_SHIFT		(5)
-//#define MAX_COLOR_INTENSITY16G_SHIFT	(6)
-//#define MAX_COLOR_INTENSITY32_SHIFT		(8)
-
 #define COLOR_ADD_16R(c0, c1)		(COLOR_TABLE_ADD16[(c0)][(c1)])
 #define COLOR_ADD_16G(c0, c1)		(COLOR_TABLE_ADD16G[(c0)][(c1)])
 #define COLOR_ADD_16B(c0, c1)		(COLOR_TABLE_ADD16[(c0)][(c1)])
@@ -1722,22 +1639,6 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 #define COLOR_MUL_32G(c0, c1)		(COLOR_TABLE_MUL32[(c0)][(c1)])
 #define COLOR_MUL_32B(c0, c1)		(COLOR_TABLE_MUL32[(c0)][(c1)])
 
-//#define COLOR_ADD_16R(c0, c1)		(*(*COLOR_TABLE_ADD16 + ((c0) << MAX_COLOR_INTENSITY16_SHIFT) + (c1)))
-//#define COLOR_ADD_16G(c0, c1)		(*(*COLOR_TABLE_ADD16G + ((c0) << MAX_COLOR_INTENSITY16G_SHIFT) + (c1)))
-//#define COLOR_ADD_16B(c0, c1)		(*(*COLOR_TABLE_ADD16 + ((c0) << MAX_COLOR_INTENSITY16_SHIFT) + (c1)))
-//
-//#define COLOR_ADD_32R(c0, c1)		(*(*COLOR_TABLE_ADD32 + ((c0) << MAX_COLOR_INTENSITY32_SHIFT) + (c1)))
-//#define COLOR_ADD_32G(c0, c1)		(*(*COLOR_TABLE_ADD32 + ((c0) << MAX_COLOR_INTENSITY32_SHIFT) + (c1)))
-//#define COLOR_ADD_32B(c0, c1)		(*(*COLOR_TABLE_ADD32 + ((c0) << MAX_COLOR_INTENSITY32_SHIFT) + (c1)))
-//
-//#define COLOR_MUL_16R(c0, c1)		(*(*COLOR_TABLE_MUL16 + ((c0) << MAX_COLOR_INTENSITY16_SHIFT) + (c1)))
-//#define COLOR_MUL_16G(c0, c1)		(*(*COLOR_TABLE_MUL16G + ((c0) << MAX_COLOR_INTENSITY16G_SHIFT) + (c1)))
-//#define COLOR_MUL_16B(c0, c1)		(*(*COLOR_TABLE_MUL16 + ((c0) << MAX_COLOR_INTENSITY16_SHIFT) + (c1)))
-//
-//#define COLOR_MUL_32R(c0, c1)		(*(*COLOR_TABLE_MUL32 + ((c0) << MAX_COLOR_INTENSITY32_SHIFT) + (c1)))
-//#define COLOR_MUL_32G(c0, c1)		(*(*COLOR_TABLE_MUL32 + ((c0) << MAX_COLOR_INTENSITY32_SHIFT) + (c1)))
-//#define COLOR_MUL_32B(c0, c1)		(*(*COLOR_TABLE_MUL32 + ((c0) << MAX_COLOR_INTENSITY32_SHIFT) + (c1)))
-
 #define FIXP16_SHIFT				(16)
 #define FIXP16_MAG					(0x00010000)
 #define FIXP16_DMASK				(0x0000FFFF)
@@ -1747,57 +1648,6 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 #define FIXP28_MAG					(0x10000000)
 #define FIXP28_DMASK				(0x0FFFFFFF)
 #define FIXP28_WMASK				(0xF0000000)
-
-//#pragma warning(disable : 4201)
-//typedef struct T3DLIB_API FIXP16_TYP
-//{
-//	union
-//	{
-//		int val;
-//
-//		struct
-//		{
-//			short			integer;
-//			unsigned short	decimal;
-//		};
-//
-//		//struct
-//		//{
-//		//	unsigned char	c1;
-//		//	unsigned char	c2;
-//		//	unsigned char	c3;
-//		//	unsigned char	c4;
-//		//};
-//	};
-//
-//} FIXP16, * FIXP16_PTR;
-
-//typedef struct T3DLIB_API RGB16_TYP
-//{
-//	union
-//	{
-//		unsigned short val;
-//	};
-//
-//} RGB16, * RGB16_PTR;
-
-//typedef struct T3DLIB_API RGB32_TYP
-//{
-//	union
-//	{
-//		unsigned int val;
-//
-//		struct
-//		{
-//			unsigned char	x;
-//			unsigned char	r;
-//			unsigned char	g;
-//			unsigned char	b;
-//		};
-//	};
-//
-//} RGB32, * RGB32_PTR;
-//#pragma warning(default : 4201)
 
 typedef unsigned short RGB16_TYP;
 typedef RGB16_TYP RGB16, * RGB16_PTR;
@@ -1819,6 +1669,16 @@ extern T3DLIB_API unsigned char COLOR_TABLE_MUL16G[MAX_COLOR_INTENSITY16G][MAX_C
 extern T3DLIB_API unsigned char COLOR_TABLE_MUL32[MAX_COLOR_INTENSITY32][MAX_COLOR_INTENSITY32];
 
 T3DLIB_API bool Init_T3dlib4(int bpp);
+
+inline void RGB16_Print(const RGB16 * pc0)
+{
+	printf("RGB16 {%d, %d, %d}\n", _16BIT_GETR(*pc0), _16BIT_GETG(*pc0), _16BIT_GETB(*pc0));
+}
+
+inline void RGB32_Print(const RGB32 * pc0)
+{
+	printf("RGB32 {%d, %d, %d}\n", _32BIT_GETR(*pc0), _32BIT_GETG(*pc0), _32BIT_GETB(*pc0));
+}
 
 inline RGB16 * RGB16_Add(RGB16 * pcres, const RGB16 * pc0, const RGB16 * pc1)
 {
@@ -1871,5 +1731,81 @@ inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
 			COLOR_MUL_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
 	return pcres;
 }
+//
+//inline VECTOR2D * Line2D_IntersectX(VECTOR2D * pvres, const VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_x)
+//{
+//	pvres->y = pv0->y + (pv1->y - pv0->y) * (axis_x - pv0->x) / (pv1->x - pv0->x);
+//	pvres->x = axis_x;
+//	return pvres;
+//}
+//
+//inline VECTOR2D * Line2D_IntersectX(VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_x)
+//{
+//	pv0->y = pv0->y + (pv1->y - pv0->y) * (axis_x - pv0->x) / (pv1->x - pv0->x);
+//	pv0->x = axis_x;
+//	return pv0;
+//}
+//
+//inline VECTOR2D * Line2D_IntersectY(VECTOR2D * pvres, const VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_y)
+//{
+//	pvres->x = pv0->x + (pv1->x - pv0->x) * (axis_y - pv0->y) / (pv1->y - pv0->y);
+//	pvres->y = axis_y;
+//	return pvres;
+//}
+//
+//inline VECTOR2D * Line2D_IntersectY(VECTOR2D * pv0, const VECTOR2D * pv1, const REAL axis_y)
+//{
+//	pv0->x = pv0->x + (pv1->x - pv0->x) * (axis_y - pv0->y) / (pv1->y - pv0->y);
+//	pv0->y = axis_y;
+//	return pv0;
+//}
+//
+//inline VECTOR3D * Line3D_IntersectX(VECTOR3D * pvres, const VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_x)
+//{
+//	pvres->y = pv0->y + (pv1->y - pv0->y) * (plan_x - pv0->x) / (pv1->x - pv0->x);
+//	pvres->z = pv0->z + (pv1->z - pv0->z) * (plan_x - pv0->x) / (pv1->x - pv0->x);
+//	pvres->x = plan_x;
+//	return pvres;
+//}
+//
+//inline VECTOR3D * Line3D_IntersectX(VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_x)
+//{
+//	pv0->y = pv0->y + (pv1->y - pv0->y) * (plan_x - pv0->x) / (pv1->x - pv0->x);
+//	pv0->z = pv0->z + (pv1->z - pv0->z) * (plan_x - pv0->x) / (pv1->x - pv0->x);
+//	pv0->x = plan_x;
+//	return pv0;
+//}
+//
+//inline VECTOR3D * Line3D_IntersectY(VECTOR3D * pvres, const VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_y)
+//{
+//	pvres->x = pv0->x + (pv1->x - pv0->x) * (plan_y - pv0->y) / (pv1->y - pv0->y);
+//	pvres->z = pv0->z + (pv1->z - pv0->z) * (plan_y - pv0->y) / (pv1->y - pv0->y);
+//	pvres->y = plan_y;
+//	return pvres;
+//}
+//
+//inline VECTOR3D * Line3D_IntersectY(VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_y)
+//{
+//	pv0->x = pv0->x + (pv1->x - pv0->x) * (plan_y - pv0->y) / (pv1->y - pv0->y);
+//	pv0->z = pv0->z + (pv1->z - pv0->z) * (plan_y - pv0->y) / (pv1->y - pv0->y);
+//	pv0->y = plan_y;
+//	return pv0;
+//}
+//
+//inline VECTOR3D * Line3D_IntersectZ(VECTOR3D * pvres, const VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_z)
+//{
+//	pvres->x = pv0->x + (pv1->x - pv0->x) * (plan_z - pv0->z) / (pv1->z - pv0->z);
+//	pvres->y = pv0->y + (pv1->y - pv0->y) * (plan_z - pv0->z) / (pv1->z - pv0->z);
+//	pvres->z = plan_z;
+//	return pvres;
+//}
+//
+//inline VECTOR3D * Line3D_IntersectZ(VECTOR3D * pv0, const VECTOR3D * pv1, const REAL plan_z)
+//{
+//	pv0->x = pv0->x + (pv1->x - pv0->x) * (plan_z - pv0->z) / (pv1->z - pv0->z);
+//	pv0->y = pv0->y + (pv1->y - pv0->y) * (plan_z - pv0->z) / (pv1->z - pv0->z);
+//	pv0->z = plan_z;
+//	return pv0;
+//}
 
 #endif // __T3DLIB4_H__

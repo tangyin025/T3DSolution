@@ -10,16 +10,6 @@
 #define MAX_VERTEX_NUM			(3)
 #define MAX_TEXTURE_NUM			(2)
 
-#define CLIP_REGION_C			(0x00)
-#define CLIP_REGION_N			(0x01)
-#define CLIP_REGION_S			(0x02)
-#define CLIP_REGION_W			(0x04)
-#define CLIP_REGION_E			(0x08)
-#define CLIP_REGION_NW			(0x05)
-#define CLIP_REGION_NE			(0x09)
-#define CLIP_REGION_SW			(0x06)
-#define CLIP_REGION_SE			(0x0A)
-
 #pragma warning(disable : 4201)
 typedef struct T3DLIB_API TEXTCOORV1_TYP
 {
@@ -90,87 +80,87 @@ typedef struct T3DLIB_API RENDERCONTEXTV1_TYP
 	long				s_pitch;
 	int					s_pitch_shift;
 	int					s_color_shift;
-	//int					min_clip_x;
-	//int					max_clip_x;
-	//int					min_clip_y;
-	//int					max_clip_y;
-	REAL				fmin_clip_x;
-	REAL				fmax_clip_x;
-	REAL				fmin_clip_y;
-	REAL				fmax_clip_y;
-	//VECTOR4D			v[MAX_VERTEX_NUM];
-	//unsigned int		c_diff[MAX_VERTEX_NUM];
-	//unsigned int		c_spec[MAX_VERTEX_NUM];
+
+	unsigned char *		z_pbuffer;
+	long				z_pitch;
+	int					z_pitch_shift;
+	int					z_color_shift;
+
 	unsigned char *		t_pbuffer[MAX_TEXTURE_NUM];
 	long				t_pitch[MAX_TEXTURE_NUM];
 	int					t_pitch_shift[MAX_TEXTURE_NUM];
 	int					t_color_shift[MAX_TEXTURE_NUM];
-	//FIXP16				t_u[MAX_TEXTURE_NUM][MAX_VERTEX_NUM];
-	//FIXP16				t_v[MAX_TEXTURE_NUM][MAX_VERTEX_NUM];
-	unsigned int		c_key;
+
+	unsigned int		c_ambi;
+	unsigned int		c_src_key;
 	unsigned int		c_src_alpha;
 	unsigned int		c_dst_alpha;
+
+	REAL				fmin_clip_x;
+	REAL				fmax_clip_x;
+	REAL				fmin_clip_y;
+	REAL				fmax_clip_y;
 
 	_CTOR_DECLARE(RENDERCONTEXTV1_TYP);
 	_DTOR_DECLARE(RENDERCONTEXTV1_TYP);
 
 } RENDERCONTEXTV1, * RENDERCONTEXTV1_PTR;
 
-extern T3DLIB_API void (* Draw_Rectangle)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Rectangle_Alpha)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Clipped_Rectangle)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Clipped_Rectangle_Alpha)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_HLine)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_VLine)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Clipped_HLine)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Clipped_VLine)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Line)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
-extern T3DLIB_API void (* Draw_Clipped_Line)(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Rectangle_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Clipped_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Clipped_Rectangle_Alpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_HLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_VLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Clipped_HLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Clipped_VLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Line)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+extern T3DLIB_API void (* Draw_Clipped_Line)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
 T3DLIB_API bool Init_T3dlib5(int bpp);
 
-T3DLIB_API void Draw_HLine16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_HLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_HLine32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_HLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_VLine16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_VLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_VLine32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_VLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_HLine16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_HLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_HLine32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_HLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_VLine16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_VLine16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_VLine32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_VLine32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Line16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Line32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API bool Clip_Line(register RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1);
+T3DLIB_API bool Clip_Line(const RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_Line16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_Line32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Rectangle16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Rectangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Rectangle32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Rectangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Rectangle_Alpha16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Rectangle_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Rectangle_Alpha32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Rectangle_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API bool Clip_Rectangle(register RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1);
+T3DLIB_API bool Clip_Rectangle(const RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_Rectangle16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_Rectangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_Rectangle32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_Rectangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_Rectangle_Alpha16(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_Rectangle_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
-T3DLIB_API void Draw_Clipped_Rectangle_Alpha32(register RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
+T3DLIB_API void Draw_Clipped_Rectangle_Alpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
 #endif // __T3DLIB5_H__

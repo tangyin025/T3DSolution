@@ -18,12 +18,14 @@
 //#pragma message("stdio.h ok")
 #include <math.h>
 //#pragma message("math.h ok")
+#include <xmmintrin.h>
+//#pragma message("xmmintrin.h ok")
 #include <Windows.h>
 //#pragma message("windows.h ok")
 #pragma warning(disable : 4201)
 #include <mmsystem.h>
-//#pragma message("mmsystem.h ok")
 #pragma warning(default : 4201)
+//#pragma message("mmsystem.h ok")
 #include <ddraw.h>
 //#pragma message("ddraw.h ok")
 #include <dinput.h>

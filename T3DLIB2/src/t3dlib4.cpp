@@ -9,28 +9,25 @@
 const MATRIX2X2_TYP MATRIX2X2::IDENTITY = {	1.0f, 0.0f,
 											0.0f, 1.0f, };
 
-const MATRIX3X2_TYP MATRIX3X2::IDENTITY = {	1.0f, 0.0f,
-											0.0f, 1.0f,
-											0.0f, 0.0f, };
+//const MATRIX3X2_TYP MATRIX3X2::IDENTITY = {	1.0f, 0.0f,
+//											0.0f, 1.0f,
+//											0.0f, 0.0f, };
 
-//const MATRIX2X3_TYP MATRIX2X3::IDENTITY = {	1.0f, 0.0f, 0.0f,
-//											0.0f, 1.0f, 0.0f, };
+const MATRIX3X2_TYP MATRIX3X2::IDENTITY = {	1.0f, 0.0f, 0.0f,
+											0.0f, 1.0f, 0.0f, };
 
 const MATRIX3X3_TYP MATRIX3X3::IDENTITY = {	1.0f, 0.0f, 0.0f,
 											0.0f, 1.0f, 0.0f,
 											0.0f, 0.0f, 1.0f, };
 
-const MATRIX4X3_TYP MATRIX4X3::IDENTITY = {	1.0f, 0.0f, 0.0f,
-											0.0f, 1.0f, 0.0f,
-											0.0f, 0.0f, 1.0f,
-											0.0f, 0.0f, 0.0f, };
+//const MATRIX4X3_TYP MATRIX4X3::IDENTITY = {	1.0f, 0.0f, 0.0f,
+//											0.0f, 1.0f, 0.0f,
+//											0.0f, 0.0f, 1.0f,
+//											0.0f, 0.0f, 0.0f, };
 
-//const MATRIX2X4_TYP MATRIX2X4::IDENTITY = {	1.0f, 0.0f, 0.0f, 0.0f,
-//											0.0f, 1.0f, 0.0f, 0.0f, };
-
-//const MATRIX3X4_TYP MATRIX3X4::IDENTITY = {	1.0f, 0.0f, 0.0f, 0.0f,
-//											0.0f, 1.0f, 0.0f, 0.0f,
-//											0.0f, 0.0f, 1.0f, 0.0f, };
+const MATRIX4X3_TYP MATRIX4X3::IDENTITY = {	1.0f, 0.0f, 0.0f, 0.0f,
+											0.0f, 1.0f, 0.0f, 0.0f,
+											0.0f, 0.0f, 1.0f, 0.0f, };
 
 const MATRIX4X4_TYP MATRIX4X4::IDENTITY = {	1.0f, 0.0f, 0.0f, 0.0f,
 											0.0f, 1.0f, 0.0f, 0.0f,
