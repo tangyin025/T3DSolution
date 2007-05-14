@@ -164,8 +164,8 @@ T3DLIB_API void Draw_HLine_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 *
 
 	while(dx--)
 	{
-		*(unsigned int *)p = ALPHA16_COMB(
-				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)p);
+		*(unsigned short *)p = ALPHA16_COMB(
+				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)p);
 
 		p += _16BIT_BYTES;
 	}
@@ -210,8 +210,8 @@ T3DLIB_API void Draw_VLine_Alpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 *
 
 	while(dy--)
 	{
-		*(unsigned int *)p = ALPHA16_COMB(
-				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)p);
+		*(unsigned short *)p = ALPHA16_COMB(
+				prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)p);
 
 		p += prc->s_pitch;
 	}
