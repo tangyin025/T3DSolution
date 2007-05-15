@@ -83,6 +83,9 @@ bool				Game_Frame(void);
 
 int			resolution_index;
 FILE *		log_file			= NULL;
+char		err_buffer[MAX_BUFFER_SIZE];
+char		err_file[MAX_BUFFER_SIZE];
+int			err_line;
 
 HWND		wnd_handle;
 SIZE		wnd_offset;
@@ -232,10 +235,15 @@ void Log_Close(void)
 // DEFINES
 // ////////////////////////////////////////////////////////////////////////////////////
 
-#define ON_ERROR_RETURN(e)		{	Log_Write("%s, %s, %d\n", \
-											(e), __FILE__, __LINE__); \
-									if(strlen(gerror.message) > 0) { Log_Write("%s, %s, %d\n", \
-										gerror.message, gerror.file, gerror.line); } return false; }
+#define ON_ERROR_RETURN(e) \
+{ \
+	Log_Write("%s, %s, %d\n", (e), __FILE__, __LINE__); \
+	if(strlen(Get_Last_Error(err_buffer, err_file, &err_line)) > 0) \
+	{ \
+		Log_Write("%s, %s, %d\n", err_buffer, err_file, err_line); \
+	} \
+	return false; \
+}
 
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)

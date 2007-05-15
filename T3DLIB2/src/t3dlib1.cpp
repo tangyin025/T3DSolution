@@ -38,10 +38,10 @@ T3DLIB_API void foo(void * pvoid /*= NULL*/)
 
 #define GET_DDRAW_ERROR(h)		(Get_DDraw_Error(gbuffer, (h)))
 
-T3DLIB_API ERRORREP			gerror = {{""}, {""}, 0};
-T3DLIB_API char				gbuffer[MAX_BUFFER_SIZE] = "";
-T3DLIB_API HRESULT			gresult = DD_OK;
-T3DLIB_API DDSURFACEDESC2	gddsd;
+__declspec(thread) ERRORREP			gerror = {{""}, {""}, 0};
+__declspec(thread) char				gbuffer[MAX_BUFFER_SIZE] = "";
+__declspec(thread) HRESULT			gresult = DD_OK;
+__declspec(thread) DDSURFACEDESC2	gddsd;
 
 _CTOR_IMPLEMENT(DDRAWV1_TYP);
 _DTOR_IMPLEMENT_W1(DDRAWV1_TYP, Destroy_DDraw, lpddraw);
@@ -990,11 +990,13 @@ ON_ERROR:
 
 T3DLIB_API bool Create_Image16(IMAGEV1 * pimage, const int width, const int height)
 {
+	assert(pimage->pbuffer == NULL);
+
 	long			rpitch;
 	int				rpitch_shift;
 	unsigned char *	pbuffer = NULL;
 
-	if(!Get_Recommended_Pitch(&rpitch, width * (sizeof(*pimage->pbuffer) << _16BIT_SHIFT)))
+	if(!Get_Recommended_Pitch(&rpitch, width * (sizeof(*pimage->pbuffer) << _16BIT_BYTES_SHIFT)))
 		ON_ERROR_GOTO("get recommended pitch failed");
 
 	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
@@ -1011,7 +1013,7 @@ T3DLIB_API bool Create_Image16(IMAGEV1 * pimage, const int width, const int heig
 	pimage->width		= width;
 	pimage->height		= height;
 	pimage->pitch_shift	= rpitch_shift;
-	pimage->color_shift	= _16BIT_SHIFT;
+	pimage->color_shift	= _16BIT_BYTES_SHIFT;
 	return true;
 
 ON_ERROR:
@@ -1021,11 +1023,13 @@ ON_ERROR:
 
 T3DLIB_API bool Create_Image32(IMAGEV1 * pimage, const int width, const int height)
 {
+	assert(pimage->pbuffer == NULL);
+
 	long			rpitch;
 	int				rpitch_shift;
 	unsigned char *	pbuffer = NULL;
 
-	if(!Get_Recommended_Pitch(&rpitch, width * (sizeof(*pimage->pbuffer) << _32BIT_SHIFT)))
+	if(!Get_Recommended_Pitch(&rpitch, width * (sizeof(*pimage->pbuffer) << _32BIT_BYTES_SHIFT)))
 		ON_ERROR_GOTO("get recommended pitch failed");
 
 	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
@@ -1042,7 +1046,7 @@ T3DLIB_API bool Create_Image32(IMAGEV1 * pimage, const int width, const int heig
 	pimage->width		= width;
 	pimage->height		= height;
 	pimage->pitch_shift	= rpitch_shift;
-	pimage->color_shift	= _32BIT_SHIFT;
+	pimage->color_shift	= _32BIT_BYTES_SHIFT;
 	return true;
 
 ON_ERROR:
@@ -1136,7 +1140,7 @@ ON_ERROR:
 
 T3DLIB_API bool Load_Surface_From_Bitmap16(SURFACEV1 * psurface, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
-	assert(psurface->color_shift == _16BIT_SHIFT);
+	assert(psurface->color_shift == _16BIT_BYTES_SHIFT);
 	assert(psurface->pbuffer != NULL);
 
 	assert(	x >= 0 &&
@@ -1153,7 +1157,7 @@ T3DLIB_API bool Load_Surface_From_Bitmap16(SURFACEV1 * psurface, const BITMAPV1 
 		for(sj = 0, bj = x;
 			sj < psurface->width && bj < x + width; sj++, bj++)
 		{
-			dest = psurface->pbuffer + (si << psurface->pitch_shift) + (sj << _16BIT_SHIFT);
+			dest = psurface->pbuffer + (si << psurface->pitch_shift) + (sj << _16BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
 			switch(pbitmap->bitmapinfoheader.biBitCount)
@@ -1193,7 +1197,7 @@ ON_ERROR:
 
 T3DLIB_API bool Load_Surface_From_Bitmap32(SURFACEV1 * psurface, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
-	assert(psurface->color_shift == _32BIT_SHIFT);
+	assert(psurface->color_shift == _32BIT_BYTES_SHIFT);
 	assert(psurface->pbuffer != NULL);
 
 	assert(	x >= 0 &&
@@ -1210,7 +1214,7 @@ T3DLIB_API bool Load_Surface_From_Bitmap32(SURFACEV1 * psurface, const BITMAPV1 
 		for(sj = 0, bj = x;
 			sj < psurface->width && bj < x + width; sj++, bj++)
 		{
-			dest = psurface->pbuffer + (si << psurface->pitch_shift) + (sj << _32BIT_SHIFT);
+			dest = psurface->pbuffer + (si << psurface->pitch_shift) + (sj << _32BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
 			switch(pbitmap->bitmapinfoheader.biBitCount)
@@ -1250,7 +1254,7 @@ ON_ERROR:
 
 T3DLIB_API bool Load_Image_From_Bitmap16(IMAGEV1 * pimage, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
-	assert(pimage->color_shift == _16BIT_SHIFT);
+	assert(pimage->color_shift == _16BIT_BYTES_SHIFT);
 	assert(pimage->pbuffer != NULL);
 
 	assert(	x >= 0 &&
@@ -1267,7 +1271,7 @@ T3DLIB_API bool Load_Image_From_Bitmap16(IMAGEV1 * pimage, const BITMAPV1 * pbit
 		for(sj = 0, bj = x;
 			sj < pimage->width && bj < x + width; sj++, bj++)
 		{
-			dest = pimage->pbuffer + (si << pimage->pitch_shift) + (sj << _16BIT_SHIFT);
+			dest = pimage->pbuffer + (si << pimage->pitch_shift) + (sj << _16BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
 			switch(pbitmap->bitmapinfoheader.biBitCount)
@@ -1307,7 +1311,7 @@ ON_ERROR:
 
 T3DLIB_API bool Load_Image_From_Bitmap32(IMAGEV1 * pimage, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
-	assert(pimage->color_shift == _32BIT_SHIFT);
+	assert(pimage->color_shift == _32BIT_BYTES_SHIFT);
 	assert(pimage->pbuffer != NULL);
 
 	assert(	x >= 0 &&
@@ -1324,7 +1328,7 @@ T3DLIB_API bool Load_Image_From_Bitmap32(IMAGEV1 * pimage, const BITMAPV1 * pbit
 		for(sj = 0, bj = x;
 			sj < pimage->width && bj < x + width; sj++, bj++)
 		{
-			dest = pimage->pbuffer + (si << pimage->pitch_shift) + (sj << _32BIT_SHIFT);
+			dest = pimage->pbuffer + (si << pimage->pitch_shift) + (sj << _32BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
 			switch(pbitmap->bitmapinfoheader.biBitCount)
@@ -1364,7 +1368,7 @@ ON_ERROR:
 
 T3DLIB_API bool Load_Texture_From_Bitmap16(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
-	assert(ptexture->color_shift == _16BIT_SHIFT);
+	assert(ptexture->color_shift == _16BIT_BYTES_SHIFT);
 	assert(ptexture->pbuffer != NULL);
 	//memset(ptexture->ptexture, 0, ptexture->height << ptexture->pitch_shift);
 
@@ -1377,7 +1381,7 @@ T3DLIB_API bool Load_Texture_From_Bitmap16(TEXTUREV1 * ptexture, const BITMAPV1 
 		for(tj = 0, bj = x;
 			tj < ptexture->width, bj < x + width; tj++, bj++)
 		{
-			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _16BIT_SHIFT));
+			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _16BIT_BYTES_SHIFT));
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
 			switch(pbitmap->bitmapinfoheader.biBitCount)
@@ -1412,7 +1416,7 @@ ON_ERROR:
 
 T3DLIB_API bool Load_Texture_From_Bitmap32(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
-	assert(ptexture->color_shift == _32BIT_SHIFT);
+	assert(ptexture->color_shift == _32BIT_BYTES_SHIFT);
 	assert(ptexture->pbuffer != NULL);
 	//memset(ptexture->ptexture, 0, ptexture->height << ptexture->pitch_shift);
 
@@ -1425,7 +1429,7 @@ T3DLIB_API bool Load_Texture_From_Bitmap32(TEXTUREV1 * ptexture, const BITMAPV1 
 		for(tj = 0, bj = x;
 			tj < ptexture->width, bj < x + width; tj++, bj++)
 		{
-			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _32BIT_SHIFT));
+			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _32BIT_BYTES_SHIFT));
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
 			switch(pbitmap->bitmapinfoheader.biBitCount)
@@ -1474,4 +1478,60 @@ T3DLIB_API void Destroy_Texture(TEXTUREV1 * ptexture)
 {
 	SAFE_FREE(ptexture->pbuffer);
 	memset(ptexture, 0, sizeof(*ptexture));
+}
+
+_CTOR_IMPLEMENT(ZBUFFERV1_TYP);
+_DTOR_IMPLEMENT_W1(ZBUFFERV1_TYP, Destroy_ZBuffer, pbuffer);
+
+T3DLIB_API bool Create_ZBuffer(ZBUFFERV1 * pzbuffer, const int width, const int height)
+{
+	assert(pzbuffer->pbuffer == NULL);
+
+	unsigned char * pbuffer = NULL;
+	long	rpitch;
+	int		rpitch_shift;
+
+	if(!Get_Recommended_Pitch(&rpitch, width << _ZBUFF_BYTES_SHIFT))
+	{
+		assert(false);
+		ON_ERROR_GOTO(SFORMAT1(gbuffer, "cannot get recommended pitch with width %d", width));
+	}
+
+	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
+	{
+		assert(false);
+		ON_ERROR_GOTO(SFORMAT1(gbuffer, "cannot compute pitch shift with pitch %d", rpitch));
+	}
+
+	if(NULL == (pbuffer = (unsigned char *)malloc(height * rpitch)))
+		ON_ERROR_GOTO(SFORMAT0(gbuffer, "malloc zbuffer failed"));
+
+	pzbuffer->pbuffer		= pbuffer;
+	pzbuffer->pitch			= rpitch;
+	pzbuffer->width			= width;
+	pzbuffer->height		= height;
+	pzbuffer->pitch_shift	= rpitch_shift;
+	pzbuffer->color_shift	= _ZBUFF_BYTES_SHIFT;
+	return true;
+
+ON_ERROR:
+	SAFE_FREE(pbuffer);
+	return false;
+}
+
+T3DLIB_API void Clear_ZBuffer(ZBUFFERV1 * pzbuffer)
+{
+	unsigned char * pz = pzbuffer->pbuffer;
+	int count = pzbuffer->height;
+	while(count--)
+	{
+		memset(pz, 0, pzbuffer->width << _ZBUFF_BYTES_SHIFT);
+		pz += pzbuffer->pitch;
+	}
+}
+
+T3DLIB_API void Destroy_ZBuffer(ZBUFFERV1 * pzbuffer)
+{
+	SAFE_FREE(pzbuffer->pbuffer);
+	memset(pzbuffer, 0, sizeof(*pzbuffer));
 }

@@ -22,7 +22,7 @@ typedef struct T3DLIB_API VECTOR2D_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[2];
+		__declspec(align(16)) REAL _M[2];
 
 		struct
 		{
@@ -36,7 +36,7 @@ typedef struct T3DLIB_API VECTOR3D_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[3];
+		__declspec(align(16)) REAL _M[3];
 
 		struct
 		{
@@ -55,7 +55,7 @@ typedef struct T3DLIB_API VECTOR4D_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[4];
+		__declspec(align(16)) REAL _M[4];
 
 		struct
 		{
@@ -79,7 +79,7 @@ typedef struct T3DLIB_API VECTOR2DI_TYP
 {
 	union
 	{
-		_declspec(align(16)) int _M[2];
+		__declspec(align(16)) int _M[2];
 
 		struct
 		{
@@ -93,7 +93,7 @@ typedef struct T3DLIB_API VECTOR3DI_TYP
 {
 	union
 	{
-		_declspec(align(16)) int _M[3];
+		__declspec(align(16)) int _M[3];
 
 		struct
 		{
@@ -112,7 +112,7 @@ typedef struct T3DLIB_API VECTOR4DI_TYP
 {
 	union
 	{
-		_declspec(align(16)) int _M[4];
+		__declspec(align(16)) int _M[4];
 
 		struct
 		{
@@ -136,7 +136,7 @@ typedef struct T3DLIB_API MATRIX2X2_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[2][2];
+		__declspec(align(16)) REAL _M[2][2];
 
 		struct
 		{
@@ -153,7 +153,7 @@ typedef struct T3DLIB_API MATRIX3X2_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[3][2];
+		__declspec(align(16)) REAL _M[3][2];
 
 		struct
 		{
@@ -170,7 +170,7 @@ typedef struct T3DLIB_API MATRIX3X3_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[3][3];
+		__declspec(align(16)) REAL _M[3][3];
 
 		struct
 		{
@@ -193,7 +193,7 @@ typedef struct T3DLIB_API MATRIX4X3_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[4][3];
+		__declspec(align(16)) REAL _M[4][3];
 
 		struct
 		{
@@ -211,7 +211,7 @@ typedef struct T3DLIB_API MATRIX4X4_TYP
 {
 	union
 	{
-		_declspec(align(16)) REAL _M[4][4];
+		__declspec(align(16)) REAL _M[4][4];
 
 		struct
 		{
@@ -1679,27 +1679,11 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 											ALPHA_COMB_32G(_32BIT_GETG(sa), _32BIT_GETG(sc), _32BIT_GETG(da), _32BIT_GETG(dc)), \
 											ALPHA_COMB_32B(_32BIT_GETB(sa), _32BIT_GETB(sc), _32BIT_GETB(da), _32BIT_GETB(dc))))
 
-#define FIXP16_SHIFT				(16)
-#define FIXP16_MAG					(0x00010000)
-#define FIXP16_DMASK				(0x0000FFFF)
-#define FIXP16_WMASK				(0xFFFF0000)
-
-#define FIXP28_SHIFT				(28)
-#define FIXP28_MAG					(0x10000000)
-#define FIXP28_DMASK				(0x0FFFFFFF)
-#define FIXP28_WMASK				(0xF0000000)
-
 typedef unsigned short RGB16_TYP;
 typedef RGB16_TYP RGB16, * RGB16_PTR;
 
 typedef unsigned int RGB32_TYP;
 typedef RGB32_TYP RGB32, * RGB32_PTR;
-
-typedef int FIXP16_TYP;
-typedef FIXP16_TYP FIXP16, * FIXP16_PTR;
-
-typedef int FIXP28_TYP;
-typedef FIXP28_TYP FIXP28, * FIXP28_PTR;
 
 extern T3DLIB_API unsigned char COLOR_TABLE_ADD16[MAX_COLOR_INTENSITY16][MAX_COLOR_INTENSITY16];
 extern T3DLIB_API unsigned char COLOR_TABLE_ADD16G[MAX_COLOR_INTENSITY16G][MAX_COLOR_INTENSITY16G];

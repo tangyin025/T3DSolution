@@ -160,23 +160,26 @@ T3DLIB_API void Set_Text_Color(TEXTDCV1 * ptdc, COLORREF color);
 
 T3DLIB_API bool Text_Out(TEXTDCV1 * ptdc, char * text, int x, int y);
 
-extern T3DLIB_API ERRORREP		gerror;
-extern T3DLIB_API char			gbuffer[MAX_BUFFER_SIZE];
-extern T3DLIB_API HRESULT		gresult;
+#ifdef T3DLIB2_EXPORTS
+extern __declspec(thread) ERRORREP			gerror;
+extern __declspec(thread) char				gbuffer[MAX_BUFFER_SIZE];
+extern __declspec(thread) HRESULT			gresult;
+extern __declspec(thread) DDSURFACEDESC2	gddsd;
+#endif // T3DLIB2_EXPORTS
 
 #define MAX_COLOR_PALETTE		(256)
-#define _08BIT_SHIFT			(0)
-#define _16BIT_SHIFT			(1)
-#define _32BIT_SHIFT			(2)
-#define _08BIT_BYTES			(1 << _08BIT_SHIFT)
-#define _16BIT_BYTES			(1 << _16BIT_SHIFT)
-#define _32BIT_BYTES			(1 << _32BIT_SHIFT)
+#define _08BIT_BYTES_SHIFT		(0)
+#define _16BIT_BYTES_SHIFT		(1)
+#define _32BIT_BYTES_SHIFT		(2)
+#define _08BIT_BYTES			(1 << _08BIT_BYTES_SHIFT)
+#define _16BIT_BYTES			(1 << _16BIT_BYTES_SHIFT)
+#define _32BIT_BYTES			(1 << _32BIT_BYTES_SHIFT)
 #define MIN_COLOR_BPP			(8)
 #define MAX_COLOR_BPP			(32)
 #define MIN_RECOMMENDED_WIDTH	(2)
 #define MAX_RECOMMENDED_WIDTH	(2048)
-#define MIN_RECOMMENDED_PITCH	(MIN_RECOMMENDED_WIDTH << _16BIT_SHIFT)
-#define MAX_RECOMMENDED_PITCH	(MAX_RECOMMENDED_WIDTH << _32BIT_SHIFT)
+#define MIN_RECOMMENDED_PITCH	(MIN_RECOMMENDED_WIDTH << _16BIT_BYTES_SHIFT)
+#define MAX_RECOMMENDED_PITCH	(MAX_RECOMMENDED_WIDTH << _32BIT_BYTES_SHIFT)
 #define BITMAP_ID				(0x4D42) // (('B' << 0) | ('M' << 8))
 
 #define _16BIT_GETR(c)			(0x1F & ((c) >> 11))
@@ -352,56 +355,100 @@ inline void Mem_Set_Word(void * dest, unsigned short value, long count)
 {
 	assert(count > 0);
 
-	_asm
+	__asm
 	{
 		mov		edi,	dest;
 		mov		ax,		value;
 		mov		ecx,	count;
 		rep		stosw;
 
-	} // _asm
+	} // __asm
 }
 
 inline void Mem_Set_Quad(void * dest, unsigned int value, long count)
 {
 	assert(count > 0);
 
-	_asm
+	__asm
 	{
 		mov		edi,	dest;
 		mov		eax,	value;
 		mov		ecx,	count;
 		rep		stosd;
 
-	} // _asm
+	} // __asm
 }
 
-//inline void Mem_Cpy_Word(void * dest, const void * src, long count)
-//{
-//	assert(abs((long)((short *)dest - (short *)src)) >= count);
-//
-//	_asm
-//	{
-//		mov		edi,	dest;
-//		mov		esi,	src;
-//		mov		ecx,	count;
-//		rep		movsw;
-//
-//	} // _asm
-//}
+#define FIXP12_BYTES_SHIFT			(1)
+#define FIXP12_BYTES				(1 << FIXP12_BYTES_SHIFT)
+#define FIXP12_SHIFT				(12)
+#define FIXP12_MAG					(0x1000)
+#define FIXP12_DMASK				(0x0FFF)
+#define FIXP12_WMASK				(0xF000)
 
-//inline void Mem_Cpy_Quad(void * dest, const void * src, long count)
-//{
-//	assert(abs((long)((int *)dest - (int *)src)) >= count);
-//
-//	_asm
-//	{
-//		mov		edi,	dest;
-//		mov		esi,	src;
-//		mov		ecx,	count;
-//		rep		movsd;
-//
-//	} // _asm
-//}
+#define FIXP16_BYTES_SHIFT			(2)
+#define FIXP16_BYTES				(1 << FIXP16_BYTES_SHIFT)
+#define FIXP16_SHIFT				(16)
+#define FIXP16_MAG					(0x00010000)
+#define FIXP16_DMASK				(0x0000FFFF)
+#define FIXP16_WMASK				(0xFFFF0000)
+
+#define FIXP28_BYTES_SHIFT			(2)
+#define FIXP28_BYTES				(1 << FIXP28_BYTES_SHIFT)
+#define FIXP28_SHIFT				(28)
+#define FIXP28_MAG					(0x10000000)
+#define FIXP28_DMASK				(0x0FFFFFFF)
+#define FIXP28_WMASK				(0xF0000000)
+
+typedef short FIXP12_TYP;
+typedef FIXP12_TYP FIXP12, * FIXP12_PTR;
+
+typedef int FIXP16_TYP;
+typedef FIXP16_TYP FIXP16, * FIXP16_PTR;
+
+typedef int FIXP28_TYP;
+typedef FIXP28_TYP FIXP28, * FIXP28_PTR;
+
+#if 0
+#define _ZBUFF_BYTES				FIXP12_BYTES
+#define _ZBUFF_BYTES_SHIFT			FIXP12_BYTES_SHIFT
+#define _ZBUFF_SHIFT				FIXP12_SHIFT
+#define _ZBUFF_MAG					FIXP12_MAG
+#define _ZBUFF_DMASK				FIXP12_DMASK
+#define _ZBUFF_WMASK				FIXP12_WMASK
+#define _ZBUFF_TO_FIXP28(z)			((z) << FIXP16_SHIFT)
+#define _FIXP28_TO_ZBUFF(f)			(_ZBUFF)((f) >> FIXP16_SHIFT)
+typedef FIXP12 _ZBUFF, * _ZBUFF_PTR;
+#else
+#define _ZBUFF_BYTES				FIXP28_BYTES
+#define _ZBUFF_BYTES_SHIFT			FIXP28_BYTES_SHIFT
+#define _ZBUFF_SHIFT				FIXP28_SHIFT
+#define _ZBUFF_MAG					FIXP28_MAG
+#define _ZBUFF_DMASK				FIXP28_DMASK
+#define _ZBUFF_WMASK				FIXP28_WMASK
+#define _ZBUFF_TO_FIXP28(z)			(z)
+#define _FIXP28_TO_ZBUFF(f)			(f)
+typedef FIXP28 _ZBUFF, * _ZBUFF_PTR;
+#endif
+
+typedef struct T3DLIB_API ZBUFFERV1_TYP
+{
+	unsigned char *		pbuffer;
+	long				pitch;
+	int					width;
+	int					height;
+	int					pitch_shift;
+	int					color_shift;
+
+	_CTOR_DECLARE(ZBUFFERV1_TYP);
+	_DTOR_DECLARE(ZBUFFERV1_TYP);
+
+} ZBUFFERV1, * ZBUFFERV1_PTR;
+
+T3DLIB_API bool Create_ZBuffer(ZBUFFERV1 * pzbuffer, const int width, const int height);
+
+T3DLIB_API void Clear_ZBuffer(ZBUFFERV1 * pzbuffer);
+
+T3DLIB_API void Destroy_ZBuffer(ZBUFFERV1 * pzbuffer);
 
 #endif // __T3DLIB1_H__

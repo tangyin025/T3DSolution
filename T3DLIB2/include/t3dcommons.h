@@ -20,5 +20,6 @@ typedef float	REAL;
 #define SWAP(a, b, temp)	{ temp = a; a = b; b = temp; }
 #define MAX(a, b)			(((a) > (b)) ? (a) : (b))
 #define MIN(a, b)			(((a) < (b)) ? (a) : (b))
+#define NEG(v)				( (v) = -(v) )
 
 #endif // __T3DCOMMONS_H__

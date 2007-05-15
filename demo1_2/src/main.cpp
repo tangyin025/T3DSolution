@@ -83,6 +83,9 @@ bool				Game_Frame(void);
 
 int			resolution_index;
 FILE *		log_file			= NULL;
+char		err_buffer[MAX_BUFFER_SIZE];
+char		err_file[MAX_BUFFER_SIZE];
+int			err_line;
 
 HWND		wnd_handle;
 SIZE		wnd_offset;
@@ -232,10 +235,15 @@ void Log_Close(void)
 // DEFINES
 // ////////////////////////////////////////////////////////////////////////////////////
 
-#define ON_ERROR_RETURN(e)		{	Log_Write("%s, %s, %d\n", \
-											(e), __FILE__, __LINE__); \
-									if(strlen(gerror.message) > 0) { Log_Write("%s, %s, %d\n", \
-										gerror.message, gerror.file, gerror.line); } return false; }
+#define ON_ERROR_RETURN(e) \
+{ \
+	Log_Write("%s, %s, %d\n", (e), __FILE__, __LINE__); \
+	if(strlen(Get_Last_Error(err_buffer, err_file, &err_line)) > 0) \
+	{ \
+		Log_Write("%s, %s, %d\n", err_buffer, err_file, err_line); \
+	} \
+	return false; \
+}
 
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)
@@ -286,6 +294,8 @@ DMPERFORMANCEV1	dmperf;
 // ================================================================================
 // TODO: Game define here
 // ================================================================================
+
+ZBUFFERV1		zbuffer;
 
 // ================================================================================
 // END TODO.
@@ -449,6 +459,9 @@ bool Game_Init(void)
 	// TODO: Game init here
 	// ================================================================================
 
+	if(!Create_ZBuffer(&zbuffer, resolutions[resolution_index].width, resolutions[resolution_index].height))
+		ON_ERROR_RETURN("create zbuffer failed");
+
 	// ================================================================================
 	// END TODO.
 	// ================================================================================
@@ -465,6 +478,8 @@ void Game_Destroy(void)
 	// ================================================================================
 	// TODO: Game destroy here
 	// ================================================================================
+
+	Destroy_ZBuffer(&zbuffer);
 
 	// ================================================================================
 	// END TODO.
@@ -573,18 +588,35 @@ bool Game_Frame(void)
 	Draw_Rectangle_Alpha(&rc, &v0, &v2);
 	//Draw_Clipped_Rectangle_Alpha(&rc, &v0, &v2);
 
-	VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 50, 0, 0);
-	VECTOR4D_InitXYZW(&v2._VECTOR4D, 150, 200, 0, 0);
-	//rc.c_ambi = Create_RGBI(255, 255, 255);
-	v0.c_diff = Create_RGBI(255, 255, 255);
-	Draw_Clipped_Line(&rc, &v0, &v2);
+	//VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 50, 0, 0);
+	//VECTOR4D_InitXYZW(&v2._VECTOR4D, 150, 200, 0, 0);
+	////rc.c_ambi = Create_RGBI(255, 255, 255);
+	//v0.c_diff = Create_RGBI(255, 255, 255);
+	//Draw_Clipped_Line(&rc, &v0, &v2);
 
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 150, 0, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 250, 250, 0, 0);
 	v0.c_diff = Create_RGBI(0, 255, 0);
-	Draw_HLine_Alpha(&rc, &v0, &v2);
-	Draw_VLine_Alpha(&rc, &v0, &v2);
+	Draw_Clipped_HLine_Alpha(&rc, &v0, &v2);
+	Draw_Clipped_VLine_Alpha(&rc, &v0, &v2);
 
+	Clear_ZBuffer(&zbuffer);
+	rc.z_pbuffer		= zbuffer.pbuffer;
+	rc.z_pitch			= zbuffer.pitch;
+	rc.z_pitch_shift	= zbuffer.pitch_shift;
+	rc.z_color_shift	= zbuffer.color_shift;
+	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 100, 0);
+	VECTOR4D_InitXYZW(&v2._VECTOR4D, 300, 500, 100, 0);
+	v0.c_diff = Create_RGBI(255, 0, 0);
+	Draw_Line_Zbuffer(&rc, &v0, &v2);
+	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 200, 0);
+	VECTOR4D_InitXYZW(&v2._VECTOR4D, 300, 500, 50, 0);
+	v0.c_diff = Create_RGBI(0, 0, 255);
+	Draw_Line_Zbuffer_Alpha(&rc, &v0, &v2);
+
+	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 100, 0, 0);
+	VECTOR4D_InitXYZW(&v1._VECTOR4D, 200, 300, 0, 0);
+	Draw_Line_Alpha(&rc, &v0, &v1);
 	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
 	//VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
 	//Draw_HLine(&rc);
