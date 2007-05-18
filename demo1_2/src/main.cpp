@@ -608,15 +608,17 @@ bool Game_Frame(void)
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 100, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 300, 500, 100, 0);
 	v0.c_diff = Create_RGBI(255, 0, 0);
-	Draw_Line_Zbuffer(&rc, &v0, &v2);
+	Draw_Line_ZbufferRW(&rc, &v0, &v2);
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 200, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 300, 500, 50, 0);
 	v0.c_diff = Create_RGBI(0, 0, 255);
-	Draw_Line_Zbuffer_Alpha(&rc, &v0, &v2);
+	Draw_Line_ZbufferR_Alpha(&rc, &v0, &v2);
 
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 100, 0, 0);
 	VECTOR4D_InitXYZW(&v1._VECTOR4D, 200, 300, 0, 0);
-	Draw_Line_Alpha(&rc, &v0, &v1);
+	Draw_Clipped_Line_Alpha(&rc, &v0, &v1);
+	//Draw_Line_Alpha(&rc, &v0, &v1);
+
 	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
 	//VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
 	//Draw_HLine(&rc);

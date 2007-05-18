@@ -105,27 +105,38 @@ int main(int argc, char ** argv)
 	VECTOR4D v0, v1, v2;
 	VECTOR4D_InitXYZ(&v0, 1.0, 2.0, 3.0);
 	VECTOR4D_InitXYZ(&v1, 2.0, 3.0, 4.0);
-	VECTOR3D_Print(&v0._3D);
+	cout << "v0" << endl;
 	VECTOR4D_Print(&v0);
+	cout << "v1" << endl;
+	VECTOR4D_Print(&v1);
 	_asm
 	{
 		movaps	xmm0,	v0._M
-		addps	xmm0,	v1._M
+		//pfadd	xmm0,	v1._M	// for 3dnow instruction
+		addps	xmm0,	v1._M	// for sse instruction
 		movaps	v2._M,	xmm0
 	}
-	VECTOR4D_Print(&v1);
+	cout << "v0 + v1" << endl;
+	VECTOR4D_Print(&v2);
+	_asm
+	{
+		movaps	xmm0,	v0._M
+		mulps	xmm0,	v1._M
+		movaps	v2._M,	xmm0
+	}
+	cout << "v0 * v1" << endl;
 	VECTOR4D_Print(&v2);
 
-	MATRIX4X4 m = {	1.0, 2.0, 3.0, 1.0,
-					1.0, 2.0, 3.0, 1.0,
-					1.0, 2.0, 3.0, 1.0,
-					1.0, 2.0, 3.0, 1.0, };
-	VECTOR3D_Mul(&v1._3D, 2.0);
-	Mat_Mul_VECTOR4D_4X4(&v2, &v1, &m);
-	VECTOR4D_Print(&v1);
-	VECTOR4D_Print(&v2);
-	REAL rad = (REAL)3.1415968489;
-	REAL deg = RAD_TO_DEG(rad);
-	cout << deg << endl;
+	//MATRIX4X4 m = {	1.0, 2.0, 3.0, 1.0,
+	//				1.0, 2.0, 3.0, 1.0,
+	//				1.0, 2.0, 3.0, 1.0,
+	//				1.0, 2.0, 3.0, 1.0, };
+	//VECTOR3D_Mul(&v1._3D, 2.0);
+	//Mat_Mul_VECTOR4D_4X4(&v2, &v1, &m);
+	//VECTOR4D_Print(&v1);
+	//VECTOR4D_Print(&v2);
+	//REAL rad = (REAL)3.1415968489;
+	//REAL deg = RAD_TO_DEG(rad);
+	//cout << deg << endl;
 	return 0;
 }
