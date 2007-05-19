@@ -1697,13 +1697,13 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 											ALPHA_COMB_32G(_32BIT_GETG(sa), _32BIT_GETG(sc), _32BIT_GETG(da), _32BIT_GETG(dc)), \
 											ALPHA_COMB_32B(_32BIT_GETB(sa), _32BIT_GETB(sc), _32BIT_GETB(da), _32BIT_GETB(dc))))
 
-#define ALPHA16_COMB_NDST(sa, sc, dc) \
+#define ALPHA16_COMB_UDST(sa, sc, dc) \
 									(_RGB16BIT( \
 											ALPHA_COMB_16R(_16BIT_GETR(sa), _16BIT_GETR(sc), COLOR_MARGIN_16R(_16BIT_GETR(sa)), _16BIT_GETR(dc)), \
 											ALPHA_COMB_16G(_16BIT_GETG(sa), _16BIT_GETG(sc), COLOR_MARGIN_16G(_16BIT_GETG(sa)), _16BIT_GETG(dc)), \
 											ALPHA_COMB_16B(_16BIT_GETB(sa), _16BIT_GETB(sc), COLOR_MARGIN_16B(_16BIT_GETB(sa)), _16BIT_GETB(dc))))
 
-#define ALPHA32_COMB_NDST(sa, sc, dc) \
+#define ALPHA32_COMB_UDST(sa, sc, dc) \
 									(_RGB32BIT( \
 											ALPHA_COMB_32R(_32BIT_GETR(sa), _32BIT_GETR(sc), COLOR_MARGIN_32R(_32BIT_GETR(sa)), _32BIT_GETR(dc)), \
 											ALPHA_COMB_32G(_32BIT_GETG(sa), _32BIT_GETG(sc), COLOR_MARGIN_32G(_32BIT_GETG(sa)), _32BIT_GETG(dc)), \

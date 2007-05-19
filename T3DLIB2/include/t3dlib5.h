@@ -7,8 +7,8 @@
 
 #include "t3dcommons.h"
 
-#define MAX_VERTEX_NUM			(3)
-#define MAX_TEXTURE_NUM			(2)
+#define TRI_VERTEX_NUM			(3)
+#define TRI_TEXTURE_NUM			(2)
 
 #define CLIP_REGION_C			(0x00)
 #define CLIP_REGION_N			(0x01)
@@ -23,6 +23,26 @@
 #define LINE2D_INTERSECT(ca, a0, a1, b0, b1)	((b0) + ((b1) - (b0)) * ((ca) - (a0)) / ((a1) - (a0)))
 
 #pragma warning(disable : 4201)
+typedef struct T3DLIB_API TEXTCOORV1_TYP
+{
+	union
+	{
+		__declspec(align(16)) FIXP16 _M[2];
+
+		struct
+		{
+			FIXP16 u;
+			FIXP16 v;
+		};
+
+		struct
+		{
+			VECTOR2DI _2DI;
+		};
+	};
+
+} TEXTCOORV1, * TEXTCOORV1_PTR;
+
 typedef struct T3DLIB_API VERTEXV1_TYP
 {
 	union
@@ -55,7 +75,8 @@ typedef struct T3DLIB_API VERTEXV1T_TYP
 			REAL x, y, z, w;
 			unsigned int c_diff;
 			unsigned int c_spec;
-			FIXP16 u, v;
+			FIXP16 u,	v;
+			FIXP16 u1,	v1;
 		};
 
 		struct
@@ -65,7 +86,8 @@ typedef struct T3DLIB_API VERTEXV1T_TYP
 
 		struct
 		{
-			VERTEXV1 _VERTEXV1;
+			VERTEXV1	_VERTEXV1;
+			TEXTCOORV1	_TEXTCOOR[TRI_TEXTURE_NUM];
 		};
 	};
 
@@ -86,10 +108,13 @@ typedef struct T3DLIB_API RENDERCONTEXTV1_TYP
 
 	unsigned char *		t_pbuffer;
 	long				t_pitch;
-	//int					t_width;
-	//int					t_height;
 	int					t_pitch_shift;
 	int					t_color_shift;
+
+	unsigned char *		t1_pbuffer;
+	long				t1_pitch;
+	int					t1_pitch_shift;
+	int					t1_color_shift;
 
 	//unsigned int		c_ambi;
 	unsigned int		c_src_key;

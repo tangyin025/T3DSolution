@@ -1568,7 +1568,7 @@ T3DLIB_API void Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha16(const RENDERCONTEX
 				unsigned int src_color = *(unsigned short *)(pt + (su >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT));
 				if(prc->c_src_key != src_color)
 				{
-					*(unsigned short *)ps = ALPHA16_COMB_NDST(src_color, pv0->c_diff, *(unsigned short *)ps);
+					*(unsigned short *)ps = ALPHA16_COMB_UDST(src_color, pv0->c_diff, *(unsigned short *)ps);
 				}
 			}
 			ps += _16BIT_BYTES;
@@ -1620,7 +1620,7 @@ T3DLIB_API void Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha32(const RENDERCONTEX
 				unsigned int src_color = *(unsigned int *)(pt + (su >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT));
 				if(prc->c_src_key != src_color)
 				{
-					*(unsigned int *)ps = ALPHA32_COMB_NDST(src_color, pv0->c_diff, *(unsigned int *)ps);
+					*(unsigned int *)ps = ALPHA32_COMB_UDST(src_color, pv0->c_diff, *(unsigned int *)ps);
 				}
 			}
 			ps += _32BIT_BYTES;

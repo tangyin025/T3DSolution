@@ -502,8 +502,9 @@ void Game_Destroy(void)
 	// TODO: Game destroy here
 	// ================================================================================
 
-	Destroy_Image(&texture);
 	Destroy_ZBuffer(&zbuffer);
+	Destroy_Image(&texture);
+	Destroy_DDSurface(&stmp);
 
 	// ================================================================================
 	// END TODO.
