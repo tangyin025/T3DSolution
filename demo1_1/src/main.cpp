@@ -466,7 +466,8 @@ bool Game_Init(void)
 
 	//if(!Create_Bitmap_From_File(&bmp1, "background-08.bmp"))
 	//if(!Create_Bitmap_From_File(&bmp1, "background-16.bmp"))
-	if(!Create_Bitmap_From_File(&bmp1, "background-24.bmp"))
+	//if(!Create_Bitmap_From_File(&bmp1, "background-24.bmp"))
+	if(!Create_Bitmap_From_File(&bmp1, "aaa.bmp"))
 		ON_ERROR_RETURN("load bitmap failed");
 
 #if USE_MEMS_MODE

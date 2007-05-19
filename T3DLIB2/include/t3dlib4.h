@@ -1639,6 +1639,14 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 #define COLOR_MUL_32G(g0, g1)		(COLOR_TABLE_MUL32[(g0)][(g1)])
 #define COLOR_MUL_32B(b0, b1)		(COLOR_TABLE_MUL32[(b0)][(b1)])
 
+#define COLOR_MARGIN_16R(r)			(MAX_COLOR_INTENSITY16 - 1 - (r))
+#define COLOR_MARGIN_16G(g)			(MAX_COLOR_INTENSITY16G - 1 - (g))
+#define COLOR_MARGIN_16B(b)			(MAX_COLOR_INTENSITY16 - 1 - (b))
+
+#define COLOR_MARGIN_32R(r)			(MAX_COLOR_INTENSITY32 - 1 - (r))
+#define COLOR_MARGIN_32G(g)			(MAX_COLOR_INTENSITY32 - 1 - (g))
+#define COLOR_MARGIN_32B(b)			(MAX_COLOR_INTENSITY32 - 1 - (b))
+
 #define ALPHA_COMB_16R(sar, sr, dar, dr)	(COLOR_ADD_16R(COLOR_MUL_16R((sar), (sr)), COLOR_MUL_16R((dar), (dr))))
 #define ALPHA_COMB_16G(sar, sr, dar, dr)	(COLOR_ADD_16G(COLOR_MUL_16G((sar), (sr)), COLOR_MUL_16G((dar), (dr))))
 #define ALPHA_COMB_16B(sar, sr, dar, dr)	(COLOR_ADD_16B(COLOR_MUL_16B((sar), (sr)), COLOR_MUL_16B((dar), (dr))))
@@ -1667,6 +1675,16 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 											COLOR_MUL_32G(_32BIT_GETG(c0), _32BIT_GETG(c1)), \
 											COLOR_MUL_32B(_32BIT_GETB(c0), _32BIT_GETB(c1))))
 
+#define ALPHA16_MARGIN(sa)			(_RGB16BIT( \
+											COLOR_MARGIN_16R(_16BIT_GETR(sa)), \
+											COLOR_MARGIN_16G(_16BIT_GETG(sa)), \
+											COLOR_MARGIN_16B(_16BIT_GETB(sa))))
+
+#define ALPHA32_MARGIN(sa)			(_RGB32BIT( \
+											COLOR_MARGIN_32R(_32BIT_GETR(sa)), \
+											COLOR_MARGIN_32G(_32BIT_GETG(sa)), \
+											COLOR_MARGIN_32B(_32BIT_GETB(sa))))
+
 #define ALPHA16_COMB(sa, sc, da, dc) \
 									(_RGB16BIT( \
 											ALPHA_COMB_16R(_16BIT_GETR(sa), _16BIT_GETR(sc), _16BIT_GETR(da), _16BIT_GETR(dc)), \
@@ -1678,6 +1696,18 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, c
 											ALPHA_COMB_32R(_32BIT_GETR(sa), _32BIT_GETR(sc), _32BIT_GETR(da), _32BIT_GETR(dc)), \
 											ALPHA_COMB_32G(_32BIT_GETG(sa), _32BIT_GETG(sc), _32BIT_GETG(da), _32BIT_GETG(dc)), \
 											ALPHA_COMB_32B(_32BIT_GETB(sa), _32BIT_GETB(sc), _32BIT_GETB(da), _32BIT_GETB(dc))))
+
+#define ALPHA16_COMB_NDST(sa, sc, dc) \
+									(_RGB16BIT( \
+											ALPHA_COMB_16R(_16BIT_GETR(sa), _16BIT_GETR(sc), COLOR_MARGIN_16R(_16BIT_GETR(sa)), _16BIT_GETR(dc)), \
+											ALPHA_COMB_16G(_16BIT_GETG(sa), _16BIT_GETG(sc), COLOR_MARGIN_16G(_16BIT_GETG(sa)), _16BIT_GETG(dc)), \
+											ALPHA_COMB_16B(_16BIT_GETB(sa), _16BIT_GETB(sc), COLOR_MARGIN_16B(_16BIT_GETB(sa)), _16BIT_GETB(dc))))
+
+#define ALPHA32_COMB_NDST(sa, sc, dc) \
+									(_RGB32BIT( \
+											ALPHA_COMB_32R(_32BIT_GETR(sa), _32BIT_GETR(sc), COLOR_MARGIN_32R(_32BIT_GETR(sa)), _32BIT_GETR(dc)), \
+											ALPHA_COMB_32G(_32BIT_GETG(sa), _32BIT_GETG(sc), COLOR_MARGIN_32G(_32BIT_GETG(sa)), _32BIT_GETG(dc)), \
+											ALPHA_COMB_32B(_32BIT_GETB(sa), _32BIT_GETB(sc), COLOR_MARGIN_32B(_32BIT_GETB(sa)), _32BIT_GETB(dc))))
 
 typedef unsigned short RGB16_TYP;
 typedef RGB16_TYP RGB16, * RGB16_PTR;

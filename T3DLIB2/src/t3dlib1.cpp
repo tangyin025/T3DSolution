@@ -1160,6 +1160,7 @@ T3DLIB_API bool Load_Surface_From_Bitmap16(SURFACEV1 * psurface, const BITMAPV1 
 			dest = psurface->pbuffer + (si << psurface->pitch_shift) + (sj << _16BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
+
 			switch(pbitmap->bitmapinfoheader.biBitCount)
 			{
 			case 8:
@@ -1186,6 +1187,7 @@ T3DLIB_API bool Load_Surface_From_Bitmap16(SURFACEV1 * psurface, const BITMAPV1 
 			default:
 				ON_ERROR_GOTO("unsurported color bit");
 			}
+
 			*((unsigned short *)dest) = pixel;
 		}
 	}
@@ -1217,6 +1219,7 @@ T3DLIB_API bool Load_Surface_From_Bitmap32(SURFACEV1 * psurface, const BITMAPV1 
 			dest = psurface->pbuffer + (si << psurface->pitch_shift) + (sj << _32BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
+
 			switch(pbitmap->bitmapinfoheader.biBitCount)
 			{
 			case 8:
@@ -1243,6 +1246,7 @@ T3DLIB_API bool Load_Surface_From_Bitmap32(SURFACEV1 * psurface, const BITMAPV1 
 			default:
 				ON_ERROR_GOTO("unsurported color bit");
 			}
+
 			*((unsigned int *)dest) = pixel;
 		}
 	}
@@ -1274,6 +1278,7 @@ T3DLIB_API bool Load_Image_From_Bitmap16(IMAGEV1 * pimage, const BITMAPV1 * pbit
 			dest = pimage->pbuffer + (si << pimage->pitch_shift) + (sj << _16BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
+
 			switch(pbitmap->bitmapinfoheader.biBitCount)
 			{
 			case 8:
@@ -1300,6 +1305,7 @@ T3DLIB_API bool Load_Image_From_Bitmap16(IMAGEV1 * pimage, const BITMAPV1 * pbit
 			default:
 				ON_ERROR_GOTO("unsurported color bit");
 			}
+
 			*((unsigned short *)dest) = pixel;
 		}
 	}
@@ -1331,6 +1337,7 @@ T3DLIB_API bool Load_Image_From_Bitmap32(IMAGEV1 * pimage, const BITMAPV1 * pbit
 			dest = pimage->pbuffer + (si << pimage->pitch_shift) + (sj << _32BIT_BYTES_SHIFT);
 			src  = pbitmap->pbuffer +
 					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
+
 			switch(pbitmap->bitmapinfoheader.biBitCount)
 			{
 			case 8:
@@ -1357,6 +1364,7 @@ T3DLIB_API bool Load_Image_From_Bitmap32(IMAGEV1 * pimage, const BITMAPV1 * pbit
 			default:
 				ON_ERROR_GOTO("unsurported color bit");
 			}
+
 			*((unsigned int *)dest) = pixel;
 		}
 	}

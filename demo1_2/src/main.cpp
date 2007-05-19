@@ -295,6 +295,9 @@ DMPERFORMANCEV1	dmperf;
 // TODO: Game define here
 // ================================================================================
 
+BITMAPV1		btmp;
+DDSURFACEV1		stmp;
+IMAGEV1			texture;
 ZBUFFERV1		zbuffer;
 
 // ================================================================================
@@ -462,6 +465,26 @@ bool Game_Init(void)
 	if(!Create_ZBuffer(&zbuffer, resolutions[resolution_index].width, resolutions[resolution_index].height))
 		ON_ERROR_RETURN("create zbuffer failed");
 
+	if(!Create_Bitmap_From_File(&btmp, "heada.bmp"))
+		ON_ERROR_RETURN("load bitmap file failed");
+
+	if(!Create_Image(&texture, btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+		ON_ERROR_RETURN("create texture failed");
+
+	if(!Load_Image_From_Bitmap(&texture, &btmp, 0, 0, texture.width, texture.height))
+		ON_ERROR_RETURN("load texture failed");
+
+	if(!Create_Memoried_DDSurface(&ddraw, &stmp, btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+		return false;
+
+	SURFACEV1 surf;
+	Lock_DDSurface(&stmp, &surf);
+	if(!Load_Surface_From_Bitmap(&surf, &btmp, 0, 0, texture.width, texture.height))
+		return false;
+	Unlock_DDSurface(&stmp);
+
+	Destroy_Bitmap(&btmp);
+
 	// ================================================================================
 	// END TODO.
 	// ================================================================================
@@ -479,6 +502,7 @@ void Game_Destroy(void)
 	// TODO: Game destroy here
 	// ================================================================================
 
+	Destroy_Image(&texture);
 	Destroy_ZBuffer(&zbuffer);
 
 	// ================================================================================
@@ -585,8 +609,8 @@ bool Game_Frame(void)
 	rc.c_dst_alpha = Create_RGBI(155, 155, 155);
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 0, 0, 0, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 640, 480, 0, 0);
-	Draw_Rectangle_Alpha(&rc, &v0, &v2);
-	//Draw_Clipped_Rectangle_Alpha(&rc, &v0, &v2);
+	Draw_Rectangle_SrcAlpha(&rc, &v0, &v2);
+	//Draw_Clipped_Rectangle_SrcAlpha(&rc, &v0, &v2);
 
 	//VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 50, 0, 0);
 	//VECTOR4D_InitXYZW(&v2._VECTOR4D, 150, 200, 0, 0);
@@ -597,8 +621,8 @@ bool Game_Frame(void)
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 150, 150, 0, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 250, 250, 0, 0);
 	v0.c_diff = Create_RGBI(0, 255, 0);
-	Draw_Clipped_HLine_Alpha(&rc, &v0, &v2);
-	Draw_Clipped_VLine_Alpha(&rc, &v0, &v2);
+	Draw_Clipped_HLine_SrcAlpha(&rc, &v0, &v2);
+	Draw_Clipped_VLine_SrcAlpha(&rc, &v0, &v2);
 
 	Clear_ZBuffer(&zbuffer);
 	rc.z_pbuffer		= zbuffer.pbuffer;
@@ -608,16 +632,50 @@ bool Game_Frame(void)
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 100, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 300, 500, 100, 0);
 	v0.c_diff = Create_RGBI(255, 0, 0);
-	Draw_Line_ZbufferRW(&rc, &v0, &v2);
+	//Draw_Line_ZbufferRW(&rc, &v0, &v2);
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 200, 0);
 	VECTOR4D_InitXYZW(&v2._VECTOR4D, 300, 500, 50, 0);
 	v0.c_diff = Create_RGBI(0, 0, 255);
-	Draw_Line_ZbufferR_Alpha(&rc, &v0, &v2);
+	//Draw_Line_ZbufferR_SrcAlpha(&rc, &v0, &v2);
+	Draw_Line_ZbufferRW(&rc, &v0, &v2);
+
+	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 100, 0);
+	VECTOR4D_InitXYZW(&v1._VECTOR4D, 200, 300, 0, 0);
+	v0.c_diff = Create_RGBI(255, 255, 255);
+	rc.c_src_alpha = Create_RGBI(200, 200, 200);
+	rc.c_dst_alpha = Create_RGBI(55, 55, 55);
+	Draw_Rectangle_ZBufferR_SrcAlpha(&rc, &v0, &v1);
 
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 100, 0, 0);
 	VECTOR4D_InitXYZW(&v1._VECTOR4D, 200, 300, 0, 0);
-	Draw_Clipped_Line_Alpha(&rc, &v0, &v1);
-	//Draw_Line_Alpha(&rc, &v0, &v1);
+	Draw_Clipped_Line_SrcAlpha(&rc, &v0, &v1);
+	//Draw_Line_SrcAlpha(&rc, &v0, &v1);
+
+	VERTEXV1T tv0, tv1;
+	VECTOR4D_InitXYZW(&tv0._VECTOR4D, 0, 0, 100, 0);
+	VECTOR4D_InitXYZW(&tv1._VECTOR4D, 800, 600, 0, 0);
+	tv0.u = 0;
+	tv0.v = 0;
+	tv1.u = 1 * FIXP16_MAG * texture.width;
+	tv1.v = 1 * FIXP16_MAG * texture.height;
+	tv0.c_diff = Create_RGBI(255, 255, 255);
+	rc.t_pbuffer		= texture.pbuffer;
+	rc.t_pitch			= texture.pitch;
+	rc.t_pitch_shift	= texture.pitch_shift;
+	rc.z_color_shift	= texture.color_shift;
+	rc.c_src_key		= Create_RGBI(0, 0, 0);
+	//rc.c_src_alpha		= Create_RGBI(255, 255, 255);
+	//rc.c_dst_alpha		= Create_RGBI(0, 0, 0);
+	rc.fmin_clip_x = 101.0f;
+	rc.fmax_clip_x = 599.0f;
+	rc.fmin_clip_y = 101.0f;
+	rc.fmax_clip_y = 499.0f;
+	//Draw_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
+	//Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
+	//Draw_Clipped_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
+	//Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
+	//for(int i = 0; i < texture.height; i++)
+	//	memcpy(rc.s_pbuffer + (i << rc.s_pitch_shift), texture.pbuffer + (i << texture.pitch_shift), texture.width << texture.color_shift);
 
 	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
 	//VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
@@ -658,8 +716,8 @@ bool Game_Frame(void)
 	//rc.c_diff[0] = Create_RGBI(0, 255, 255);
 	//rc.c_src_alpha = Create_RGBI(100, 100, 100);
 	//rc.c_dst_alpha = Create_RGBI(155, 155, 155);
-	//Draw_Rectangle_Alpha(&rc);
-	////Draw_Clipped_Rectangle_Alpha(&rc);
+	//Draw_Rectangle_SrcAlpha(&rc);
+	////Draw_Clipped_Rectangle_SrcAlpha(&rc);
 
 	//for(int i = 0; i < 100000; i++)
 	//{
@@ -673,6 +731,7 @@ bool Game_Frame(void)
 	//}
 
 	Unlock_DDSurface(&ddsback);
+	//Blit_DDSurface(&ddsback, &stmp.rect, &stmp, &stmp.rect);
 
 	// ================================================================================
 	// END TODO.
