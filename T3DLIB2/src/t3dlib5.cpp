@@ -595,7 +595,7 @@ T3DLIB_API void Draw_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV
 		error = dy2 - dx;
 		for(i = 0; i < dx; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned short *)ps = (unsigned short)pv0->c_diff;
 				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
@@ -605,7 +605,7 @@ T3DLIB_API void Draw_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV
 			{
 				ps += iys;
 				pz += iyz;
-				z0 += zdy;
+				//z0 += zdy;
 				error -= dx2;
 			}
 			ps += ixs;
@@ -619,7 +619,7 @@ T3DLIB_API void Draw_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV
 		error = dx2 - dy;
 		for(i = 0; i < dy; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned short *)ps = (unsigned short)pv0->c_diff;
 				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
@@ -629,7 +629,7 @@ T3DLIB_API void Draw_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV
 			{
 				ps += ixs;
 				pz += ixz;
-				z0 += zdx;
+				//z0 += zdx;
 				error -= dy2;
 			}
 			ps += iys;
@@ -673,7 +673,7 @@ T3DLIB_API void Draw_Line_ZbufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV
 		error = dy2 - dx;
 		for(i = 0; i < dx; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned int *)ps = pv0->c_diff;
 				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
@@ -683,7 +683,7 @@ T3DLIB_API void Draw_Line_ZbufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV
 			{
 				ps += iys;
 				pz += iyz;
-				z0 += zdy;
+				//z0 += zdy;
 				error -= dx2;
 			}
 			ps += ixs;
@@ -697,7 +697,7 @@ T3DLIB_API void Draw_Line_ZbufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV
 		error = dx2 - dy;
 		for(i = 0; i < dy; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned int *)ps = pv0->c_diff;
 				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
@@ -707,7 +707,7 @@ T3DLIB_API void Draw_Line_ZbufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV
 			{
 				ps += ixs;
 				pz += ixz;
-				z0 += zdx;
+				//z0 += zdx;
 				error -= dy2;
 			}
 			ps += iys;
@@ -859,7 +859,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const
 		error = dy2 - dx;
 		for(i = 0; i < dx; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned short *)ps = ALPHA16_COMB(
 						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
@@ -869,7 +869,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const
 			{
 				ps += iys;
 				pz += iyz;
-				z0 += zdy;
+				//z0 += zdy;
 				error -= dx2;
 			}
 			ps += ixs;
@@ -883,7 +883,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const
 		error = dx2 - dy;
 		for(i = 0; i < dy; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned short *)ps = ALPHA16_COMB(
 						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
@@ -893,7 +893,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const
 			{
 				ps += ixs;
 				pz += ixz;
-				z0 += zdx;
+				//z0 += zdx;
 				error -= dy2;
 			}
 			ps += iys;
@@ -937,7 +937,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, const
 		error = dy2 - dx;
 		for(i = 0; i < dx; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned int *)ps = ALPHA32_COMB(
 						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
@@ -947,7 +947,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, const
 			{
 				ps += iys;
 				pz += iyz;
-				z0 += zdy;
+				//z0 += zdy;
 				error -= dx2;
 			}
 			ps += ixs;
@@ -961,7 +961,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, const
 		error = dx2 - dy;
 		for(i = 0; i < dy; i++)
 		{
-			if(z0 > _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 			{
 				*(unsigned int *)ps = ALPHA32_COMB(
 						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
@@ -971,7 +971,7 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, const
 			{
 				ps += ixs;
 				pz += ixz;
-				z0 += zdx;
+				//z0 += zdx;
 				error -= dy2;
 			}
 			ps += iys;
@@ -1480,7 +1480,7 @@ T3DLIB_API void Draw_Rectangle_ZBufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, 
 		int count = dx;
 		while(count--)
 		{
-			if(z0 > *(FIXP28 *)pz)
+			if(z0 >= *(FIXP28 *)pz)
 			{
 				*(unsigned short *)ps = ALPHA16_COMB(
 						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
@@ -1516,7 +1516,7 @@ T3DLIB_API void Draw_Rectangle_ZBufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, 
 		int count = dx;
 		while(count--)
 		{
-			if(z0 > *(FIXP28 *)pz)
+			if(z0 >= *(FIXP28 *)pz)
 			{
 				*(unsigned int *)ps = ALPHA32_COMB(
 						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
@@ -1563,7 +1563,7 @@ T3DLIB_API void Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha16(const RENDERCONTEX
 		int count = dx;
 		while(count--)
 		{
-			if(z0 > *(FIXP28 *)pz)
+			if(z0 >= *(FIXP28 *)pz)
 			{
 				unsigned int src_color = *(unsigned short *)(pt + (su >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT));
 				if(prc->c_src_key != src_color)
@@ -1615,7 +1615,7 @@ T3DLIB_API void Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha32(const RENDERCONTEX
 		int count = dx;
 		while(count--)
 		{
-			if(z0 > *(FIXP28 *)pz)
+			if(z0 >= *(FIXP28 *)pz)
 			{
 				unsigned int src_color = *(unsigned int *)(pt + (su >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT));
 				if(prc->c_src_key != src_color)

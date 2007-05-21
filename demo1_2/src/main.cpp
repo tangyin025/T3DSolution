@@ -640,8 +640,13 @@ bool Game_Frame(void)
 	//Draw_Line_ZbufferR_SrcAlpha(&rc, &v0, &v2);
 	Draw_Line_ZbufferRW(&rc, &v0, &v2);
 
+	//Wait_For_VSynchronize(&ddraw);
+	//static REAL rz = 200;
+	//if(rz >= 50) rz -= 1;
+	//else rz = 200;
+	//VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, rz, 0);
 	VECTOR4D_InitXYZW(&v0._VECTOR4D, 100, 200, 100, 0);
-	VECTOR4D_InitXYZW(&v1._VECTOR4D, 200, 300, 0, 0);
+	VECTOR4D_InitXYZW(&v1._VECTOR4D, 300, 500, 0, 0);
 	v0.c_diff = Create_RGBI(255, 255, 255);
 	rc.c_src_alpha = Create_RGBI(200, 200, 200);
 	rc.c_dst_alpha = Create_RGBI(55, 55, 55);
@@ -672,8 +677,8 @@ bool Game_Frame(void)
 	rc.fmin_clip_y = 101.0f;
 	rc.fmax_clip_y = 499.0f;
 	//Draw_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
-	//Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
 	//Draw_Clipped_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
+	//Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
 	//Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
 	//for(int i = 0; i < texture.height; i++)
 	//	memcpy(rc.s_pbuffer + (i << rc.s_pitch_shift), texture.pbuffer + (i << texture.pitch_shift), texture.width << texture.color_shift);
