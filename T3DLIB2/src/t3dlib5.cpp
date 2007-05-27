@@ -29,11 +29,13 @@ T3DLIB_API void (* Draw_Clipped_Line_ZbufferR_SrcAlpha)(const RENDERCONTEXTV1 * 
 T3DLIB_API void (* Draw_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Rectangle_SrcAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Rectangle_Texture_SrcKey)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
+T3DLIB_API void (* Draw_Rectangle_Texture_ZBufferW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
 T3DLIB_API void (* Draw_Rectangle_ZBufferR_SrcAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle_SrcAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle_Texture_SrcKey)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
+T3DLIB_API void (* Draw_Clipped_Rectangle_Texture_ZBufferW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle_ZBufferR_SrcAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
 
@@ -61,11 +63,13 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Rectangle						= Draw_Rectangle16;
 		Draw_Rectangle_SrcAlpha				= Draw_Rectangle_SrcAlpha16;
 		Draw_Rectangle_Texture_SrcKey		= Draw_Rectangle_Texture_SrcKey16;
+		Draw_Rectangle_Texture_ZBufferW		= Draw_Rectangle_Texture_ZBufferW16;
 		Draw_Rectangle_ZBufferR_SrcAlpha	= Draw_Rectangle_ZBufferR_SrcAlpha16;
 		Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha	= Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha16;
 		Draw_Clipped_Rectangle				= Draw_Clipped_Rectangle16;
 		Draw_Clipped_Rectangle_SrcAlpha		= Draw_Clipped_Rectangle_SrcAlpha16;
 		Draw_Clipped_Rectangle_Texture_SrcKey	= Draw_Clipped_Rectangle_Texture_SrcKey16;
+		Draw_Clipped_Rectangle_Texture_ZBufferW	= Draw_Clipped_Rectangle_Texture_ZBufferW16;
 		Draw_Clipped_Rectangle_ZBufferR_SrcAlpha	= Draw_Clipped_Rectangle_ZBufferR_SrcAlpha16;
 		Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha	= Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha16;
 		break;
@@ -90,11 +94,13 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Rectangle						= Draw_Rectangle32;
 		Draw_Rectangle_SrcAlpha				= Draw_Rectangle_SrcAlpha32;
 		Draw_Rectangle_Texture_SrcKey		= Draw_Rectangle_Texture_SrcKey32;
+		Draw_Rectangle_Texture_ZBufferW		= Draw_Rectangle_Texture_ZBufferW32;
 		Draw_Rectangle_ZBufferR_SrcAlpha	= Draw_Rectangle_ZBufferR_SrcAlpha32;
 		Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha	= Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha32;
 		Draw_Clipped_Rectangle				= Draw_Clipped_Rectangle32;
 		Draw_Clipped_Rectangle_SrcAlpha		= Draw_Clipped_Rectangle_SrcAlpha32;
 		Draw_Clipped_Rectangle_Texture_SrcKey	= Draw_Clipped_Rectangle_Texture_SrcKey32;
+		Draw_Clipped_Rectangle_Texture_ZBufferW	= Draw_Clipped_Rectangle_Texture_ZBufferW32;
 		Draw_Clipped_Rectangle_ZBufferR_SrcAlpha	= Draw_Clipped_Rectangle_ZBufferR_SrcAlpha32;
 		Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha	= Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha32;
 		break;
@@ -1457,6 +1463,100 @@ T3DLIB_API void Draw_Rectangle_Texture_SrcKey32(const RENDERCONTEXTV1 * prc, con
 	}
 }
 
+T3DLIB_API void Draw_Rectangle_Texture_ZBufferW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1)
+{
+	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+	int itmp;
+	int x0 = (int)pv0->x;
+	int y0 = (int)pv0->y;
+	int x1 = (int)pv1->x;
+	int y1 = (int)pv1->y;
+	FIXP16 u0 = pv0->u;
+	FIXP16 v0 = pv0->v;
+	FIXP16 u1 = pv1->u;
+	FIXP16 v1 = pv1->v;
+
+	if(x0 > x1) { SWAP(x0, x1, itmp); SWAP(u0, u1, itmp); }
+	if(y0 > y1) { SWAP(y0, y1, itmp); SWAP(v0, v1, itmp); }
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	FIXP16 du = 0;
+	FIXP16 dv = 0;
+	if(dx != 0) { du = (u1 - u0) / dx; }
+	if(dy != 0) { dv = (v1 - v0) / dy; }
+
+	unsigned char * psl = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+	unsigned char * pzl = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+	FIXP28 sv = v0;
+	while(dy--)
+	{
+		unsigned char * ps = psl;
+		unsigned char * pz = pzl;
+		unsigned char * pt = prc->t_pbuffer + (sv >> FIXP16_SHIFT << prc->t_pitch_shift);
+		FIXP28 su = u0;
+		int count = dx;
+		while(count--)
+		{
+			*(unsigned short *)ps = *(unsigned short *)(pt + (su >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT));
+			*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+
+			ps += _16BIT_BYTES;
+			pz += _ZBUFF_BYTES;
+			su += du;
+		}
+		psl += prc->s_pitch;
+		pzl += prc->z_pitch;
+		sv += dv;
+	}
+}
+
+T3DLIB_API void Draw_Rectangle_Texture_ZBufferW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1)
+{
+	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+	int itmp;
+	int x0 = (int)pv0->x;
+	int y0 = (int)pv0->y;
+	int x1 = (int)pv1->x;
+	int y1 = (int)pv1->y;
+	FIXP16 u0 = pv0->u;
+	FIXP16 v0 = pv0->v;
+	FIXP16 u1 = pv1->u;
+	FIXP16 v1 = pv1->v;
+
+	if(x0 > x1) { SWAP(x0, x1, itmp); SWAP(u0, u1, itmp); }
+	if(y0 > y1) { SWAP(y0, y1, itmp); SWAP(v0, v1, itmp); }
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	FIXP16 du = 0;
+	FIXP16 dv = 0;
+	if(dx != 0) { du = (u1 - u0) / dx; }
+	if(dy != 0) { dv = (v1 - v0) / dy; }
+
+	unsigned char * psl = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+	unsigned char * pzl = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+	FIXP28 sv = v0;
+	while(dy--)
+	{
+		unsigned char * ps = psl;
+		unsigned char * pz = pzl;
+		unsigned char * pt = prc->t_pbuffer + (sv >> FIXP16_SHIFT << prc->t_pitch_shift);
+		FIXP28 su = u0;
+		int count = dx;
+		while(count--)
+		{
+			*(unsigned int *)ps = *(unsigned int *)(pt + (su >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT));
+			*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+
+			ps += _32BIT_BYTES;
+			pz += _ZBUFF_BYTES;
+			su += du;
+		}
+		psl += prc->s_pitch;
+		pzl += prc->z_pitch;
+		sv += dv;
+	}
+}
+
 T3DLIB_API void Draw_Rectangle_ZBufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
 {
 	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
@@ -1945,6 +2045,26 @@ T3DLIB_API void Draw_Clipped_Rectangle_Texture_SrcKey32(const RENDERCONTEXTV1 * 
 
 	if(Clip_Rectangle_Texture(prc, &cv0, &cv1))
 		Draw_Rectangle_Texture_SrcKey32(prc, &cv0, &cv1);
+}
+
+T3DLIB_API void Draw_Clipped_Rectangle_Texture_ZBufferW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1)
+{
+	VERTEXV1T cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	if(Clip_Rectangle_Texture(prc, &cv0, &cv1))
+		Draw_Rectangle_Texture_ZBufferW16(prc, &cv0, &cv1);
+}
+
+T3DLIB_API void Draw_Clipped_Rectangle_Texture_ZBufferW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1)
+{
+	VERTEXV1T cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	if(Clip_Rectangle_Texture(prc, &cv0, &cv1))
+		Draw_Rectangle_Texture_ZBufferW32(prc, &cv0, &cv1);
 }
 
 T3DLIB_API void Draw_Clipped_Rectangle_ZBufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)

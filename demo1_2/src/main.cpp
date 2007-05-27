@@ -680,6 +680,7 @@ bool Game_Frame(void)
 	//Draw_Clipped_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
 	//Draw_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
 	//Draw_Clipped_Rectangle_SrcKey_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
+	//Draw_Clipped_Rectangle_Texture_ZBufferW(&rc, &tv0, &tv1);
 	//for(int i = 0; i < texture.height; i++)
 	//	memcpy(rc.s_pbuffer + (i << rc.s_pitch_shift), texture.pbuffer + (i << texture.pitch_shift), texture.width << texture.color_shift);
 
