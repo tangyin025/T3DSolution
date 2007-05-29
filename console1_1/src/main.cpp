@@ -9,6 +9,13 @@ using namespace std;
 #include "t3dheaders.h"
 #include "t3dlib1.h"
 #include "t3dlib4.h"
+#include "t3dlib6.h"
+
+bool foo(int elem)
+{
+	cout << elem << ", ";
+	return true;
+}
 
 int main(int argc, char ** argv)
 {
@@ -96,36 +103,36 @@ int main(int argc, char ** argv)
 	//cout << _32BIT_GETG(c3) << endl;
 	//cout << _32BIT_GETB(c3) << endl;
 
-	Init_T3dlib4(32);
-	cout << "PF_MMX_INSTRUCTIONS_AVAILABLE == "
-		<< IsProcessorFeaturePresent(PF_MMX_INSTRUCTIONS_AVAILABLE) << endl;
-	cout << "PF_XMMI_INSTRUCTIONS_AVAILABLE == "
-		<< IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE) << endl;
+	//Init_T3dlib4(32);
+	//cout << "PF_MMX_INSTRUCTIONS_AVAILABLE == "
+	//	<< IsProcessorFeaturePresent(PF_MMX_INSTRUCTIONS_AVAILABLE) << endl;
+	//cout << "PF_XMMI_INSTRUCTIONS_AVAILABLE == "
+	//	<< IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE) << endl;
 
-	VECTOR4D v0, v1, v2;
-	VECTOR4D_InitXYZ(&v0, 1.0, 2.0, 3.0);
-	VECTOR4D_InitXYZ(&v1, 2.0, 3.0, 4.0);
-	cout << "v0" << endl;
-	VECTOR4D_Print(&v0);
-	cout << "v1" << endl;
-	VECTOR4D_Print(&v1);
-	_asm
-	{
-		movaps	xmm0,	v0._M
-		//pfadd	xmm0,	v1._M	// for 3dnow instruction
-		addps	xmm0,	v1._M	// for sse instruction
-		movaps	v2._M,	xmm0
-	}
-	cout << "v0 + v1" << endl;
-	VECTOR4D_Print(&v2);
-	_asm
-	{
-		movaps	xmm0,	v0._M
-		mulps	xmm0,	v1._M
-		movaps	v2._M,	xmm0
-	}
-	cout << "v0 * v1" << endl;
-	VECTOR4D_Print(&v2);
+	//VECTOR4D v0, v1, v2;
+	//VECTOR4D_InitXYZ(&v0, 1.0, 2.0, 3.0);
+	//VECTOR4D_InitXYZ(&v1, 2.0, 3.0, 4.0);
+	//cout << "v0" << endl;
+	//VECTOR4D_Print(&v0);
+	//cout << "v1" << endl;
+	//VECTOR4D_Print(&v1);
+	//_asm
+	//{
+	//	movaps	xmm0,	v0._M
+	//	//pfadd	xmm0,	v1._M	// for 3dnow instruction
+	//	addps	xmm0,	v1._M	// for sse instruction
+	//	movaps	v2._M,	xmm0
+	//}
+	//cout << "v0 + v1" << endl;
+	//VECTOR4D_Print(&v2);
+	//_asm
+	//{
+	//	movaps	xmm0,	v0._M
+	//	mulps	xmm0,	v1._M
+	//	movaps	v2._M,	xmm0
+	//}
+	//cout << "v0 * v1" << endl;
+	//VECTOR4D_Print(&v2);
 
 	//MATRIX4X4 m = {	1.0, 2.0, 3.0, 1.0,
 	//				1.0, 2.0, 3.0, 1.0,
@@ -138,5 +145,44 @@ int main(int argc, char ** argv)
 	//REAL rad = (REAL)3.1415968489;
 	//REAL deg = RAD_TO_DEG(rad);
 	//cout << deg << endl;
+
+	typedef struct SLIST<int> MyList;
+	typedef struct SLIST_NODE<int> MyNode;
+	MyList list;
+	MyNode * pnode, * phead, * plast;
+
+	Create_SList(&list, 5);
+	for(int i = 0; i < 5; i++)
+	{
+		Append_SList(&list, &pnode);
+		pnode->elem = i;
+	}
+
+	plast = phead = pnode = GetHead_SList(&list);
+	while(phead != GetNext_SList(&list, &pnode))
+	{
+		if(pnode->elem % 2 == 0)
+		{
+			Remove_SNode(plast, pnode);
+			pnode = plast;
+		}
+		plast = pnode;
+	}
+
+	phead = pnode = GetHead_SList(&list);
+	while(phead != GetNext_SList(&list, &pnode))
+	{
+		std::cout << pnode->elem << ", ";
+	}
+
+	Clear_SList(&list);
+	phead = pnode = GetHead_SList(&list);
+	while(phead != GetNext_SList(&list, &pnode))
+	{
+		std::cout << pnode->elem << ", ";
+	}
+
+	Destroy_SList(&list);
+
 	return 0;
 }

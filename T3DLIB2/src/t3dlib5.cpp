@@ -1666,7 +1666,7 @@ T3DLIB_API void Draw_Rectangle_ZbufferR_TextureAlpha16(const RENDERCONTEXTV1 * p
 			if(z0 >= *(FIXP28 *)pz)
 			{
 				unsigned int src_alpha = *(unsigned short *)(pt + (su >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT));
-				if(src_alpha != 0)
+				if(src_alpha)
 				{
 					*(unsigned short *)ps = ALPHA16_COMB_UDST(src_alpha, pv0->c_diff, *(unsigned short *)ps);
 				}
@@ -1718,7 +1718,7 @@ T3DLIB_API void Draw_Rectangle_ZbufferR_TextureAlpha32(const RENDERCONTEXTV1 * p
 			if(z0 >= *(FIXP28 *)pz)
 			{
 				unsigned int src_alpha = *(unsigned int *)(pt + (su >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT));
-				if(src_alpha != 0)
+				if(src_alpha)
 				{
 					*(unsigned int *)ps = ALPHA32_COMB_UDST(src_alpha, pv0->c_diff, *(unsigned int *)ps);
 				}

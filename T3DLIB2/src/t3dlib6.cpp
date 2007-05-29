@@ -3,4 +3,5 @@
  */
 
 #include "t3dheaders.h"
+#include "t3dlib1.h"
 #include "t3dlib6.h"

@@ -29,9 +29,11 @@ T3DLIB_API void foo(void * pvoid = NULL);
 
 #ifdef _DEBUG
 #define _WARNING(e)									{ if(e) { _RPT0(_CRT_WARN, "warn: " #e "\n"); } }
-#define _CTOR_DECLARE(class_name)					class_name::class_name()
+#define _CTOR_DECLARE(class_name)					class_name()
 #define _CTOR_IMPLEMENT(class_name)					class_name::class_name() { memset(this, 0, sizeof(*this)); }
-#define _DTOR_DECLARE(class_name)					class_name::~class_name()
+#define _CTOR_IMPLEMENT_T1(class_name, type_name1) \
+													template<typename type_name1> class_name<type_name1>::class_name() { memset(this, 0, sizeof(*this)); }
+#define _DTOR_DECLARE(class_name)					~class_name()
 #define _DTOR_IMPLEMENT(class_name, destroy_func)	class_name::~class_name() { destroy_func(this); }
 #define _DTOR_IMPLEMENT_W1(class_name, destroy_func, warn_memb1) \
 													class_name::~class_name() { _WARNING(warn_memb1 != NULL); destroy_func(this); }
@@ -39,15 +41,28 @@ T3DLIB_API void foo(void * pvoid = NULL);
 													class_name::~class_name() { _WARNING(warn_memb1 != NULL); _WARNING(warn_memb2 != NULL); destroy_func(this); }
 #define _DTOR_IMPLEMENT_W3(class_name, destroy_func, warn_memb1, warn_memb2, warn_memb3) \
 													class_name::~class_name() { _WARNING(warn_memb1 != NULL); _WARNING(warn_memb2 != NULL); _WARNING(warn_memb3 != NULL); destroy_func(this); }
+#define _DTOR_IMPLEMENT_T1(class_name, destroy_func) \
+													template<typename type_name1> class_name<type_name1>::~class_name() { destroy_func(this); }
+#define _DTOR_IMPLEMENT_T1_W1(class_name, type_name1, destroy_func, warn_memb1) \
+													template<typename type_name1> class_name<type_name1>::~class_name() { _WARNING(warn_memb1 != NULL); destroy_func(this); }
+#define _DTOR_IMPLEMENT_T1_W2(class_name, type_name1, destroy_func, warn_memb1, warn_memb2) \
+													template<typename type_name1> class_name<type_name1>::~class_name() { _WARNING(warn_memb1 != NULL); _WARNING(warn_memb2 != NULL); destroy_func(this); }
+#define _DTOR_IMPLEMENT_T1_W3(class_name, type_name1, destroy_func, warn_memb1, warn_memb2, warn_memb3) \
+													template<typename type_name1> class_name<type_name1>::~class_name() { _WARNING(warn_memb1 != NULL); _WARNING(warn_memb2 != NULL); _WARNING(warn_memb3 != NULL); destroy_func(this); }
 #else
 #define _WARNING(e)
 #define _CTOR_DECLARE(class_name)
 #define _CTOR_IMPLEMENT(class_name)
+#define _CTOR_IMPLEMENT_T1(class_name, type_name1)
 #define _DTOR_DECLARE(class_name)
 #define _DTOR_IMPLEMENT(class_name, destroy_func)
 #define _DTOR_IMPLEMENT_W1(class_name, destory_func, warn_memb1)
 #define _DTOR_IMPLEMENT_W2(class_name, destory_func, warn_memb1, warn_memb2)
 #define _DTOR_IMPLEMENT_W3(class_name, destory_func, warn_memb1, warn_memb2, warn_memb3)
+#define _DTOR_IMPLEMENT_T1(class_name, destroy_func)
+#define _DTOR_IMPLEMENT_T1_W1(class_name, type_name1, destroy_func, warn_memb1)
+#define _DTOR_IMPLEMENT_T1_W2(class_name, type_name1, destroy_func, warn_memb1, warn_memb2)
+#define _DTOR_IMPLEMENT_T1_W3(class_name, type_name1, destroy_func, warn_memb1, warn_memb2, warn_memb3)
 #endif
 
 typedef struct T3DLIB_API ERRORREP_TYP
