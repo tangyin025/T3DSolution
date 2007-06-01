@@ -1,4 +1,4 @@
-/**
+/*
  * File: console1_1/main.cpp
  */
 
@@ -9,6 +9,7 @@ using namespace std;
 #include "t3dheaders.h"
 #include "t3dlib1.h"
 #include "t3dlib4.h"
+#include "t3dlib5.h"
 #include "t3dlib6.h"
 
 bool foo(int elem)
@@ -146,43 +147,65 @@ int main(int argc, char ** argv)
 	//REAL deg = RAD_TO_DEG(rad);
 	//cout << deg << endl;
 
-	typedef struct SLIST<int> MyList;
-	typedef struct SLIST_NODE<int> MyNode;
-	MyList list;
-	MyNode * pnode, * phead, * plast;
+	//typedef struct SLIST<int> MyList;
+	//typedef struct SLIST_NODE<int> MyNode;
+	//MyList list;
+	//MyNode * pnode, * phead, * plast;
 
-	Create_SList(&list, 5);
-	for(int i = 0; i < 5; i++)
+	//Create_SList(&list, 5);
+	//for(int i = 0; i < 5; i++)
+	//{
+	//	Append_SList(&list, &pnode);
+	//	pnode->elem = i;
+	//}
+
+	//plast = phead = pnode = GetHead_SNode(&list);
+	//while(phead != GetNext_SNode(&list, &pnode))
+	//{
+	//	if(pnode->elem % 2 == 0)
+	//	{
+	//		Remove_SNode(plast, pnode);
+	//		pnode = plast;
+	//	}
+	//	plast = pnode;
+	//}
+
+	//phead = pnode = GetHead_SNode(&list);
+	//while(phead != GetNext_SNode(&list, &pnode))
+	//{
+	//	std::cout << pnode->elem << ", ";
+	//}
+	//std::cout << std::endl;
+
+	////for(int i = 1; i < (int)list.length; i++)
+	////	std::cout << list.nodes[i].elem << ", ";
+	////std::cout << std::endl;
+
+	//Clear_SList(&list);
+	//phead = pnode = GetHead_SNode(&list);
+	//while(phead != GetNext_SNode(&list, &pnode))
+	//{
+	//	std::cout << pnode->elem << ", ";
+	//}
+	//std::cout << std::endl;
+
+	//Destroy_SList(&list);
+
+	ARRAYV1<int> arr_i;
+	Create_Array(&arr_i, 5);
+	int * pi;
+	for(int i = 0; i < 10; i++)
 	{
-		Append_SList(&list, &pnode);
-		pnode->elem = i;
+		if(Append_Array(&arr_i, &pi))
+			*pi = i;
 	}
-
-	plast = phead = pnode = GetHead_SList(&list);
-	while(phead != GetNext_SList(&list, &pnode))
-	{
-		if(pnode->elem % 2 == 0)
-		{
-			Remove_SNode(plast, pnode);
-			pnode = plast;
-		}
-		plast = pnode;
-	}
-
-	phead = pnode = GetHead_SList(&list);
-	while(phead != GetNext_SList(&list, &pnode))
-	{
-		std::cout << pnode->elem << ", ";
-	}
-
-	Clear_SList(&list);
-	phead = pnode = GetHead_SList(&list);
-	while(phead != GetNext_SList(&list, &pnode))
-	{
-		std::cout << pnode->elem << ", ";
-	}
-
-	Destroy_SList(&list);
+	for(int i = 0; i < (int)arr_i.length; i++)
+		std::cout << arr_i.elems[i] << ", ";
+	std::cout << std::endl;
+	std::cout << arr_i.length << ", " << arr_i.size << std::endl;
+	Clear_Array(&arr_i);
+	std::cout << arr_i.length << ", " << arr_i.size << std::endl;
+	Destroy_Array(&arr_i);
 
 	return 0;
 }

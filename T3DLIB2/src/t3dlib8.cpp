@@ -1,4 +1,4 @@
-/**
+/*
  * File: T3DLIB2/t3dlib8.cpp
  */
 

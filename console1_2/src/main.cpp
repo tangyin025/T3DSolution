@@ -1,4 +1,4 @@
-/**
+/*
  * File: console1_2/main.cpp
  */
 #include <iostream>

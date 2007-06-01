@@ -1,4 +1,4 @@
-/**
+/*
  * File: demo1_2/main.cpp
  */
 
