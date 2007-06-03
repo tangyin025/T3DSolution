@@ -20,6 +20,7 @@ typedef float	REAL;
 #define MAX_BUFFER_SIZE				MAX_PATH
 #define TEXT_BKMODE_OPAQUE			OPAQUE
 #define TEXT_BKMODE_TRANSPARENT		TRANSPARENT
+#define INIT_ZERO(s)				memset(&(s), 0, sizeof(s))
 #define SAFE_FREE(p)				{ if(p != NULL) { free(p);		p = NULL; } }
 #define SAFE_DELETE(p)				{ if(p != NULL) { delete p;		p = NULL; } }
 #define SAFE_DELETES(p)				{ if(p != NULL) { delete[] p;	p = NULL; } }
@@ -38,7 +39,7 @@ typedef float	REAL;
 #ifdef _DEBUG
 #define _WARNING(e)									{ if(e) { _RPT0(_CRT_WARN, "warn: " #e "\n"); } }
 #define _CTOR_DECLARE(class_name)					class_name()
-#define _CTOR_IMPLEMENT(class_name)					class_name::class_name() { memset(this, 0, sizeof(*this)); }
+#define _CTOR_IMPLEMENT(class_name)					class_name::class_name() { memset(this, 0xFF, sizeof(*this)); }
 #define _CTOR_IMPLEMENT_T1(class_name, type_name1) \
 													template<typename type_name1> class_name<type_name1>::class_name() { memset(this, 0, sizeof(*this)); }
 #define _DTOR_DECLARE(class_name)					~class_name()

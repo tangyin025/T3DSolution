@@ -197,27 +197,23 @@ T3DLIB_API bool Create_MsModel_From_File(msModel * pmodel, const char * fname)
 	assert(pmodel->pMaterials == NULL);
 	assert(pmodel->pBones == NULL);
 
-	msModel tmp_model;
-	memset(&tmp_model, 0, sizeof(tmp_model));
-
 	FILE * pfile = NULL;
 	if(NULL == (pfile = fopen(fname, "r")))
 		ON_ERROR_GOTO(SFORMAT1(gbuffer, "open %s failed", fname));
 
-	if(!Load_Frame_Info(&tmp_model, pfile)
-		|| !Load_Mesh_Info(&tmp_model, pfile)
-		|| !Load_Material_Info(&tmp_model, pfile)
-		|| !Load_Bone_Info(&tmp_model, pfile))
+	if(!Load_Frame_Info(pmodel, pfile)
+		|| !Load_Mesh_Info(pmodel, pfile)
+		|| !Load_Material_Info(pmodel, pfile)
+		|| !Load_Bone_Info(pmodel, pfile))
 		goto ON_ERROR;
 		// the last error have already write to global by these subroutines
 
 	fclose(pfile);
-	*pmodel = tmp_model;
 	return true;
 
 ON_ERROR:
 	SAFE_FCLOSE(pfile);
-	Destroy_MsModel(&tmp_model);
+	Destroy_MsModel(pmodel);
 	return false;
 }
 

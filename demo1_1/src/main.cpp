@@ -278,6 +278,7 @@ typedef struct FPSV1_TYP
 // ////////////////////////////////////////////////////////////////////////////////////
 
 FPSV1			fps;
+TEXTDCV1		tdc;
 DDRAWV1			ddraw;
 DDSURFACEV1		ddsprimary;
 DDSURFACEV1		ddsback;
@@ -346,6 +347,21 @@ bool Game_Init(void)
 
 	if(!Log_Open(WND_NAME ".log"))
 		return false;
+
+	INIT_ZERO(fps);
+	INIT_ZERO(tdc);
+	INIT_ZERO(ddraw);
+	INIT_ZERO(ddsprimary);
+	INIT_ZERO(ddsback);
+	INIT_ZERO(ddcprimary);
+	INIT_ZERO(ddcback);
+	INIT_ZERO(dinput);
+	INIT_ZERO(dimouse);
+	INIT_ZERO(dimouse_state);
+	INIT_ZERO(dikey);
+	INIT_ZERO(dikey_state);
+	INIT_ZERO(dsound);
+	INIT_ZERO(dmperf);
 
 	if(!Create_DDraw(&ddraw))
 		ON_ERROR_RETURN("create ddraw failed");
@@ -464,10 +480,19 @@ bool Game_Init(void)
 	// TODO: Game init here
 	// ================================================================================
 
+	INIT_ZERO(bmp1);
+	INIT_ZERO(ddsbmp1);
+	INIT_ZERO(stmp1);
+	INIT_ZERO(stmp2);
+	INIT_ZERO(dsbuf1);
+	INIT_ZERO(wtmp1);
+	INIT_ZERO(dmseg1);
+	INIT_ZERO(dmloader);
+
 	//if(!Create_Bitmap_From_File(&bmp1, "background-08.bmp"))
 	//if(!Create_Bitmap_From_File(&bmp1, "background-16.bmp"))
-	//if(!Create_Bitmap_From_File(&bmp1, "background-24.bmp"))
-	if(!Create_Bitmap_From_File(&bmp1, "aaa.bmp"))
+	if(!Create_Bitmap_From_File(&bmp1, "background-24.bmp"))
+	//if(!Create_Bitmap_From_File(&bmp1, "aaa.bmp"))
 		ON_ERROR_RETURN("load bitmap failed");
 
 #if USE_MEMS_MODE
@@ -607,7 +632,6 @@ bool Game_Frame(void)
 	// TODO: Game text here
 	// ================================================================================
 
-	TEXTDCV1 tdc;
 	char buffer[MAX_PATH];
 	if(!Begin_Text_DC(&ddsback, &tdc))
 		ON_ERROR_RETURN("begin text dc failed");

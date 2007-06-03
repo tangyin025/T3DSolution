@@ -278,6 +278,7 @@ typedef struct FPSV1_TYP
 // ////////////////////////////////////////////////////////////////////////////////////
 
 FPSV1			fps;
+TEXTDCV1		tdc;
 DDRAWV1			ddraw;
 DDSURFACEV1		ddsprimary;
 DDSURFACEV1		ddsback;
@@ -342,6 +343,21 @@ bool Game_Init(void)
 
 	if(!Log_Open(WND_NAME ".log"))
 		return false;
+
+	INIT_ZERO(fps);
+	INIT_ZERO(tdc);
+	INIT_ZERO(ddraw);
+	INIT_ZERO(ddsprimary);
+	INIT_ZERO(ddsback);
+	INIT_ZERO(ddcprimary);
+	INIT_ZERO(ddcback);
+	INIT_ZERO(dinput);
+	INIT_ZERO(dimouse);
+	INIT_ZERO(dimouse_state);
+	INIT_ZERO(dikey);
+	INIT_ZERO(dikey_state);
+	INIT_ZERO(dsound);
+	INIT_ZERO(dmperf);
 
 	if(!Create_DDraw(&ddraw))
 		ON_ERROR_RETURN("create ddraw failed");
@@ -461,6 +477,11 @@ bool Game_Init(void)
 	// ================================================================================
 	// TODO: Game init here
 	// ================================================================================
+
+	INIT_ZERO(btmp);
+	INIT_ZERO(stmp);
+	INIT_ZERO(texture);
+	INIT_ZERO(zbuffer);
 
 	if(!Create_ZBuffer(&zbuffer, resolutions[resolution_index].width, resolutions[resolution_index].height))
 		ON_ERROR_RETURN("create zbuffer failed");
@@ -748,7 +769,6 @@ bool Game_Frame(void)
 	// TODO: Game text here
 	// ================================================================================
 
-	TEXTDCV1 tdc;
 	char buffer[MAX_PATH];
 	if(!Begin_Text_DC(&ddsback, &tdc))
 		ON_ERROR_RETURN("begin text dc failed");
