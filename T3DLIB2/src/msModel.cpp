@@ -1,5 +1,5 @@
 /*
- * File: ms3d.h
+ * File: T3DLIB2/msModel.cpp
  */
 
 #include "t3dheaders.h"
@@ -22,52 +22,317 @@ static bool Get_Next_Valid_Line(char * pbuff, int buff_size, FILE * pfile)
 	return false;
 }
 
+static bool Load_MsVertex(msVertex * pVertex, FILE * pfile)
+{
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read vertex data");
+
+	if(7 != sscanf(gline, "%d %f %f %f %f %f %d", &pVertex->nFlags,
+			&pVertex->Vertex[0], &pVertex->Vertex[1], &pVertex->Vertex[2], &pVertex->u, &pVertex->v, &pVertex->nBoneIndex))
+		ON_ERROR_GOTO("read vertex data failed");
+	return true;
+
+ON_ERROR:
+	return false;
+}
+
+static bool Load_MsNormal(float pNormal[3], FILE * pfile)
+{
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read normal data");
+
+	if(3 != sscanf(gline, "%f %f %f", &pNormal[0], &pNormal[1], &pNormal[2]))
+		ON_ERROR_GOTO("read normal data failed");
+	return true;
+
+ON_ERROR:
+	return false;
+}
+
+static bool Load_MsTriangles(msTriangle * pTriangle, FILE * pfile)
+{
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read triangle data");
+
+	if(8 != sscanf(gline, "%d %d %d %d %d %d %d %d", &pTriangle->nFlags,
+			&pTriangle->nVertexIndices[0], &pTriangle->nVertexIndices[1], &pTriangle->nVertexIndices[2],
+			&pTriangle->nNormalIndices[0], &pTriangle->nNormalIndices[1], &pTriangle->nNormalIndices[2], &pTriangle->nSmoothingGroup))
+		ON_ERROR_GOTO("read triangle data failed");
+	return true;
+
+ON_ERROR:
+	return false;
+}
+
+static bool Load_MsPositionKey(msPositionKey * pPositionKey, FILE * pfile)
+{
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read PositionKey data");
+
+	if(4 != sscanf(gline, "%f %f %f %f", &pPositionKey->fTime,
+			&pPositionKey->Position[0], &pPositionKey->Position[1], &pPositionKey->Position[2]))
+		ON_ERROR_GOTO("read PositionKey data failed");
+	return true;
+
+ON_ERROR:
+	return false;
+}
+
+static bool Load_MsRotationKey(msRotationKey * pRotationKey, FILE * pfile)
+{
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read RotationKey data");
+
+	if(4 != sscanf(gline, "%f %f %f %f", &pRotationKey->fTime,
+			&pRotationKey->Rotation[0], &pRotationKey->Rotation[1], &pRotationKey->Rotation[2]))
+		ON_ERROR_GOTO("read RotationKey data failed");
+	return true;
+
+ON_ERROR:
+	return false;
+}
+
 static bool Create_And_Load_MsMesh(msMesh * pmesh, FILE * pfile)
 {
+	assert(pmesh->pVertices == NULL);
+	assert(pmesh->pNormals == NULL);
+	assert(pmesh->pTriangles == NULL);
+
+	int i;
+	msVertex * pVertices = NULL;
+	int nVertices = 0;
+	float (* pNormals)[3] = NULL;
+	int nNormals = 0;
+	msTriangle * pTriangles = NULL;
+	int nTriangles = 0;
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read mesh");
+
+	if(3 != sscanf(gline, "\"%[^\"]\" %d %d", pmesh->szName, &pmesh->nFlags, &pmesh->nMaterialIndex))
+		ON_ERROR_GOTO("read mesh name failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read mesh");
+
+	if(1 != sscanf(gline, "%d", &nVertices))
+		ON_ERROR_GOTO("read vertices failed");
+
+	if(NULL == (pVertices = (msVertex *)malloc(sizeof(*pVertices) * nVertices)))
+		ON_ERROR_GOTO("malloc vertices failed");
+
+	for(i = 0; i < nVertices; i++)
+	{
+		if(!Load_MsVertex(&pVertices[i], pfile))
+			ON_ERROR_GOTO("load vertex failed");
+	}
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read mesh");
+
+	if(1 != sscanf(gline, "%d", &nNormals))
+		ON_ERROR_GOTO("read normals failed");
+
+	assert(sizeof(*pNormals) == sizeof(float) * 3);
+	if(NULL == (pNormals = (float (*) [3])malloc(sizeof(*pNormals) * nNormals)))
+		ON_ERROR_GOTO("malloc normals failed");
+
+	for(i = 0; i < nNormals; i++)
+	{
+		if(!Load_MsNormal(pNormals[i], pfile))
+			goto ON_ERROR;
+	}
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read mesh");
+
+	if(1 != sscanf(gline, "%d", &nTriangles))
+		ON_ERROR_GOTO("read triangles failed");
+
+	if(NULL == (pTriangles = (msTriangle *)malloc(sizeof(*pTriangles) * nTriangles)))
+		ON_ERROR_GOTO("malloc triangles failed");
+
+	for(i = 0; i < nTriangles; i++)
+	{
+		if(!Load_MsTriangles(&pTriangles[i], pfile))
+			goto ON_ERROR;
+	}
+
+	pmesh->nNumVertices		= nVertices;
+	pmesh->pVertices		= pVertices;
+	pmesh->nNumNormals		= nNormals;
+	pmesh->pNormals			= pNormals;
+	pmesh->nNumTriangles	= nTriangles;
+	pmesh->pTriangles		= pTriangles;
+	return true;
+
+ON_ERROR:
+	SAFE_FREE(pVertices);
+	SAFE_FREE(pNormals);
+	SAFE_FREE(pTriangles);
 	return false;
-	UNREFERENCED_PARAMETER(pmesh);
-	UNREFERENCED_PARAMETER(pfile);
 }
 
 static void Destroy_MsMesh(msMesh * pmesh)
 {
-	;
-	UNREFERENCED_PARAMETER(pmesh);
+	SAFE_FREE(pmesh->pVertices);
+	SAFE_FREE(pmesh->pNormals);
+	SAFE_FREE(pmesh->pTriangles);
 }
 
 static bool Create_And_Load_MsMaterial(msMaterial * pmaterial, FILE * pfile)
 {
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read material name");
+
+	if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szName))
+		ON_ERROR_GOTO("read material name failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read ambient color");
+
+	if(4 != sscanf(gline, "%f %f %f %f",
+			&pmaterial->Ambient[0], &pmaterial->Ambient[1], &pmaterial->Ambient[2], &pmaterial->Ambient[3]))
+		ON_ERROR_GOTO("read ambient color failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read diffuse color");
+
+	if(4 != sscanf(gline, "%f %f %f %f",
+			&pmaterial->Diffuse[0], &pmaterial->Diffuse[1], &pmaterial->Diffuse[2], &pmaterial->Diffuse[3]))
+		ON_ERROR_GOTO("read diffuse color failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read specular color");
+
+	if(4 != sscanf(gline, "%f %f %f %f",
+			&pmaterial->Specular[0], &pmaterial->Specular[1], &pmaterial->Specular[2], &pmaterial->Specular[3]))
+		ON_ERROR_GOTO("read specular color failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read emissive color");
+
+	if(4 != sscanf(gline, "%f %f %f %f",
+			&pmaterial->Emissive[0], &pmaterial->Emissive[1], &pmaterial->Emissive[2], &pmaterial->Emissive[3]))
+		ON_ERROR_GOTO("read emissive color failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read shininess");
+
+	if(1 != sscanf(gline, "%f", &pmaterial->fShininess))
+		ON_ERROR_GOTO("read shininess failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read transparency");
+
+	if(1 != sscanf(gline, "%f", &pmaterial->fTransparency))
+		ON_ERROR_GOTO("read transparency failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read diffuse texture");
+
+	if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szDiffuseTexture))
+		ON_ERROR_GOTO("read diffuse texture failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read alpha texture");
+
+	if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szAlphaTexture))
+		ON_ERROR_GOTO("read diffuse texture failed");
+	return true;
+
+ON_ERROR:
 	return false;
-	UNREFERENCED_PARAMETER(pmaterial);
-	UNREFERENCED_PARAMETER(pfile);
 }
 
 static void Destroy_MsMaterial(msMaterial * pMaterial)
 {
-	;
-	UNREFERENCED_PARAMETER(pMaterial);
+	pMaterial;
 }
 
 static bool Create_And_Load_MsBone(msBone * pbone, FILE * pfile)
 {
+	int i;
+	msPositionKey * pPositionKeys = NULL;
+	int nPositionKeys = 0;
+	msRotationKey * pRotationKeys = NULL;
+	int nRotationKeys = 0;
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read bone name");
+
+	if(1 != sscanf(gline, "\"%[^\"]\"", pbone->szName))
+		ON_ERROR_GOTO("read bone name failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read parent bone name");
+
+	if(1 != sscanf(gline, "\"%[^\"]\"", pbone->szParentName))
+		ON_ERROR_GOTO("read parent bone name failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read bone data");
+
+	if(7 != sscanf(gline, "%d %f %f %f %f %f %f", &pbone->nFlags,
+			&pbone->Position[0], &pbone->Position[1], &pbone->Position[2],
+			&pbone->Rotation[0], &pbone->Rotation[1], &pbone->Rotation[2]))
+		ON_ERROR_GOTO("read bone data failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read PositionKeys");
+
+	if(1 != sscanf(gline, "%d", nPositionKeys))
+		ON_ERROR_GOTO("read PositionKeys failed");
+
+	if(NULL == (pPositionKeys = (msPositionKey *)malloc(sizeof(*pPositionKeys) * nPositionKeys)))
+		ON_ERROR_GOTO("malloc PositionKeys failed");
+
+	for(i = 0; i < nPositionKeys; i++)
+	{
+		if(!Load_MsPositionKey(&pbone->pPositionKeys[i], pfile))
+			goto ON_ERROR;
+	}
+
+	if(1 != sscanf(gline, "%d", nRotationKeys))
+		ON_ERROR_GOTO("read RotationKeys failed");
+
+	if(NULL == (pRotationKeys = (msRotationKey *)malloc(sizeof(*pRotationKeys) * nRotationKeys)))
+		ON_ERROR_GOTO("malloc RotationKeys failed");
+
+	for(i = 0; i < nRotationKeys; i++)
+	{
+		if(!Load_MsRotationKey(&pbone->pRotationKeys[i], pfile))
+			goto ON_ERROR;
+	}
+
+	pbone->nNumPositionKeys	= nPositionKeys;
+	pbone->pPositionKeys	= pPositionKeys;
+	pbone->nNumRotationKeys	= nRotationKeys;
+	pbone->pRotationKeys	= pRotationKeys;
+	return true;
+
+ON_ERROR:
+	SAFE_FREE(pPositionKeys);
+	SAFE_FREE(pRotationKeys);
 	return false;
-	UNREFERENCED_PARAMETER(pbone);
-	UNREFERENCED_PARAMETER(pfile);
 }
 
 static void Destroy_MsBone(msBone * pbone)
 {
-	;
-	UNREFERENCED_PARAMETER(pbone);
+	SAFE_FREE(pbone->pPositionKeys);
+	SAFE_FREE(pbone->pRotationKeys);
 }
 
 static bool Load_Frame_Info(msModel * pmodel, FILE * pfile)
 {
-	if(!Get_Next_Valid_Line(gline, MAX_BUFFER_SIZE, pfile))
-		ON_ERROR_GOTO("cannot read frame info");
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read frames info");
 
 	if(1 != scanf(gline, "Frames: %d", &pmodel->nTotalFrames))
 		ON_ERROR_GOTO("read frames failed");
+
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read frame info");
 
 	if(1 != scanf(gline, "Frame: %d", &pmodel->nFrame))
 		ON_ERROR_GOTO("read frame failed");
@@ -86,7 +351,7 @@ static bool Load_Mesh_Info(msModel * pmodel, FILE * pfile)
 	int nMeshes = 0;
 	int i;
 
-	if(!Get_Next_Valid_Line(gline, MAX_BUFFER_SIZE, pfile))
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read mesh info");
 
 	if(1 != scanf(gline, "Meshes: %d", &nMeshes))
@@ -94,12 +359,12 @@ static bool Load_Mesh_Info(msModel * pmodel, FILE * pfile)
 
 	if(NULL == (pMeshes = (msMesh *)malloc(sizeof(*pMeshes) * nMeshes)))
 		ON_ERROR_GOTO("malloc meshes failed");
-	memset(pMeshes, 0, sizeof(*pMeshes) * nMeshes);
 
+	memset(pMeshes, 0, sizeof(*pMeshes) * nMeshes);
 	for(i = 0; i < nMeshes; i++)
 	{
 		if(!Create_And_Load_MsMesh(&pMeshes[i], pfile))
-			ON_ERROR_GOTO("read mesh data failed");
+			goto ON_ERROR;
 	}
 
 	pmodel->nNumMeshes = nMeshes;
@@ -124,7 +389,7 @@ static bool Load_Material_Info(msModel * pmodel, FILE * pfile)
 	int nMaterials = 0;
 	int i;
 
-	if(!Get_Next_Valid_Line(gline, MAX_BUFFER_SIZE, pfile))
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read material info");
 
 	if(1 != scanf(gline, "Materials: %d", &nMaterials))
@@ -132,12 +397,12 @@ static bool Load_Material_Info(msModel * pmodel, FILE * pfile)
 
 	if(NULL == (pMaterials = (msMaterial *)malloc(sizeof(*pMaterials) * nMaterials)))
 		ON_ERROR_GOTO("malloc materials failed");
-	memset(pMaterials, 0, sizeof(*pMaterials) * nMaterials);
 
+	memset(pMaterials, 0, sizeof(*pMaterials) * nMaterials);
 	for(i = 0; i < nMaterials; i++)
 	{
 		if(!Create_And_Load_MsMaterial(&pMaterials[i], pfile))
-			ON_ERROR_GOTO("read material data failed");
+			goto ON_ERROR;
 	}
 
 	pmodel->nNumMaterials = nMaterials;
@@ -162,7 +427,7 @@ static bool Load_Bone_Info(msModel * pmodel, FILE * pfile)
 	int nBones = 0;
 	int i;
 
-	if(!Get_Next_Valid_Line(gline, MAX_BUFFER_SIZE, pfile))
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read bone info");
 
 	if(1 != scanf(gline, "Bones: %d", &nBones))
@@ -170,12 +435,12 @@ static bool Load_Bone_Info(msModel * pmodel, FILE * pfile)
 
 	if(NULL == (pBones = (msBone *)malloc(sizeof(*pBones) * nBones)))
 		ON_ERROR_GOTO("malloc bones failed");
-	memset(pBones, 0, sizeof(*pBones) * nBones);
 
+	memset(pBones, 0, sizeof(*pBones) * nBones);
 	for(i = 0; i < nBones; i++)
 	{
 		if(!Create_And_Load_MsBone(&pBones[i], pfile))
-			ON_ERROR_GOTO("read bone data failed");
+			goto ON_ERROR;
 	}
 
 	pmodel->nNumBones = nBones;

@@ -1,5 +1,5 @@
 /*
- * File: ms3d.h
+ * File: T3DLIB2/msModel.h
  */
 
 #ifndef __MS3D_H__
@@ -63,20 +63,20 @@ typedef struct T3DLIB_API msMesh_t
 	int				nMaterialIndex;
 
 	int				nNumVertices;
-	int				nNumAllocedVertices;
+	//int				nNumAllocedVertices;
 	msVertex *		pVertices;
 
 	int				nNumNormals;
-	int				nNumAllocedNormals;
+	//int				nNumAllocedNormals;
 	float			(* pNormals)[3];
 
 	int				nNumTriangles;
-	int				nNumAllocedTriangles;
+	//int				nNumAllocedTriangles;
 	msTriangle *	pTriangles;
 
-	char *			pszComment;
-	msVertexEx *	pVertexExs;
-	msTriangleEx *	pTriangleExs;
+	//char *			pszComment;
+	//msVertexEx *	pVertexExs;
+	//msTriangleEx *	pTriangleExs;
 
 } msMesh;
 
@@ -92,8 +92,8 @@ typedef struct T3DLIB_API msMaterial
 	float			fTransparency;
 	char			szDiffuseTexture[MS_MAX_PATH];
 	char			szAlphaTexture[MS_MAX_PATH];
-	int				nName;
-	char *			pszComment;
+	//int				nName;
+	//char *			pszComment;
 
 } msMaterial;
 
@@ -120,40 +120,40 @@ typedef struct T3DLIB_API msBone
 	float			Rotation[3];
 
 	int				nNumPositionKeys;
-	int				nNumAllocedPositionKeys;
+	//int				nNumAllocedPositionKeys;
 	msPositionKey *	pPositionKeys;
 
 	int				nNumRotationKeys;
-	int				nNumAllocedRotationKeys;
+	//int				nNumAllocedRotationKeys;
 	msRotationKey *	pRotationKeys;
-	char *			pszComment;
+	//char *			pszComment;
 
 } msBone;
 
 typedef struct T3DLIB_API msModel_t
 {
 	int				nNumMeshes;
-	int				nNumAllocedMeshes;
+	//int				nNumAllocedMeshes;
 	msMesh *		pMeshes;
 
 	int				nNumMaterials;
-	int				nNumAllocedMaterials;
+	//int				nNumAllocedMaterials;
 	msMaterial *	pMaterials;
 
 	int				nNumBones;
-	int				nNumAllocedBones;
+	//int				nNumAllocedBones;
 	msBone *		pBones;
 
 	int				nFrame;
 	int				nTotalFrames;
 
-	float			Position[3];
-	float			Rotation[3];
+	//float			Position[3];
+	//float			Rotation[3];
 
-	float			CameraPosition[3];
-	float			CameraRotationXY[2];
+	//float			CameraPosition[3];
+	//float			CameraRotationXY[2];
 
-	char *			pszComment;
+	//char *			pszComment;
 
 	_CTOR_DECLARE(msModel_t);
 	_DTOR_DECLARE(msModel_t);

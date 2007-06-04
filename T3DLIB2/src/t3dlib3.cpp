@@ -145,7 +145,7 @@ ON_ERROR:
 		mmioClose(hwav, 0);
 		hwav = NULL;
 	}
-	SAFE_DELETE(pbuffer);
+	SAFE_FREE(pbuffer);
 	return false;
 }
 
@@ -216,7 +216,7 @@ T3DLIB_API void Destroy_Wav(WAVV1 * pwav)
 		mmioClose(pwav->hwav, 0);
 		pwav->hwav = NULL;
 	}
-	SAFE_DELETE(pwav->pbuffer);
+	SAFE_FREE(pwav->pbuffer);
 }
 
 T3DLIB_API void Destroy_DSBuffer(DSBUFFERV1 * pdsbuffer)
