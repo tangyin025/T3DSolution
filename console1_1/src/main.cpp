@@ -191,21 +191,33 @@ int main(int argc, char ** argv)
 
 	//Destroy_SList(&list);
 
-	ARRAYV1<int> arr_i;
-	Create_Array(&arr_i, 5);
-	int * pi;
-	for(int i = 0; i < 10; i++)
-	{
-		if(Append_Array(&arr_i, &pi))
-			*pi = i;
-	}
-	for(int i = 0; i < (int)arr_i.length; i++)
-		std::cout << arr_i.elems[i] << ", ";
-	std::cout << std::endl;
-	std::cout << arr_i.length << ", " << arr_i.size << std::endl;
-	Clear_Array(&arr_i);
-	std::cout << arr_i.length << ", " << arr_i.size << std::endl;
-	Destroy_Array(&arr_i);
+	//ARRAYV1<int> arr_i;
+	//Create_Array(&arr_i, 5);
+	//int * pi;
+	//for(int i = 0; i < 10; i++)
+	//{
+	//	if(Append_Array(&arr_i, &pi))
+	//		*pi = i;
+	//}
+	//for(int i = 0; i < (int)arr_i.length; i++)
+	//	std::cout << arr_i.elems[i] << ", ";
+	//std::cout << std::endl;
+	//std::cout << arr_i.length << ", " << arr_i.size << std::endl;
+	//Clear_Array(&arr_i);
+	//std::cout << arr_i.length << ", " << arr_i.size << std::endl;
+	//Destroy_Array(&arr_i);
 
+	msModel model;
+	char buffer[MAX_BUFFER_SIZE];
+	int line;
+	char file[MAX_BUFFER_SIZE];
+	INIT_ZERO(model);
+	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+	{
+		Get_Last_Error(buffer, file, &line);
+		std::cout << buffer << " " << line << endl;
+	}
+
+	Destroy_MsModel(&model);
 	return 0;
 }

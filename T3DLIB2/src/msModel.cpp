@@ -10,13 +10,25 @@ __declspec(thread) static char gline[MAX_BUFFER_SIZE];
 _CTOR_IMPLEMENT(msModel_t);
 _DTOR_IMPLEMENT_W1(msModel_t, Destroy_MsModel, pMeshes);
 
+static bool Is_Empty_String(const char * pbuff)
+{
+	const char * p = pbuff;
+	while(*p)
+	{
+		if(*p != ' ' && *p != '\t' && *p != '\r' && *p != '\n')
+			return false;
+		p++;
+	}
+	return true;
+}
+
 static bool Get_Next_Valid_Line(char * pbuff, int buff_size, FILE * pfile)
 {
 	static const char * comment = "//";
 	static const size_t comment_len = strlen(comment);
 	while(fgets(pbuff, buff_size, pfile))
 	{
-		if(0 != strlen(pbuff) && 0 != strncmp(pbuff, comment, comment_len))
+		if(!Is_Empty_String(pbuff) && 0 != strncmp(pbuff, comment, comment_len))
 			return true;
 	}
 	return false;
@@ -267,8 +279,8 @@ static bool Create_And_Load_MsBone(msBone * pbone, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read parent bone name");
 
-	if(1 != sscanf(gline, "\"%[^\"]\"", pbone->szParentName))
-		ON_ERROR_GOTO("read parent bone name failed");
+	strcpy(pbone->szParentName, "");
+	sscanf(gline, "\"%[^\"]\"", pbone->szParentName);
 
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read bone data");
@@ -281,7 +293,7 @@ static bool Create_And_Load_MsBone(msBone * pbone, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read PositionKeys");
 
-	if(1 != sscanf(gline, "%d", nPositionKeys))
+	if(1 != sscanf(gline, "%d", &nPositionKeys))
 		ON_ERROR_GOTO("read PositionKeys failed");
 
 	if(NULL == (pPositionKeys = (msPositionKey *)malloc(sizeof(*pPositionKeys) * nPositionKeys)))
@@ -289,11 +301,14 @@ static bool Create_And_Load_MsBone(msBone * pbone, FILE * pfile)
 
 	for(i = 0; i < nPositionKeys; i++)
 	{
-		if(!Load_MsPositionKey(&pbone->pPositionKeys[i], pfile))
+		if(!Load_MsPositionKey(&pPositionKeys[i], pfile))
 			goto ON_ERROR;
 	}
 
-	if(1 != sscanf(gline, "%d", nRotationKeys))
+	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
+		ON_ERROR_GOTO("cannot read RotationKeys");
+
+	if(1 != sscanf(gline, "%d", &nRotationKeys))
 		ON_ERROR_GOTO("read RotationKeys failed");
 
 	if(NULL == (pRotationKeys = (msRotationKey *)malloc(sizeof(*pRotationKeys) * nRotationKeys)))
@@ -301,7 +316,7 @@ static bool Create_And_Load_MsBone(msBone * pbone, FILE * pfile)
 
 	for(i = 0; i < nRotationKeys; i++)
 	{
-		if(!Load_MsRotationKey(&pbone->pRotationKeys[i], pfile))
+		if(!Load_MsRotationKey(&pRotationKeys[i], pfile))
 			goto ON_ERROR;
 	}
 
@@ -328,13 +343,13 @@ static bool Load_Frame_Info(msModel * pmodel, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read frames info");
 
-	if(1 != scanf(gline, "Frames: %d", &pmodel->nTotalFrames))
+	if(1 != sscanf(gline, "Frames: %d", &pmodel->nTotalFrames))
 		ON_ERROR_GOTO("read frames failed");
 
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read frame info");
 
-	if(1 != scanf(gline, "Frame: %d", &pmodel->nFrame))
+	if(1 != sscanf(gline, "Frame: %d", &pmodel->nFrame))
 		ON_ERROR_GOTO("read frame failed");
 	return true;
 
@@ -354,7 +369,7 @@ static bool Load_Mesh_Info(msModel * pmodel, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read mesh info");
 
-	if(1 != scanf(gline, "Meshes: %d", &nMeshes))
+	if(1 != sscanf(gline, "Meshes: %d", &nMeshes))
 		ON_ERROR_GOTO("read meshes failed");
 
 	if(NULL == (pMeshes = (msMesh *)malloc(sizeof(*pMeshes) * nMeshes)))
@@ -392,7 +407,7 @@ static bool Load_Material_Info(msModel * pmodel, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read material info");
 
-	if(1 != scanf(gline, "Materials: %d", &nMaterials))
+	if(1 != sscanf(gline, "Materials: %d", &nMaterials))
 		ON_ERROR_GOTO("read materials failed");
 
 	if(NULL == (pMaterials = (msMaterial *)malloc(sizeof(*pMaterials) * nMaterials)))
@@ -430,7 +445,7 @@ static bool Load_Bone_Info(msModel * pmodel, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read bone info");
 
-	if(1 != scanf(gline, "Bones: %d", &nBones))
+	if(1 != sscanf(gline, "Bones: %d", &nBones))
 		ON_ERROR_GOTO("read bones failed");
 
 	if(NULL == (pBones = (msBone *)malloc(sizeof(*pBones) * nBones)))
@@ -489,14 +504,20 @@ T3DLIB_API void Destroy_MsModel(msModel * pmodel)
 	{
 		Destroy_MsMesh(&pmodel->pMeshes[i]);
 	}
+	SAFE_FREE(pmodel->pMeshes);
+	pmodel->nNumMeshes = 0;
 
 	for(i = 0; i < pmodel->nNumMaterials; i++)
 	{
 		Destroy_MsMaterial(&pmodel->pMaterials[i]);
 	}
+	SAFE_FREE(pmodel->pMaterials);
+	pmodel->nNumMaterials = 0;
 
 	for(i = 0; i < pmodel->nNumBones; i++)
 	{
 		Destroy_MsBone(&pmodel->pBones[i]);
 	}
+	SAFE_FREE(pmodel->pBones);
+	pmodel->nNumBones = 0;
 }
