@@ -10,7 +10,7 @@ __declspec(thread) static char gline[MAX_BUFFER_SIZE];
 _CTOR_IMPLEMENT(msModel_t);
 _DTOR_IMPLEMENT_W1(msModel_t, Destroy_MsModel, pMeshes);
 
-static bool Is_Empty_String(const char * pbuff)
+static bool Is_Empty_Line(const char * pbuff)
 {
 	const char * p = pbuff;
 	while(*p)
@@ -22,13 +22,18 @@ static bool Is_Empty_String(const char * pbuff)
 	return true;
 }
 
-static bool Get_Next_Valid_Line(char * pbuff, int buff_size, FILE * pfile)
+static bool Is_Comment_Line(const char * pbuff)
 {
 	static const char * comment = "//";
 	static const size_t comment_len = strlen(comment);
+	return 0 == strncmp(pbuff, comment, comment_len);
+}
+
+static bool Get_Next_Valid_Line(char * pbuff, int buff_size, FILE * pfile)
+{
 	while(fgets(pbuff, buff_size, pfile))
 	{
-		if(!Is_Empty_String(pbuff) && 0 != strncmp(pbuff, comment, comment_len))
+		if(!Is_Empty_Line(pbuff) && !Is_Comment_Line(pbuff))
 			return true;
 	}
 	return false;

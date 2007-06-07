@@ -471,7 +471,8 @@ bool Game_Init(void)
 
 	if(!Init_T3dlib1(ddsprimary.bpp)
 		|| !Init_T3dlib4(ddsprimary.bpp)
-		|| !Init_T3dlib5(ddsprimary.bpp))
+		|| !Init_T3dlib5(ddsprimary.bpp)
+		|| !Init_T3dlib6(ddsprimary.bpp))
 		ON_ERROR_RETURN("init t3dlibs failed");
 
 	// ================================================================================

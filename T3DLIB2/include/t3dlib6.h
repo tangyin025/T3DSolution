@@ -90,7 +90,7 @@ typedef struct MATERIALV1_TYP
 } MATERIALV1, * MATERIALV1_PTR;
 
 #pragma warning(disable : 4201)
-typedef struct OBJECT4DV1_TRIANGLE_TYP
+typedef struct TRIANGLEV1_TYP
 {
 	unsigned int state;
 	unsigned int attr;
@@ -109,13 +109,13 @@ typedef struct OBJECT4DV1_TRIANGLE_TYP
 		};
 	};
 
-} OBJECT4DV1_TRIANGLE, * OBJECT4DV1_TRIANGLE_PTR;
+} TRIANGLEV1, * TRIANGLEV1_PTR;
 
-typedef struct T3DLIB_API ARRAYV1<VECTOR4D> OBJ4D_NOR_ARRAYV1, * OBJ4D_NOR_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<VECTOR4D> NOR_ARRAYV1, * NOR_ARRAYV1_PTR;
 
-typedef struct T3DLIB_API ARRAYV1<VERTEXV1T> OBJ4D_VER_ARRAYV1, * OBJ4D_VER_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<VERTEXV1T> VER_ARRAYV1, * VER_ARRAYV1_PTR;
 
-typedef struct T3DLIB_API ARRAYV1<OBJECT4DV1_TRIANGLE> OBJ4D_TRI_ARRAYV1, * OBJ4D_TRI_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<TRIANGLEV1> TRI_ARRAYV1, * TRI_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API OBJECT4DV1_TYP
 {
@@ -123,11 +123,11 @@ typedef struct T3DLIB_API OBJECT4DV1_TYP
 	unsigned int		attr;
 	VECTOR4D			vpos;
 	VECTOR4D			vrot;
-	OBJ4D_TRI_ARRAYV1	tri_list;
-	OBJ4D_VER_ARRAYV1	ver_list;
-	OBJ4D_VER_ARRAYV1	ver_list_t;
-	OBJ4D_NOR_ARRAYV1	nor_list;
-	OBJ4D_NOR_ARRAYV1	nor_list_t;
+	TRI_ARRAYV1			tri_list;
+	VER_ARRAYV1			ver_list;
+	VER_ARRAYV1			ver_list_t;
+	NOR_ARRAYV1			nor_list;
+	NOR_ARRAYV1			nor_list_t;
 	MATERIALV1 *		pmaterial;
 
 } OBJECT4DV1, * OBJECT4DV1_PTR;
@@ -167,5 +167,34 @@ typedef struct T3DLIB_API CAM4DV1_TYP
 
 } CAM4DV1, * CAM4DV1_PTR;
 #pragma warning(default : 4201)
+
+extern T3DLIB_API void (* Draw_Object4D)(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API bool Init_T3dlib6(int bpp);
+
+T3DLIB_API bool Create_Material_From_MsModel(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+
+T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial);
+
+T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
+											 size_t max_tri_size = 1000,
+											 size_t max_ver_size = 3000,
+											 size_t max_nor_size = 3000);
+
+T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj);
+
+T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj);
+
+T3DLIB_API void World_To_Camera_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D16(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D32(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
 
 #endif // __T3DLIB6_H__
