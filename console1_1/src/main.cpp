@@ -207,6 +207,16 @@ int main(int argc, char ** argv)
 	//std::cout << arr_i.length << ", " << arr_i.size << std::endl;
 	//Destroy_Array(&arr_i);
 
+	int bpp = 16;
+	if(!Init_T3dlib1(bpp)
+		|| !Init_T3dlib4(bpp)
+		|| !Init_T3dlib5(bpp)
+		|| !Init_T3dlib6(bpp))
+	{
+		cout << "Init t3dlibs failed !!!" << endl;
+		exit(1);
+	}
+
 	msModel model;
 	char buffer[MAX_BUFFER_SIZE];
 	int line;
@@ -216,7 +226,33 @@ int main(int argc, char ** argv)
 	{
 		Get_Last_Error(buffer, file, &line);
 		std::cout << buffer << " " << line << endl;
+		Destroy_MsModel(&model);
+		exit(1);
 	}
+
+	/*MATERIALV1 mat;
+	INIT_ZERO(mat);
+	if(!Create_Material_From_MsModel32(&mat, &model, "Material01"))
+	{
+		Get_Last_Error(buffer, file, &line);
+		std::cout << buffer << " " << line << endl;
+		Destroy_Material(&mat);
+		Destroy_MsModel(&model);
+		exit(1);
+	}
+	Destroy_Material(&mat);*/
+
+	OBJECT4DV1 obj;
+	INIT_ZERO(obj);
+	if(!Create_Object4D_From_MsModel(&obj, &model, "Box01"))
+	{
+		Get_Last_Error(buffer, file, &line);
+		std::cout << buffer << " " << line << endl;
+		Destroy_Object4D(&obj);
+		Destroy_MsModel(&model);
+		exit(1);
+	}
+	Destroy_Object4D(&obj);
 
 	Destroy_MsModel(&model);
 	return 0;

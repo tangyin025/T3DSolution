@@ -87,6 +87,9 @@ typedef struct MATERIALV1_TYP
  	unsigned int	c_emis;
 	IMAGEV1			texture;
 
+	_CTOR_DECLARE(MATERIALV1_TYP);
+	_DTOR_DECLARE(MATERIALV1_TYP);
+
 } MATERIALV1, * MATERIALV1_PTR;
 
 #pragma warning(disable : 4201)
@@ -130,6 +133,9 @@ typedef struct T3DLIB_API OBJECT4DV1_TYP
 	NOR_ARRAYV1			nor_list_t;
 	MATERIALV1 *		pmaterial;
 
+	_CTOR_DECLARE(OBJECT4DV1_TYP);
+	_DTOR_DECLARE(OBJECT4DV1_TYP);
+
 } OBJECT4DV1, * OBJECT4DV1_PTR;
 
 typedef enum T3DLIB_API CAM4DV1_MODE_TYP
@@ -168,11 +174,14 @@ typedef struct T3DLIB_API CAM4DV1_TYP
 } CAM4DV1, * CAM4DV1_PTR;
 #pragma warning(default : 4201)
 
+extern T3DLIB_API bool (* Create_Material_From_MsModel)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
 extern T3DLIB_API void (* Draw_Object4D)(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API bool Init_T3dlib6(int bpp);
 
-T3DLIB_API bool Create_Material_From_MsModel(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+T3DLIB_API bool Create_Material_From_MsModel16(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+
+T3DLIB_API bool Create_Material_From_MsModel32(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
 
 T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial);
 
