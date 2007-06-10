@@ -11,6 +11,7 @@ using namespace std;
 #include "t3dlib4.h"
 #include "t3dlib5.h"
 #include "t3dlib6.h"
+#pragma comment(lib, "winmm.lib")
 
 bool foo(int elem)
 {
@@ -230,7 +231,7 @@ int main(int argc, char ** argv)
 		exit(1);
 	}
 
-	/*MATERIALV1 mat;
+	MATERIALV1 mat;
 	INIT_ZERO(mat);
 	if(!Create_Material_From_MsModel32(&mat, &model, "Material01"))
 	{
@@ -240,7 +241,7 @@ int main(int argc, char ** argv)
 		Destroy_MsModel(&model);
 		exit(1);
 	}
-	Destroy_Material(&mat);*/
+	Destroy_Material(&mat);
 
 	OBJECT4DV1 obj;
 	INIT_ZERO(obj);
@@ -253,7 +254,51 @@ int main(int argc, char ** argv)
 		exit(1);
 	}
 	Destroy_Object4D(&obj);
-
 	Destroy_MsModel(&model);
+
+	//int i;
+	//for(i = 0; i < 500; i += 10)
+	//{
+	//	REAL a, b;
+	//	a = Fast_Sin((REAL)i);
+	//	b = sin(DEG_TO_RAD(i));
+	//	printf("fast sin: %3.6f, sin: %3.6f, error: %3.6f\n",
+	//		a, b, abs(a - b));
+	//}
+
+	//for(i = 0; i < 500; i += 10)
+	//{
+	//	REAL a, b;
+	//	a = Fast_Cos((REAL)i);
+	//	b = cos(DEG_TO_RAD(i));
+	//	printf("fast cos: %3.6f, cos: %3.6f, error: %3.6f\n",
+	//		a, b, abs(a - b));
+	//}
+
+	//// performance test:
+	//// note: must be run at release mode ***
+	//int limit = 999999;
+	//REAL a = 0;
+	//DWORD begin = timeGetTime();
+	//for(i = 0; i < limit; i++)
+	//{
+	//	a += Fast_Sin(50);
+	//}
+	//DWORD end = timeGetTime();
+	//DWORD error_f = end - begin;
+
+	//begin = timeGetTime();
+	//for(i = 0; i < limit; i++)
+	//{
+	//	// the const value's caculating will not be done at runtime!
+	//	a += sin(DEG_TO_RAD(50));
+	//}
+	//end = timeGetTime();
+	//DWORD error = end - begin;
+
+	//cout << "fast time: " << error_f << endl;
+	//cout << "normal time: " << error << endl;
+
+	//cout << a << endl;
 	return 0;
 }

@@ -77,7 +77,7 @@ ON_ERROR:
 	return false;
 }
 
-typedef struct MATERIALV1_TYP
+typedef struct T3DLIB_API MATERIALV1_TYP
 {
 	unsigned int	state;
 	unsigned int	attr;

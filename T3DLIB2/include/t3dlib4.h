@@ -1783,5 +1783,14 @@ inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
 			COLOR_MUL_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
 	return pcres;
 }
+//
+//#define SIN_TABLE_SIZE				(361)
+//
+//extern T3DLIB_API REAL SIN_TABLE[SIN_TABLE_SIZE];
+//extern T3DLIB_API REAL COS_TABLE[SIN_TABLE_SIZE];
+//
+//T3DLIB_API REAL Fast_Sin(REAL angle);
+//
+//T3DLIB_API REAL Fast_Cos(REAL angle);
 
 #endif // __T3DLIB4_H__

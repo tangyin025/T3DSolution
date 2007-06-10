@@ -8,7 +8,7 @@
 
 const MATRIX2X2_TYP MATRIX2X2::IDENTITY = {	1.0f, 0.0f,
 											0.0f, 1.0f, };
-
+//
 //const MATRIX3X2_TYP MATRIX3X2::IDENTITY = {	1.0f, 0.0f,
 //											0.0f, 1.0f,
 //											0.0f, 0.0f, };
@@ -19,7 +19,7 @@ const MATRIX3X2_TYP MATRIX3X2::IDENTITY = {	1.0f, 0.0f, 0.0f,
 const MATRIX3X3_TYP MATRIX3X3::IDENTITY = {	1.0f, 0.0f, 0.0f,
 											0.0f, 1.0f, 0.0f,
 											0.0f, 0.0f, 1.0f, };
-
+//
 //const MATRIX4X3_TYP MATRIX4X3::IDENTITY = {	1.0f, 0.0f, 0.0f,
 //											0.0f, 1.0f, 0.0f,
 //											0.0f, 0.0f, 1.0f,
@@ -38,6 +38,9 @@ T3DLIB_API unsigned char COLOR_TABLE_ADD16G[MAX_COLOR_INTENSITY16G][MAX_COLOR_IN
 T3DLIB_API unsigned char COLOR_TABLE_ADD[MAX_COLOR_INTENSITY32][MAX_COLOR_INTENSITY32];
 T3DLIB_API unsigned char COLOR_TABLE_MUL16G[MAX_COLOR_INTENSITY16G][MAX_COLOR_INTENSITY16G];
 T3DLIB_API unsigned char COLOR_TABLE_MUL[MAX_COLOR_INTENSITY32][MAX_COLOR_INTENSITY32];
+//
+//T3DLIB_API REAL SIN_TABLE[SIN_TABLE_SIZE];
+//T3DLIB_API REAL COS_TABLE[SIN_TABLE_SIZE];
 
 T3DLIB_API bool Init_T3dlib4(int bpp)
 {
@@ -77,8 +80,36 @@ T3DLIB_API bool Init_T3dlib4(int bpp)
 	default:
 		ON_ERROR_GOTO((sprintf(gbuffer, "unsupported color bip: %d", bpp), gbuffer));
 	}
+
+	//for(i = 0; i < SIN_TABLE_SIZE; i++)
+	//{
+	//	SIN_TABLE[i] = sin(DEG_TO_RAD(i));
+	//	COS_TABLE[i] = cos(DEG_TO_RAD(i));
+	//}
 	return true;
 
 ON_ERROR:
 	return false;
 }
+//
+//T3DLIB_API REAL Fast_Sin(REAL angle)
+//{
+//	angle = fmod(angle, 360);
+//	if(angle < 0)
+//		angle = 360 - angle;
+//
+//	int iint = (int)angle;
+//	float frac = angle - (float)iint;
+//	return SIN_TABLE[iint] + frac * (SIN_TABLE[iint + 1] - SIN_TABLE[iint]);
+//}
+//
+//T3DLIB_API REAL Fast_Cos(REAL angle)
+//{
+//	angle = fmod(angle, 360);
+//	if(angle < 0)
+//		angle = 360 - angle;
+//
+//	int iint = (int)angle;
+//	float frac = angle - (float)iint;
+//	return COS_TABLE[iint] + frac * (COS_TABLE[iint + 1] - COS_TABLE[iint]);
+//}
