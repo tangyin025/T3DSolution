@@ -78,7 +78,7 @@ T3DLIB_API bool Init_T3dlib4(int bpp)
 		break;
 
 	default:
-		ON_ERROR_GOTO((sprintf(gbuffer, "unsupported color bip: %d", bpp), gbuffer));
+		ON_ERROR_GOTO((sprintf(gbuffer, "unsupported color bpp: %d", bpp), gbuffer));
 	}
 
 	//for(i = 0; i < SIN_TABLE_SIZE; i++)

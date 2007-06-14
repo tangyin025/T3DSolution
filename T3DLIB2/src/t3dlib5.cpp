@@ -106,7 +106,7 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		break;
 
 	default:
-		ON_ERROR_GOTO(SFORMAT1(gbuffer, "unsupported color bip: %d", bpp));
+		ON_ERROR_GOTO(SFORMAT1(gbuffer, "unsupported color bpp: %d", bpp));
 	}
 	return true;
 

@@ -1446,6 +1446,9 @@ inline MATRIX4X4 * Mat_Add_4X4(MATRIX4X4 * pm0, const REAL scale)
 
 inline MATRIX2X2 * Mat_Mul_2X2(MATRIX2X2 * pmres, const MATRIX2X2 * pm0, const MATRIX2X2 * pm1)
 {
+	assert(pmres != pm0);
+	assert(pmres != pm1);
+
 	pmres->m00 = pm0->m00 * pm1->m00 + pm0->m01 * pm1->m10;
 	pmres->m01 = pm0->m00 * pm1->m01 + pm0->m01 * pm1->m11;
 	pmres->m10 = pm0->m10 * pm1->m00 + pm0->m11 * pm1->m10;
@@ -1473,6 +1476,9 @@ inline MATRIX2X2 * Mat_Mul_2X2(MATRIX2X2 * pm0, const REAL scale)
 
 inline MATRIX3X2 * Mat_Mul_3X2(MATRIX3X2 * pmres, const MATRIX3X2 * pm0, const MATRIX3X2 * pm1)
 {
+	assert(pmres != pm0);
+	assert(pmres != pm1);
+
 	pmres->m00 = pm0->m00 * pm1->m00 + pm0->m01 * pm1->m10;
 	pmres->m01 = pm0->m00 * pm1->m01 + pm0->m01 * pm1->m11;
 	pmres->m10 = pm0->m10 * pm1->m00 + pm0->m11 * pm1->m10;
@@ -1484,6 +1490,9 @@ inline MATRIX3X2 * Mat_Mul_3X2(MATRIX3X2 * pmres, const MATRIX3X2 * pm0, const M
 
 inline MATRIX3X3 * Mat_Mul_3X3(MATRIX3X3 * pmres, const MATRIX3X3 * pm0, const MATRIX3X3 * pm1)
 {
+	assert(pmres != pm0);
+	assert(pmres != pm1);
+
 	pmres->m00 = pm0->m00 * pm1->m00 + pm0->m01 * pm1->m10 + pm0->m02 * pm1->m20;
 	pmres->m01 = pm0->m00 * pm1->m01 + pm0->m01 * pm1->m11 + pm0->m02 * pm1->m21;
 	pmres->m02 = pm0->m00 * pm1->m02 + pm0->m01 * pm1->m12 + pm0->m02 * pm1->m22;
@@ -1514,6 +1523,9 @@ inline MATRIX3X3 * Mat_Mul_3X3(MATRIX3X3 * pm0, const REAL scale)
 
 inline MATRIX4X3 * Mat_Mul_4X3(MATRIX4X3 * pmres, const MATRIX4X3 * pm0, const MATRIX4X3 * pm1)
 {
+	assert(pmres != pm0);
+	assert(pmres != pm1);
+
 	pmres->m00 = pm0->m00 * pm1->m00 + pm0->m01 * pm1->m10 + pm0->m02 * pm1->m20;
 	pmres->m01 = pm0->m00 * pm1->m01 + pm0->m01 * pm1->m11 + pm0->m02 * pm1->m21;
 	pmres->m02 = pm0->m00 * pm1->m02 + pm0->m01 * pm1->m12 + pm0->m02 * pm1->m22;
@@ -1534,6 +1546,9 @@ inline MATRIX4X3 * Mat_Mul_4X3(MATRIX4X3 * pmres, const MATRIX4X3 * pm0, const M
 
 inline MATRIX4X4 * Mat_Mul_4X4(MATRIX4X4 * pmres, const MATRIX4X4 * pm0, const MATRIX4X4 * pm1)
 {
+	assert(pmres != pm0);
+	assert(pmres != pm1);
+
 	pmres->m00 = pm0->m00 * pm1->m00 + pm0->m01 * pm1->m10 + pm0->m02 * pm1->m20 + pm0->m03 * pm1->m30;
 	pmres->m01 = pm0->m00 * pm1->m01 + pm0->m01 * pm1->m11 + pm0->m02 * pm1->m21 + pm0->m03 * pm1->m31;
 	pmres->m02 = pm0->m00 * pm1->m02 + pm0->m01 * pm1->m12 + pm0->m02 * pm1->m22 + pm0->m03 * pm1->m32;
@@ -1576,6 +1591,8 @@ inline MATRIX4X4 * Mat_Mul_4X4(MATRIX4X4 * pm0, const REAL scale)
 
 inline VECTOR2D * Mat_Mul_VECTOR2D_2X2(VECTOR2D * pvres, const VECTOR2D * pv0, const MATRIX2X2 * pm0)
 {
+	assert(pvres != pv0);
+
 	pvres->x = pv0->x * pm0->m00 + pv0->y * pm0->m10;
 	pvres->y = pv0->x * pm0->m01 + pv0->y * pm0->m11;
 	return pvres;
@@ -1583,6 +1600,7 @@ inline VECTOR2D * Mat_Mul_VECTOR2D_2X2(VECTOR2D * pvres, const VECTOR2D * pv0, c
 
 inline VECTOR3D * Mat_Mul_VECTOR3D_3X2(VECTOR3D * pvres, const VECTOR3D * pv0, const MATRIX3X2 * pm0)
 {
+	assert(pvres != pv0);
 	assert(pv0->z == 1.0f);
 
 	pvres->x = pv0->x * pm0->m00 + pv0->y * pm0->m10 + pm0->m20;
@@ -1593,6 +1611,8 @@ inline VECTOR3D * Mat_Mul_VECTOR3D_3X2(VECTOR3D * pvres, const VECTOR3D * pv0, c
 
 inline VECTOR3D * Mat_Mul_VECTOR3D_3X3(VECTOR3D * pvres, const VECTOR3D * pv0, const MATRIX3X3 * pm0)
 {
+	assert(pvres != pv0);
+
 	pvres->x = pv0->x * pm0->m00 + pv0->y * pm0->m10 + pv0->z * pm0->m20;
 	pvres->y = pv0->x * pm0->m01 + pv0->y * pm0->m11 + pv0->z * pm0->m21;
 	pvres->z = pv0->x * pm0->m02 + pv0->y * pm0->m12 + pv0->z * pm0->m22;
@@ -1601,6 +1621,7 @@ inline VECTOR3D * Mat_Mul_VECTOR3D_3X3(VECTOR3D * pvres, const VECTOR3D * pv0, c
 
 inline VECTOR4D * Mat_Mul_VECTOR4D_4X3(VECTOR4D * pvres, const VECTOR4D * pv0, const MATRIX4X3 * pm0)
 {
+	assert(pvres != pv0);
 	assert(pv0->w == 1.0f);
 
 	pvres->x = pv0->x * pm0->m00 + pv0->y * pm0->m10 + pv0->z * pm0->m20 + pm0->m30;
@@ -1612,6 +1633,8 @@ inline VECTOR4D * Mat_Mul_VECTOR4D_4X3(VECTOR4D * pvres, const VECTOR4D * pv0, c
 
 inline VECTOR4D * Mat_Mul_VECTOR4D_4X4(VECTOR4D * pvres, const VECTOR4D * pv0, const MATRIX4X4 * pm0)
 {
+	assert(pvres != pv0);
+
 	pvres->x = pv0->x * pm0->m00 + pv0->y * pm0->m10 + pv0->z * pm0->m20 + pv0->w * pm0->m30;
 	pvres->y = pv0->x * pm0->m01 + pv0->y * pm0->m11 + pv0->z * pm0->m21 + pv0->w * pm0->m31;
 	pvres->z = pv0->x * pm0->m02 + pv0->y * pm0->m12 + pv0->z * pm0->m22 + pv0->w * pm0->m32;

@@ -786,7 +786,7 @@ T3DLIB_API bool Init_T3dlib1(int bpp)
 		break;
 
 	default:
-		ON_ERROR_GOTO((sprintf(gbuffer, "unsupported color bip: %d", bpp), gbuffer));
+		ON_ERROR_GOTO((sprintf(gbuffer, "unsupported color bpp: %d", bpp), gbuffer));
 	}
 
 	memset(COLOR_SHIFT_TABLE, 0, sizeof(COLOR_SHIFT_TABLE));
@@ -969,7 +969,8 @@ T3DLIB_API bool Lock_DDSurface(const DDSURFACEV1 * pddsurface, SURFACEV1 * psurf
 
 	psurface->pbuffer	= (unsigned char *)gddsd.lpSurface;
 	psurface->pitch		= gddsd.lPitch;
-	psurface->width		= gddsd.dwWidth;
+	//psurface->width		= gddsd.dwWidth;
+	psurface->width		= pddsurface->rect.right - pddsurface->rect.left;
 	psurface->height	= gddsd.dwHeight;
 	return true;
 

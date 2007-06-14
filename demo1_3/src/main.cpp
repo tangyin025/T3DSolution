@@ -296,6 +296,11 @@ DMPERFORMANCEV1	dmperf;
 // TODO: Game define here
 // ================================================================================
 
+ZBUFFERV1		zbuf;
+msModel			model;
+OBJECT4DV1		obj1;
+CAM4DV1			cam1;
+
 // ================================================================================
 // END TODO.
 // ================================================================================
@@ -464,12 +469,37 @@ bool Game_Init(void)
 	if(!Create_DMPerformance(&dsound, &dmperf, wnd_handle))
 		ON_ERROR_RETURN("create direct music perf failed");
 
-	if(!Init_T3dlib1(ddsprimary.bpp))
+	if(!Init_T3dlib1(ddsprimary.bpp)
+		|| !Init_T3dlib4(ddsprimary.bpp)
+		|| !Init_T3dlib5(ddsprimary.bpp)
+		|| !Init_T3dlib6(ddsprimary.bpp))
 		ON_ERROR_RETURN("init t3dlib1 failed");
 
 	// ================================================================================
 	// TODO: Game init here
 	// ================================================================================
+
+	INIT_ZERO(zbuf);
+	INIT_ZERO(model);
+	INIT_ZERO(obj1);
+	INIT_ZERO(cam1);
+
+	// create zbuffer
+	if(!Create_ZBuffer(&zbuf, resolutions[resolution_index].width, resolutions[resolution_index].height))
+		ON_ERROR_RETURN("create zbuffer error");
+
+	// load msModel "MilkShape 3D ASCII.txt"
+	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+	//	ON_ERROR_RETURN("load MilkShape 3D ASCII.txt failed");
+
+	if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
+		ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
+
+	// convert msModel to Object4D
+	if(!Create_Object4D_From_MsModel(&obj1, &model, "Box01"))
+		ON_ERROR_RETURN("convert object4d failed");
+
+	Destroy_MsModel(&model);
 
 	// ================================================================================
 	// END TODO.
@@ -487,6 +517,10 @@ void Game_Destroy(void)
 	// ================================================================================
 	// TODO: Game destroy here
 	// ================================================================================
+
+	Destroy_Object4D(&obj1);
+	Destroy_MsModel(&model);
+	Destroy_ZBuffer(&zbuf);
 
 	// ================================================================================
 	// END TODO.
@@ -535,6 +569,12 @@ bool Game_Frame(void)
 	// TODO: Game logic here
 	// ================================================================================
 
+	static VECTOR4D cam_pos = {0, 0, -50, 1};
+	if(IS_KEY_DOWN(dikey_state, DIK_UP))
+		cam_pos.z++;
+	if(IS_KEY_DOWN(dikey_state, DIK_DOWN))
+		cam_pos.z--;
+
 	// ================================================================================
 	// END TODO.
 	// ================================================================================
@@ -543,8 +583,42 @@ bool Game_Frame(void)
 	// TODO: Game render here
 	// ================================================================================
 
-	//if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(150, 150, 200)))
-	//	ON_ERROR_RETURN("fill surface failed");
+	if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(0, 0, 0)))
+		ON_ERROR_RETURN("fill surface failed");
+
+	SURFACEV1 surf;
+	if(!Lock_DDSurface(&ddsback, &surf))
+		return false;
+
+	CAM4DV1_Init(	&cam1,
+					CAM4DV1_MODE_EULAR,
+					DEG_TO_RAD(90),
+					10,
+					5000,
+					&surf,
+					&zbuf,
+					FIX_MODE_VIEWPORT_HEIGHT);
+
+	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
+
+	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_XYZ);
+
+	Model_To_World_Object4D(&obj1);
+
+	World_To_Camera_Object4D(&obj1, &cam1);
+
+	Camera_To_Perspective_Object4D(&obj1, &cam1);
+
+	Perspective_To_Screen_Object4D(&obj1, &cam1);
+
+	// set color to white
+	int i;
+	for(i = 0; i < (int)obj1.ver_list_t.length; i++)
+		obj1.ver_list_t.elems[i].c_diff = Create_RGBI(255, 255, 255);
+
+	Draw_Object4D(&obj1, &cam1);
+
+	Unlock_DDSurface(&ddsback);
 
 	// ================================================================================
 	// END TODO.
@@ -560,8 +634,14 @@ bool Game_Frame(void)
 	Set_Text_BKColor(&tdc, RGB(255, 255, 255));
 	Set_Text_BKMode(&tdc, TEXT_BKMODE_OPAQUE);
 	Set_Text_Color(&tdc, RGB(0, 0, 0));
+
 	sprintf(buffer, "%.1f fps", fps.fps);
 	Text_Out(&tdc, buffer, 10, 10);
+
+	sprintf(buffer, "cam.z = %f", cam1.vpos.z);
+	Text_Out(&tdc, buffer, 10, 300);
+	//Sleep(50);
+
 	End_Text_DC(&tdc);
 
 	// ================================================================================

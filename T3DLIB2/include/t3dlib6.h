@@ -9,6 +9,20 @@
 #include "msModel.h"
 
 #define ARRAYV1_INCREMENT_SIZE			(10)
+#define CAM4DV1_VIEWPLANE_DIST			(1)
+
+#define ROTATION_SEQ_XYZ				(0)
+#define ROTATION_SEQ_XZY				(1)
+#define ROTATION_SEQ_YXZ				(2)
+#define ROTATION_SEQ_YZX				(3)
+#define ROTATION_SEQ_ZXY				(4)
+#define ROTATION_SEQ_ZYX				(5)
+
+#define UVN_MODE_SIMPLE					(0)
+#define UVN_MODE_SPHERICAL				(1)
+
+#define FIX_MODE_VIEWPORT_WIDTH			(0)
+#define FIX_MODE_VIEWPORT_HEIGHT		(1)
 
 template <typename ELEM_T>
 struct ARRAYV1
@@ -159,23 +173,28 @@ typedef struct T3DLIB_API CAM4DV1_TYP
 	REAL			min_clip_z;
 	REAL			max_clip_z;
 
+	struct VIEWPORT_TYP
+	{
+		int			x, y;
+		REAL		width, height;
+
+	} viewport;
+
 	struct VIEWPLANE_TYP
 	{
-		REAL		dist, width, height;
+		//REAL		dist;
+		REAL		width, height;
 
 	} viewplane;
 
-	struct VIEWPORT_TYP
-	{
-		REAL		x, y, width, height;
-
-	} viewport;
+	SURFACEV1 *		psurf;
+	ZBUFFERV1 *		pzbuf;
 
 } CAM4DV1, * CAM4DV1_PTR;
 #pragma warning(default : 4201)
 
 extern T3DLIB_API bool (* Create_Material_From_MsModel)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
-extern T3DLIB_API void (* Draw_Object4D)(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+extern T3DLIB_API void (* Draw_Object4D)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API bool Init_T3dlib6(int bpp);
 
@@ -200,10 +219,25 @@ T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 
 T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
-T3DLIB_API void Draw_Object4D16(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
-T3DLIB_API void Draw_Object4D32(SURFACEV1 * psurface, OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
+
+T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
+
+T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *		pcam,
+									CAM4DV1_MODE	mode,
+									REAL			fov,
+									REAL			min_clip_z,
+									REAL			max_clip_z,
+									SURFACEV1 *		psurf,
+									ZBUFFERV1 *		pzbuf,
+									int				fix_mode = FIX_MODE_VIEWPORT_WIDTH);
+
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq);
+
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode);
 
 #endif // __T3DLIB6_H__
