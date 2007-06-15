@@ -323,7 +323,7 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	for(i = 0; i < (int)pobj->ver_list_t.length; i++)
 	{
 		pobj->ver_list_t.elems[i].x = (aw_inv + pobj->ver_list_t.elems[i].x) * ow_inv;
-		pobj->ver_list_t.elems[i].y = (ah_inv + pobj->ver_list_t.elems[i].y) * oh_inv;
+		pobj->ver_list_t.elems[i].y = (ah_inv - pobj->ver_list_t.elems[i].y) * oh_inv;
 	}
 }
 
@@ -523,27 +523,27 @@ T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pca
 	switch(rot_seq)
 	{
 	case ROTATION_SEQ_XYZ:
-		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mx, &my), &mz);
+		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mz, &my), &mx);
 		break;
 
 	case ROTATION_SEQ_XZY:
-		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mx, &mz), &my);
-		break;
-
-	case ROTATION_SEQ_YXZ:
-		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &my, &mx), &mz);
-		break;
-
-	case ROTATION_SEQ_YZX:
 		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &my, &mz), &mx);
 		break;
 
-	case ROTATION_SEQ_ZXY:
+	case ROTATION_SEQ_YXZ:
 		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mz, &mx), &my);
 		break;
 
+	case ROTATION_SEQ_YZX:
+		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mx, &mz), &my);
+		break;
+
+	case ROTATION_SEQ_ZXY:
+		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &my, &mx), &mz);
+		break;
+
 	case ROTATION_SEQ_ZYX:
-		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mz, &my), &mx);
+		Mat_Mul_4X4(&mrot, Mat_Mul_4X4(&mtmp, &mx, &my), &mz);
 		break;
 
 	default:

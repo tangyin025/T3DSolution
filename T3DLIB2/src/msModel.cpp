@@ -248,16 +248,14 @@ static bool Create_And_Load_MsMaterial(msMaterial * pmaterial, FILE * pfile)
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read diffuse texture");
 
-	//if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szDiffuseTexture))
-	//	ON_ERROR_GOTO("read diffuse texture failed");
-	sscanf(gline, "\"%[^\"]\"", pmaterial->szDiffuseTexture);
+	if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szDiffuseTexture))
+		INIT_ZERO(pmaterial->szDiffuseTexture);
 
 	if(!Get_Next_Valid_Line(gline, sizeof(gline), pfile))
 		ON_ERROR_GOTO("cannot read alpha texture");
 
-	//if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szAlphaTexture))
-	//	ON_ERROR_GOTO("read alpha texture failed");
-	sscanf(gline, "\"%[^\"]\"", pmaterial->szAlphaTexture);
+	if(1 != sscanf(gline, "\"%[^\"]\"", pmaterial->szAlphaTexture))
+		INIT_ZERO(pmaterial->szAlphaTexture);
 	return true;
 
 ON_ERROR:

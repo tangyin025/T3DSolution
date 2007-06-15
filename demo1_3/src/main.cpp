@@ -569,11 +569,57 @@ bool Game_Frame(void)
 	// TODO: Game logic here
 	// ================================================================================
 
+	static VECTOR4D cam_rot = {0, 0, 0, 1};
+
 	static VECTOR4D cam_pos = {0, 0, -50, 1};
+
+	//if(IS_KEY_DOWN(dikey_state, DIK_W))
+	//	cam_rot.x -= DEG_TO_RAD((REAL)0.5);
+
+	//if(IS_KEY_DOWN(dikey_state, DIK_S))
+	//	cam_rot.x += DEG_TO_RAD((REAL)0.5);
+
+	//if(IS_KEY_DOWN(dikey_state, DIK_A))
+	//	cam_rot.z += DEG_TO_RAD((REAL)0.5);
+
+	//if(IS_KEY_DOWN(dikey_state, DIK_D))
+	//	cam_rot.z -= DEG_TO_RAD((REAL)0.5);
+
+	if(IS_KEY_DOWN(dikey_state, DIK_LEFT))
+		cam_rot.y -= DEG_TO_RAD((REAL)0.5);
+
+	if(IS_KEY_DOWN(dikey_state, DIK_RIGHT))
+		cam_rot.y += DEG_TO_RAD((REAL)0.5);
+
 	if(IS_KEY_DOWN(dikey_state, DIK_UP))
-		cam_pos.z++;
+	{
+		cam_pos.z += cos(cam_rot.y);
+		cam_pos.x += sin(cam_rot.y);
+	}
+
 	if(IS_KEY_DOWN(dikey_state, DIK_DOWN))
-		cam_pos.z--;
+	{
+		cam_pos.z -= cos(cam_rot.y);
+		cam_pos.x -= sin(cam_rot.y);
+	}
+
+	if(IS_KEY_DOWN(dikey_state, DIK_HOME))
+		cam_pos.y++;
+
+	if(IS_KEY_DOWN(dikey_state, DIK_END))
+		cam_pos.y--;
+
+	if(IS_KEY_DOWN(dikey_state, DIK_DELETE))
+	{
+		cam_pos.x -= cos(cam_rot.y);
+		cam_pos.z += sin(cam_rot.y);
+	}
+
+	if(IS_KEY_DOWN(dikey_state, DIK_PGDN))
+	{
+		cam_pos.x += cos(cam_rot.y);
+		cam_pos.z -= sin(cam_rot.y);
+	}
 
 	// ================================================================================
 	// END TODO.
@@ -598,6 +644,8 @@ bool Game_Frame(void)
 					&surf,
 					&zbuf,
 					FIX_MODE_VIEWPORT_HEIGHT);
+
+	VECTOR4D_Copy(&cam1.vrot, &cam_rot);
 
 	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
 
