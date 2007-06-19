@@ -24,6 +24,21 @@
 #define FIX_MODE_VIEWPORT_WIDTH			(0)
 #define FIX_MODE_VIEWPORT_HEIGHT		(1)
 
+#define TRI_STATE_NULL					(0)
+#define TRI_STATE_ACTIVE				(1)
+#define TRI_STATE_CULLED				(2)
+#define TRI_STATE_CLIPPED				(3)
+#define TRI_STATE_BACKFACE				(4)
+
+#define IS_VALID_TRIANGLE(s)			((s) == TRI_STATE_ACTIVE || (s) == TRI_STATE_CLIPPED)
+
+typedef enum T3DLIB_API CAM4DV1_MODE_TYP
+{
+	CAM4DV1_MODE_EULAR,
+	CAM4DV1_MODE_UVN,
+
+} CAM4DV1_MODE, * CAM4DV1_MODE_PTR;
+
 template <typename ELEM_T>
 struct ARRAYV1
 {
@@ -140,6 +155,7 @@ typedef struct T3DLIB_API OBJECT4DV1_TYP
 	unsigned int		attr;
 	VECTOR4D			vpos;
 	VECTOR4D			vrot;
+	size_t				tri_orig_num;
 	TRI_ARRAYV1			tri_list;
 	VER_ARRAYV1			ver_list;
 	VER_ARRAYV1			ver_list_t;
@@ -151,13 +167,6 @@ typedef struct T3DLIB_API OBJECT4DV1_TYP
 	_DTOR_DECLARE(OBJECT4DV1_TYP);
 
 } OBJECT4DV1, * OBJECT4DV1_PTR;
-
-typedef enum T3DLIB_API CAM4DV1_MODE_TYP
-{
-	CAM4DV1_MODE_EULAR,
-	CAM4DV1_MODE_UVN,
-
-} CAM4DV1_MODE, * CAM4DV1_MODE_PTR;
 
 typedef struct T3DLIB_API CAM4DV1_TYP
 {
@@ -209,11 +218,25 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 											 size_t max_ver_size = 3000,
 											 size_t max_nor_size = 3000);
 
+T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj);
+
 T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj);
 
 T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj);
 
 T3DLIB_API void World_To_Camera_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Clip_Triangle_XPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
+
+T3DLIB_API void Clip_Triangle_YPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
+
+T3DLIB_API bool Clip_Triangle_ZPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris);
+
+T3DLIB_API bool Clip_Triangle_ZPlane_Near1(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris);
+
+T3DLIB_API bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris);
+
+T3DLIB_API bool Clip_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
@@ -222,8 +245,8 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
-
-T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
+//
+//T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
 
 T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
 

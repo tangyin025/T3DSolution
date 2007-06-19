@@ -187,6 +187,8 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 				ptri->n0_i = pmesh->pTriangles[j].nNormalIndices[0];
 				ptri->n1_i = pmesh->pTriangles[j].nNormalIndices[1];
 				ptri->n2_i = pmesh->pTriangles[j].nNormalIndices[2];
+
+				ptri->state = TRI_STATE_ACTIVE;
 			}
 
 			if(!Create_Array(&pobj->ver_list, max_ver_size))
@@ -227,6 +229,8 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 
 			if(!Create_Array(&pobj->nor_list_t, max_nor_size))
 				ON_ERROR_GOTO("create normal_t list failed");
+
+			pobj->tri_orig_num = pobj->tri_list.length;
 			return true;
 		}
 	}
@@ -239,6 +243,16 @@ ON_ERROR:
 	Destroy_Array(&pobj->nor_list);
 	Destroy_Array(&pobj->nor_list_t);
 	return false;
+}
+
+T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj)
+{
+	int i;
+	pobj->tri_list.length = pobj->tri_orig_num;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+		pobj->tri_list.elems[i].state = TRI_STATE_ACTIVE;
+	Clear_Array(&pobj->ver_list_t);
+	Clear_Array(&pobj->nor_list_t);
 }
 
 T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj)
@@ -254,7 +268,7 @@ T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj)
 T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj)
 {
 	assert(pobj->ver_list_t.size >= pobj->ver_list.size);
-	//assert(pobj->ver_list_t.length == 0);
+	assert(pobj->ver_list_t.length == 0);
 
 	int i;
 	if(IS_ZERO_FLOAT(pobj->vrot.x)
@@ -300,6 +314,307 @@ T3DLIB_API void World_To_Camera_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	}
 }
 
+T3DLIB_API void Clip_Triangle_XPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam)
+{
+	int clip_count = 0;
+	if(abs(pvers->elems[ptri->v0_i].x)
+			> pvers->elems[ptri->v0_i].z * (REAL)0.5 * pcam->viewplane.width / CAM4DV1_VIEWPLANE_DIST)
+		clip_count++;
+
+	if(abs(pvers->elems[ptri->v1_i].x)
+			> pvers->elems[ptri->v1_i].z * (REAL)0.5 * pcam->viewplane.width / CAM4DV1_VIEWPLANE_DIST)
+		clip_count++;
+
+	if(abs(pvers->elems[ptri->v2_i].x)
+			> pvers->elems[ptri->v2_i].z * (REAL)0.5 * pcam->viewplane.width / CAM4DV1_VIEWPLANE_DIST)
+		clip_count++;
+
+	switch(clip_count)
+	{
+	case 3:
+		ptri->state = TRI_STATE_CULLED;
+		break;
+
+	case 1:
+	case 2:
+		ptri->state = TRI_STATE_CLIPPED;
+		break;
+
+	default:
+		assert(clip_count == 0);
+		break;
+	}
+	UNREFERENCED_PARAMETER(pnors);
+}
+
+T3DLIB_API void Clip_Triangle_YPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam)
+{
+	int clip_count = 0;
+	if(abs(pvers->elems[ptri->v0_i].y)
+			> pvers->elems[ptri->v0_i].z * (REAL)0.5 * pcam->viewplane.height / CAM4DV1_VIEWPLANE_DIST)
+		clip_count++;
+
+	if(abs(pvers->elems[ptri->v1_i].y)
+			> pvers->elems[ptri->v1_i].z * (REAL)0.5 * pcam->viewplane.height / CAM4DV1_VIEWPLANE_DIST)
+		clip_count++;
+
+	if(abs(pvers->elems[ptri->v2_i].y)
+			> pvers->elems[ptri->v2_i].z * (REAL)0.5 * pcam->viewplane.height / CAM4DV1_VIEWPLANE_DIST)
+		clip_count++;
+
+	switch(clip_count)
+	{
+	case 3:
+		ptri->state = TRI_STATE_CULLED;
+		break;
+
+	case 1:
+	case 2:
+		ptri->state = TRI_STATE_CLIPPED;
+		break;
+
+	default:
+		assert(clip_count == 0);
+		break;
+	}
+	UNREFERENCED_PARAMETER(pnors);
+}
+
+T3DLIB_API bool Clip_Triangle_ZPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
+{
+	int clip_count_max = 0;
+	int clip_count_min = 0;
+
+	if(pvers->elems[ptri->v0_i].z > pcam->max_clip_z)
+		clip_count_max++;
+	else if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
+		clip_count_min++;
+
+	if(pvers->elems[ptri->v1_i].z > pcam->max_clip_z)
+		clip_count_max++;
+	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
+		clip_count_min++;
+
+	if(pvers->elems[ptri->v2_i].z > pcam->max_clip_z)
+		clip_count_max++;
+	else if(pvers->elems[ptri->v2_i].z < pcam->min_clip_z)
+		clip_count_min++;
+
+	if(clip_count_max >= 3 || clip_count_min >= 3)
+	{
+		ptri->state = TRI_STATE_CULLED;
+		return true;
+	}
+
+	switch(clip_count_min)
+	{
+	case 1:
+		if(!Clip_Triangle_ZPlane_Near1(ptri, pvers, pnors, pcam, ptris))
+			return false;
+		break;
+
+	case 2:
+		if(!Clip_Triangle_ZPlane_Near2(ptri, pvers, pnors, pcam, ptris))
+			return false;
+		break;
+	}
+	return true;
+	UNREFERENCED_PARAMETER(ptri);
+	UNREFERENCED_PARAMETER(pvers);
+	UNREFERENCED_PARAMETER(pnors);
+	UNREFERENCED_PARAMETER(pcam);
+	UNREFERENCED_PARAMETER(ptris);
+}
+
+T3DLIB_API bool Clip_Triangle_ZPlane_Near1(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
+{
+	TRIANGLEV1 * pt0;
+	if(!Append_Array(ptris, &pt0))
+		return false;
+	memcpy(pt0, ptri, sizeof(*pt0));
+
+	if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v0_i;
+		pt0->v1_i = ptri->v1_i;
+		pt0->v2_i = ptri->v2_i;
+	}
+	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v1_i;
+		pt0->v1_i = ptri->v2_i;
+		pt0->v2_i = ptri->v0_i;
+	}
+	else
+	{
+		assert(pvers->elems[ptri->v2_i].z < pcam->min_clip_z);
+		pt0->v0_i = ptri->v2_i;
+		pt0->v1_i = ptri->v0_i;
+		pt0->v2_i = ptri->v1_i;
+	}
+
+	VERTEXV1T * pv0;
+	if(!Append_Array(pvers, &pv0))
+		return false;
+	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
+pv0->c_diff = Create_RGBI(0, 255, 255);
+
+	pv0->z = pcam->min_clip_z;
+	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv0->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	//pt0->v0_i = (int)pvers->length - 1;
+
+	TRIANGLEV1 * pt1;
+	if(!Append_Array(ptris, &pt1))
+		return false;
+	memcpy(pt1, ptri, sizeof(*pt1));
+	pt0 = &ptris->elems[ptris->length - 2];
+
+	pt1->v0_i = (int)pvers->length - 1;
+	pt1->v1_i = pt0->v2_i;
+
+	VERTEXV1T * pv1;
+	if(!Append_Array(pvers, &pv1))
+		return false;
+	memcpy(pv1, &pvers->elems[pt0->v0_i], sizeof(*pv1));
+pv1->c_diff = Create_RGBI(0, 255, 255);
+
+	pv1->z = pcam->min_clip_z;
+	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv1->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pt0->v0_i = (int)pvers->length - 2;
+	pt1->v2_i = (int)pvers->length - 1;
+
+	ptri->state = TRI_STATE_CULLED;
+	return true;
+	UNREFERENCED_PARAMETER(pnors);
+}
+
+T3DLIB_API bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
+{
+	TRIANGLEV1 * pt0;
+	if(!Append_Array(ptris, &pt0))
+		return false;
+	memcpy(pt0, ptri, sizeof(*pt0));
+
+	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v1_i;
+		pt0->v1_i = ptri->v2_i;
+		pt0->v2_i = ptri->v0_i;
+	}
+	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v2_i;
+		pt0->v1_i = ptri->v0_i;
+		pt0->v2_i = ptri->v1_i;
+	}
+	else
+	{
+		assert(pvers->elems[ptri->v2_i].z > pcam->min_clip_z);
+		pt0->v0_i = ptri->v0_i;
+		pt0->v1_i = ptri->v1_i;
+		pt0->v2_i = ptri->v2_i;
+	}
+
+	VERTEXV1T * pv0;
+	if(!Append_Array(pvers, &pv0))
+		return false;
+	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
+pv0->c_diff = Create_RGBI(0, 255, 255);
+
+	pv0->z = pcam->min_clip_z;
+	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv0->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pt0->v0_i = (int)pvers->length - 1;
+
+	VERTEXV1T * pv1;
+	if(!Append_Array(pvers, &pv1))
+		return false;
+	memcpy(pv1, &pvers->elems[pt0->v1_i], sizeof(*pv1));
+pv1->c_diff = Create_RGBI(0, 255, 255);
+
+	pv1->z = pcam->min_clip_z;
+	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v1_i].x);
+
+	pv1->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v1_i].y);
+
+	pt0->v1_i = (int)pvers->length - 1;
+
+	ptri->state = TRI_STATE_CULLED;
+	return true;
+	UNREFERENCED_PARAMETER(pnors);
+}
+
+T3DLIB_API bool Clip_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+{
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		{
+			Clip_Triangle_XPlane(&pobj->tri_list.elems[i], &pobj->ver_list_t, &pobj->nor_list_t, pcam);
+		}
+	}
+
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		{
+			Clip_Triangle_YPlane(&pobj->tri_list.elems[i], &pobj->ver_list_t, &pobj->nor_list_t, pcam);
+		}
+	}
+
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		{
+			if(!Clip_Triangle_ZPlane(
+					&pobj->tri_list.elems[i], &pobj->ver_list_t, &pobj->nor_list_t, pcam, &pobj->tri_list))
+				return false;
+		}
+	}
+	return true;
+}
+
 T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
 	int i;
@@ -316,8 +631,8 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 {
 	REAL aw_inv = (REAL)0.5 * pcam->viewplane.width;
 	REAL ah_inv = (REAL)0.5 * pcam->viewplane.height;
-	REAL ow_inv = pcam->viewport.width / pcam->viewplane.width;
-	REAL oh_inv = pcam->viewport.height / pcam->viewplane.height;
+	REAL ow_inv = (pcam->viewport.width - 1) / pcam->viewplane.width;
+	REAL oh_inv = (pcam->viewport.height - 1) / pcam->viewplane.height;
 
 	int i;
 	for(i = 0; i < (int)pobj->ver_list_t.length; i++)
@@ -346,9 +661,12 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-		Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-		Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-		Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		{
+			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+		}
 	}
 }
 
@@ -365,26 +683,52 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	rc.s_color_shift = pcam->psurf->color_shift;
 	rc.fmin_clip_x = 0;
 	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width;
-	rc.fmax_clip_y = pcam->viewport.height;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-		Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-		Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-		Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			break;
+
+		case TRI_STATE_CLIPPED:
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 255, 255);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 255, 255);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 255, 255);
+			break;
+
+		default:
+			break;
+		}
 	}
 }
-
-T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam)
-{
-	return false;
-	UNREFERENCED_PARAMETER(ptris);
-	UNREFERENCED_PARAMETER(pvers);
-	UNREFERENCED_PARAMETER(pnors);
-	UNREFERENCED_PARAMETER(pcam);
-}
+//
+//T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam)
+//{
+//	return false;
+//	UNREFERENCED_PARAMETER(ptris);
+//	UNREFERENCED_PARAMETER(pvers);
+//	UNREFERENCED_PARAMETER(pnors);
+//	UNREFERENCED_PARAMETER(pcam);
+//}
 
 T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0)
 {

@@ -635,11 +635,11 @@ bool Game_Frame(void)
 	Draw_Rectangle_SrcAlpha(&rc, &v0, &v2);
 	//Draw_Clipped_Rectangle_SrcAlpha(&rc, &v0, &v2);
 
-	//VECTOR4D_InitXYZW(&v0._4D, 150, 50, 0, 0);
-	//VECTOR4D_InitXYZW(&v2._4D, 150, 200, 0, 0);
+	VECTOR4D_InitXYZW(&v0._4D, 150, 50, 0, 0);
+	VECTOR4D_InitXYZW(&v2._4D, 250, 200, 0, 0);
 	////rc.c_ambi = Create_RGBI(255, 255, 255);
-	//v0.c_diff = Create_RGBI(255, 255, 255);
-	//Draw_Clipped_Line(&rc, &v0, &v2);
+	v0.c_diff = Create_RGBI(255, 255, 255);
+	Draw_Clipped_Line(&rc, &v0, &v2);
 
 	VECTOR4D_InitXYZW(&v0._4D, 150, 150, 0, 0);
 	VECTOR4D_InitXYZW(&v2._4D, 250, 250, 0, 0);
@@ -700,7 +700,7 @@ bool Game_Frame(void)
 	rc.fmax_clip_y = 499.0f;
 	//Draw_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
 	//Draw_Clipped_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
-	Draw_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
+//	Draw_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
 	//Draw_Clipped_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
 	//Draw_Clipped_Rectangle_Texture_ZBufferW(&rc, &tv0, &tv1);
 	//for(int i = 0; i < texture.height; i++)

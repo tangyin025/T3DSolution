@@ -488,15 +488,21 @@ bool Game_Init(void)
 	if(!Create_ZBuffer(&zbuf, resolutions[resolution_index].width, resolutions[resolution_index].height))
 		ON_ERROR_RETURN("create zbuffer error");
 
-	// load msModel "MilkShape 3D ASCII.txt"
 	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
 	//	ON_ERROR_RETURN("load MilkShape 3D ASCII.txt failed");
 
-	if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
-		ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
+	// load msModel "MilkShape 3D ASCII.txt"
+	//if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
+	//	ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
+
+	if(!Create_MsModel_From_File(&model, "Plane1_1.ms3d.txt"))
+		ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
 
 	// convert msModel to Object4D
-	if(!Create_Object4D_From_MsModel(&obj1, &model, "Box01"))
+	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Box01"))
+	//	ON_ERROR_RETURN("convert object4d failed");
+
+	if(!Create_Object4D_From_MsModel(&obj1, &model, "Plane01"))
 		ON_ERROR_RETURN("convert object4d failed");
 
 	Destroy_MsModel(&model);
@@ -569,27 +575,27 @@ bool Game_Frame(void)
 	// TODO: Game logic here
 	// ================================================================================
 
-	static VECTOR4D cam_rot = {0, 0, 0, 1};
+	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
 
-	static VECTOR4D cam_pos = {0, 0, -50, 1};
+	static VECTOR4D cam_pos = {0, 30, -50, 1};
 
-	//if(IS_KEY_DOWN(dikey_state, DIK_W))
-	//	cam_rot.x -= DEG_TO_RAD((REAL)0.5);
+	if(IS_KEY_DOWN(dikey_state, DIK_W))
+		cam_rot.x -= DEG_TO_RAD((REAL)2);
 
-	//if(IS_KEY_DOWN(dikey_state, DIK_S))
-	//	cam_rot.x += DEG_TO_RAD((REAL)0.5);
+	if(IS_KEY_DOWN(dikey_state, DIK_S))
+		cam_rot.x += DEG_TO_RAD((REAL)2);
 
-	//if(IS_KEY_DOWN(dikey_state, DIK_A))
-	//	cam_rot.z += DEG_TO_RAD((REAL)0.5);
+	if(IS_KEY_DOWN(dikey_state, DIK_A))
+		cam_rot.z += DEG_TO_RAD((REAL)2);
 
-	//if(IS_KEY_DOWN(dikey_state, DIK_D))
-	//	cam_rot.z -= DEG_TO_RAD((REAL)0.5);
+	if(IS_KEY_DOWN(dikey_state, DIK_D))
+		cam_rot.z -= DEG_TO_RAD((REAL)2);
 
 	if(IS_KEY_DOWN(dikey_state, DIK_LEFT))
-		cam_rot.y -= DEG_TO_RAD((REAL)0.5);
+		cam_rot.y -= DEG_TO_RAD((REAL)2);
 
 	if(IS_KEY_DOWN(dikey_state, DIK_RIGHT))
-		cam_rot.y += DEG_TO_RAD((REAL)0.5);
+		cam_rot.y += DEG_TO_RAD((REAL)2);
 
 	if(IS_KEY_DOWN(dikey_state, DIK_UP))
 	{
@@ -636,11 +642,32 @@ bool Game_Frame(void)
 	if(!Lock_DDSurface(&ddsback, &surf))
 		return false;
 
+	RENDERCONTEXTV1 rc;
+	rc.s_pbuffer = surf.pbuffer;
+	rc.s_pitch = surf.pitch;
+	rc.s_pitch_shift = surf.pitch_shift;
+	rc.s_color_shift = surf.color_shift;
+	VERTEXV1 v0, v1;
+	VECTOR4D_InitXYZW(&v0._4D, 50-1, 50-1, 0, 0);
+	VECTOR4D_InitXYZW(&v1._4D, 800-50, 600-50, 0, 0);
+	v0.c_diff = Create_RGBI(255, 255, 255);
+	v1.c_diff = Create_RGBI(255, 255, 255);
+	Draw_HLine(&rc, &v0, &v1);
+	Draw_HLine(&rc, &v1, &v0);
+	Draw_VLine(&rc, &v0, &v1);
+	Draw_VLine(&rc, &v1, &v0);
+
+	VECTOR3D_Add(&v0._3D, 1);
+	VECTOR3D_Sub(&v1._3D, 1);
+	surf.pbuffer	= surf.pbuffer + ((int)v0.x << surf.color_shift) + ((int)v0.y << surf.pitch_shift);
+	surf.width		= (int)(v1.x - v0.x) + 1;
+	surf.height		= (int)(v1.y - v0.y) + 1;
+
 	CAM4DV1_Init(	&cam1,
 					CAM4DV1_MODE_EULAR,
 					DEG_TO_RAD(90),
 					10,
-					5000,
+					100,
 					&surf,
 					&zbuf,
 					FIX_MODE_VIEWPORT_HEIGHT);
@@ -649,20 +676,25 @@ bool Game_Frame(void)
 
 	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
 
+	Reset_Object4D(&obj1);
+
 	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_XYZ);
 
 	Model_To_World_Object4D(&obj1);
-
-	World_To_Camera_Object4D(&obj1, &cam1);
-
-	Camera_To_Perspective_Object4D(&obj1, &cam1);
-
-	Perspective_To_Screen_Object4D(&obj1, &cam1);
 
 	// set color to white
 	int i;
 	for(i = 0; i < (int)obj1.ver_list_t.length; i++)
 		obj1.ver_list_t.elems[i].c_diff = Create_RGBI(255, 255, 255);
+
+	World_To_Camera_Object4D(&obj1, &cam1);
+
+	if(!Clip_Object4D(&obj1, &cam1))
+		ON_ERROR_RETURN("clip object4d failed");
+
+	Camera_To_Perspective_Object4D(&obj1, &cam1);
+
+	Perspective_To_Screen_Object4D(&obj1, &cam1);
 
 	Draw_Object4D(&obj1, &cam1);
 
@@ -686,9 +718,31 @@ bool Game_Frame(void)
 	sprintf(buffer, "%.1f fps", fps.fps);
 	Text_Out(&tdc, buffer, 10, 10);
 
-	sprintf(buffer, "cam.z = %f", cam1.vpos.z);
-	Text_Out(&tdc, buffer, 10, 300);
-	//Sleep(50);
+	sprintf(buffer, "cam.rot.x = %f, cam.rot.y = %f, cam.rot.z = %f",
+		RAD_TO_DEG(cam1.vrot.x), RAD_TO_DEG(cam1.vrot.y), RAD_TO_DEG(cam1.vrot.z));
+	Text_Out(&tdc, buffer, 10, 460);
+
+	sprintf(buffer, "cam.pos.x = %f, cam.pos.y = %f, cam.pos.z = %f",
+		cam1.vpos.x, cam1.vpos.y, cam1.vpos.z);
+	Text_Out(&tdc, buffer, 10, 500);
+
+	int total = 0, active = 0, culled = 0, clipped = 0, backface = 0;
+	for(i = 0; i < (int)obj1.tri_list.length; i++)
+	{
+		total++;
+		if(obj1.tri_list.elems[i].state == TRI_STATE_ACTIVE)
+			active++;
+		if(obj1.tri_list.elems[i].state == TRI_STATE_CULLED)
+			culled++;
+		if(obj1.tri_list.elems[i].state == TRI_STATE_CLIPPED)
+			clipped++;
+		if(obj1.tri_list.elems[i].state == TRI_STATE_BACKFACE)
+			backface++;
+	}
+
+	sprintf(buffer, "total = %d, active = %d, culled = %d, clipped = %d, backface = %d, vers = %d",
+		total, active, culled, clipped, backface, obj1.ver_list_t.length);
+	Text_Out(&tdc, buffer, 10, 540);
 
 	End_Text_DC(&tdc);
 
