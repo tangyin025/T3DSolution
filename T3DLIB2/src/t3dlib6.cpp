@@ -698,18 +698,26 @@ assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x 
 assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
 assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
-			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			//Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			//Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			//Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			Draw_Triangle32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
-			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			//Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			//Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			//Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			Draw_Clipped_Triangle32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 255, 255);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 255, 255);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 255, 255);

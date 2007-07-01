@@ -566,6 +566,63 @@ T3DLIB_API void Draw_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 			error += dx2;
 		}
 	}
+
+	//int x0 = (int)pv0->x;
+	//int y0 = (int)pv0->y;
+	//int x1 = (int)pv1->x;
+	//int y1 = (int)pv1->y;
+
+	//int dx = x1 - x0;
+	//int dy = y1 - y0;
+	//int ix = _32BIT_BYTES;
+	//int	iy = prc->s_pitch;
+	//if(dx < 0)
+	//{
+	//	//NEG(dx);
+	//	//NEG(ix);
+
+	//	NEG(dx);
+	//	NEG(iy);
+	//	int itmp;
+	//	SWAP(x0, x1, itmp);
+	//	SWAP(y0, y1, itmp);
+	//}
+	//if(dy < 0) { NEG(dy); NEG(iy); }
+
+	//unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+	//int dx2 = dx << 1;
+	//int dy2 = dy << 1;
+	//int i, error;
+	//if(dx > dy)
+	//{
+	//	error = dy2 - dx;
+	//	for(i = 0; i <= dx; i++)
+	//	{
+	//		*(unsigned int *)ps = pv0->c_diff;
+	//		if(error >= 0)
+	//		{
+	//			ps += iy;
+	//			error -= dx2;
+	//		}
+	//		ps += ix;
+	//		error += dy2;
+	//	}
+	//}
+	//else
+	//{
+	//	error = dx2 - dy;
+	//	for(i = 0; i <= dy; i++)
+	//	{
+	//		*(unsigned int *)ps = pv0->c_diff;
+	//		if(error >= 0)
+	//		{
+	//			ps += ix;
+	//			error -= dy2;
+	//		}
+	//		ps += iy;
+	//		error += dx2;
+	//	}
+	//}
 }
 
 T3DLIB_API void Draw_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
@@ -2105,4 +2162,462 @@ T3DLIB_API void Draw_Clipped_Rectangle_ZbufferR_TextureAlpha32(const RENDERCONTE
 
 	if(Clip_Rectangle_Texture(prc, &cv0, &cv1))
 		Draw_Rectangle_ZbufferR_TextureAlpha32(prc, &cv0, &cv1);
+}
+
+T3DLIB_API void Draw_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
+{
+	;
+	UNREFERENCED_PARAMETER(prc);
+	UNREFERENCED_PARAMETER(pv0);
+	UNREFERENCED_PARAMETER(pv1);
+	UNREFERENCED_PARAMETER(pv2);
+}
+
+T3DLIB_API void Draw_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
+{
+	const VERTEXV1 * pv_orig = pv0;
+	const VERTEXV1 * ptmp;
+	if(pv0->y > pv1->y)
+		SWAP(pv0, pv1, ptmp);
+	if(pv0->y > pv2->y)
+		SWAP(pv0, pv2, ptmp);
+	if(pv1->y > pv2->y)
+		SWAP(pv1, pv2, ptmp);
+
+	int y0 = (int)pv0->y;
+	int y1 = (int)pv1->y;
+	int y2 = (int)pv2->y;
+
+	REAL ix_0_1 = (pv1->x - pv0->x) / (float)(y1 - y0);
+	REAL ix_0_2 = (pv2->x - pv0->x) / (float)(y2 - y0);
+	REAL ix_1_2 = (pv2->x - pv1->x) / (float)(y2 - y1);
+
+	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
+	REAL lx = pv0->x;
+	REAL rx = pv0->x;
+
+	if(pv1->x < x3)
+	{
+		int y;
+		for(y = y0; y < y1; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			int dx = s_end - s_beg;
+
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			while(dx--)
+			{
+				*(unsigned int *)ps = pv_orig->c_diff;
+				ps += _32BIT_BYTES;
+			}
+
+			lx += ix_0_1;
+			rx += ix_0_2;
+		}
+
+		lx = pv1->x;
+		for(y = y1; y < y2; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			int dx = s_end - s_beg;
+
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			while(dx-- > 0) // !!! > 0
+			{
+				*(unsigned int *)ps = pv_orig->c_diff;
+				ps += _32BIT_BYTES;
+			}
+
+			lx += ix_1_2;
+			rx += ix_0_2;
+		}
+	}
+	else
+	{
+		int y;
+		for(y = y0; y < y1; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			int dx = s_end - s_beg;
+
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			while(dx--)
+			{
+				*(unsigned int *)ps = pv_orig->c_diff;
+				ps += _32BIT_BYTES;
+			}
+
+			lx += ix_0_2;
+			rx += ix_0_1;
+		}
+
+		rx = pv1->x;
+		for(y = y1; y < y2; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			int dx = s_end - s_beg;
+
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			while(dx-- > 0) // !!! > 0
+			{
+				*(unsigned int *)ps = pv_orig->c_diff;
+				ps += _32BIT_BYTES;
+			}
+
+			lx += ix_0_2;
+			rx += ix_1_2;
+		}
+	}
+}
+
+T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
+{
+	;
+	UNREFERENCED_PARAMETER(prc);
+	UNREFERENCED_PARAMETER(pv0);
+	UNREFERENCED_PARAMETER(pv1);
+	UNREFERENCED_PARAMETER(pv2);
+}
+
+T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
+{
+	const VERTEXV1 * pv_orig = pv0;
+	const VERTEXV1 * ptmp;
+	if(pv0->y > pv1->y)
+		SWAP(pv0, pv1, ptmp);
+	if(pv0->y > pv2->y)
+		SWAP(pv0, pv2, ptmp);
+	if(pv1->y > pv2->y)
+		SWAP(pv1, pv2, ptmp);
+
+	int y0 = (int)pv0->y;
+	int y1 = (int)pv1->y;
+	int y2 = (int)pv2->y;
+
+	REAL ix_0_1 = (pv1->x - pv0->x) / (ceil(pv1->y) - ceil(pv0->y));
+	REAL ix_0_2 = (pv2->x - pv0->x) / (ceil(pv2->y) - ceil(pv0->y));
+	REAL ix_1_2 = (pv2->x - pv1->x) / (ceil(pv2->y) - ceil(pv1->y));
+
+	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
+	REAL lx = pv0->x;
+	REAL rx = pv0->x;
+
+	if(pv1->x < x3)
+	{
+		int y_beg, y_end;
+		if(pv0->y < prc->fmin_clip_y && pv1->y > prc->fmin_clip_y) // !!! && pv1->y > prc->fmin_clip_y
+		{
+			y_beg = (int)prc->fmin_clip_y;
+			lx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_1;
+			rx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_2;
+		}
+		else
+		{
+			y_beg = y0;
+		}
+
+		if(pv1->y > prc->fmax_clip_y + 1)
+		{
+			y_end = (int)prc->fmax_clip_y + 1;
+		}
+		else
+		{
+			y_end = y1;
+		}
+
+		int y;
+		if(MIN(lx, pv1->x) < prc->fmin_clip_x || MAX(rx, x3) > prc->fmax_clip_x)
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				if(lx < prc->fmin_clip_x)
+				{
+					s_beg = (int)prc->fmin_clip_x;
+				}
+				else
+				{
+					s_beg = (int)lx;
+				}
+
+				if(rx > prc->fmax_clip_x + 1)
+				{
+					s_end = (int)prc->fmax_clip_x + 1;
+				}
+				else
+				{
+					s_end = (int)rx;
+				}
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_0_1;
+				rx += ix_0_2;
+			}
+		}
+		else
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				s_beg = (int)lx;
+				s_end = (int)rx;
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_0_1;
+				rx += ix_0_2;
+			}
+		}
+
+		lx = pv1->x;
+		if(pv1->y < prc->fmin_clip_y)
+		{
+			y_beg = (int)prc->fmin_clip_y;
+			lx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_1_2;
+			rx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_0_2;
+		}
+		else
+		{
+			y_beg = y1;
+		}
+
+		if(pv2->y > prc->fmax_clip_y + 1)
+		{
+			y_end = (int)prc->fmax_clip_y + 1;
+		}
+		else
+		{
+			y_end = y2;
+		}
+
+		if(MIN(lx, pv2->x) < prc->fmin_clip_x || MAX(rx, pv2->x) > prc->fmax_clip_x)
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				if(lx < prc->fmin_clip_x)
+				{
+					s_beg = (int)prc->fmin_clip_x;
+				}
+				else
+				{
+					s_beg = (int)lx;
+				}
+
+				if(rx > prc->fmax_clip_x + 1)
+				{
+					s_end = (int)prc->fmax_clip_x + 1;
+				}
+				else
+				{
+					s_end = (int)rx;
+				}
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_1_2;
+				rx += ix_0_2;
+			}
+		}
+		else
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				s_beg = (int)lx;
+				s_end = (int)rx;
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_1_2;
+				rx += ix_0_2;
+			}
+		}
+	}
+	else
+	{
+		int y_beg, y_end;
+		if(pv0->y < prc->fmin_clip_y && pv1->y > prc->fmin_clip_y) // !!! && pv1->y > prc->fmin_clip_y
+		{
+			y_beg = (int)prc->fmin_clip_y;
+			lx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_2; // ***
+			rx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_1; // ***
+		}
+		else
+		{
+			y_beg = y0;
+		}
+
+		if(pv1->y > prc->fmax_clip_y + 1)
+		{
+			y_end = (int)prc->fmax_clip_y + 1;
+		}
+		else
+		{
+			y_end = y1;
+		}
+
+		int y;
+		if(MIN(lx, x3) < prc->fmin_clip_x || MAX(rx, pv1->x) > prc->fmax_clip_x)
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				if(lx < prc->fmin_clip_x)
+				{
+					s_beg = (int)prc->fmin_clip_x;
+				}
+				else
+				{
+					s_beg = (int)lx;
+				}
+
+				if(rx > prc->fmax_clip_x + 1)
+				{
+					s_end = (int)prc->fmax_clip_x + 1;
+				}
+				else
+				{
+					s_end = (int)rx;
+				}
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_0_2; // ***
+				rx += ix_0_1; // ***
+			}
+		}
+		else
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				s_beg = (int)lx;
+				s_end = (int)rx;
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_0_2; // ***
+				rx += ix_0_1; // ***
+			}
+		}
+
+		rx = pv1->x;
+		if(pv1->y < prc->fmin_clip_y)
+		{
+			y_beg = (int)prc->fmin_clip_y;
+			lx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_0_2; // ***
+			rx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_1_2; // ***
+		}
+		else
+		{
+			y_beg = y1;
+		}
+
+		if(pv2->y > prc->fmax_clip_y + 1)
+		{
+			y_end = (int)prc->fmax_clip_y + 1;
+		}
+		else
+		{
+			y_end = y2;
+		}
+
+		if(MIN(lx, pv2->x) < prc->fmin_clip_x || MAX(rx, pv2->x) > prc->fmax_clip_x)
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				if(lx < prc->fmin_clip_x)
+				{
+					s_beg = (int)prc->fmin_clip_x;
+				}
+				else
+				{
+					s_beg = (int)lx;
+				}
+
+				if(rx > prc->fmax_clip_x + 1)
+				{
+					s_end = (int)prc->fmax_clip_x + 1;
+				}
+				else
+				{
+					s_end = (int)rx;
+				}
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_0_2; // ***
+				rx += ix_1_2; // ***
+			}
+		}
+		else
+		{
+			for(y = y_beg; y < y_end; y++)
+			{
+				int s_beg, s_end;
+				s_beg = (int)lx;
+				s_end = (int)rx;
+				int dx = s_end - s_beg;
+
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+				while(dx-- > 0)
+				{
+					*(unsigned int *)ps = pv_orig->c_diff;
+					ps += _32BIT_BYTES;
+				}
+
+				lx += ix_0_2; // ***
+				rx += ix_1_2; // ***
+			}
+		}
+	}
 }

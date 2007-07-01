@@ -632,7 +632,7 @@ bool Game_Frame(void)
 	rc.c_dst_alpha = Create_RGBI(155, 155, 155);
 	VECTOR4D_InitXYZW(&v0._4D, 0, 0, 0, 0);
 	VECTOR4D_InitXYZW(&v2._4D, 640, 480, 0, 0);
-	Draw_Rectangle_SrcAlpha(&rc, &v0, &v2);
+	//Draw_Rectangle_SrcAlpha(&rc, &v0, &v2);
 	//Draw_Clipped_Rectangle_SrcAlpha(&rc, &v0, &v2);
 
 	VECTOR4D_InitXYZW(&v0._4D, 150, 50, 0, 0);
@@ -672,7 +672,7 @@ bool Game_Frame(void)
 	v0.c_diff = Create_RGBI(255, 255, 255);
 	rc.c_src_alpha = Create_RGBI(200, 200, 200);
 	rc.c_dst_alpha = Create_RGBI(55, 55, 55);
-	Draw_Rectangle_ZBufferR_SrcAlpha(&rc, &v0, &v1);
+//	Draw_Rectangle_ZBufferR_SrcAlpha(&rc, &v0, &v1);
 
 	VECTOR4D_InitXYZW(&v0._4D, 100, 100, 0, 0);
 	VECTOR4D_InitXYZW(&v1._4D, 200, 300, 0, 0);
@@ -758,6 +758,59 @@ bool Game_Frame(void)
 	//	f3 /= f1;
 	//	f3 /= f1;
 	//}
+
+	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
+	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
+	//v0.c_diff = Create_RGBI(255, 0, 0);
+	//v1.c_diff = Create_RGBI(255, 255, 255);
+	//Draw_Line(&rc, &v0, &v1);
+	//Draw_Line(&rc, &v1, &v0);
+
+	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
+	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
+	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
+	//v0.c_diff = Create_RGBI(0, 255, 0);
+	//Draw_Triangle32(&rc, &v0, &v1, &v2);
+
+	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
+	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
+	//VECTOR4D_InitXYZ(&v2._4D, 500, 350, 0);
+	//v0.c_diff = Create_RGBI(255, 0, 0);
+	//Draw_Triangle32(&rc, &v0, &v1, &v2);
+
+	VECTOR4D_InitXYZW(&v0._4D, 300, 300, 0, 0);
+	VECTOR4D_InitXYZW(&v1._4D, 500, 300, 0, 0);
+	VECTOR4D_InitXYZW(&v2._4D, 500, 500, 0, 0);
+	VECTOR4D_InitXYZW(&v3._4D, 300, 500, 0, 0);
+	v0.c_diff = Create_RGBI(255, 0, 0);
+	v1.c_diff = Create_RGBI(255, 0, 0);
+	v2.c_diff = Create_RGBI(255, 0, 0);
+	v3.c_diff = Create_RGBI(255, 0, 0);
+	Draw_HLine(&rc, &v0, &v1);
+	Draw_VLine(&rc, &v1, &v2);
+	Draw_HLine(&rc, &v2, &v3);
+	Draw_VLine(&rc, &v3, &v0);
+	rc.fmin_clip_x = v0.x + 1;
+	rc.fmax_clip_x = v2.x - 1;
+	rc.fmin_clip_y = v0.y + 1;
+	rc.fmax_clip_y = v2.y - 1;
+	//rc.fmin_clip_x = 0;
+	//rc.fmax_clip_x = 799;
+	//rc.fmin_clip_y = 0;
+	//rc.fmax_clip_y = 599;
+
+	//VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
+	//VECTOR4D_InitXYZ(&v1._4D, 550, 550, 0);
+	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
+
+	VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
+	VECTOR4D_InitXYZ(&v1._4D, 200, 550, 0);
+	VECTOR4D_InitXYZ(&v2._4D, 550, 350, 0);
+	v0.c_diff = Create_RGBI(0, 0, 0);
+	Draw_Triangle32(&rc, &v0, &v1, &v2);
+	v0.c_diff = Create_RGBI(255, 255, 255);
+	Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+
 
 	Unlock_DDSurface(&ddsback);
 	//Blit_DDSurface(&ddsback, &stmp.rect, &stmp, &stmp.rect);
