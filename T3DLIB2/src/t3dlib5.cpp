@@ -2176,100 +2176,110 @@ T3DLIB_API void Draw_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv
 T3DLIB_API void Draw_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 	const VERTEXV1 * pv_orig = pv0;
+
 	const VERTEXV1 * ptmp;
 	if(pv0->y > pv1->y)
 		SWAP(pv0, pv1, ptmp);
+
 	if(pv0->y > pv2->y)
 		SWAP(pv0, pv2, ptmp);
+
 	if(pv1->y > pv2->y)
 		SWAP(pv1, pv2, ptmp);
+
+	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
 
 	int y0 = (int)pv0->y;
 	int y1 = (int)pv1->y;
 	int y2 = (int)pv2->y;
 
-	REAL ix_0_1 = (pv1->x - pv0->x) / (float)(y1 - y0);
-	REAL ix_0_2 = (pv2->x - pv0->x) / (float)(y2 - y0);
-	REAL ix_1_2 = (pv2->x - pv1->x) / (float)(y2 - y1);
+	REAL lx = 0;
+	REAL rx = 0;
+	REAL lx_inc = 0;
+	REAL rx_inc = 0;
 
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	REAL lx = pv0->x;
-	REAL rx = pv0->x;
-
-	if(pv1->x < x3)
+	if(y0 < y1)
 	{
+		lx = pv0->x;
+		rx = pv0->x;
+
+		if(pv1->x < x3)
+		{
+			lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
+			rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+		}
+		else
+		{
+			lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+			rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
+		}
+
 		int y;
 		for(y = y0; y < y1; y++)
 		{
 			int s_beg = (int)lx;
 			int s_end = (int)rx;
-			int dx = s_end - s_beg;
-
 			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-			while(dx--)
+
+			int dx = s_end - s_beg;
+			while(dx-- > 0)
 			{
 				*(unsigned int *)ps = pv_orig->c_diff;
 				ps += _32BIT_BYTES;
 			}
 
-			lx += ix_0_1;
-			rx += ix_0_2;
-		}
-
-		lx = pv1->x;
-		for(y = y1; y < y2; y++)
-		{
-			int s_beg = (int)lx;
-			int s_end = (int)rx;
-			int dx = s_end - s_beg;
-
-			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-			while(dx-- > 0) // !!! > 0
-			{
-				*(unsigned int *)ps = pv_orig->c_diff;
-				ps += _32BIT_BYTES;
-			}
-
-			lx += ix_1_2;
-			rx += ix_0_2;
+			lx += lx_inc;
+			rx += rx_inc;
 		}
 	}
-	else
+
+	if(y1 < y2)
 	{
-		int y;
-		for(y = y0; y < y1; y++)
+		if(y0 < y1)
 		{
-			int s_beg = (int)lx;
-			int s_end = (int)rx;
-			int dx = s_end - s_beg;
-
-			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-			while(dx--)
+			if(pv1->x < x3)
 			{
-				*(unsigned int *)ps = pv_orig->c_diff;
-				ps += _32BIT_BYTES;
+				lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
 			}
-
-			lx += ix_0_2;
-			rx += ix_0_1;
+			else
+			{
+				rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+			}
+		}
+		else
+		{
+			if(pv1->x < x3)
+			{
+				lx = pv1->x;
+				rx = pv0->x;
+				lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+				rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+			}
+			else
+			{
+				lx = pv0->x;
+				rx = pv1->x;
+				lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+				rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+			}
 		}
 
-		rx = pv1->x;
+		int y;
 		for(y = y1; y < y2; y++)
 		{
 			int s_beg = (int)lx;
 			int s_end = (int)rx;
-			int dx = s_end - s_beg;
-
 			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-			while(dx-- > 0) // !!! > 0
+
+			int dx = s_end - s_beg;
+			while(dx-- > 0)
 			{
 				*(unsigned int *)ps = pv_orig->c_diff;
 				ps += _32BIT_BYTES;
 			}
 
-			lx += ix_0_2;
-			rx += ix_1_2;
+			lx += lx_inc;
+			rx += rx_inc;
 		}
 	}
 }
@@ -2286,41 +2296,58 @@ T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTE
 T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 	const VERTEXV1 * pv_orig = pv0;
+
 	const VERTEXV1 * ptmp;
 	if(pv0->y > pv1->y)
 		SWAP(pv0, pv1, ptmp);
+
 	if(pv0->y > pv2->y)
 		SWAP(pv0, pv2, ptmp);
+
 	if(pv1->y > pv2->y)
 		SWAP(pv1, pv2, ptmp);
+
+	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
 
 	int y0 = (int)pv0->y;
 	int y1 = (int)pv1->y;
 	int y2 = (int)pv2->y;
 
-	REAL ix_0_1 = (pv1->x - pv0->x) / (ceil(pv1->y) - ceil(pv0->y));
-	REAL ix_0_2 = (pv2->x - pv0->x) / (ceil(pv2->y) - ceil(pv0->y));
-	REAL ix_1_2 = (pv2->x - pv1->x) / (ceil(pv2->y) - ceil(pv1->y));
+	REAL lx = 0;
+	REAL rx = 0;
+	REAL lx_inc = 0;
+	REAL rx_inc = 0;
 
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	REAL lx = pv0->x;
-	REAL rx = pv0->x;
-
-	if(pv1->x < x3)
+	if(y0 < y1 && prc->fmin_clip_y < y1)
 	{
-		int y_beg, y_end;
-		if(pv0->y < prc->fmin_clip_y && pv1->y > prc->fmin_clip_y) // !!! && pv1->y > prc->fmin_clip_y
+		lx = pv0->x;
+		rx = pv0->x;
+
+		if(pv1->x < x3)
+		{
+			lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
+			rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+		}
+		else
+		{
+			lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+			rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
+		}
+
+		int y_beg;
+		int y_end;
+		if(y0 < prc->fmin_clip_y)
 		{
 			y_beg = (int)prc->fmin_clip_y;
-			lx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_1;
-			rx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_2;
+			lx += (prc->fmin_clip_y - ceil(pv0->y)) * lx_inc;
+			rx += (prc->fmin_clip_y - ceil(pv0->y)) * rx_inc;
 		}
 		else
 		{
 			y_beg = y0;
 		}
 
-		if(pv1->y > prc->fmax_clip_y + 1)
+		if(y1 > prc->fmax_clip_y + 1)
 		{
 			y_end = (int)prc->fmax_clip_y + 1;
 		}
@@ -2330,7 +2357,9 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 		}
 
 		int y;
-		if(MIN(lx, pv1->x) < prc->fmin_clip_x || MAX(rx, x3) > prc->fmax_clip_x)
+		// AB + ^AC
+		if(pv1->x < x3 && (MIN(lx, pv1->x) < prc->fmin_clip_x || MAX(rx, x3) > prc->fmax_clip_x)
+			|| pv1->x >= x3	&& (MIN(lx, x3) < prc->fmin_clip_x || MAX(rx, pv1->x) > prc->fmax_clip_x))
 		{
 			for(y = y_beg; y < y_end; y++)
 			{
@@ -2352,210 +2381,107 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 				{
 					s_end = (int)rx;
 				}
-				int dx = s_end - s_beg;
-
 				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+
+				int dx = s_end - s_beg;
 				while(dx-- > 0)
 				{
 					*(unsigned int *)ps = pv_orig->c_diff;
 					ps += _32BIT_BYTES;
 				}
 
-				lx += ix_0_1;
-				rx += ix_0_2;
+				lx += lx_inc;
+				rx += rx_inc;
 			}
 		}
 		else
 		{
 			for(y = y_beg; y < y_end; y++)
 			{
-				int s_beg, s_end;
-				s_beg = (int)lx;
-				s_end = (int)rx;
-				int dx = s_end - s_beg;
-
+				int s_beg = (int)lx;
+				int s_end = (int)rx;
 				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+
+				int dx = s_end - s_beg;
 				while(dx-- > 0)
 				{
 					*(unsigned int *)ps = pv_orig->c_diff;
 					ps += _32BIT_BYTES;
 				}
 
-				lx += ix_0_1;
-				rx += ix_0_2;
-			}
-		}
-
-		lx = pv1->x;
-		if(pv1->y < prc->fmin_clip_y)
-		{
-			y_beg = (int)prc->fmin_clip_y;
-			lx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_1_2;
-			rx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_0_2;
-		}
-		else
-		{
-			y_beg = y1;
-		}
-
-		if(pv2->y > prc->fmax_clip_y + 1)
-		{
-			y_end = (int)prc->fmax_clip_y + 1;
-		}
-		else
-		{
-			y_end = y2;
-		}
-
-		if(MIN(lx, pv2->x) < prc->fmin_clip_x || MAX(rx, pv2->x) > prc->fmax_clip_x)
-		{
-			for(y = y_beg; y < y_end; y++)
-			{
-				int s_beg, s_end;
-				if(lx < prc->fmin_clip_x)
-				{
-					s_beg = (int)prc->fmin_clip_x;
-				}
-				else
-				{
-					s_beg = (int)lx;
-				}
-
-				if(rx > prc->fmax_clip_x + 1)
-				{
-					s_end = (int)prc->fmax_clip_x + 1;
-				}
-				else
-				{
-					s_end = (int)rx;
-				}
-				int dx = s_end - s_beg;
-
-				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-				while(dx-- > 0)
-				{
-					*(unsigned int *)ps = pv_orig->c_diff;
-					ps += _32BIT_BYTES;
-				}
-
-				lx += ix_1_2;
-				rx += ix_0_2;
-			}
-		}
-		else
-		{
-			for(y = y_beg; y < y_end; y++)
-			{
-				int s_beg, s_end;
-				s_beg = (int)lx;
-				s_end = (int)rx;
-				int dx = s_end - s_beg;
-
-				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-				while(dx-- > 0)
-				{
-					*(unsigned int *)ps = pv_orig->c_diff;
-					ps += _32BIT_BYTES;
-				}
-
-				lx += ix_1_2;
-				rx += ix_0_2;
+				lx += lx_inc;
+				rx += rx_inc;
 			}
 		}
 	}
-	else
+
+	if(y1 < y2 && prc->fmin_clip_y < y2)
 	{
-		int y_beg, y_end;
-		if(pv0->y < prc->fmin_clip_y && pv1->y > prc->fmin_clip_y) // !!! && pv1->y > prc->fmin_clip_y
+		if(y0 < y1)
 		{
-			y_beg = (int)prc->fmin_clip_y;
-			lx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_2; // ***
-			rx += (prc->fmin_clip_y - ceil(pv0->y)) * ix_0_1; // ***
-		}
-		else
-		{
-			y_beg = y0;
-		}
-
-		if(pv1->y > prc->fmax_clip_y + 1)
-		{
-			y_end = (int)prc->fmax_clip_y + 1;
-		}
-		else
-		{
-			y_end = y1;
-		}
-
-		int y;
-		if(MIN(lx, x3) < prc->fmin_clip_x || MAX(rx, pv1->x) > prc->fmax_clip_x)
-		{
-			for(y = y_beg; y < y_end; y++)
+			if(prc->fmin_clip_y < y1)
 			{
-				int s_beg, s_end;
-				if(lx < prc->fmin_clip_x)
+				if(pv1->x < x3)
 				{
-					s_beg = (int)prc->fmin_clip_x;
+					lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
 				}
 				else
 				{
-					s_beg = (int)lx;
+					rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
 				}
-
-				if(rx > prc->fmax_clip_x + 1)
+			}
+			else
+			{
+				if(pv1->x < x3)
 				{
-					s_end = (int)prc->fmax_clip_x + 1;
+					lx = pv1->x;
+					rx = pv0->x;
+					lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+					rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+					rx += (ceil(pv1->y) - ceil(pv0->y)) * rx_inc;
 				}
 				else
 				{
-					s_end = (int)rx;
+					lx = pv0->x;
+					rx = pv1->x;
+					lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+					rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+					lx += (ceil(pv1->y) - ceil(pv0->y)) * lx_inc;
 				}
-				int dx = s_end - s_beg;
-
-				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-				while(dx-- > 0)
-				{
-					*(unsigned int *)ps = pv_orig->c_diff;
-					ps += _32BIT_BYTES;
-				}
-
-				lx += ix_0_2; // ***
-				rx += ix_0_1; // ***
 			}
 		}
 		else
 		{
-			for(y = y_beg; y < y_end; y++)
+			if(pv1->x < x3)
 			{
-				int s_beg, s_end;
-				s_beg = (int)lx;
-				s_end = (int)rx;
-				int dx = s_end - s_beg;
-
-				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-				while(dx-- > 0)
-				{
-					*(unsigned int *)ps = pv_orig->c_diff;
-					ps += _32BIT_BYTES;
-				}
-
-				lx += ix_0_2; // ***
-				rx += ix_0_1; // ***
+				lx = pv1->x;
+				rx = pv0->x;
+				lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+				rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+			}
+			else
+			{
+				lx = pv0->x;
+				rx = pv1->x;
+				lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+				rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
 			}
 		}
 
-		rx = pv1->x;
-		if(pv1->y < prc->fmin_clip_y)
+		int y_beg;
+		int y_end;
+		if(y1 < prc->fmin_clip_y)
 		{
 			y_beg = (int)prc->fmin_clip_y;
-			lx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_0_2; // ***
-			rx += (prc->fmin_clip_y - ceil(pv1->y)) * ix_1_2; // ***
+			lx += (prc->fmin_clip_y - ceil(pv1->y)) * lx_inc;
+			rx += (prc->fmin_clip_y - ceil(pv1->y)) * rx_inc;
 		}
 		else
 		{
 			y_beg = y1;
 		}
 
-		if(pv2->y > prc->fmax_clip_y + 1)
+		if(y2 > prc->fmax_clip_y + 1)
 		{
 			y_end = (int)prc->fmax_clip_y + 1;
 		}
@@ -2564,6 +2490,7 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 			y_end = y2;
 		}
 
+		int y;
 		if(MIN(lx, pv2->x) < prc->fmin_clip_x || MAX(rx, pv2->x) > prc->fmax_clip_x)
 		{
 			for(y = y_beg; y < y_end; y++)
@@ -2586,37 +2513,36 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 				{
 					s_end = (int)rx;
 				}
-				int dx = s_end - s_beg;
-
 				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+
+				int dx = s_end - s_beg;
 				while(dx-- > 0)
 				{
 					*(unsigned int *)ps = pv_orig->c_diff;
 					ps += _32BIT_BYTES;
 				}
 
-				lx += ix_0_2; // ***
-				rx += ix_1_2; // ***
+				lx += lx_inc;
+				rx += rx_inc;
 			}
 		}
 		else
 		{
 			for(y = y_beg; y < y_end; y++)
 			{
-				int s_beg, s_end;
-				s_beg = (int)lx;
-				s_end = (int)rx;
-				int dx = s_end - s_beg;
-
+				int s_beg = (int)lx;
+				int s_end = (int)rx;
 				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+
+				int dx = s_end - s_beg;
 				while(dx-- > 0)
 				{
 					*(unsigned int *)ps = pv_orig->c_diff;
 					ps += _32BIT_BYTES;
 				}
 
-				lx += ix_0_2; // ***
-				rx += ix_1_2; // ***
+				lx += lx_inc;
+				rx += rx_inc;
 			}
 		}
 	}

@@ -803,14 +803,21 @@ bool Game_Frame(void)
 	//VECTOR4D_InitXYZ(&v1._4D, 550, 550, 0);
 	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
 
-	VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
-	VECTOR4D_InitXYZ(&v1._4D, 200, 550, 0);
-	VECTOR4D_InitXYZ(&v2._4D, 550, 350, 0);
+	//VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
+	//VECTOR4D_InitXYZ(&v1._4D, 200, 550, 0);
+	//VECTOR4D_InitXYZ(&v2._4D, 550, 350, 0);
+	//v0.c_diff = Create_RGBI(0, 0, 0);
+	//Draw_Triangle32(&rc, &v0, &v1, &v2);
+	//v0.c_diff = Create_RGBI(255, 255, 255);
+	//Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+
+	VECTOR4D_InitXYZ(&v0._4D, 300, 250, 0);
+	VECTOR4D_InitXYZ(&v1._4D, 500, 200, 0);
+	VECTOR4D_InitXYZ(&v2._4D, 400, 400, 0);
 	v0.c_diff = Create_RGBI(0, 0, 0);
 	Draw_Triangle32(&rc, &v0, &v1, &v2);
 	v0.c_diff = Create_RGBI(255, 255, 255);
 	Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
-
 
 	Unlock_DDSurface(&ddsback);
 	//Blit_DDSurface(&ddsback, &stmp.rect, &stmp, &stmp.rect);
