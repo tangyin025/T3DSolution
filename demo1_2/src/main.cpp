@@ -247,7 +247,7 @@ void Log_Close(void)
 
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)
-#define USE_SYNC_MODE			(0)
+#define USE_SYNC_MODE			(1)
 #define USE_MEMS_MODE			(1)
 
 // ////////////////////////////////////////////////////////////////////////////////////
@@ -589,6 +589,246 @@ bool Game_Frame(void)
 	SURFACEV1 surf;
 	if(!Lock_DDSurface(&ddsback, &surf))
 		return false;
+//	RENDERCONTEXTV1 rc;
+//	rc.s_pbuffer = surf.pbuffer;
+//	rc.s_pitch = surf.pitch;
+//	rc.s_pitch_shift = surf.pitch_shift;
+//	rc.s_color_shift = surf.color_shift;
+//
+//	VERTEXV1 v0, v1, v2, v3;
+//	//memset(&v0, 0, sizeof(v0));
+//	//memset(&v1, 0, sizeof(v1));
+//	//memset(&v2, 0, sizeof(v2));
+//	//memset(&v3, 0, sizeof(v3));
+//	VECTOR4D_InitXYZW(&v0._4D, 100, 100, 0, 0);
+//	VECTOR4D_InitXYZW(&v1._4D, 200, 100, 0, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 200, 200, 0, 0);
+//	VECTOR4D_InitXYZW(&v3._4D, 100, 200, 0, 0);
+//
+//	v0.c_diff = Create_RGBI(255, 0, 0);
+//	v1.c_diff = Create_RGBI(255, 0, 0);
+//	v2.c_diff = Create_RGBI(255, 0, 0);
+//	v3.c_diff = Create_RGBI(255, 0, 0);
+//	//rc.c_ambi = Create_RGBI(255, 0, 0);
+//
+//	Draw_HLine(&rc, &v0, &v1);
+//	Draw_VLine(&rc, &v1, &v2);
+//	Draw_HLine(&rc, &v2, &v3);
+//	Draw_VLine(&rc, &v3, &v0);
+//
+//	VECTOR3D_Add(&v0._4D._3D, 50);
+//	VECTOR3D_Add(&v2._4D._3D, 50);
+//	v0.c_diff = Create_RGBI(0, 255, 255);
+//	//rc.c_ambi = Create_RGBI(0, 255, 255);
+//	//Draw_Rectangle(&rc, &v0, &v2);
+//
+//	rc.fmin_clip_x = 101.0f;
+//	rc.fmax_clip_x = 199.0f;
+//	rc.fmin_clip_y = 101.0f;
+//	rc.fmax_clip_y = 199.0f;
+//	//Draw_Clipped_Rectangle(&rc, &v0, &v2);
+//
+//	rc.c_src_alpha = Create_RGBI(100, 100, 100);
+//	rc.c_dst_alpha = Create_RGBI(155, 155, 155);
+//	VECTOR4D_InitXYZW(&v0._4D, 0, 0, 0, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 640, 480, 0, 0);
+//	//Draw_Rectangle_SrcAlpha(&rc, &v0, &v2);
+//	//Draw_Clipped_Rectangle_SrcAlpha(&rc, &v0, &v2);
+//
+//	VECTOR4D_InitXYZW(&v0._4D, 150, 50, 0, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 250, 200, 0, 0);
+//	////rc.c_ambi = Create_RGBI(255, 255, 255);
+//	v0.c_diff = Create_RGBI(255, 255, 255);
+//	Draw_Clipped_Line(&rc, &v0, &v2);
+//
+//	VECTOR4D_InitXYZW(&v0._4D, 150, 150, 0, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 250, 250, 0, 0);
+//	v0.c_diff = Create_RGBI(0, 255, 0);
+//	Draw_Clipped_HLine_SrcAlpha(&rc, &v0, &v2);
+//	Draw_Clipped_VLine_SrcAlpha(&rc, &v0, &v2);
+//
+//	Clear_ZBuffer(&zbuffer);
+//	rc.z_pbuffer		= zbuffer.pbuffer;
+//	rc.z_pitch			= zbuffer.pitch;
+//	rc.z_pitch_shift	= zbuffer.pitch_shift;
+//	rc.z_color_shift	= zbuffer.color_shift;
+//	VECTOR4D_InitXYZW(&v0._4D, 100, 200, 100, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 300, 500, 100, 0);
+//	v0.c_diff = Create_RGBI(255, 0, 0);
+//	//Draw_Line_ZbufferRW(&rc, &v0, &v2);
+//	VECTOR4D_InitXYZW(&v0._4D, 100, 200, 200, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 300, 500, 50, 0);
+//	v0.c_diff = Create_RGBI(0, 0, 255);
+//	//Draw_Line_ZbufferR_SrcAlpha(&rc, &v0, &v2);
+//	Draw_Line_ZbufferRW(&rc, &v0, &v2);
+//
+//	//Wait_For_VSynchronize(&ddraw);
+//	//static REAL rz = 200;
+//	//if(rz >= 50) rz -= 1;
+//	//else rz = 200;
+//	//VECTOR4D_InitXYZW(&v0._4D, 100, 200, rz, 0);
+//	VECTOR4D_InitXYZW(&v0._4D, 100, 200, 100, 0);
+//	VECTOR4D_InitXYZW(&v1._4D, 300, 500, 0, 0);
+//	v0.c_diff = Create_RGBI(255, 255, 255);
+//	rc.c_src_alpha = Create_RGBI(200, 200, 200);
+//	rc.c_dst_alpha = Create_RGBI(55, 55, 55);
+////	Draw_Rectangle_ZBufferR_SrcAlpha(&rc, &v0, &v1);
+//
+//	VECTOR4D_InitXYZW(&v0._4D, 100, 100, 0, 0);
+//	VECTOR4D_InitXYZW(&v1._4D, 200, 300, 0, 0);
+//	Draw_Clipped_Line_SrcAlpha(&rc, &v0, &v1);
+//	//Draw_Line_SrcAlpha(&rc, &v0, &v1);
+//
+//	VERTEXV1T tv0, tv1;
+//	VECTOR4D_InitXYZW(&tv0._4D, 0, 0, 100, 0);
+//	VECTOR4D_InitXYZW(&tv1._4D, 800, 600, 0, 0);
+//	tv0.u = 0;
+//	tv0.v = 0;
+//	tv1.u = 1 * FIXP16_MAG * texture.width;
+//	tv1.v = 1 * FIXP16_MAG * texture.height;
+//	tv0.c_diff = Create_RGBI(255, 255, 255);
+//	rc.t_pbuffer		= texture.pbuffer;
+//	rc.t_pitch			= texture.pitch;
+//	rc.t_pitch_shift	= texture.pitch_shift;
+//	rc.z_color_shift	= texture.color_shift;
+//	rc.c_src_key		= Create_RGBI(0, 0, 0);
+//	//rc.c_src_alpha		= Create_RGBI(255, 255, 255);
+//	//rc.c_dst_alpha		= Create_RGBI(0, 0, 0);
+//	rc.fmin_clip_x = 101.0f;
+//	rc.fmax_clip_x = 599.0f;
+//	rc.fmin_clip_y = 101.0f;
+//	rc.fmax_clip_y = 499.0f;
+//	//Draw_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
+//	//Draw_Clipped_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
+////	Draw_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
+//	//Draw_Clipped_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
+//	//Draw_Clipped_Rectangle_Texture_ZBufferW(&rc, &tv0, &tv1);
+//	//for(int i = 0; i < texture.height; i++)
+//	//	memcpy(rc.s_pbuffer + (i << rc.s_pitch_shift), texture.pbuffer + (i << texture.pitch_shift), texture.width << texture.color_shift);
+//
+//	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
+//	//VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
+//	//Draw_HLine(&rc);
+//	//Draw_VLine(&rc);
+//	//Draw_Rectangle(&rc);
+//	//rc.c_diff[0] = Create_RGBI(255, 0, 0);
+//	//rc.fmin_clip_x = 101.0f;
+//	//rc.fmax_clip_x = 199.0f;
+//	//rc.fmin_clip_y = 101.0f;
+//	//rc.fmax_clip_y = 199.0f;
+//	////VECTOR2D_InitXY(&rc.v[0]._2D, 200, 130);
+//	////VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
+//	////Draw_Clipped_HLine(&rc);
+//	////VECTOR2D_InitXY(&rc.v[0]._2D, 130, 200);
+//	////VECTOR2D_InitXY(&rc.v[1]._2D, 100, 101);
+//	////Draw_Clipped_VLine(&rc);
+//	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
+//	//VECTOR2D_InitXY(&rc.v[1]._2D, 101, 101);
+//	////Draw_Line(&rc);
+//	////Draw_Clipped_Line(&rc);
+//	//Draw_Clipped_Rectangle(&rc);
+//
+//	////VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
+//	////VECTOR2D_InitXY(&rc.v[1]._2D, 300, 300);
+//	////Draw_Line(&rc);
+//	////VECTOR2D_InitXY(&rc.v[0]._2D, 300, 300);
+//	////VECTOR2D_InitXY(&rc.v[1]._2D, 400, 200);
+//	////Draw_Line(&rc);
+//	////VECTOR2D_InitXY(&rc.v[0]._2D, 400, 200);
+//	////VECTOR2D_InitXY(&rc.v[1]._2D, 200, 200);
+//	////Draw_Line(&rc);
+//
+//	//VECTOR2D_InitXY(&rc.v[0]._2D, 0, 0);
+//	//VECTOR2D_InitXY(&rc.v[1]._2D, 640, 480);
+//	////rc.c_alpha_src = Create_RGBI(255, 255, 255);
+//	////rc.c_alpha_dest = Create_RGBI(0, 0, 0);
+//	//rc.c_diff[0] = Create_RGBI(0, 255, 255);
+//	//rc.c_src_alpha = Create_RGBI(100, 100, 100);
+//	//rc.c_dst_alpha = Create_RGBI(155, 155, 155);
+//	//Draw_Rectangle_SrcAlpha(&rc);
+//	////Draw_Clipped_Rectangle_SrcAlpha(&rc);
+//
+//	//for(int i = 0; i < 100000; i++)
+//	//{
+//	//	float f1 = PI;
+//	//	float f3 = 5.5f;
+//	//	//float f2 = 1.0f / f1;
+//	//	//f3 *= f2;
+//	//	//f3 *= f2;
+//	//	f3 /= f1;
+//	//	f3 /= f1;
+//	//}
+//
+//	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
+//	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
+//	//v0.c_diff = Create_RGBI(255, 0, 0);
+//	//v1.c_diff = Create_RGBI(255, 255, 255);
+//	//Draw_Line(&rc, &v0, &v1);
+//	//Draw_Line(&rc, &v1, &v0);
+//
+//	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
+//	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
+//	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
+//	//v0.c_diff = Create_RGBI(0, 255, 0);
+//	//Draw_Triangle32(&rc, &v0, &v1, &v2);
+//
+//	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
+//	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
+//	//VECTOR4D_InitXYZ(&v2._4D, 500, 350, 0);
+//	//v0.c_diff = Create_RGBI(255, 0, 0);
+//	//Draw_Triangle32(&rc, &v0, &v1, &v2);
+//
+//	VECTOR4D_InitXYZW(&v0._4D, 300, 300, 0, 0);
+//	VECTOR4D_InitXYZW(&v1._4D, 500, 300, 0, 0);
+//	VECTOR4D_InitXYZW(&v2._4D, 500, 500, 0, 0);
+//	VECTOR4D_InitXYZW(&v3._4D, 300, 500, 0, 0);
+//	v0.c_diff = Create_RGBI(255, 0, 0);
+//	v1.c_diff = Create_RGBI(255, 0, 0);
+//	v2.c_diff = Create_RGBI(255, 0, 0);
+//	v3.c_diff = Create_RGBI(255, 0, 0);
+//	Draw_HLine(&rc, &v0, &v1);
+//	Draw_VLine(&rc, &v1, &v2);
+//	Draw_HLine(&rc, &v2, &v3);
+//	Draw_VLine(&rc, &v3, &v0);
+//	rc.fmin_clip_x = v0.x + 1;
+//	rc.fmax_clip_x = v2.x - 1;
+//	rc.fmin_clip_y = v0.y + 1;
+//	rc.fmax_clip_y = v2.y - 1;
+//	//rc.fmin_clip_x = 0;
+//	//rc.fmax_clip_x = 799;
+//	//rc.fmin_clip_y = 0;
+//	//rc.fmax_clip_y = 599;
+//
+//	//VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
+//	//VECTOR4D_InitXYZ(&v1._4D, 550, 550, 0);
+//	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
+//
+//	//VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
+//	//VECTOR4D_InitXYZ(&v1._4D, 200, 550, 0);
+//	//VECTOR4D_InitXYZ(&v2._4D, 550, 350, 0);
+//	//v0.c_diff = Create_RGBI(0, 0, 0);
+//	//Draw_Triangle32(&rc, &v0, &v1, &v2);
+//	//v0.c_diff = Create_RGBI(255, 255, 255);
+//	//Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+//
+//	VECTOR4D_InitXYZ(&v0._4D, 300, 250, 0);
+//	VECTOR4D_InitXYZ(&v1._4D, 500, 200, 0);
+//	VECTOR4D_InitXYZ(&v2._4D, 400, 400, 0);
+//	v0.c_diff = Create_RGBI(0, 0, 0);
+//	Draw_Triangle32(&rc, &v0, &v1, &v2);
+//	v0.c_diff = Create_RGBI(255, 255, 255);
+//	Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+
+	static REAL x = 400, y = 300;
+	if(IS_KEY_DOWN(dikey_state, DIK_UP))
+		y--;
+	else if(IS_KEY_DOWN(dikey_state, DIK_DOWN))
+		y++;
+	if(IS_KEY_DOWN(dikey_state, DIK_LEFT))
+		x--;
+	else if(IS_KEY_DOWN(dikey_state, DIK_RIGHT))
+		x++;
+
 	RENDERCONTEXTV1 rc;
 	rc.s_pbuffer = surf.pbuffer;
 	rc.s_pitch = surf.pitch;
@@ -596,192 +836,11 @@ bool Game_Frame(void)
 	rc.s_color_shift = surf.color_shift;
 
 	VERTEXV1 v0, v1, v2, v3;
-	//memset(&v0, 0, sizeof(v0));
-	//memset(&v1, 0, sizeof(v1));
-	//memset(&v2, 0, sizeof(v2));
-	//memset(&v3, 0, sizeof(v3));
-	VECTOR4D_InitXYZW(&v0._4D, 100, 100, 0, 0);
-	VECTOR4D_InitXYZW(&v1._4D, 200, 100, 0, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 200, 200, 0, 0);
-	VECTOR4D_InitXYZW(&v3._4D, 100, 200, 0, 0);
 
-	v0.c_diff = Create_RGBI(255, 0, 0);
-	v1.c_diff = Create_RGBI(255, 0, 0);
-	v2.c_diff = Create_RGBI(255, 0, 0);
-	v3.c_diff = Create_RGBI(255, 0, 0);
-	//rc.c_ambi = Create_RGBI(255, 0, 0);
-
-	Draw_HLine(&rc, &v0, &v1);
-	Draw_VLine(&rc, &v1, &v2);
-	Draw_HLine(&rc, &v2, &v3);
-	Draw_VLine(&rc, &v3, &v0);
-
-	VECTOR3D_Add(&v0._4D._3D, 50);
-	VECTOR3D_Add(&v2._4D._3D, 50);
-	v0.c_diff = Create_RGBI(0, 255, 255);
-	//rc.c_ambi = Create_RGBI(0, 255, 255);
-	//Draw_Rectangle(&rc, &v0, &v2);
-
-	rc.fmin_clip_x = 101.0f;
-	rc.fmax_clip_x = 199.0f;
-	rc.fmin_clip_y = 101.0f;
-	rc.fmax_clip_y = 199.0f;
-	//Draw_Clipped_Rectangle(&rc, &v0, &v2);
-
-	rc.c_src_alpha = Create_RGBI(100, 100, 100);
-	rc.c_dst_alpha = Create_RGBI(155, 155, 155);
-	VECTOR4D_InitXYZW(&v0._4D, 0, 0, 0, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 640, 480, 0, 0);
-	//Draw_Rectangle_SrcAlpha(&rc, &v0, &v2);
-	//Draw_Clipped_Rectangle_SrcAlpha(&rc, &v0, &v2);
-
-	VECTOR4D_InitXYZW(&v0._4D, 150, 50, 0, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 250, 200, 0, 0);
-	////rc.c_ambi = Create_RGBI(255, 255, 255);
-	v0.c_diff = Create_RGBI(255, 255, 255);
-	Draw_Clipped_Line(&rc, &v0, &v2);
-
-	VECTOR4D_InitXYZW(&v0._4D, 150, 150, 0, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 250, 250, 0, 0);
-	v0.c_diff = Create_RGBI(0, 255, 0);
-	Draw_Clipped_HLine_SrcAlpha(&rc, &v0, &v2);
-	Draw_Clipped_VLine_SrcAlpha(&rc, &v0, &v2);
-
-	Clear_ZBuffer(&zbuffer);
-	rc.z_pbuffer		= zbuffer.pbuffer;
-	rc.z_pitch			= zbuffer.pitch;
-	rc.z_pitch_shift	= zbuffer.pitch_shift;
-	rc.z_color_shift	= zbuffer.color_shift;
-	VECTOR4D_InitXYZW(&v0._4D, 100, 200, 100, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 300, 500, 100, 0);
-	v0.c_diff = Create_RGBI(255, 0, 0);
-	//Draw_Line_ZbufferRW(&rc, &v0, &v2);
-	VECTOR4D_InitXYZW(&v0._4D, 100, 200, 200, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 300, 500, 50, 0);
-	v0.c_diff = Create_RGBI(0, 0, 255);
-	//Draw_Line_ZbufferR_SrcAlpha(&rc, &v0, &v2);
-	Draw_Line_ZbufferRW(&rc, &v0, &v2);
-
-	//Wait_For_VSynchronize(&ddraw);
-	//static REAL rz = 200;
-	//if(rz >= 50) rz -= 1;
-	//else rz = 200;
-	//VECTOR4D_InitXYZW(&v0._4D, 100, 200, rz, 0);
-	VECTOR4D_InitXYZW(&v0._4D, 100, 200, 100, 0);
-	VECTOR4D_InitXYZW(&v1._4D, 300, 500, 0, 0);
-	v0.c_diff = Create_RGBI(255, 255, 255);
-	rc.c_src_alpha = Create_RGBI(200, 200, 200);
-	rc.c_dst_alpha = Create_RGBI(55, 55, 55);
-//	Draw_Rectangle_ZBufferR_SrcAlpha(&rc, &v0, &v1);
-
-	VECTOR4D_InitXYZW(&v0._4D, 100, 100, 0, 0);
-	VECTOR4D_InitXYZW(&v1._4D, 200, 300, 0, 0);
-	Draw_Clipped_Line_SrcAlpha(&rc, &v0, &v1);
-	//Draw_Line_SrcAlpha(&rc, &v0, &v1);
-
-	VERTEXV1T tv0, tv1;
-	VECTOR4D_InitXYZW(&tv0._4D, 0, 0, 100, 0);
-	VECTOR4D_InitXYZW(&tv1._4D, 800, 600, 0, 0);
-	tv0.u = 0;
-	tv0.v = 0;
-	tv1.u = 1 * FIXP16_MAG * texture.width;
-	tv1.v = 1 * FIXP16_MAG * texture.height;
-	tv0.c_diff = Create_RGBI(255, 255, 255);
-	rc.t_pbuffer		= texture.pbuffer;
-	rc.t_pitch			= texture.pitch;
-	rc.t_pitch_shift	= texture.pitch_shift;
-	rc.z_color_shift	= texture.color_shift;
-	rc.c_src_key		= Create_RGBI(0, 0, 0);
-	//rc.c_src_alpha		= Create_RGBI(255, 255, 255);
-	//rc.c_dst_alpha		= Create_RGBI(0, 0, 0);
-	rc.fmin_clip_x = 101.0f;
-	rc.fmax_clip_x = 599.0f;
-	rc.fmin_clip_y = 101.0f;
-	rc.fmax_clip_y = 499.0f;
-	//Draw_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
-	//Draw_Clipped_Rectangle_Texture_SrcKey(&rc, &tv0, &tv1);
-//	Draw_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
-	//Draw_Clipped_Rectangle_ZbufferR_TextureAlpha(&rc, &tv0, &tv1);
-	//Draw_Clipped_Rectangle_Texture_ZBufferW(&rc, &tv0, &tv1);
-	//for(int i = 0; i < texture.height; i++)
-	//	memcpy(rc.s_pbuffer + (i << rc.s_pitch_shift), texture.pbuffer + (i << texture.pitch_shift), texture.width << texture.color_shift);
-
-	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
-	//VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
-	//Draw_HLine(&rc);
-	//Draw_VLine(&rc);
-	//Draw_Rectangle(&rc);
-	//rc.c_diff[0] = Create_RGBI(255, 0, 0);
-	//rc.fmin_clip_x = 101.0f;
-	//rc.fmax_clip_x = 199.0f;
-	//rc.fmin_clip_y = 101.0f;
-	//rc.fmax_clip_y = 199.0f;
-	////VECTOR2D_InitXY(&rc.v[0]._2D, 200, 130);
-	////VECTOR2D_InitXY(&rc.v[1]._2D, 100, 100);
-	////Draw_Clipped_HLine(&rc);
-	////VECTOR2D_InitXY(&rc.v[0]._2D, 130, 200);
-	////VECTOR2D_InitXY(&rc.v[1]._2D, 100, 101);
-	////Draw_Clipped_VLine(&rc);
-	//VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
-	//VECTOR2D_InitXY(&rc.v[1]._2D, 101, 101);
-	////Draw_Line(&rc);
-	////Draw_Clipped_Line(&rc);
-	//Draw_Clipped_Rectangle(&rc);
-
-	////VECTOR2D_InitXY(&rc.v[0]._2D, 200, 200);
-	////VECTOR2D_InitXY(&rc.v[1]._2D, 300, 300);
-	////Draw_Line(&rc);
-	////VECTOR2D_InitXY(&rc.v[0]._2D, 300, 300);
-	////VECTOR2D_InitXY(&rc.v[1]._2D, 400, 200);
-	////Draw_Line(&rc);
-	////VECTOR2D_InitXY(&rc.v[0]._2D, 400, 200);
-	////VECTOR2D_InitXY(&rc.v[1]._2D, 200, 200);
-	////Draw_Line(&rc);
-
-	//VECTOR2D_InitXY(&rc.v[0]._2D, 0, 0);
-	//VECTOR2D_InitXY(&rc.v[1]._2D, 640, 480);
-	////rc.c_alpha_src = Create_RGBI(255, 255, 255);
-	////rc.c_alpha_dest = Create_RGBI(0, 0, 0);
-	//rc.c_diff[0] = Create_RGBI(0, 255, 255);
-	//rc.c_src_alpha = Create_RGBI(100, 100, 100);
-	//rc.c_dst_alpha = Create_RGBI(155, 155, 155);
-	//Draw_Rectangle_SrcAlpha(&rc);
-	////Draw_Clipped_Rectangle_SrcAlpha(&rc);
-
-	//for(int i = 0; i < 100000; i++)
-	//{
-	//	float f1 = PI;
-	//	float f3 = 5.5f;
-	//	//float f2 = 1.0f / f1;
-	//	//f3 *= f2;
-	//	//f3 *= f2;
-	//	f3 /= f1;
-	//	f3 /= f1;
-	//}
-
-	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
-	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
-	//v0.c_diff = Create_RGBI(255, 0, 0);
-	//v1.c_diff = Create_RGBI(255, 255, 255);
-	//Draw_Line(&rc, &v0, &v1);
-	//Draw_Line(&rc, &v1, &v0);
-
-	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
-	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
-	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
-	//v0.c_diff = Create_RGBI(0, 255, 0);
-	//Draw_Triangle32(&rc, &v0, &v1, &v2);
-
-	//VECTOR4D_InitXYZ(&v0._4D, 300, 300, 0);
-	//VECTOR4D_InitXYZ(&v1._4D, 500, 400, 0);
-	//VECTOR4D_InitXYZ(&v2._4D, 500, 350, 0);
-	//v0.c_diff = Create_RGBI(255, 0, 0);
-	//Draw_Triangle32(&rc, &v0, &v1, &v2);
-
-	VECTOR4D_InitXYZW(&v0._4D, 300, 300, 0, 0);
-	VECTOR4D_InitXYZW(&v1._4D, 500, 300, 0, 0);
-	VECTOR4D_InitXYZW(&v2._4D, 500, 500, 0, 0);
-	VECTOR4D_InitXYZW(&v3._4D, 300, 500, 0, 0);
+	VECTOR4D_InitXYZW(&v0._4D, 400 - 100, 300 - 100, 0, 0);
+	VECTOR4D_InitXYZW(&v1._4D, 400 + 100, 300 - 100, 0, 0);
+	VECTOR4D_InitXYZW(&v2._4D, 400 + 100, 300 + 100, 0, 0);
+	VECTOR4D_InitXYZW(&v3._4D, 400 - 100, 300 + 100, 0, 0);
 	v0.c_diff = Create_RGBI(255, 0, 0);
 	v1.c_diff = Create_RGBI(255, 0, 0);
 	v2.c_diff = Create_RGBI(255, 0, 0);
@@ -794,30 +853,35 @@ bool Game_Frame(void)
 	rc.fmax_clip_x = v2.x - 1;
 	rc.fmin_clip_y = v0.y + 1;
 	rc.fmax_clip_y = v2.y - 1;
-	//rc.fmin_clip_x = 0;
-	//rc.fmax_clip_x = 799;
-	//rc.fmin_clip_y = 0;
-	//rc.fmax_clip_y = 599;
 
-	//VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
-	//VECTOR4D_InitXYZ(&v1._4D, 550, 550, 0);
-	//VECTOR4D_InitXYZ(&v2._4D, 200, 350, 0);
+	//VECTOR4D_InitXYZW(&v0._4D, 300, 200, 0, 0);
+	//VECTOR4D_InitXYZW(&v1._4D, 400, 200, 0, 0);
+	//VECTOR4D_InitXYZW(&v2._4D, 300, 100, 0, 0);
 
-	//VECTOR4D_InitXYZ(&v0._4D, 300, 200, 0);
-	//VECTOR4D_InitXYZ(&v1._4D, 200, 550, 0);
-	//VECTOR4D_InitXYZ(&v2._4D, 550, 350, 0);
-	//v0.c_diff = Create_RGBI(0, 0, 0);
+	//v0.c_diff = Create_RGBI(255, 255, 0);
 	//Draw_Triangle32(&rc, &v0, &v1, &v2);
-	//v0.c_diff = Create_RGBI(255, 255, 255);
-	//Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
 
-	VECTOR4D_InitXYZ(&v0._4D, 300, 250, 0);
-	VECTOR4D_InitXYZ(&v1._4D, 500, 200, 0);
-	VECTOR4D_InitXYZ(&v2._4D, 400, 400, 0);
-	v0.c_diff = Create_RGBI(0, 0, 0);
-	Draw_Triangle32(&rc, &v0, &v1, &v2);
-	v0.c_diff = Create_RGBI(255, 255, 255);
-	Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+	VECTOR4D_InitXYZW(&v0._4D, x, y, 0, 0);
+	v1.x = cos(DEG_TO_RAD(0)) * 200 + v0.x;
+	v1.y = sin(DEG_TO_RAD(0)) * 200 + v0.y;
+
+	for(int i = 0; i < 100; i++)
+	{
+		v2.x = cos(DEG_TO_RAD((float)i / 100 * 360)) * 100 + v0.x;
+		v2.y = sin(DEG_TO_RAD((float)i / 100 * 360)) * 100 + v0.y;
+
+
+		if(i % 2)
+		{
+			v0.c_diff = Create_RGBI(0, 0, 0);
+			Draw_Triangle32(&rc, &v0, &v1, &v2);
+
+			v0.c_diff = Create_RGBI(255, 255, 0);
+			Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+		}
+
+		v1 = v2;
+	}
 
 	Unlock_DDSurface(&ddsback);
 	//Blit_DDSurface(&ddsback, &stmp.rect, &stmp, &stmp.rect);

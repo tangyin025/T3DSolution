@@ -247,7 +247,7 @@ void Log_Close(void)
 
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)
-#define USE_SYNC_MODE			(0)
+#define USE_SYNC_MODE			(1)
 #define USE_MEMS_MODE			(1)
 
 // ////////////////////////////////////////////////////////////////////////////////////
@@ -498,12 +498,18 @@ bool Game_Init(void)
 	if(!Create_MsModel_From_File(&model, "Plane1_1.ms3d.txt"))
 		ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
 
+	//if(!Create_MsModel_From_File(&model, "face.ms3d.txt"))
+	//	ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
+
 	// convert msModel to Object4D
 	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Box01"))
 	//	ON_ERROR_RETURN("convert object4d failed");
 
 	if(!Create_Object4D_From_MsModel(&obj1, &model, "Plane01"))
 		ON_ERROR_RETURN("convert object4d failed");
+
+	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Create Face"))
+	//	ON_ERROR_RETURN("convert object4d failed");
 
 	Destroy_MsModel(&model);
 
@@ -742,7 +748,7 @@ bool Game_Frame(void)
 
 	sprintf(buffer, "total = %d, active = %d, culled = %d, clipped = %d, backface = %d, vers = %d",
 		total, active, culled, clipped, backface, obj1.ver_list_t.length);
-	Text_Out(&tdc, buffer, 10, 540);
+//	Text_Out(&tdc, buffer, 10, 540);
 
 	End_Text_DC(&tdc);
 
