@@ -655,17 +655,48 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	rc.s_color_shift = pcam->psurf->color_shift;
 	rc.fmin_clip_x = 0;
 	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width;
-	rc.fmax_clip_y = pcam->viewport.height;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		switch(pobj->tri_list.elems[i].state)
 		{
-			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+		case TRI_STATE_ACTIVE:
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+			//Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			//Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			//Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			Draw_Triangle16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			break;
+
+		case TRI_STATE_CLIPPED:
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+			//Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			//Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			//Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			Draw_Clipped_Triangle16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 255, 255);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 255, 255);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 255, 255);
+			break;
+
+		default:
+			break;
 		}
 	}
 }

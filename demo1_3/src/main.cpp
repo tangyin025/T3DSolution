@@ -247,7 +247,7 @@ void Log_Close(void)
 
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)
-#define USE_SYNC_MODE			(1)
+#define USE_SYNC_MODE			(0)
 #define USE_MEMS_MODE			(1)
 
 // ////////////////////////////////////////////////////////////////////////////////////
@@ -653,9 +653,17 @@ bool Game_Frame(void)
 	rc.s_pitch = surf.pitch;
 	rc.s_pitch_shift = surf.pitch_shift;
 	rc.s_color_shift = surf.color_shift;
+
 	VERTEXV1 v0, v1;
-	VECTOR4D_InitXYZW(&v0._4D, 50-1, 50-1, 0, 0);
-	VECTOR4D_InitXYZW(&v1._4D, 800-50, 600-50, 0, 0);
+	VECTOR4D_InitXYZW(	&v0._4D,
+						(REAL)(resolutions[resolution_index].height / 12 - 1),
+						(REAL)(resolutions[resolution_index].height / 12 - 1),
+						0, 0);
+	VECTOR4D_InitXYZW(&v1._4D,
+						(REAL)(resolutions[resolution_index].width - resolutions[resolution_index].height / 12),
+						(REAL)(resolutions[resolution_index].height - resolutions[resolution_index].height / 12),
+						0, 0);
+
 	v0.c_diff = Create_RGBI(255, 255, 255);
 	v1.c_diff = Create_RGBI(255, 255, 255);
 	Draw_HLine(&rc, &v0, &v1);
@@ -726,11 +734,11 @@ bool Game_Frame(void)
 
 	sprintf(buffer, "cam.rot.x = %f, cam.rot.y = %f, cam.rot.z = %f",
 		RAD_TO_DEG(cam1.vrot.x), RAD_TO_DEG(cam1.vrot.y), RAD_TO_DEG(cam1.vrot.z));
-	Text_Out(&tdc, buffer, 10, 460);
+	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 120);
 
 	sprintf(buffer, "cam.pos.x = %f, cam.pos.y = %f, cam.pos.z = %f",
 		cam1.vpos.x, cam1.vpos.y, cam1.vpos.z);
-	Text_Out(&tdc, buffer, 10, 500);
+	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 80);
 
 	int total = 0, active = 0, culled = 0, clipped = 0, backface = 0;
 	for(i = 0; i < (int)obj1.tri_list.length; i++)
@@ -748,7 +756,7 @@ bool Game_Frame(void)
 
 	sprintf(buffer, "total = %d, active = %d, culled = %d, clipped = %d, backface = %d, vers = %d",
 		total, active, culled, clipped, backface, obj1.ver_list_t.length);
-//	Text_Out(&tdc, buffer, 10, 540);
+	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 40);
 
 	End_Text_DC(&tdc);
 
