@@ -712,6 +712,8 @@ bool Game_Frame(void)
 
 	Draw_Object4D(&obj1, &cam1);
 
+	//Draw_Object4D_Wire(&obj1, &cam1);
+
 	Unlock_DDSurface(&ddsback);
 
 	// ================================================================================

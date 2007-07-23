@@ -106,6 +106,39 @@ ON_ERROR:
 	return false;
 }
 
+typedef struct T3DLIB_API CAM4DV1_TYP
+{
+	CAM4DV1_MODE	mode;
+	MATRIX4X4		mcam;
+	VECTOR4D		vpos;
+	VECTOR4D		vrot;
+	VECTOR4D		vtag;
+	VECTOR4D		u;
+	VECTOR4D		v;
+	VECTOR4D		n;
+	REAL			fov;
+	REAL			min_clip_z;
+	REAL			max_clip_z;
+
+	struct VIEWPORT_TYP
+	{
+		int			x, y;
+		REAL		width, height;
+
+	} viewport;
+
+	struct VIEWPLANE_TYP
+	{
+		//REAL		dist;
+		REAL		width, height;
+
+	} viewplane;
+
+	SURFACEV1 *		psurf;
+	ZBUFFERV1 *		pzbuf;
+
+} CAM4DV1, * CAM4DV1_PTR;
+
 typedef struct T3DLIB_API MATERIALV1_TYP
 {
 	unsigned int	state;
@@ -142,6 +175,7 @@ typedef struct TRIANGLEV1_TYP
 	};
 
 } TRIANGLEV1, * TRIANGLEV1_PTR;
+#pragma warning(default : 4201)
 
 typedef struct T3DLIB_API ARRAYV1<VECTOR4D> NOR_ARRAYV1, * NOR_ARRAYV1_PTR;
 
@@ -168,44 +202,26 @@ typedef struct T3DLIB_API OBJECT4DV1_TYP
 
 } OBJECT4DV1, * OBJECT4DV1_PTR;
 
-typedef struct T3DLIB_API CAM4DV1_TYP
-{
-	CAM4DV1_MODE	mode;
-	MATRIX4X4		mcam;
-	VECTOR4D		vpos;
-	VECTOR4D		vrot;
-	VECTOR4D		vtag;
-	VECTOR4D		u;
-	VECTOR4D		v;
-	VECTOR4D		n;
-	REAL			fov;
-	REAL			min_clip_z;
-	REAL			max_clip_z;
-
-	struct VIEWPORT_TYP
-	{
-		int			x, y;
-		REAL		width, height;
-
-	} viewport;
-
-	struct VIEWPLANE_TYP
-	{
-		//REAL		dist;
-		REAL		width, height;
-
-	} viewplane;
-
-	SURFACEV1 *		psurf;
-	ZBUFFERV1 *		pzbuf;
-
-} CAM4DV1, * CAM4DV1_PTR;
-#pragma warning(default : 4201)
-
 extern T3DLIB_API bool (* Create_Material_From_MsModel)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
 extern T3DLIB_API void (* Draw_Object4D)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+extern T3DLIB_API void (* Draw_Object4D_Wire)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API bool Init_T3dlib6(int bpp);
+
+T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
+
+T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *		pcam,
+									CAM4DV1_MODE	mode,
+									REAL			fov,
+									REAL			min_clip_z,
+									REAL			max_clip_z,
+									SURFACEV1 *		psurf,
+									ZBUFFERV1 *		pzbuf,
+									int				fix_mode = FIX_MODE_VIEWPORT_WIDTH);
+
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq);
+
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode);
 
 T3DLIB_API bool Create_Material_From_MsModel16(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
 
@@ -225,6 +241,8 @@ T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj);
 T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj);
 
 T3DLIB_API void World_To_Camera_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+//
+//T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
 
 T3DLIB_API void Clip_Triangle_XPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
 
@@ -245,22 +263,9 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
-//
-//T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
 
-T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
+T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
-T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *		pcam,
-									CAM4DV1_MODE	mode,
-									REAL			fov,
-									REAL			min_clip_z,
-									REAL			max_clip_z,
-									SURFACEV1 *		psurf,
-									ZBUFFERV1 *		pzbuf,
-									int				fix_mode = FIX_MODE_VIEWPORT_WIDTH);
-
-T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq);
-
-T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode);
+T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 #endif // __T3DLIB6_H__
