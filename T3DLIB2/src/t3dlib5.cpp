@@ -39,7 +39,9 @@ T3DLIB_API void (* Draw_Clipped_Rectangle_Texture_ZBufferW)(const RENDERCONTEXTV
 T3DLIB_API void (* Draw_Clipped_Rectangle_ZBufferR_SrcAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle_ZbufferR_TextureAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
 T3DLIB_API void (* Draw_Triangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
+T3DLIB_API void (* Draw_Triangle_Gouraud_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
+T3DLIB_API void (* Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 
 T3DLIB_API bool Init_T3dlib5(int bpp)
 {
@@ -75,7 +77,9 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Clipped_Rectangle_ZBufferR_SrcAlpha	= Draw_Clipped_Rectangle_ZBufferR_SrcAlpha16;
 		Draw_Clipped_Rectangle_ZbufferR_TextureAlpha	= Draw_Clipped_Rectangle_ZbufferR_TextureAlpha16;
 		Draw_Triangle						= Draw_Triangle16;
+		Draw_Triangle_Gouraud_Texture_ZBufferRW	= Draw_Triangle_Gouraud_Texture_ZBufferRW16;
 		Draw_Clipped_Triangle				= Draw_Clipped_Triangle16;
+		Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW	= Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16;
 		break;
 
 	case 32:
@@ -108,7 +112,9 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Clipped_Rectangle_ZBufferR_SrcAlpha	= Draw_Clipped_Rectangle_ZBufferR_SrcAlpha32;
 		Draw_Clipped_Rectangle_ZbufferR_TextureAlpha	= Draw_Clipped_Rectangle_ZbufferR_TextureAlpha32;
 		Draw_Triangle						= Draw_Triangle32;
+		Draw_Triangle_Gouraud_Texture_ZBufferRW	= Draw_Triangle_Gouraud_Texture_ZBufferRW32;
 		Draw_Clipped_Triangle				= Draw_Clipped_Triangle32;
+		Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW	= Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32;
 		break;
 
 	default:
@@ -2193,8 +2199,8 @@ T3DLIB_API void Draw_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv
 		REAL rx = pv0->x;
 		REAL lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
 		REAL rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-		int y;
 
+		int y;
 		for(y = y0; y < y1; y++)
 		{
 			int s_beg = (int)lx;
@@ -2238,8 +2244,8 @@ T3DLIB_API void Draw_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv
 		REAL rx = pv0->x;
 		REAL lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
 		REAL rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-		int y;
 
+		int y;
 		for(y = y0; y < y1; y++)
 		{
 			int s_beg = (int)lx;
@@ -2302,8 +2308,8 @@ T3DLIB_API void Draw_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv
 		REAL rx = pv0->x;
 		REAL lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
 		REAL rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-		int y;
 
+		int y;
 		for(y = y0; y < y1; y++)
 		{
 			int s_beg = (int)lx;
@@ -2347,8 +2353,8 @@ T3DLIB_API void Draw_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv
 		REAL rx = pv0->x;
 		REAL lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
 		REAL rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-		int y;
 
+		int y;
 		for(y = y0; y < y1; y++)
 		{
 			int s_beg = (int)lx;
@@ -2384,6 +2390,487 @@ T3DLIB_API void Draw_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv
 
 			lx += lx_inc;
 			rx += rx_inc;
+		}
+	}
+}
+
+T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+	Draw_Triangle16(prc, &pv0->_VERTEXV1, &pv1->_VERTEXV1, &pv2->_VERTEXV1);
+	;
+	UNREFERENCED_PARAMETER(prc);
+	UNREFERENCED_PARAMETER(pv0);
+	UNREFERENCED_PARAMETER(pv1);
+	UNREFERENCED_PARAMETER(pv2);
+}
+
+T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+	const VERTEXV1T * pv_orig = pv0;
+	const VERTEXV1T * ptmp;
+
+	if(pv0->y > pv1->y)
+		SWAP(pv0, pv1, ptmp);
+	if(pv0->y > pv2->y)
+		SWAP(pv0, pv2, ptmp);
+	if(pv1->y > pv2->y)
+		SWAP(pv1, pv2, ptmp);
+
+	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
+	int y0 = (int)pv0->y;
+	int y1 = (int)pv1->y;
+	int y2 = (int)pv2->y;
+
+	if(pv1->x < x3)
+	{
+		REAL lx = pv0->x;
+		REAL rx = pv0->x;
+		REAL lx_inc, rx_inc;
+
+		FIXP16 lu = pv0->u;
+		FIXP16 lv = pv0->v;
+		FIXP16 ru = pv0->u;
+		FIXP16 rv = pv0->v;
+		FIXP16 lu_inc, lv_inc;
+		FIXP16 ru_inc, rv_inc;
+
+		VECTOR4DI lc, lc_inc;
+		VECTOR4DI rc, rc_inc;
+		VECTOR4DI_InitXYZW( &lc,
+						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+		VECTOR4DI_InitXYZW( &rc,
+						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+
+		FIXP28 lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+		FIXP28 rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+		FIXP28 lz_inc, rz_inc;
+
+		if(y1 > y0)
+		{
+			lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
+
+			lu_inc = (pv1->u - pv0->u) / (y1 - y0);
+			lv_inc = (pv1->v - pv0->v) / (y1 - y0);
+
+			VECTOR4DI_Div( VECTOR4DI_InitXYZW( &lc_inc,
+							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0), y1 - y0);
+
+			lz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
+		}
+
+		if(y2 > y0)
+		{
+			rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+
+			ru_inc = (pv2->u - pv0->u) / (y2 - y0);
+			rv_inc = (pv2->v - pv0->v) / (y2 - y0);
+
+			VECTOR4DI_Div( VECTOR4DI_InitXYZW( &rc_inc,
+							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0), y2 - y0);
+
+			rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
+		}
+
+		int y;
+		for(y = y0; y < y1; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			int dx = s_end - s_beg;
+
+			FIXP16 u_beg = lu;
+			FIXP16 v_beg = lv;
+			FIXP16 du, dv;
+
+			VECTOR4DI c_beg = lc;
+			VECTOR4DI dc;
+
+			FIXP28 z_beg = lz;
+			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
+			FIXP28 dz;
+
+			if(dx > 0)
+			{
+				du = (ru - lu) / dx;
+				dv = (rv - lv) / dx;
+
+				VECTOR4DI_Div(VECTOR4DI_Sub(&dc, &rc, &lc), dx);
+
+				dz = (rz - lz) / dx;
+			}
+
+			while(dx-- > 0)
+			{
+				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					//*(unsigned int *)ps = *(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift));
+
+					//*(unsigned int *)ps = _RGB32BIT(c_beg.x >> FIXP16_SHIFT, c_beg.y >> FIXP16_SHIFT, c_beg.z >> FIXP16_SHIFT);
+
+					*(unsigned int *)ps = _RGB32BIT(
+							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
+				}
+
+				ps += _32BIT_BYTES;
+
+				u_beg += du;
+				v_beg += dv;
+
+				VECTOR4DI_Add(&c_beg, &dc);
+
+				z_beg += dz;
+				pz += _ZBUFF_BYTES;
+			}
+
+			lx += lx_inc;
+			rx += rx_inc;
+
+			lu += lu_inc;
+			lv += lv_inc;
+			ru += ru_inc;
+			rv += rv_inc;
+
+			VECTOR4DI_Add(&lc, &lc_inc);
+			VECTOR4DI_Add(&rc, &rc_inc);
+
+			lz += lz_inc;
+			rz += rz_inc;
+		}
+
+		lx = pv1->x;
+
+		lu = pv1->u;
+		lv = pv1->v;
+
+		VECTOR4DI_InitXYZW( &lc,
+						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
+
+		lz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
+
+		if(y2 > y1)
+		{
+			lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+
+			lu_inc = (pv2->u - pv1->u) / (y2 - y1);
+			lv_inc = (pv2->v - pv1->v) / (y2 - y1);
+
+			VECTOR4DI_Div( VECTOR4DI_InitXYZW( &lc_inc,
+							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0), y2 - y1);
+
+			lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
+		}
+
+		for(y = y1; y < y2; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			int dx = s_end - s_beg;
+
+			FIXP16 u_beg = lu;
+			FIXP16 v_beg = lv;
+			FIXP16 du, dv;
+
+			VECTOR4DI c_beg = lc;
+			VECTOR4DI dc;
+
+			FIXP28 z_beg = lz;
+			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
+			FIXP28 dz;
+
+			if(dx > 0)
+			{
+				du = (ru - lu) / dx;
+				dv = (rv - lv) / dx;
+
+				VECTOR4DI_Div(VECTOR4DI_Sub(&dc, &rc, &lc), dx);
+
+				dz = (rz - lz) / dx;
+			}
+
+			while(dx-- > 0)
+			{
+				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					//*(unsigned int *)ps = *(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift));
+
+					//*(unsigned int *)ps = _RGB32BIT(c_beg.x >> FIXP16_SHIFT, c_beg.y >> FIXP16_SHIFT, c_beg.z >> FIXP16_SHIFT);
+
+					*(unsigned int *)ps = _RGB32BIT(
+							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
+				}
+
+				ps += _32BIT_BYTES;
+
+				u_beg += du;
+				v_beg += dv;
+
+				VECTOR4DI_Add(&c_beg, &dc);
+
+				z_beg += dz;
+				pz += _ZBUFF_BYTES;
+			}
+
+			lx += lx_inc;
+			rx += rx_inc;
+
+			lu += lu_inc;
+			lv += lv_inc;
+			ru += ru_inc;
+			rv += rv_inc;
+
+			VECTOR4DI_Add(&lc, &lc_inc);
+			VECTOR4DI_Add(&rc, &rc_inc);
+
+			lz += lz_inc;
+			rz += rz_inc;
+		}
+	}
+	else
+	{
+		REAL lx = pv0->x;
+		REAL rx = pv0->x;
+		REAL lx_inc, rx_inc;
+
+		FIXP16 lu = pv0->u;
+		FIXP16 lv = pv0->v;
+		FIXP16 ru = pv0->u;
+		FIXP16 rv = pv0->v;
+		FIXP16 lu_inc, lv_inc;
+		FIXP16 ru_inc, rv_inc;
+
+		VECTOR4DI lc, lc_inc;
+		VECTOR4DI rc, rc_inc;
+		VECTOR4DI_InitXYZW( &lc,
+						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+		VECTOR4DI_InitXYZW( &rc,
+						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+
+		FIXP28 lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+		FIXP28 rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+		FIXP28 lz_inc, rz_inc;
+
+		if(y2 > y0)
+		{
+			lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
+
+			lu_inc = (pv2->u - pv0->u) / (y2 - y0);
+			lv_inc = (pv2->v - pv0->v) / (y2 - y0);
+
+			VECTOR4DI_Div( VECTOR4DI_InitXYZW( &lc_inc,
+							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0), y2 - y0);
+
+			lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
+		}
+
+		if(y1 > y0)
+		{
+			rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
+
+			ru_inc = (pv1->u - pv0->u) / (y1 - y0);
+			rv_inc = (pv1->v - pv0->v) / (y1 - y0);
+
+			VECTOR4DI_Div( VECTOR4DI_InitXYZW( &rc_inc,
+							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0), y1 - y0);
+
+			rz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
+		}
+
+		int y;
+		for(y = y0; y < y1; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			int dx = s_end - s_beg;
+
+			FIXP16 u_beg = lu;
+			FIXP16 v_beg = lv;
+			FIXP16 du, dv;
+
+			VECTOR4DI c_beg = lc;
+			VECTOR4DI dc;
+
+			FIXP28 z_beg = lz;
+			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
+			FIXP28 dz;
+
+			if(dx > 0)
+			{
+				du = (ru - lu) / dx;
+				dv = (rv - lv) / dx;
+
+				VECTOR4DI_Div(VECTOR4DI_Sub(&dc, &rc, &lc), dx);
+
+				dz = (rz - lz) / dx;
+			}
+
+			while(dx-- > 0)
+			{
+				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					//*(unsigned int *)ps = *(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift));
+
+					//*(unsigned int *)ps = _RGB32BIT(c_beg.x >> FIXP16_SHIFT, c_beg.y >> FIXP16_SHIFT, c_beg.z >> FIXP16_SHIFT);
+
+					*(unsigned int *)ps = _RGB32BIT(
+							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
+				}
+
+				ps += _32BIT_BYTES;
+
+				u_beg += du;
+				v_beg += dv;
+
+				VECTOR4DI_Add(&c_beg, &dc);
+
+				z_beg += dz;
+				pz += _ZBUFF_BYTES;
+			}
+
+			lx += lx_inc;
+			rx += rx_inc;
+
+			lu += lu_inc;
+			lv += lv_inc;
+			ru += ru_inc;
+			rv += rv_inc;
+
+			VECTOR4DI_Add(&lc, &lc_inc);
+			VECTOR4DI_Add(&rc, &rc_inc);
+
+			lz += lz_inc;
+			rz += rz_inc;
+		}
+
+		rx = pv1->x;
+
+		ru = pv1->u;
+		rv = pv1->v;
+
+		VECTOR4DI_InitXYZW( &rc,
+						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
+						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
+
+		rz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
+
+		if(y2 > y1)
+		{
+			rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
+
+			ru_inc = (pv2->u - pv1->u) / (y2 - y1);
+			rv_inc = (pv2->v - pv1->v) / (y2 - y1);
+
+			VECTOR4DI_Div( VECTOR4DI_InitXYZW( &rc_inc,
+							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
+							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0), y2 - y1);
+
+			rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
+		}
+
+		for(y = y1; y < y2; y++)
+		{
+			int s_beg = (int)lx;
+			int s_end = (int)rx;
+			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+			int dx = s_end - s_beg;
+
+			FIXP16 u_beg = lu;
+			FIXP16 v_beg = lv;
+			FIXP16 du, dv;
+
+			VECTOR4DI c_beg = lc;
+			VECTOR4DI dc;
+
+			FIXP28 z_beg = lz;
+			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
+			FIXP28 dz;
+
+			if(dx > 0)
+			{
+				du = (ru - lu) / dx;
+				dv = (rv - lv) / dx;
+
+				VECTOR4DI_Div(VECTOR4DI_Sub(&dc, &rc, &lc), dx);
+
+				dz = (rz - lz) / dx;
+			}
+
+			while(dx-- > 0)
+			{
+				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					//*(unsigned int *)ps = *(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift));
+
+					//*(unsigned int *)ps = _RGB32BIT(c_beg.x >> FIXP16_SHIFT, c_beg.y >> FIXP16_SHIFT, c_beg.z >> FIXP16_SHIFT);
+
+					*(unsigned int *)ps = _RGB32BIT(
+							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
+				}
+
+				ps += _32BIT_BYTES;
+
+				u_beg += du;
+				v_beg += dv;
+
+				VECTOR4DI_Add(&c_beg, &dc);
+
+				z_beg += dz;
+				pz += _ZBUFF_BYTES;
+			}
+
+			lx += lx_inc;
+			rx += rx_inc;
+
+			lu += lu_inc;
+			lv += lv_inc;
+			ru += ru_inc;
+			rv += rv_inc;
+
+			VECTOR4DI_Add(&lc, &lc_inc);
+			VECTOR4DI_Add(&rc, &rc_inc);
+
+			lz += lz_inc;
+			rz += rz_inc;
 		}
 	}
 }
@@ -2968,4 +3455,24 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 			}
 		}
 	}
+}
+
+T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+	Draw_Clipped_Triangle16(prc, &pv0->_VERTEXV1, &pv1->_VERTEXV1, &pv2->_VERTEXV1);
+	;
+	UNREFERENCED_PARAMETER(prc);
+	UNREFERENCED_PARAMETER(pv0);
+	UNREFERENCED_PARAMETER(pv1);
+	UNREFERENCED_PARAMETER(pv2);
+}
+
+T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+	Draw_Clipped_Triangle32(prc, &pv0->_VERTEXV1, &pv1->_VERTEXV1, &pv2->_VERTEXV1);
+	;
+	UNREFERENCED_PARAMETER(prc);
+	UNREFERENCED_PARAMETER(pv0);
+	UNREFERENCED_PARAMETER(pv1);
+	UNREFERENCED_PARAMETER(pv2);
 }

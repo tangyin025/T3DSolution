@@ -247,7 +247,7 @@ void Log_Close(void)
 
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)
-#define USE_SYNC_MODE			(1)
+#define USE_SYNC_MODE			(0)
 #define USE_MEMS_MODE			(1)
 
 // ////////////////////////////////////////////////////////////////////////////////////
@@ -589,6 +589,7 @@ bool Game_Frame(void)
 	SURFACEV1 surf;
 	if(!Lock_DDSurface(&ddsback, &surf))
 		return false;
+//
 //	RENDERCONTEXTV1 rc;
 //	rc.s_pbuffer = surf.pbuffer;
 //	rc.s_pitch = surf.pitch;
@@ -835,7 +836,7 @@ bool Game_Frame(void)
 	rc.s_pitch_shift = surf.pitch_shift;
 	rc.s_color_shift = surf.color_shift;
 
-	VERTEXV1 v0, v1, v2, v3;
+	VERTEXV1T v0, v1, v2, v3;
 
 	VECTOR4D_InitXYZW(&v0._4D, 400 - 100, 300 - 100, 0, 0);
 	VECTOR4D_InitXYZW(&v1._4D, 400 + 100, 300 - 100, 0, 0);
@@ -845,10 +846,10 @@ bool Game_Frame(void)
 	v1.c_diff = Create_RGBI(255, 0, 0);
 	v2.c_diff = Create_RGBI(255, 0, 0);
 	v3.c_diff = Create_RGBI(255, 0, 0);
-	Draw_HLine(&rc, &v0, &v1);
-	Draw_VLine(&rc, &v1, &v2);
-	Draw_HLine(&rc, &v2, &v3);
-	Draw_VLine(&rc, &v3, &v0);
+	Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+	Draw_VLine(&rc, &v1._VERTEXV1, &v2._VERTEXV1);
+	Draw_HLine(&rc, &v2._VERTEXV1, &v3._VERTEXV1);
+	Draw_VLine(&rc, &v3._VERTEXV1, &v0._VERTEXV1);
 	rc.fmin_clip_x = v0.x + 1;
 	rc.fmax_clip_x = v2.x - 1;
 	rc.fmin_clip_y = v0.y + 1;
@@ -861,27 +862,92 @@ bool Game_Frame(void)
 	//v0.c_diff = Create_RGBI(255, 255, 0);
 	//Draw_Triangle32(&rc, &v0, &v1, &v2);
 
+	rc.t_pbuffer = texture.pbuffer;
+	rc.t_pitch = texture.pitch;
+	rc.t_pitch_shift = texture.pitch_shift;
+	rc.t_color_shift = texture.color_shift;
+
+	Clear_ZBuffer(&zbuffer);
+	rc.z_pbuffer		= zbuffer.pbuffer;
+	rc.z_pitch			= zbuffer.pitch;
+	rc.z_pitch_shift	= zbuffer.pitch_shift;
+	rc.z_color_shift	= zbuffer.color_shift;
+
+	const int t_num = 100;
+	const int t_rad = 100;
+
 	VECTOR4D_InitXYZW(&v0._4D, x, y, 0, 0);
-	v1.x = cos(DEG_TO_RAD(0)) * 200 + v0.x;
-	v1.y = sin(DEG_TO_RAD(0)) * 200 + v0.y;
+	v0.u = texture.width * FIXP16_MAG / 2;
+	v0.v = texture.height * FIXP16_MAG / 2;
 
-	for(int i = 0; i < 100; i++)
+	v1.x = cos(DEG_TO_RAD(0)) * t_rad + v0.x;
+	v1.y = sin(DEG_TO_RAD(0)) * t_rad + v0.y;
+
+	v1.u = (FIXP16)((cos(DEG_TO_RAD(0)) + 1) / 2 * texture.width * FIXP16_MAG);
+	v1.v = (FIXP16)((sin(DEG_TO_RAD(0)) + 1) / 2 * texture.height * FIXP16_MAG);
+
+	v0.c_diff = Create_RGBI(255, 255, 255);
+	v1.c_diff = Create_RGBI(255, 255, 255);
+	v2.c_diff = Create_RGBI(255, 255, 255);
+
+	for(int i = 1; i <= t_num; i++)
 	{
-		v2.x = cos(DEG_TO_RAD((float)i / 100 * 360)) * 100 + v0.x;
-		v2.y = sin(DEG_TO_RAD((float)i / 100 * 360)) * 100 + v0.y;
+		v2.x = cos(DEG_TO_RAD((float)i / t_num * 360)) * t_rad + v0.x;
+		v2.y = sin(DEG_TO_RAD((float)i / t_num * 360)) * t_rad + v0.y; // note: the y axis was reverted!
 
+		v2.u = (FIXP16)((cos(DEG_TO_RAD((float)i / t_num * 360)) + 1) / 2 * texture.width * FIXP16_MAG);
+		v2.v = (FIXP16)((sin(DEG_TO_RAD((float)i / t_num * 360)) + 1) / 2 * texture.height * FIXP16_MAG);
 
 		if(i % 2)
 		{
-			v0.c_diff = Create_RGBI(0, 0, 0);
-			Draw_Triangle32(&rc, &v0, &v1, &v2);
+			//Draw_Triangle(&rc, &v0._VERTEXV1, &v1._VERTEXV1, &v2._VERTEXV1);
+			Draw_Triangle_Gouraud_Texture_ZBufferRW(&rc, &v0, &v1, &v2);
 
-			v0.c_diff = Create_RGBI(255, 255, 0);
-			Draw_Clipped_Triangle32(&rc, &v0, &v1, &v2);
+			//Draw_Clipped_Triangle(&rc, &v0, &v1, &v2);
+			//Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW(&rc, &v0, &v1, &v2);
 		}
 
 		v1 = v2;
 	}
+
+	//VECTOR4D_InitXYZ(&v0._4D, 100, 200, 10);
+	//VECTOR4D_InitXYZ(&v1._4D, 300, 400, 10);
+	//v0.u = 0, v0.v = 0;
+	//v1.u = texture.width * FIXP16_MAG;
+	//v1.v = texture.height * FIXP16_MAG;
+	//rc.c_src_key = 0;
+	//Draw_Rectangle_Texture_ZBufferW(&rc, &v0, &v1);
+
+	////VECTOR4D_InitXYZ(&v0._4D, 400, 200, 0);
+	////VECTOR4D_InitXYZ(&v1._4D, 300, 400, 0);
+	////VECTOR4D_InitXYZ(&v2._4D, 500, 400, 0);
+
+	////VECTOR4D_InitXYZ(&v0._4D, 400, 10, 500);
+	////VECTOR4D_InitXYZ(&v1._4D, 10, 590, 50);
+	////VECTOR4D_InitXYZ(&v2._4D, 790, 590, 500);
+
+	////v0.u = texture.width << FIXP16_SHIFT >> 1;
+	////v0.v = 0;
+	////v1.u = 0;
+	////v1.v = texture.height << FIXP16_SHIFT;
+	////v2.u = texture.width << FIXP16_SHIFT;
+	////v2.v = texture.height << FIXP16_SHIFT;
+
+	//VECTOR4D_InitXYZ(&v0._4D, 10, 200, 500);
+	//VECTOR4D_InitXYZ(&v1._4D, 790, 10, 50);
+	//VECTOR4D_InitXYZ(&v2._4D, 400, 590, 500);
+
+	//v0.u = 0;
+	//v0.v = 0;
+	//v1.u = texture.width << FIXP16_SHIFT;
+	//v1.v = 0;
+	//v2.u = texture.width << FIXP16_SHIFT >> 1;
+	//v2.v = texture.height << FIXP16_SHIFT;
+
+	//v0.c_diff = Create_RGBI(255, 0, 0);
+	//v1.c_diff = Create_RGBI(0, 255, 0);
+	//v2.c_diff = Create_RGBI(0, 0, 255);
+	//Draw_Triangle_Gouraud_Texture_ZBufferRW32(&rc, &v0, &v1, &v2);
 
 	Unlock_DDSurface(&ddsback);
 	//Blit_DDSurface(&ddsback, &stmp.rect, &stmp, &stmp.rect);
