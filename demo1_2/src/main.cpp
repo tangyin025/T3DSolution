@@ -872,16 +872,17 @@ bool Game_Frame(void)
 	rc.z_pitch			= zbuffer.pitch;
 	rc.z_pitch_shift	= zbuffer.pitch_shift;
 	rc.z_color_shift	= zbuffer.color_shift;
-/*
+
 	const int t_num = 10;
 	const int t_rad = 100;
 
-	VECTOR4D_InitXYZW(&v0._4D, x, y, 0, 0);
+	VECTOR4D_InitXYZW(&v0._4D, x, y, 10, 0);
 	v0.u = texture.width * FIXP16_MAG / 2;
 	v0.v = texture.height * FIXP16_MAG / 2;
 
 	v1.x = cos(DEG_TO_RAD(0)) * t_rad + v0.x;
 	v1.y = sin(DEG_TO_RAD(0)) * t_rad + v0.y;
+	v1.z = 10;
 
 	v1.u = (FIXP16)((cos(DEG_TO_RAD(0)) + 1) / 2 * texture.width * FIXP16_MAG);
 	v1.v = (FIXP16)((sin(DEG_TO_RAD(0)) + 1) / 2 * texture.height * FIXP16_MAG);
@@ -894,22 +895,23 @@ bool Game_Frame(void)
 	{
 		v2.x = cos(DEG_TO_RAD((float)i / t_num * 360)) * t_rad + v0.x;
 		v2.y = sin(DEG_TO_RAD((float)i / t_num * 360)) * t_rad + v0.y; // note: the y axis was reverted!
+		v2.z = 10;
 
 		v2.u = (FIXP16)((cos(DEG_TO_RAD((float)i / t_num * 360)) + 1) / 2 * texture.width * FIXP16_MAG);
 		v2.v = (FIXP16)((sin(DEG_TO_RAD((float)i / t_num * 360)) + 1) / 2 * texture.height * FIXP16_MAG);
 
-		//if(i % 2)
+		if(i % 2)
 		{
-			//Draw_Triangle(&rc, &v0._VERTEXV1, &v1._VERTEXV1, &v2._VERTEXV1);
+			Draw_Triangle(&rc, &v0._VERTEXV1, &v1._VERTEXV1, &v2._VERTEXV1);
 			//Draw_Triangle_Gouraud_Texture_ZBufferRW(&rc, &v0, &v1, &v2);
 
-			//Draw_Clipped_Triangle(&rc, &v0, &v1, &v2);
+			//Draw_Clipped_Triangle(&rc, &v0._VERTEXV1, &v1._VERTEXV1, &v2._VERTEXV1);
 			Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW(&rc, &v0, &v1, &v2);
 		}
 
 		v1 = v2;
 	}
-*/
+/*
 	VECTOR4D_InitXYZ(&v0._4D, 100, 200, 10);
 	VECTOR4D_InitXYZ(&v1._4D, 300, 400, 10);
 	v0.u = 0, v0.v = 0;
@@ -949,7 +951,7 @@ bool Game_Frame(void)
 	v2.c_diff = Create_RGBI(0, 0, 255);
 	//Draw_Triangle_Gouraud_Texture_ZBufferRW32(&rc, &v0, &v1, &v2);
 	Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(&rc, &v0, &v1, &v2);
-
+*/
 	Unlock_DDSurface(&ddsback);
 	//Blit_DDSurface(&ddsback, &stmp.rect, &stmp, &stmp.rect);
 

@@ -1818,52 +1818,52 @@ inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
 
 // ////////////////////////////////////////////////////////////////////////////////////
 // ADDITIONAL
-
-inline VECTOR4DI * VECTOR4DI_Add(VECTOR4DI * pvres, const VECTOR4DI * pv0, const VECTOR4DI * pv1)
-{
-	pvres->x = pv0->x + pv1->x;
-	pvres->y = pv0->y + pv1->y;
-	pvres->z = pv0->z + pv1->z;
-	pvres->w = pv0->w + pv1->w;
-	return pvres;
-}
-
-inline VECTOR4DI * VECTOR4DI_Add(VECTOR4DI * pv0, const VECTOR4DI * pv1)
-{
-	pv0->x += pv1->x;
-	pv0->y += pv1->y;
-	pv0->z += pv1->z;
-	pv0->w += pv1->w;
-	return pv0;
-}
-
-inline VECTOR4DI * VECTOR4DI_Sub(VECTOR4DI * pvres, const VECTOR4DI * pv0, const VECTOR4DI * pv1)
-{
-	pvres->x = pv0->x - pv1->x;
-	pvres->y = pv0->y - pv1->y;
-	pvres->z = pv0->z - pv1->z;
-	pvres->w = pv0->w - pv1->w;
-	return pvres;
-}
-
-inline VECTOR4DI * VECTOR4DI_Mul(VECTOR4DI * pvres, const VECTOR4DI * pv0, const int scale)
-{
-	pvres->x = pv0->x * scale;
-	pvres->y = pv0->y * scale;
-	pvres->z = pv0->z * scale;
-	pvres->w = pv0->w * scale;
-	return pvres;
-}
-
-inline VECTOR4DI * VECTOR4DI_Div(VECTOR4DI * pv0, const int scale)
-{
-	assert(!IS_ZERO_FLOAT(scale));
-
-	pv0->x /= scale;
-	pv0->y /= scale;
-	pv0->z /= scale;
-	pv0->w /= scale;
-	return pv0;
-}
+//
+//inline VECTOR4DI * VECTOR4DI_Add(VECTOR4DI * pvres, const VECTOR4DI * pv0, const VECTOR4DI * pv1)
+//{
+//	pvres->x = pv0->x + pv1->x;
+//	pvres->y = pv0->y + pv1->y;
+//	pvres->z = pv0->z + pv1->z;
+//	pvres->w = pv0->w + pv1->w;
+//	return pvres;
+//}
+//
+//inline VECTOR4DI * VECTOR4DI_Add(VECTOR4DI * pv0, const VECTOR4DI * pv1)
+//{
+//	pv0->x += pv1->x;
+//	pv0->y += pv1->y;
+//	pv0->z += pv1->z;
+//	pv0->w += pv1->w;
+//	return pv0;
+//}
+//
+//inline VECTOR4DI * VECTOR4DI_Sub(VECTOR4DI * pvres, const VECTOR4DI * pv0, const VECTOR4DI * pv1)
+//{
+//	pvres->x = pv0->x - pv1->x;
+//	pvres->y = pv0->y - pv1->y;
+//	pvres->z = pv0->z - pv1->z;
+//	pvres->w = pv0->w - pv1->w;
+//	return pvres;
+//}
+//
+//inline VECTOR4DI * VECTOR4DI_Mul(VECTOR4DI * pvres, const VECTOR4DI * pv0, const int scale)
+//{
+//	pvres->x = pv0->x * scale;
+//	pvres->y = pv0->y * scale;
+//	pvres->z = pv0->z * scale;
+//	pvres->w = pv0->w * scale;
+//	return pvres;
+//}
+//
+//inline VECTOR4DI * VECTOR4DI_Div(VECTOR4DI * pv0, const int scale)
+//{
+//	assert(!IS_ZERO_FLOAT(scale));
+//
+//	pv0->x /= scale;
+//	pv0->y /= scale;
+//	pv0->z /= scale;
+//	pv0->w /= scale;
+//	return pv0;
+//}
 
 #endif // __T3DLIB4_H__
