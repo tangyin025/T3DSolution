@@ -684,7 +684,7 @@ bool Game_Frame(void)
 					100,
 					&surf,
 					&zbuf,
-					FIX_MODE_VIEWPORT_HEIGHT);
+					VIEWPORT_FIX_MODE_HEIGHT);
 
 	VECTOR4D_Copy(&cam1.vrot, &cam_rot);
 

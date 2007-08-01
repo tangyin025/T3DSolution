@@ -275,6 +275,8 @@ static bool Clip_Triangle_ZPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARR
 
 static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	assert(0);
+
 	return false;
 	UNREFERENCED_PARAMETER(ptri);
 	UNREFERENCED_PARAMETER(pvers);
@@ -285,6 +287,8 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 
 static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	assert(0);
+
 	return false;
 	UNREFERENCED_PARAMETER(ptri);
 	UNREFERENCED_PARAMETER(pvers);
@@ -295,6 +299,8 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 
 static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	assert(0);
+
 	return false;
 	UNREFERENCED_PARAMETER(ptri);
 	UNREFERENCED_PARAMETER(pvers);
@@ -305,6 +311,8 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 
 static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	assert(0);
+
 	return false;
 	UNREFERENCED_PARAMETER(ptri);
 	UNREFERENCED_PARAMETER(pvers);
@@ -502,14 +510,14 @@ T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D *
 	return pmres;
 }
 
-T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *		pcam,
-									CAM4DV1_MODE	mode,
-									REAL			fov,
-									REAL			min_clip_z,
-									REAL			max_clip_z,
-									SURFACEV1 *		psurf,
-									ZBUFFERV1 *		pzbuf,
-									int				fix_mode /*= FIX_MODE_VIEWPORT_WIDTH*/)
+T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *			pcam,
+									CAM4DV1_MODE		mode,
+									REAL				fov,
+									REAL				min_clip_z,
+									REAL				max_clip_z,
+									SURFACEV1 *			psurf,
+									ZBUFFERV1 *			pzbuf,
+									VIEWPORT_FIX_MODE	fix_mode /*= VIEWPORT_FIX_MODE_HEIGHT*/)
 {
 	//INIT_ZERO(*pcam);
 	pcam->mode				= mode;
@@ -523,12 +531,12 @@ T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *		pcam,
 
 	switch(fix_mode)
 	{
-	case FIX_MODE_VIEWPORT_WIDTH:
+	case VIEWPORT_FIX_MODE_WIDTH:
 		pcam->viewplane.width	= tan(fov / 2) * 2 * CAM4DV1_VIEWPLANE_DIST;
 		pcam->viewplane.height	= pcam->viewport.height / pcam->viewport.width * pcam->viewplane.width;
 		break;
 
-	case FIX_MODE_VIEWPORT_HEIGHT:
+	case VIEWPORT_FIX_MODE_HEIGHT:
 		pcam->viewplane.height	= tan(fov / 2) * 2 * CAM4DV1_VIEWPLANE_DIST;
 		pcam->viewplane.width	= pcam->viewport.width / pcam->viewport.height * pcam->viewplane.height;
 		break;
@@ -603,6 +611,8 @@ T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pca
 
 T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode)
 {
+	assert(0);
+
 	return NULL;
 	UNREFERENCED_PARAMETER(pmres);
 	UNREFERENCED_PARAMETER(pcam);
@@ -1019,6 +1029,134 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	}
 }
 
+T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+{
+	assert(pcam->psurf != NULL);
+	assert(pcam->psurf->color_shift == _16BIT_BYTES_SHIFT);
+
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
+	rc.s_pitch = pcam->psurf->pitch;
+	rc.s_pitch_shift = pcam->psurf->pitch_shift;
+	rc.s_color_shift = pcam->psurf->color_shift;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+unsigned int c0, c1, c2;
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			break;
+
+		case TRI_STATE_CLIPPED:
+c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
+c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
+c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+{
+	assert(pcam->psurf != NULL);
+	assert(pcam->psurf->color_shift == _32BIT_BYTES_SHIFT);
+
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
+	rc.s_pitch = pcam->psurf->pitch;
+	rc.s_pitch_shift = pcam->psurf->pitch_shift;
+	rc.s_color_shift = pcam->psurf->color_shift;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+unsigned int c0, c1, c2;
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			break;
+
+		case TRI_STATE_CLIPPED:
+c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
+c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
+c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+{
+	assert(0);
+
+	UNREFERENCED_PARAMETER(pobj);
+	UNREFERENCED_PARAMETER(pcam);
+}
+
+T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+{
+	assert(0);
+
+	UNREFERENCED_PARAMETER(pobj);
+	UNREFERENCED_PARAMETER(pcam);
+}
+
 T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
 	assert(pcam->psurf != NULL);
@@ -1042,12 +1180,13 @@ unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
 			Draw_Triangle16(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
@@ -1099,12 +1238,13 @@ unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
 			Draw_Triangle32(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
@@ -1133,112 +1273,20 @@ pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 	}
 }
 
-T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, MATERIALV1 * pmat, CAM4DV1 * pcam)
 {
-	assert(pcam->psurf != NULL);
-	assert(pcam->psurf->color_shift == _16BIT_BYTES_SHIFT);
+	assert(0);
 
-	RENDERCONTEXTV1 rc;
-	INIT_ZERO(rc);
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
-
-	int i;
-	for(i = 0; i < (int)pobj->tri_list.length; i++)
-	{
-unsigned int c0, c1, c2;
-		switch(pobj->tri_list.elems[i].state)
-		{
-		case TRI_STATE_ACTIVE:
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
-			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-			break;
-
-		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
-			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
-			break;
-
-		default:
-			break;
-		}
-	}
+	UNREFERENCED_PARAMETER(pobj);
+	UNREFERENCED_PARAMETER(pmat);
+	UNREFERENCED_PARAMETER(pcam);
 }
 
-T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, MATERIALV1 * pmat, CAM4DV1 * pcam)
 {
-	assert(pcam->psurf != NULL);
-	assert(pcam->psurf->color_shift == _32BIT_BYTES_SHIFT);
+	assert(0);
 
-	RENDERCONTEXTV1 rc;
-	INIT_ZERO(rc);
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
-
-	int i;
-	for(i = 0; i < (int)pobj->tri_list.length; i++)
-	{
-unsigned int c0, c1, c2;
-		switch(pobj->tri_list.elems[i].state)
-		{
-		case TRI_STATE_ACTIVE:
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
-assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
-			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-			break;
-
-		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
-			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
-			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
-			break;
-
-		default:
-			break;
-		}
-	}
+	UNREFERENCED_PARAMETER(pobj);
+	UNREFERENCED_PARAMETER(pmat);
+	UNREFERENCED_PARAMETER(pcam);
 }

@@ -21,9 +21,6 @@
 #define UVN_MODE_SIMPLE					(0)
 #define UVN_MODE_SPHERICAL				(1)
 
-#define FIX_MODE_VIEWPORT_WIDTH			(0)
-#define FIX_MODE_VIEWPORT_HEIGHT		(1)
-
 #define TRI_STATE_NULL					(0)
 #define TRI_STATE_ACTIVE				(1)
 #define TRI_STATE_CULLED				(2)
@@ -38,6 +35,13 @@ typedef enum T3DLIB_API CAM4DV1_MODE_TYP
 	CAM4DV1_MODE_UVN,
 
 } CAM4DV1_MODE, * CAM4DV1_MODE_PTR;
+
+typedef enum T3DLIB_API VIEWPORT_FIX_MODE_TYP
+{
+	VIEWPORT_FIX_MODE_WIDTH,
+	VIEWPORT_FIX_MODE_HEIGHT,
+
+} VIEWPORT_FIX_MODE, * VIEWPORT_FIX_MODE_PTR;
 
 template <typename ELEM_T>
 struct ARRAYV1
@@ -212,14 +216,14 @@ T3DLIB_API bool Init_T3dlib6(int bpp);
 
 T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
 
-T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *		pcam,
-									CAM4DV1_MODE	mode,
-									REAL			fov,
-									REAL			min_clip_z,
-									REAL			max_clip_z,
-									SURFACEV1 *		psurf,
-									ZBUFFERV1 *		pzbuf,
-									int				fix_mode = FIX_MODE_VIEWPORT_WIDTH);
+T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *			pcam,
+									CAM4DV1_MODE		mode,
+									REAL				fov,
+									REAL				min_clip_z,
+									REAL				max_clip_z,
+									SURFACEV1 *			psurf,
+									ZBUFFERV1 *			pzbuf,
+									VIEWPORT_FIX_MODE	fix_mode = VIEWPORT_FIX_MODE_HEIGHT);
 
 T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq);
 
@@ -256,12 +260,20 @@ T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 
 T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
+T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
 T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
-T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, MATERIALV1 * pmat, CAM4DV1 * pcam);
 
-T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, MATERIALV1 * pmat, CAM4DV1 * pcam);
 
 #endif // __T3DLIB6_H__
