@@ -35,7 +35,9 @@ static void Draw_Scan16(SCANCONTEXT & sc, const int y_beg, const int y_end, cons
 		//}
 
 		if(dx > 0)
+		{
 			Mem_Set_Word(ps, (unsigned short)sc.lc.x, dx);
+		}
 
 		sc.lx += sc.lx_inc;
 		sc.rx += sc.rx_inc;
@@ -60,7 +62,9 @@ static void Draw_Scan32(SCANCONTEXT & sc, const int y_beg, const int y_end, cons
 		//}
 
 		if(dx > 0)
+		{
 			Mem_Set_Quad(ps, sc.lc.x, dx);
+		}
 
 		sc.lx += sc.lx_inc;
 		sc.rx += sc.rx_inc;
@@ -84,9 +88,10 @@ static void Draw_Clipped_Scan16(SCANCONTEXT & sc, const int y_beg, const int y_e
 		//	ps += _16BIT_BYTES;
 		//}
 
-
 		if(dx > 0)
+		{
 			Mem_Set_Word(ps, (unsigned short)sc.lc.x, dx);
+		}
 
 		sc.lx += sc.lx_inc;
 		sc.rx += sc.rx_inc;
@@ -111,7 +116,9 @@ static void Draw_Clipped_Scan32(SCANCONTEXT & sc, const int y_beg, const int y_e
 		//}
 
 		if(dx > 0)
+		{
 			Mem_Set_Quad(ps, sc.lc.x, dx);
+		}
 
 		sc.lx += sc.lx_inc;
 		sc.rx += sc.rx_inc;
@@ -144,7 +151,10 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_
 			du = (sc.ru - sc.lu) / dx;
 			dv = (sc.rv - sc.lv) / dx;
 
-			VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			dc.x = (sc.rc.x - sc.lc.x) / dx;
+			dc.y = (sc.rc.y - sc.lc.y) / dx;
+			dc.z = (sc.rc.z - sc.lc.z) / dx;
 
 			dz = (sc.rz - sc.lz) / dx;
 
@@ -165,7 +175,10 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_
 				u_beg += du;
 				v_beg += dv;
 
-				VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				c_beg.x += dc.x;
+				c_beg.y += dc.y;
+				c_beg.z += dc.z;
 
 				z_beg += dz;
 				pz += _ZBUFF_BYTES;
@@ -180,8 +193,14 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_
 		sc.ru += sc.ru_inc;
 		sc.rv += sc.rv_inc;
 
-		VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
+		sc.lc.x += sc.lc_inc.x;
+		sc.lc.y += sc.lc_inc.y;
+		sc.lc.z += sc.lc_inc.z;
+		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		sc.rc.x += sc.rc_inc.x;
+		sc.rc.y += sc.rc_inc.y;
+		sc.rc.z += sc.rc_inc.z;
 
 		sc.lz += sc.lz_inc;
 		sc.rz += sc.rz_inc;
@@ -214,7 +233,10 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_
 			du = (sc.ru - sc.lu) / dx;
 			dv = (sc.rv - sc.lv) / dx;
 
-			VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			dc.x = (sc.rc.x - sc.lc.x) / dx;
+			dc.y = (sc.rc.y - sc.lc.y) / dx;
+			dc.z = (sc.rc.z - sc.lc.z) / dx;
 
 			dz = (sc.rz - sc.lz) / dx;
 
@@ -235,7 +257,10 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_
 				u_beg += du;
 				v_beg += dv;
 
-				VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				c_beg.x += dc.x;
+				c_beg.y += dc.y;
+				c_beg.z += dc.z;
 
 				z_beg += dz;
 				pz += _ZBUFF_BYTES;
@@ -250,8 +275,14 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_
 		sc.ru += sc.ru_inc;
 		sc.rv += sc.rv_inc;
 
-		VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
+		sc.lc.x += sc.lc_inc.x;
+		sc.lc.y += sc.lc_inc.y;
+		sc.lc.z += sc.lc_inc.z;
+		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		sc.rc.x += sc.rc_inc.x;
+		sc.rc.y += sc.rc_inc.y;
+		sc.rc.z += sc.rc_inc.z;
 
 		sc.lz += sc.lz_inc;
 		sc.rz += sc.rz_inc;
@@ -280,7 +311,10 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, cons
 			du = (sc.ru - sc.lu) / dx;
 			dv = (sc.rv - sc.lv) / dx;
 
-			VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			dc.x = (sc.rc.x - sc.lc.x) / dx;
+			dc.y = (sc.rc.y - sc.lc.y) / dx;
+			dc.z = (sc.rc.z - sc.lc.z) / dx;
 
 			dz = (sc.rz - sc.lz) / dx;
 
@@ -291,8 +325,11 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, cons
 				u_beg = sc.lu + ((int)prc->fmin_clip_x - (int)sc.lx) * du;
 				v_beg = sc.lv + ((int)prc->fmin_clip_x - (int)sc.lx) * dv;
 
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&c_beg._3D, &sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &dc._3D, (int)(prc->fmin_clip_x - sc.lx)));
+				//VECTOR4DI vtmp;
+				//VECTOR3DI_Add(&c_beg._3D, &sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &dc._3D, (int)(prc->fmin_clip_x - sc.lx)));
+				c_beg.x = sc.lc.x + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.x;
+				c_beg.y = sc.lc.y + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.y;
+				c_beg.z = sc.lc.z + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.z;
 
 				z_beg = sc.lz + (int)(prc->fmin_clip_x - sc.lx) * dz;
 			}
@@ -332,7 +369,10 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, cons
 				u_beg += du;
 				v_beg += dv;
 
-				VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				c_beg.x += dc.x;
+				c_beg.y += dc.y;
+				c_beg.z += dc.z;
 
 				z_beg += dz;
 				pz += _ZBUFF_BYTES;
@@ -347,8 +387,14 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, cons
 		sc.ru += sc.ru_inc;
 		sc.rv += sc.rv_inc;
 
-		VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
+		sc.lc.x += sc.lc_inc.x;
+		sc.lc.y += sc.lc_inc.y;
+		sc.lc.z += sc.lc_inc.z;
+		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		sc.rc.x += sc.rc_inc.x;
+		sc.rc.y += sc.rc_inc.y;
+		sc.rc.z += sc.rc_inc.z;
 
 		sc.lz += sc.lz_inc;
 		sc.rz += sc.rz_inc;
@@ -377,7 +423,10 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, cons
 			du = (sc.ru - sc.lu) / dx;
 			dv = (sc.rv - sc.lv) / dx;
 
-			VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
+			dc.x = (sc.rc.x - sc.lc.x) / dx;
+			dc.y = (sc.rc.y - sc.lc.y) / dx;
+			dc.z = (sc.rc.z - sc.lc.z) / dx;
 
 			dz = (sc.rz - sc.lz) / dx;
 
@@ -388,8 +437,11 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, cons
 				u_beg = sc.lu + ((int)prc->fmin_clip_x - (int)sc.lx) * du;
 				v_beg = sc.lv + ((int)prc->fmin_clip_x - (int)sc.lx) * dv;
 
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&c_beg._3D, &sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &dc._3D, (int)(prc->fmin_clip_x - sc.lx)));
+				//VECTOR4DI vtmp;
+				//VECTOR3DI_Add(&c_beg._3D, &sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &dc._3D, (int)(prc->fmin_clip_x - sc.lx)));
+				c_beg.x = sc.lc.x + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.x;
+				c_beg.y = sc.lc.y + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.y;
+				c_beg.z = sc.lc.z + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.z;
 
 				z_beg = sc.lz + (int)(prc->fmin_clip_x - sc.lx) * dz;
 			}
@@ -429,7 +481,10 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, cons
 				u_beg += du;
 				v_beg += dv;
 
-				VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
+				c_beg.x += dc.x;
+				c_beg.y += dc.y;
+				c_beg.z += dc.z;
 
 				z_beg += dz;
 				pz += _ZBUFF_BYTES;
@@ -444,8 +499,14 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, cons
 		sc.ru += sc.ru_inc;
 		sc.rv += sc.rv_inc;
 
-		VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
+		sc.lc.x += sc.lc_inc.x;
+		sc.lc.y += sc.lc_inc.y;
+		sc.lc.z += sc.lc_inc.z;
+		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
+		sc.rc.x += sc.rc_inc.x;
+		sc.rc.y += sc.rc_inc.y;
+		sc.rc.z += sc.rc_inc.z;
 
 		sc.lz += sc.lz_inc;
 		sc.rz += sc.rz_inc;

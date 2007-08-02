@@ -121,15 +121,13 @@ pv0->c_diff = Create_RGBI(0, 255, 255);
 								pvers->elems[pt0->v0_i].y);
 
 	//pt0->v0_i = (int)pvers->length - 1;
+		// !!! note : cannot change the pt0->v0_i, because the following pv1 use the old pt0->v0_i
 
 	TRIANGLEV1 * pt1;
 	if(!Append_Array(ptris, &pt1))
 		return false;
 	memcpy(pt1, ptri, sizeof(*pt1));
 	pt0 = &ptris->elems[ptris->length - 2];
-
-	pt1->v0_i = (int)pvers->length - 1;
-	pt1->v1_i = pt0->v2_i;
 
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
@@ -151,6 +149,8 @@ pv1->c_diff = Create_RGBI(0, 255, 255);
 								pvers->elems[pt0->v0_i].y);
 
 	pt0->v0_i = (int)pvers->length - 2;
+	pt1->v0_i = (int)pvers->length - 2;
+	pt1->v1_i = pt0->v2_i;
 	pt1->v2_i = (int)pvers->length - 1;
 
 	ptri->state = TRI_STATE_CULLED;
@@ -204,8 +204,6 @@ pv0->c_diff = Create_RGBI(0, 255, 255);
 								pvers->elems[pt0->v2_i].y,
 								pvers->elems[pt0->v0_i].y);
 
-	pt0->v0_i = (int)pvers->length - 1;
-
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
 		return false;
@@ -225,6 +223,7 @@ pv1->c_diff = Create_RGBI(0, 255, 255);
 								pvers->elems[pt0->v2_i].y,
 								pvers->elems[pt0->v1_i].y);
 
+	pt0->v0_i = (int)pvers->length - 2;
 	pt0->v1_i = (int)pvers->length - 1;
 
 	ptri->state = TRI_STATE_CULLED;
@@ -275,50 +274,534 @@ static bool Clip_Triangle_ZPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARR
 
 static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
-	assert(0);
+	TRIANGLEV1 * pt0;
+	if(!Append_Array(ptris, &pt0))
+		return false;
+	memcpy(pt0, ptri, sizeof(*pt0));
 
-	return false;
-	UNREFERENCED_PARAMETER(ptri);
-	UNREFERENCED_PARAMETER(pvers);
+	if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v0_i;
+		pt0->v1_i = ptri->v1_i;
+		pt0->v2_i = ptri->v2_i;
+	}
+	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v1_i;
+		pt0->v1_i = ptri->v2_i;
+		pt0->v2_i = ptri->v0_i;
+	}
+	else
+	{
+		assert(pvers->elems[ptri->v2_i].z < pcam->min_clip_z);
+		pt0->v0_i = ptri->v2_i;
+		pt0->v1_i = ptri->v0_i;
+		pt0->v2_i = ptri->v1_i;
+	}
+
+	VERTEXV1T * pv0;
+	if(!Append_Array(pvers, &pv0))
+		return false;
+	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
+
+	pv0->z = pcam->min_clip_z;
+	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv0->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pv0->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].u,
+								pvers->elems[pt0->v0_i].u);
+
+	pv0->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].v,
+								pvers->elems[pt0->v0_i].v);
+
+	pv0->c_diff = _RGB16BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v1_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETR(pvers->elems[pt0->v1_i].c_diff),
+										_16BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v1_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETG(pvers->elems[pt0->v1_i].c_diff),
+										_16BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v1_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETB(pvers->elems[pt0->v1_i].c_diff),
+										_16BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+
+	TRIANGLEV1 * pt1;
+	if(!Append_Array(ptris, &pt1))
+		return false;
+	memcpy(pt1, ptri, sizeof(*pt1));
+	pt0 = &ptris->elems[ptris->length - 2];
+
+	VERTEXV1T * pv1;
+	if(!Append_Array(pvers, &pv1))
+		return false;
+	memcpy(pv1, &pvers->elems[pt0->v0_i], sizeof(*pv1));
+
+	pv1->z = pcam->min_clip_z;
+	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv1->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pv1->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].u,
+								pvers->elems[pt0->v0_i].u);
+
+	pv1->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].v,
+								pvers->elems[pt0->v0_i].v);
+
+	pv1->c_diff = _RGB16BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+
+	pt0->v0_i = (int)pvers->length - 2;
+	pt1->v0_i = (int)pvers->length - 2;
+	pt1->v1_i = pt0->v2_i;
+	pt1->v2_i = (int)pvers->length - 1;
+
+	ptri->state = TRI_STATE_CULLED;
+	return true;
 	UNREFERENCED_PARAMETER(pnors);
-	UNREFERENCED_PARAMETER(pcam);
-	UNREFERENCED_PARAMETER(ptris);
 }
 
 static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
-	assert(0);
+	TRIANGLEV1 * pt0;
+	if(!Append_Array(ptris, &pt0))
+		return false;
+	memcpy(pt0, ptri, sizeof(*pt0));
 
-	return false;
-	UNREFERENCED_PARAMETER(ptri);
-	UNREFERENCED_PARAMETER(pvers);
+	if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v0_i;
+		pt0->v1_i = ptri->v1_i;
+		pt0->v2_i = ptri->v2_i;
+	}
+	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v1_i;
+		pt0->v1_i = ptri->v2_i;
+		pt0->v2_i = ptri->v0_i;
+	}
+	else
+	{
+		assert(pvers->elems[ptri->v2_i].z < pcam->min_clip_z);
+		pt0->v0_i = ptri->v2_i;
+		pt0->v1_i = ptri->v0_i;
+		pt0->v2_i = ptri->v1_i;
+	}
+
+	VERTEXV1T * pv0;
+	if(!Append_Array(pvers, &pv0))
+		return false;
+	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
+
+	pv0->z = pcam->min_clip_z;
+	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv0->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pv0->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].u,
+								pvers->elems[pt0->v0_i].u);
+
+	pv0->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v1_i].v,
+								pvers->elems[pt0->v0_i].v);
+
+	pv0->c_diff = _RGB32BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v1_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETR(pvers->elems[pt0->v1_i].c_diff),
+										_32BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v1_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETG(pvers->elems[pt0->v1_i].c_diff),
+										_32BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v1_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETB(pvers->elems[pt0->v1_i].c_diff),
+										_32BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+
+	TRIANGLEV1 * pt1;
+	if(!Append_Array(ptris, &pt1))
+		return false;
+	memcpy(pt1, ptri, sizeof(*pt1));
+	pt0 = &ptris->elems[ptris->length - 2];
+
+	VERTEXV1T * pv1;
+	if(!Append_Array(pvers, &pv1))
+		return false;
+	memcpy(pv1, &pvers->elems[pt0->v0_i], sizeof(*pv1));
+
+	pv1->z = pcam->min_clip_z;
+	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv1->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pv1->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].u,
+								pvers->elems[pt0->v0_i].u);
+
+	pv1->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].v,
+								pvers->elems[pt0->v0_i].v);
+
+	pv1->c_diff = _RGB32BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+
+	pt0->v0_i = (int)pvers->length - 2;
+	pt1->v0_i = (int)pvers->length - 2;
+	pt1->v1_i = pt0->v2_i;
+	pt1->v2_i = (int)pvers->length - 1;
+
+	ptri->state = TRI_STATE_CULLED;
+	return true;
 	UNREFERENCED_PARAMETER(pnors);
-	UNREFERENCED_PARAMETER(pcam);
-	UNREFERENCED_PARAMETER(ptris);
 }
 
 static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
-	assert(0);
+	TRIANGLEV1 * pt0;
+	if(!Append_Array(ptris, &pt0))
+		return false;
+	memcpy(pt0, ptri, sizeof(*pt0));
 
-	return false;
-	UNREFERENCED_PARAMETER(ptri);
-	UNREFERENCED_PARAMETER(pvers);
+	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v1_i;
+		pt0->v1_i = ptri->v2_i;
+		pt0->v2_i = ptri->v0_i;
+	}
+	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v2_i;
+		pt0->v1_i = ptri->v0_i;
+		pt0->v2_i = ptri->v1_i;
+	}
+	else
+	{
+		assert(pvers->elems[ptri->v2_i].z > pcam->min_clip_z);
+		pt0->v0_i = ptri->v0_i;
+		pt0->v1_i = ptri->v1_i;
+		pt0->v2_i = ptri->v2_i;
+	}
+
+	VERTEXV1T * pv0;
+	if(!Append_Array(pvers, &pv0))
+		return false;
+	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
+
+	pv0->z = pcam->min_clip_z;
+	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv0->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pv0->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].u,
+								pvers->elems[pt0->v0_i].u);
+
+	pv0->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].v,
+								pvers->elems[pt0->v0_i].v);
+
+	pv0->c_diff = _RGB16BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_16BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+
+	VERTEXV1T * pv1;
+	if(!Append_Array(pvers, &pv1))
+		return false;
+	memcpy(pv1, &pvers->elems[pt0->v1_i], sizeof(*pv1));
+
+	pv1->z = pcam->min_clip_z;
+	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v1_i].x);
+
+	pv1->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v1_i].y);
+
+	pv1->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].u,
+								pvers->elems[pt0->v1_i].u);
+
+	pv1->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].v,
+								pvers->elems[pt0->v1_i].v);
+
+	pv1->c_diff = _RGB16BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v1_i].z,
+										_16BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETR(pvers->elems[pt0->v1_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v1_i].z,
+										_16BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETG(pvers->elems[pt0->v1_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v1_i].z,
+										_16BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
+										_16BIT_GETB(pvers->elems[pt0->v1_i].c_diff)));
+
+	pt0->v0_i = (int)pvers->length - 2;
+	pt0->v1_i = (int)pvers->length - 1;
+
+	ptri->state = TRI_STATE_CULLED;
+	return true;
 	UNREFERENCED_PARAMETER(pnors);
-	UNREFERENCED_PARAMETER(pcam);
-	UNREFERENCED_PARAMETER(ptris);
 }
 
 static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
-	assert(0);
+	TRIANGLEV1 * pt0;
+	if(!Append_Array(ptris, &pt0))
+		return false;
+	memcpy(pt0, ptri, sizeof(*pt0));
 
-	return false;
-	UNREFERENCED_PARAMETER(ptri);
-	UNREFERENCED_PARAMETER(pvers);
+	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v1_i;
+		pt0->v1_i = ptri->v2_i;
+		pt0->v2_i = ptri->v0_i;
+	}
+	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
+	{
+		pt0->v0_i = ptri->v2_i;
+		pt0->v1_i = ptri->v0_i;
+		pt0->v2_i = ptri->v1_i;
+	}
+	else
+	{
+		assert(pvers->elems[ptri->v2_i].z > pcam->min_clip_z);
+		pt0->v0_i = ptri->v0_i;
+		pt0->v1_i = ptri->v1_i;
+		pt0->v2_i = ptri->v2_i;
+	}
+
+	VERTEXV1T * pv0;
+	if(!Append_Array(pvers, &pv0))
+		return false;
+	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
+
+	pv0->z = pcam->min_clip_z;
+	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v0_i].x);
+
+	pv0->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v0_i].y);
+
+	pv0->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].u,
+								pvers->elems[pt0->v0_i].u);
+
+	pv0->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v0_i].z,
+								pvers->elems[pt0->v2_i].v,
+								pvers->elems[pt0->v0_i].v);
+
+	pv0->c_diff = _RGB32BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v0_i].z,
+										_32BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+
+	VERTEXV1T * pv1;
+	if(!Append_Array(pvers, &pv1))
+		return false;
+	memcpy(pv1, &pvers->elems[pt0->v1_i], sizeof(*pv1));
+
+	pv1->z = pcam->min_clip_z;
+	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].x,
+								pvers->elems[pt0->v1_i].x);
+
+	pv1->y = LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].y,
+								pvers->elems[pt0->v1_i].y);
+
+	pv1->u = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].u,
+								pvers->elems[pt0->v1_i].u);
+
+	pv1->v = (FIXP16)LINE2D_INTERSECT(	pcam->min_clip_z,
+								pvers->elems[pt0->v2_i].z,
+								pvers->elems[pt0->v1_i].z,
+								pvers->elems[pt0->v2_i].v,
+								pvers->elems[pt0->v1_i].v);
+
+	pv1->c_diff = _RGB32BIT(
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v1_i].z,
+										_32BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETR(pvers->elems[pt0->v1_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v1_i].z,
+										_32BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETG(pvers->elems[pt0->v1_i].c_diff)),
+					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
+										pvers->elems[pt0->v2_i].z,
+										pvers->elems[pt0->v1_i].z,
+										_32BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
+										_32BIT_GETB(pvers->elems[pt0->v1_i].c_diff)));
+
+	pt0->v0_i = (int)pvers->length - 2;
+	pt0->v1_i = (int)pvers->length - 1;
+
+	ptri->state = TRI_STATE_CULLED;
+	return true;
 	UNREFERENCED_PARAMETER(pnors);
-	UNREFERENCED_PARAMETER(pcam);
-	UNREFERENCED_PARAMETER(ptris);
 }
 
 static bool Clip_Triangle_ZPlane_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
@@ -411,8 +894,10 @@ _DTOR_IMPLEMENT_W1(OBJECT4DV1_TYP, Destroy_Object4D, tri_list.elems);
 
 T3DLIB_API bool (* Create_Material_From_MsModel)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name) = NULL;
 T3DLIB_API bool (* Clip_Object4D_Gouraud_Texture)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
-T3DLIB_API void (* Draw_Object4D)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
 T3DLIB_API void (* Draw_Object4D_Wire)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
+T3DLIB_API void (* Draw_Object4D_Wire_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
+T3DLIB_API void (* Draw_Object4D)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
+T3DLIB_API void (* Draw_Object4D_Gouraud_Texture_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial) = NULL;
 
 T3DLIB_API bool Init_T3dlib6(int bpp)
 {
@@ -420,16 +905,20 @@ T3DLIB_API bool Init_T3dlib6(int bpp)
 	{
 	case 16:
 		Create_Material_From_MsModel	= Create_Material_From_MsModel16;
-		Draw_Object4D					= Draw_Object4D16;
-		Draw_Object4D_Wire				= Draw_Object4D_Wire16;
 		Clip_Object4D_Gouraud_Texture	= Clip_Object4D_Gouraud_Texture16;
+		Draw_Object4D_Wire				= Draw_Object4D_Wire16;
+		Draw_Object4D_Wire_ZBufferRW	= Draw_Object4D_Wire_ZBufferRW16;
+		Draw_Object4D					= Draw_Object4D16;
+		Draw_Object4D_Gouraud_Texture_ZBufferRW	= Draw_Object4D_Gouraud_Texture_ZBufferRW16;
 		break;
 
 	case 32:
 		Create_Material_From_MsModel	= Create_Material_From_MsModel32;
-		Draw_Object4D					= Draw_Object4D32;
-		Draw_Object4D_Wire				= Draw_Object4D_Wire32;
 		Clip_Object4D_Gouraud_Texture	= Clip_Object4D_Gouraud_Texture32;
+		Draw_Object4D_Wire				= Draw_Object4D_Wire32;
+		Draw_Object4D_Wire_ZBufferRW	= Draw_Object4D_Wire_ZBufferRW32;
+		Draw_Object4D					= Draw_Object4D32;
+		Draw_Object4D_Gouraud_Texture_ZBufferRW	= Draw_Object4D_Gouraud_Texture_ZBufferRW32;
 		break;
 
 	default:
@@ -662,6 +1151,9 @@ T3DLIB_API bool Create_Material_From_MsModel16(MATERIALV1 * pmaterial, msModel *
 
 				Destroy_Bitmap(&btmp);
 			}
+
+			strcpy(pmaterial->name, pmat->szName);
+
 			return true;
 		}
 	}
@@ -716,6 +1208,9 @@ T3DLIB_API bool Create_Material_From_MsModel32(MATERIALV1 * pmaterial, msModel *
 
 				Destroy_Bitmap(&btmp);
 			}
+
+			strcpy(pmaterial->name, pmat->szName);
+
 			return true;
 		}
 	}
@@ -778,14 +1273,16 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 				VERTEXV1T * pver;
 				if(!Append_Array(&pobj->ver_list, &pver))
 					ON_ERROR_GOTO("append vertex list failed");
+				memset(pver, 0, sizeof(*pver));
 
 				VECTOR4D_InitXYZ(	&pver->_4D,
 									(REAL)pmesh->pVertices[j].Vertex[0],
 									(REAL)pmesh->pVertices[j].Vertex[1],
 									(REAL)pmesh->pVertices[j].Vertex[2]);
 
-				pver->u = (FIXP16)(pmesh->pVertices[j].u * FIXP16_MAG);
-				pver->v = (FIXP16)(pmesh->pVertices[j].v * FIXP16_MAG);
+				//pver->u = (FIXP16)(pmesh->pVertices[j].u * FIXP16_MAG);
+				//pver->v = (FIXP16)(pmesh->pVertices[j].v * FIXP16_MAG);
+					// !!! note : the u, v should be absolutely coordinate with texture's width and height
 			}
 
 			if(!Create_Array(&pobj->ver_list_t, max_ver_size))
@@ -814,8 +1311,10 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 			if(pmesh->nMaterialIndex >= 0)
 			{
 				assert(pmesh->nMaterialIndex < pmodel->nNumMeshes);
-				strcpy(pobj->mat_name, pmodel->pMaterials[pmesh->nMaterialIndex].szName);
+				strcpy(pobj->material_name, pmodel->pMaterials[pmesh->nMaterialIndex].szName);
 			}
+
+			strcpy(pobj->name, pmesh->szName);
 
 			return true;
 		}
@@ -829,6 +1328,29 @@ ON_ERROR:
 	Destroy_Array(&pobj->nor_list);
 	Destroy_Array(&pobj->nor_list_t);
 	return false;
+}
+
+T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmode, MATERIALV1 * pmaterial)
+{
+	assert(pmaterial->texture.pbuffer != NULL);
+
+	int i, j;
+	for(i = 0; i < pmode->nNumMeshes; i++)
+	{
+		msMesh * pmesh = &pmode->pMeshes[i];
+		if(0 == strcmp(pmesh->szName, pobj->name))
+		{
+			assert((int)pobj->ver_list.length == pmesh->nNumVertices);
+
+			for(j = 0; j < (int)pobj->ver_list.length; j++)
+			{
+				VERTEXV1T * pver = &pobj->ver_list.elems[j];
+
+				pver->u = (FIXP16)(pmesh->pVertices[j].u * FIXP16_MAG * (pmaterial->texture.width - 1));
+				pver->v = (FIXP16)(pmesh->pVertices[j].v * FIXP16_MAG * (pmaterial->texture.height - 1));
+			}
+		}
+	}
 }
 
 T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj)
@@ -1036,10 +1558,12 @@ T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
+
 	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
 	rc.s_pitch = pcam->psurf->pitch;
 	rc.s_pitch_shift = pcam->psurf->pitch_shift;
 	rc.s_color_shift = pcam->psurf->color_shift;
+
 	rc.fmin_clip_x = 0;
 	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
@@ -1092,10 +1616,12 @@ T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
+
 	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
 	rc.s_pitch = pcam->psurf->pitch;
 	rc.s_pitch_shift = pcam->psurf->pitch_shift;
 	rc.s_color_shift = pcam->psurf->color_shift;
+
 	rc.fmin_clip_x = 0;
 	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
@@ -1143,18 +1669,130 @@ pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 
 T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
-	assert(0);
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _16BIT_BYTES_SHIFT);
 
-	UNREFERENCED_PARAMETER(pobj);
-	UNREFERENCED_PARAMETER(pcam);
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
+	rc.s_pitch = pcam->psurf->pitch;
+	rc.s_pitch_shift = pcam->psurf->pitch_shift;
+	rc.s_color_shift = pcam->psurf->color_shift;
+
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
+
+	rc.z_pbuffer = pcam->pzbuf->pbuffer;
+	rc.z_pitch = pcam->pzbuf->pitch;
+	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
+	rc.z_color_shift = pcam->pzbuf->color_shift;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+unsigned int c0, c1, c2;
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			Draw_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			break;
+
+		case TRI_STATE_CLIPPED:
+c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
+c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
+c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
-	assert(0);
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _32BIT_BYTES_SHIFT);
 
-	UNREFERENCED_PARAMETER(pobj);
-	UNREFERENCED_PARAMETER(pcam);
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
+	rc.s_pitch = pcam->psurf->pitch;
+	rc.s_pitch_shift = pcam->psurf->pitch_shift;
+	rc.s_color_shift = pcam->psurf->color_shift;
+
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
+
+	rc.z_pbuffer = pcam->pzbuf->pbuffer;
+	rc.z_pitch = pcam->pzbuf->pitch;
+	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
+	rc.z_color_shift = pcam->pzbuf->color_shift;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+unsigned int c0, c1, c2;
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			Draw_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+			break;
+
+		case TRI_STATE_CLIPPED:
+c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
+c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
+c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
+			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
+			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
+pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
@@ -1164,10 +1802,12 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
+
 	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
 	rc.s_pitch = pcam->psurf->pitch;
 	rc.s_pitch_shift = pcam->psurf->pitch_shift;
 	rc.s_color_shift = pcam->psurf->color_shift;
+
 	rc.fmin_clip_x = 0;
 	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
@@ -1222,10 +1862,12 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
+
 	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
 	rc.s_pitch = pcam->psurf->pitch;
 	rc.s_pitch_shift = pcam->psurf->pitch_shift;
 	rc.s_color_shift = pcam->psurf->color_shift;
+
 	rc.fmin_clip_x = 0;
 	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
@@ -1273,20 +1915,124 @@ pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 	}
 }
 
-T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, MATERIALV1 * pmat, CAM4DV1 * pcam)
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial)
 {
-	assert(0);
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _16BIT_BYTES_SHIFT);
 
-	UNREFERENCED_PARAMETER(pobj);
-	UNREFERENCED_PARAMETER(pmat);
-	UNREFERENCED_PARAMETER(pcam);
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
+	rc.s_pitch = pcam->psurf->pitch;
+	rc.s_pitch_shift = pcam->psurf->pitch_shift;
+	rc.s_color_shift = pcam->psurf->color_shift;
+
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
+
+	rc.t_pbuffer = pmaterial->texture.pbuffer;
+	rc.t_pitch = pmaterial->texture.pitch;
+	rc.t_pitch_shift = pmaterial->texture.pitch_shift;
+	rc.t_color_shift = pmaterial->texture.color_shift;
+
+	rc.z_pbuffer = pcam->pzbuf->pbuffer;
+	rc.z_pitch = pcam->pzbuf->pitch;
+	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
+	rc.z_color_shift = pcam->pzbuf->color_shift;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			Draw_Triangle_Gouraud_Texture_ZBufferRW16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		case TRI_STATE_CLIPPED:
+			Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
-T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, MATERIALV1 * pmat, CAM4DV1 * pcam)
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial)
 {
-	assert(0);
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _32BIT_BYTES_SHIFT);
 
-	UNREFERENCED_PARAMETER(pobj);
-	UNREFERENCED_PARAMETER(pmat);
-	UNREFERENCED_PARAMETER(pcam);
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
+	rc.s_pitch = pcam->psurf->pitch;
+	rc.s_pitch_shift = pcam->psurf->pitch_shift;
+	rc.s_color_shift = pcam->psurf->color_shift;
+
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
+	rc.fmax_clip_x = pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.height - 1;
+
+	rc.t_pbuffer = pmaterial->texture.pbuffer;
+	rc.t_pitch = pmaterial->texture.pitch;
+	rc.t_pitch_shift = pmaterial->texture.pitch_shift;
+	rc.t_color_shift = pmaterial->texture.color_shift;
+
+	rc.z_pbuffer = pcam->pzbuf->pbuffer;
+	rc.z_pitch = pcam->pzbuf->pitch;
+	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
+	rc.z_color_shift = pcam->pzbuf->color_shift;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			Draw_Triangle_Gouraud_Texture_ZBufferRW32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		case TRI_STATE_CLIPPED:
+			Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		default:
+			break;
+		}
+	}
 }

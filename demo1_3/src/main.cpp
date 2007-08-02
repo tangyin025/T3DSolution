@@ -299,6 +299,7 @@ DMPERFORMANCEV1	dmperf;
 ZBUFFERV1		zbuf;
 msModel			model;
 OBJECT4DV1		obj1;
+MATERIALV1		obj1_material;
 CAM4DV1			cam1;
 
 // ================================================================================
@@ -482,6 +483,7 @@ bool Game_Init(void)
 	INIT_ZERO(zbuf);
 	INIT_ZERO(model);
 	INIT_ZERO(obj1);
+	INIT_ZERO(obj1_material);
 	INIT_ZERO(cam1);
 
 	// create zbuffer
@@ -508,6 +510,11 @@ bool Game_Init(void)
 	if(!Create_Object4D_From_MsModel(&obj1, &model, "Plane01"))
 		ON_ERROR_RETURN("convert object4d failed");
 
+	if(!Create_Material_From_MsModel(&obj1_material, &model, obj1.material_name))
+		ON_ERROR_RETURN("create material failed");
+
+	Undate_Object4D_Absolute_UV(&obj1, &model, &obj1_material);
+
 	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Create Face"))
 	//	ON_ERROR_RETURN("convert object4d failed");
 
@@ -530,6 +537,7 @@ void Game_Destroy(void)
 	// TODO: Game destroy here
 	// ================================================================================
 
+	Destroy_Material(&obj1_material);
 	Destroy_Object4D(&obj1);
 	Destroy_MsModel(&model);
 	Destroy_ZBuffer(&zbuf);
@@ -703,16 +711,21 @@ bool Game_Frame(void)
 
 	World_To_Camera_Object4D(&obj1, &cam1);
 
-	if(!Clip_Object4D(&obj1, &cam1))
+	//if(!Clip_Object4D(&obj1, &cam1))
+	if(!Clip_Object4D_Gouraud_Texture(&obj1, &cam1))
 		ON_ERROR_RETURN("clip object4d failed");
 
 	Camera_To_Perspective_Object4D(&obj1, &cam1);
 
 	Perspective_To_Screen_Object4D(&obj1, &cam1);
 
-	Draw_Object4D(&obj1, &cam1);
+	Clear_ZBuffer(&zbuf);
+
+	//Draw_Object4D(&obj1, &cam1);
 
 	//Draw_Object4D_Wire(&obj1, &cam1);
+
+	Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj1, &cam1, &obj1_material);
 
 	Unlock_DDSurface(&ddsback);
 
