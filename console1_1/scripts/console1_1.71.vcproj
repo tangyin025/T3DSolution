@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)../T3DLIB2/T3DLIB2/include&quot;;&quot;$(ProjectDir)../include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/T3DLIB2/include&quot;;&quot;$(ProjectDir)../include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +36,7 @@
 				AdditionalDependencies="t3dlib2_d.lib"
 				OutputFile="$(OutDir)/console1_1.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)../T3DLIB2/T3DLIB2/lib/$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)/T3DLIB2/lib/$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/console1_1.pdb"
 				SubSystem="1"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)../T3DLIB2/T3DLIB2/include&quot;;&quot;$(ProjectDir)../include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/T3DLIB2/include&quot;;&quot;$(ProjectDir)../include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
@@ -84,7 +84,7 @@
 				AdditionalDependencies="t3dlib2.lib"
 				OutputFile="$(OutDir)/console1_1.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)../T3DLIB2/T3DLIB2/lib/$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)/T3DLIB2/lib/$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
