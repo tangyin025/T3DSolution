@@ -295,7 +295,8 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, cons
 	for(y = y_beg; y < y_end; y++)
 	{
 		int s_beg, s_end;
-		int dx = (int)(sc.rx - sc.lx);
+		//int dx = (int)(floor(sc.rx) - floor(sc.lx));
+		int dx = (int)sc.rx - (int)sc.lx;
 
 		FIXP16 u_beg, v_beg;
 		FIXP16 du, dv;
@@ -407,7 +408,8 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, cons
 	for(y = y_beg; y < y_end; y++)
 	{
 		int s_beg, s_end;
-		int dx = (int)(sc.rx - sc.lx);
+		//int dx = (int)(floor(sc.rx) - floor(sc.lx));
+		int dx = (int)sc.rx - (int)sc.lx;
 
 		FIXP16 u_beg, v_beg;
 		FIXP16 du, dv;

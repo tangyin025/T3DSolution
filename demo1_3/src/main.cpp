@@ -722,9 +722,7 @@ bool Game_Frame(void)
 	Clear_ZBuffer(&zbuf);
 
 	//Draw_Object4D(&obj1, &cam1);
-
 	//Draw_Object4D_Wire(&obj1, &cam1);
-
 	Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj1, &cam1, &obj1_material);
 
 	Unlock_DDSurface(&ddsback);
