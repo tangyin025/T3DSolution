@@ -126,7 +126,7 @@ typedef struct T3DLIB_API CAM4DV1_TYP
 
 	struct VIEWPORT_TYP
 	{
-		int			x, y;
+		REAL		x, y;
 		REAL		width, height;
 
 	} viewport;

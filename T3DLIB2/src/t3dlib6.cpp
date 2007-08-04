@@ -1559,13 +1559,10 @@ T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1617,13 +1614,10 @@ T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1676,25 +1670,17 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
-
-	rc.z_pbuffer = pcam->pzbuf->pbuffer;
-	rc.z_pitch = pcam->pzbuf->pitch;
-	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
-	rc.z_color_shift = pcam->pzbuf->color_shift;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
@@ -1711,18 +1697,9 @@ unsigned int c0, c1, c2;
 			break;
 
 		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
 			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 			break;
 
 		default:
@@ -1740,25 +1717,17 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
-
-	rc.z_pbuffer = pcam->pzbuf->pbuffer;
-	rc.z_pitch = pcam->pzbuf->pitch;
-	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
-	rc.z_color_shift = pcam->pzbuf->color_shift;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
@@ -1775,18 +1744,9 @@ unsigned int c0, c1, c2;
 			break;
 
 		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
 			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 			break;
 
 		default:
@@ -1803,13 +1763,10 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1863,13 +1820,10 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1924,25 +1878,14 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
-
-	rc.t_pbuffer = pmaterial->texture.pbuffer;
-	rc.t_pitch = pmaterial->texture.pitch;
-	rc.t_pitch_shift = pmaterial->texture.pitch_shift;
-	rc.t_color_shift = pmaterial->texture.color_shift;
-
-	rc.z_pbuffer = pcam->pzbuf->pbuffer;
-	rc.z_pitch = pcam->pzbuf->pitch;
-	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
-	rc.z_color_shift = pcam->pzbuf->color_shift;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1985,25 +1928,14 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	RENDERCONTEXTV1 rc;
 	INIT_ZERO(rc);
 
-	rc.s_pbuffer = pcam->psurf->pbuffer + pcam->viewport.x + (pcam->viewport.y << pcam->psurf->pitch_shift);
-	rc.s_pitch = pcam->psurf->pitch;
-	rc.s_pitch_shift = pcam->psurf->pitch_shift;
-	rc.s_color_shift = pcam->psurf->color_shift;
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
-
-	rc.t_pbuffer = pmaterial->texture.pbuffer;
-	rc.t_pitch = pmaterial->texture.pitch;
-	rc.t_pitch_shift = pmaterial->texture.pitch_shift;
-	rc.t_color_shift = pmaterial->texture.color_shift;
-
-	rc.z_pbuffer = pcam->pzbuf->pbuffer;
-	rc.z_pitch = pcam->pzbuf->pitch;
-	rc.z_pitch_shift = pcam->pzbuf->pitch_shift;
-	rc.z_color_shift = pcam->pzbuf->color_shift;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)

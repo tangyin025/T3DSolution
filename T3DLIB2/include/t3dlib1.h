@@ -233,21 +233,21 @@ typedef struct T3DLIB_API IMAGEV1_TYP
 
 } IMAGEV1, * IMAGEV1_PTR;
 #pragma warning(default : 4201)
-
-typedef struct T3DLIB_API TEXTUREV1_TYP
-{
-	//XRGB32 *			pbuffer;
-	unsigned char *		pbuffer;
-	long				pitch;
-	int					width;
-	int					height;
-	int					pitch_shift;
-	int					color_shift;
-
-	_CTOR_DECLARE(TEXTUREV1_TYP);
-	_DTOR_DECLARE(TEXTUREV1_TYP);
-
-} TEXTUREV1, * TEXTUREV1_PTR;
+//
+//typedef struct T3DLIB_API TEXTUREV1_TYP
+//{
+//	//XRGB32 *			pbuffer;
+//	unsigned char *		pbuffer;
+//	long				pitch;
+//	int					width;
+//	int					height;
+//	int					pitch_shift;
+//	int					color_shift;
+//
+//	_CTOR_DECLARE(TEXTUREV1_TYP);
+//	_DTOR_DECLARE(TEXTUREV1_TYP);
+//
+//} TEXTUREV1, * TEXTUREV1_PTR;
 
 T3DLIB_API bool Init_T3dlib1(int bpp);
 
@@ -276,10 +276,10 @@ T3DLIB_API bool Unlock_DDSurface(const DDSURFACEV1 * pddsurface);
 T3DLIB_API bool Create_Image16(IMAGEV1 * pimage, const int width, const int height);
 
 T3DLIB_API bool Create_Image32(IMAGEV1 * pimage, const int width, const int height);
-
-T3DLIB_API bool Create_Texture16(TEXTUREV1 * ptexture, const int width, const int height);
-
-T3DLIB_API bool Create_Texture32(TEXTUREV1 * ptexture, const int width, const int height);
+//
+//T3DLIB_API bool Create_Texture16(TEXTUREV1 * ptexture, const int width, const int height);
+//
+//T3DLIB_API bool Create_Texture32(TEXTUREV1 * ptexture, const int width, const int height);
 
 T3DLIB_API bool Load_Surface_From_Bitmap16(SURFACEV1 * psurface, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
 
@@ -288,16 +288,16 @@ T3DLIB_API bool Load_Surface_From_Bitmap32(SURFACEV1 * psurface, const BITMAPV1 
 T3DLIB_API bool Load_Image_From_Bitmap16(IMAGEV1 * pimage, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
 
 T3DLIB_API bool Load_Image_From_Bitmap32(IMAGEV1 * pimage, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
-
-T3DLIB_API bool Load_Texture_From_Bitmap16(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
-
-T3DLIB_API bool Load_Texture_From_Bitmap32(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
+//
+//T3DLIB_API bool Load_Texture_From_Bitmap16(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
+//
+//T3DLIB_API bool Load_Texture_From_Bitmap32(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
 
 T3DLIB_API void Destroy_Bitmap(BITMAPV1 * pbitmap);
 
 T3DLIB_API void Destroy_Image(IMAGEV1 * pimage);
-
-T3DLIB_API void Destroy_Texture(TEXTUREV1 * ptexture);
+//
+//T3DLIB_API void Destroy_Texture(TEXTUREV1 * ptexture);
 
 extern T3DLIB_API int COLOR_SHIFT_TABLE[MAX_COLOR_BPP + 1];
 extern T3DLIB_API int PITCH_SHIFT_TABLE[MAX_RECOMMENDED_PITCH + 1];
@@ -305,10 +305,10 @@ extern T3DLIB_API int PITCH_SHIFT_TABLE[MAX_RECOMMENDED_PITCH + 1];
 extern T3DLIB_API unsigned int (* Create_RGBI)(int r, int g, int b);
 extern T3DLIB_API unsigned int (* Create_RGBF)(float fr, float fg, float fb);
 extern T3DLIB_API bool (* Create_Image)(IMAGEV1 * pimage, const int width, const int height);
-extern T3DLIB_API bool (* Create_Texture)(TEXTUREV1 * ptexture, const int width, const int height);
+//extern T3DLIB_API bool (* Create_Texture)(TEXTUREV1 * ptexture, const int width, const int height);
 extern T3DLIB_API bool (* Load_Surface_From_Bitmap)(SURFACEV1 * psurface, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
 extern T3DLIB_API bool (* Load_Image_From_Bitmap)(IMAGEV1 * pimage, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
-extern T3DLIB_API bool (* Load_Texture_From_Bitmap)(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
+//extern T3DLIB_API bool (* Load_Texture_From_Bitmap)(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height);
 
 inline void Mem_Set_Word(void * dest, unsigned short value, long count)
 {
@@ -390,19 +390,32 @@ typedef FIXP12 _ZBUFF, * _ZBUFF_PTR;
 typedef FIXP28 _ZBUFF, * _ZBUFF_PTR;
 #endif
 
+#pragma warning(disable : 4201)
 typedef struct T3DLIB_API ZBUFFERV1_TYP
 {
-	unsigned char *		pbuffer;
-	long				pitch;
-	int					width;
-	int					height;
-	int					pitch_shift;
-	int					color_shift;
+	union
+	{
+		struct
+		{
+			unsigned char *		pbuffer;
+			long				pitch;
+			int					width;
+			int					height;
+			int					pitch_shift;
+			int					color_shift;
+		};
+
+		struct
+		{
+			SURFACEV1 _SURFACE;
+		};
+	};
 
 	_CTOR_DECLARE(ZBUFFERV1_TYP);
 	_DTOR_DECLARE(ZBUFFERV1_TYP);
 
 } ZBUFFERV1, * ZBUFFERV1_PTR;
+#pragma warning(default : 4201)
 
 T3DLIB_API bool Create_ZBuffer(ZBUFFERV1 * pzbuffer, const int width, const int height);
 

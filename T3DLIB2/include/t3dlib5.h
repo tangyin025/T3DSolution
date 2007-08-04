@@ -102,29 +102,68 @@ typedef struct T3DLIB_API VERTEXV1T_TYP
 	};
 
 } VERTEXV1T, * VERTEXV1T_PTR;
-#pragma warning(default : 4201)
 
 typedef struct T3DLIB_API RENDERCONTEXTV1_TYP
 {
-	unsigned char *		s_pbuffer;
-	long				s_pitch;
-	int					s_pitch_shift;
-	int					s_color_shift;
+	union
+	{
+		struct
+		{
+			unsigned char *		s_pbuffer;
+			long				s_pitch;
+			int					s_width;
+			int					s_height;
+			int					s_pitch_shift;
+			int					s_color_shift;
+		};
 
-	unsigned char *		z_pbuffer;
-	long				z_pitch;
-	int					z_pitch_shift;
-	int					z_color_shift;
+		SURFACEV1	_SURFACE;
+	};
 
-	unsigned char *		t_pbuffer;
-	long				t_pitch;
-	int					t_pitch_shift;
-	int					t_color_shift;
+	union
+	{
+		struct
+		{
+			unsigned char *		z_pbuffer;
+			long				z_pitch;
+			int					z_width;
+			int					z_height;
+			int					z_pitch_shift;
+			int					z_color_shift;
+		};
 
-	unsigned char *		t1_pbuffer;
-	long				t1_pitch;
-	int					t1_pitch_shift;
-	int					t1_color_shift;
+		SURFACEV1	_ZBUFFER;
+	};
+
+	union
+	{
+		struct
+		{
+			unsigned char *		t_pbuffer;
+			long				t_pitch;
+			int					t_width;
+			int					t_height;
+			int					t_pitch_shift;
+			int					t_color_shift;
+		};
+
+		SURFACEV1	_TEXTURE;
+	};
+
+	union
+	{
+		struct
+		{
+			unsigned char *		t1_pbuffer;
+			long				t1_pitch;
+			int					t1_width;
+			int					t1_height;
+			int					t1_pitch_shift;
+			int					t1_color_shift;
+		};
+
+		SURFACEV1	_TEXTURE1;
+	};
 
 	//unsigned int		c_ambi;
 	unsigned int		c_src_key;
@@ -140,6 +179,7 @@ typedef struct T3DLIB_API RENDERCONTEXTV1_TYP
 	_DTOR_DECLARE(RENDERCONTEXTV1_TYP);
 
 } RENDERCONTEXTV1, * RENDERCONTEXTV1_PTR;
+#pragma warning(default : 4201)
 
 extern T3DLIB_API void (* Draw_HLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 extern T3DLIB_API void (* Draw_VLine)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);

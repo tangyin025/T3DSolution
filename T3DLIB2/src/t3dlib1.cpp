@@ -747,19 +747,19 @@ T3DLIB_API int PITCH_SHIFT_TABLE[MAX_RECOMMENDED_PITCH + 1];
 T3DLIB_API unsigned int (* Create_RGBI)(int r, int g, int b) = NULL;
 T3DLIB_API unsigned int (* Create_RGBF)(float fr, float fg, float fb) = NULL;
 T3DLIB_API bool (* Create_Image)(IMAGEV1 * pimage, const int width, const int height) = NULL;
-T3DLIB_API bool (* Create_Texture)(TEXTUREV1 * ptexture, const int width, const int height) = NULL;
+//T3DLIB_API bool (* Create_Texture)(TEXTUREV1 * ptexture, const int width, const int height) = NULL;
 T3DLIB_API bool (* Load_Surface_From_Bitmap)(SURFACEV1 * psurface, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height) = NULL;
 T3DLIB_API bool (* Load_Image_From_Bitmap)(IMAGEV1 * pimage, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height) = NULL;
-T3DLIB_API bool (* Load_Texture_From_Bitmap)(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height) = NULL;
+//T3DLIB_API bool (* Load_Texture_From_Bitmap)(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height) = NULL;
 
 _CTOR_IMPLEMENT(BITMAPV1_TYP);
 _DTOR_IMPLEMENT_W1(BITMAPV1_TYP, Destroy_Bitmap, pbuffer);
 
 _CTOR_IMPLEMENT(IMAGEV1_TYP);
 _DTOR_IMPLEMENT_W1(IMAGEV1_TYP, Destroy_Image, pbuffer);
-
-_CTOR_IMPLEMENT(TEXTUREV1_TYP);
-_DTOR_IMPLEMENT_W1(TEXTUREV1_TYP, Destroy_Texture, pbuffer);
+//
+//_CTOR_IMPLEMENT(TEXTUREV1_TYP);
+//_DTOR_IMPLEMENT_W1(TEXTUREV1_TYP, Destroy_Texture, pbuffer);
 
 T3DLIB_API bool Init_T3dlib1(int bpp)
 {
@@ -769,20 +769,20 @@ T3DLIB_API bool Init_T3dlib1(int bpp)
 		Create_RGBI					= Create_RGBI16;
 		Create_RGBF					= Create_RGBF16;
 		Create_Image				= Create_Image16;
-		Create_Texture				= Create_Texture16;
+//		Create_Texture				= Create_Texture16;
 		Load_Surface_From_Bitmap	= Load_Surface_From_Bitmap16;
 		Load_Image_From_Bitmap		= Load_Image_From_Bitmap16;
-		Load_Texture_From_Bitmap	= Load_Texture_From_Bitmap16;
+//		Load_Texture_From_Bitmap	= Load_Texture_From_Bitmap16;
 		break;
 
 	case 32:
 		Create_RGBI					= Create_RGBI32;
 		Create_RGBF					= Create_RGBF32;
 		Create_Image				= Create_Image32;
-		Create_Texture				= Create_Texture32;
+//		Create_Texture				= Create_Texture32;
 		Load_Surface_From_Bitmap	= Load_Surface_From_Bitmap32;
 		Load_Image_From_Bitmap		= Load_Image_From_Bitmap32;
-		Load_Texture_From_Bitmap	= Load_Texture_From_Bitmap32;
+//		Load_Texture_From_Bitmap	= Load_Texture_From_Bitmap32;
 		break;
 
 	default:
@@ -1054,90 +1054,90 @@ ON_ERROR:
 	SAFE_FREE(pbuffer);
 	return false;
 }
-
-T3DLIB_API bool Create_Texture16(TEXTUREV1 * ptexture, const int width, const int height)
-{
-	assert(sizeof(XRGB32) == 4);
-	assert(ptexture->pbuffer == NULL);
-
-	long			rpitch;
-	int				rpitch_shift;
-	int				rcolor_shift;
-	unsigned char *	pbuffer = NULL;
-
-	if(!Get_Recommended_Pitch(&rpitch, width * sizeof(XRGB32)))
-		ON_ERROR_GOTO("get recommended pitch failed");
-
-	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
-	{
-		assert(false);
-		ON_ERROR_GOTO("compute pitch shift failed");
-	}
-
-	if(!Compute_Color_Shift(&rcolor_shift, sizeof(XRGB32) * 8))
-	{
-		assert(false);
-		ON_ERROR_GOTO("compute color shift failed");
-	}
-
-	//if(NULL == (ptexture->ptexture = (XRGB32 *)malloc(height * rpitch)))
-	if(NULL == (pbuffer = (unsigned char *)malloc(height * rpitch)))
-		ON_ERROR_GOTO("malloc image failed");
-
-	ptexture->pbuffer		= pbuffer;
-	ptexture->pitch			= rpitch;
-	ptexture->width			= width;
-	ptexture->height		= height;
-	ptexture->pitch_shift	= rpitch_shift;
-	ptexture->color_shift	= rcolor_shift;
-	return true;
-
-ON_ERROR:
-	SAFE_FREE(pbuffer);
-	return false;
-}
-
-T3DLIB_API bool Create_Texture32(TEXTUREV1 * ptexture, const int width, const int height)
-{
-	assert(sizeof(XRGB32) == 4);
-	assert(ptexture->pbuffer == NULL);
-
-	long			rpitch;
-	int				rpitch_shift;
-	int				rcolor_shift;
-	unsigned char *	pbuffer = NULL;
-
-	if(!Get_Recommended_Pitch(&rpitch, width * sizeof(XRGB32)))
-		ON_ERROR_GOTO("get recommended pitch failed");
-
-	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
-	{
-		assert(false);
-		ON_ERROR_GOTO("compute pitch shift failed");
-	}
-
-	if(!Compute_Color_Shift(&rcolor_shift, sizeof(XRGB32) * 8))
-	{
-		assert(false);
-		ON_ERROR_GOTO("compute color shift failed");
-	}
-
-	//if(NULL == (ptexture->ptexture = (XRGB32 *)malloc(height * rpitch)))
-	if(NULL == (pbuffer = (unsigned char *)malloc(height * rpitch)))
-		ON_ERROR_GOTO("malloc image failed");
-
-	ptexture->pbuffer		= pbuffer;
-	ptexture->pitch			= rpitch;
-	ptexture->width			= width;
-	ptexture->height		= height;
-	ptexture->pitch_shift	= rpitch_shift;
-	ptexture->color_shift	= rcolor_shift;
-	return true;
-
-ON_ERROR:
-	SAFE_FREE(pbuffer);
-	return false;
-}
+//
+//T3DLIB_API bool Create_Texture16(TEXTUREV1 * ptexture, const int width, const int height)
+//{
+//	assert(sizeof(XRGB32) == 4);
+//	assert(ptexture->pbuffer == NULL);
+//
+//	long			rpitch;
+//	int				rpitch_shift;
+//	int				rcolor_shift;
+//	unsigned char *	pbuffer = NULL;
+//
+//	if(!Get_Recommended_Pitch(&rpitch, width * sizeof(XRGB32)))
+//		ON_ERROR_GOTO("get recommended pitch failed");
+//
+//	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
+//	{
+//		assert(false);
+//		ON_ERROR_GOTO("compute pitch shift failed");
+//	}
+//
+//	if(!Compute_Color_Shift(&rcolor_shift, sizeof(XRGB32) * 8))
+//	{
+//		assert(false);
+//		ON_ERROR_GOTO("compute color shift failed");
+//	}
+//
+//	//if(NULL == (ptexture->ptexture = (XRGB32 *)malloc(height * rpitch)))
+//	if(NULL == (pbuffer = (unsigned char *)malloc(height * rpitch)))
+//		ON_ERROR_GOTO("malloc image failed");
+//
+//	ptexture->pbuffer		= pbuffer;
+//	ptexture->pitch			= rpitch;
+//	ptexture->width			= width;
+//	ptexture->height		= height;
+//	ptexture->pitch_shift	= rpitch_shift;
+//	ptexture->color_shift	= rcolor_shift;
+//	return true;
+//
+//ON_ERROR:
+//	SAFE_FREE(pbuffer);
+//	return false;
+//}
+//
+//T3DLIB_API bool Create_Texture32(TEXTUREV1 * ptexture, const int width, const int height)
+//{
+//	assert(sizeof(XRGB32) == 4);
+//	assert(ptexture->pbuffer == NULL);
+//
+//	long			rpitch;
+//	int				rpitch_shift;
+//	int				rcolor_shift;
+//	unsigned char *	pbuffer = NULL;
+//
+//	if(!Get_Recommended_Pitch(&rpitch, width * sizeof(XRGB32)))
+//		ON_ERROR_GOTO("get recommended pitch failed");
+//
+//	if(!Compute_Pitch_Shift(&rpitch_shift, rpitch))
+//	{
+//		assert(false);
+//		ON_ERROR_GOTO("compute pitch shift failed");
+//	}
+//
+//	if(!Compute_Color_Shift(&rcolor_shift, sizeof(XRGB32) * 8))
+//	{
+//		assert(false);
+//		ON_ERROR_GOTO("compute color shift failed");
+//	}
+//
+//	//if(NULL == (ptexture->ptexture = (XRGB32 *)malloc(height * rpitch)))
+//	if(NULL == (pbuffer = (unsigned char *)malloc(height * rpitch)))
+//		ON_ERROR_GOTO("malloc image failed");
+//
+//	ptexture->pbuffer		= pbuffer;
+//	ptexture->pitch			= rpitch;
+//	ptexture->width			= width;
+//	ptexture->height		= height;
+//	ptexture->pitch_shift	= rpitch_shift;
+//	ptexture->color_shift	= rcolor_shift;
+//	return true;
+//
+//ON_ERROR:
+//	SAFE_FREE(pbuffer);
+//	return false;
+//}
 
 T3DLIB_API bool Load_Surface_From_Bitmap16(SURFACEV1 * psurface, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
 {
@@ -1374,102 +1374,102 @@ T3DLIB_API bool Load_Image_From_Bitmap32(IMAGEV1 * pimage, const BITMAPV1 * pbit
 ON_ERROR:
 	return false;
 }
-
-T3DLIB_API bool Load_Texture_From_Bitmap16(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
-{
-	assert(ptexture->color_shift == _16BIT_BYTES_SHIFT);
-	assert(ptexture->pbuffer != NULL);
-	//memset(ptexture->ptexture, 0, ptexture->height << ptexture->pitch_shift);
-
-	int ti, bi, tj, bj;
-	XRGB32 * dest;
-	unsigned char * src;
-	for(ti = 0, bi = y;
-		ti < ptexture->height, bi < y + height; ti++, bi++)
-	{
-		for(tj = 0, bj = x;
-			tj < ptexture->width, bj < x + width; tj++, bj++)
-		{
-			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _16BIT_BYTES_SHIFT));
-			src  = pbitmap->pbuffer +
-					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
-			switch(pbitmap->bitmapinfoheader.biBitCount)
-			{
-			case 8:
-				dest->r = pbitmap->palette[*src].peRed		>> 3;
-				dest->g = pbitmap->palette[*src].peGreen	>> 2;
-				dest->b = pbitmap->palette[*src].peBlue		>> 3;
-				break;
-
-			case 16:
-				dest->r = (unsigned char)_16BIT_GETR(*((unsigned short *)src));
-				dest->g = (unsigned char)_16BIT_GETG(*((unsigned short *)src));
-				dest->b = (unsigned char)_16BIT_GETB(*((unsigned short *)src));
-				break;
-
-			case 24:
-				dest->r = (unsigned char)_32BIT_GETR(*((unsigned int *)src)) >> 3;
-				dest->g = (unsigned char)_32BIT_GETG(*((unsigned int *)src)) >> 2;
-				dest->b = (unsigned char)_32BIT_GETB(*((unsigned int *)src)) >> 3;
-				break;
-
-			default:
-				ON_ERROR_GOTO("unsurported color bit");
-			}
-		}
-	}
-
-ON_ERROR:
-	return false;
-}
-
-T3DLIB_API bool Load_Texture_From_Bitmap32(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
-{
-	assert(ptexture->color_shift == _32BIT_BYTES_SHIFT);
-	assert(ptexture->pbuffer != NULL);
-	//memset(ptexture->ptexture, 0, ptexture->height << ptexture->pitch_shift);
-
-	int ti, bi, tj, bj;
-	XRGB32 * dest;
-	unsigned char * src;
-	for(ti = 0, bi = y;
-		ti < ptexture->height, bi < y + height; ti++, bi++)
-	{
-		for(tj = 0, bj = x;
-			tj < ptexture->width, bj < x + width; tj++, bj++)
-		{
-			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _32BIT_BYTES_SHIFT));
-			src  = pbitmap->pbuffer +
-					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
-			switch(pbitmap->bitmapinfoheader.biBitCount)
-			{
-			case 8:
-				dest->r = pbitmap->palette[*src].peRed;
-				dest->g = pbitmap->palette[*src].peGreen;
-				dest->b = pbitmap->palette[*src].peBlue;
-				break;
-
-			case 16:
-				dest->r = (unsigned char)_16BIT_GETR(*((unsigned short *)src)) << 3;
-				dest->g = (unsigned char)_16BIT_GETG(*((unsigned short *)src)) << 2;
-				dest->b = (unsigned char)_16BIT_GETB(*((unsigned short *)src)) << 3;
-				break;
-
-			case 24:
-				dest->r = (unsigned char)_32BIT_GETR(*((unsigned int *)src));
-				dest->g = (unsigned char)_32BIT_GETG(*((unsigned int *)src));
-				dest->b = (unsigned char)_32BIT_GETB(*((unsigned int *)src));
-				break;
-
-			default:
-				ON_ERROR_GOTO("unsurported color bit");
-			}
-		}
-	}
-
-ON_ERROR:
-	return false;
-}
+//
+//T3DLIB_API bool Load_Texture_From_Bitmap16(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
+//{
+//	assert(ptexture->color_shift == _16BIT_BYTES_SHIFT);
+//	assert(ptexture->pbuffer != NULL);
+//	//memset(ptexture->ptexture, 0, ptexture->height << ptexture->pitch_shift);
+//
+//	int ti, bi, tj, bj;
+//	XRGB32 * dest;
+//	unsigned char * src;
+//	for(ti = 0, bi = y;
+//		ti < ptexture->height, bi < y + height; ti++, bi++)
+//	{
+//		for(tj = 0, bj = x;
+//			tj < ptexture->width, bj < x + width; tj++, bj++)
+//		{
+//			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _16BIT_BYTES_SHIFT));
+//			src  = pbitmap->pbuffer +
+//					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
+//			switch(pbitmap->bitmapinfoheader.biBitCount)
+//			{
+//			case 8:
+//				dest->r = pbitmap->palette[*src].peRed		>> 3;
+//				dest->g = pbitmap->palette[*src].peGreen	>> 2;
+//				dest->b = pbitmap->palette[*src].peBlue		>> 3;
+//				break;
+//
+//			case 16:
+//				dest->r = (unsigned char)_16BIT_GETR(*((unsigned short *)src));
+//				dest->g = (unsigned char)_16BIT_GETG(*((unsigned short *)src));
+//				dest->b = (unsigned char)_16BIT_GETB(*((unsigned short *)src));
+//				break;
+//
+//			case 24:
+//				dest->r = (unsigned char)_32BIT_GETR(*((unsigned int *)src)) >> 3;
+//				dest->g = (unsigned char)_32BIT_GETG(*((unsigned int *)src)) >> 2;
+//				dest->b = (unsigned char)_32BIT_GETB(*((unsigned int *)src)) >> 3;
+//				break;
+//
+//			default:
+//				ON_ERROR_GOTO("unsurported color bit");
+//			}
+//		}
+//	}
+//
+//ON_ERROR:
+//	return false;
+//}
+//
+//T3DLIB_API bool Load_Texture_From_Bitmap32(TEXTUREV1 * ptexture, const BITMAPV1 * pbitmap, const int x, const int y, const int width, const int height)
+//{
+//	assert(ptexture->color_shift == _32BIT_BYTES_SHIFT);
+//	assert(ptexture->pbuffer != NULL);
+//	//memset(ptexture->ptexture, 0, ptexture->height << ptexture->pitch_shift);
+//
+//	int ti, bi, tj, bj;
+//	XRGB32 * dest;
+//	unsigned char * src;
+//	for(ti = 0, bi = y;
+//		ti < ptexture->height, bi < y + height; ti++, bi++)
+//	{
+//		for(tj = 0, bj = x;
+//			tj < ptexture->width, bj < x + width; tj++, bj++)
+//		{
+//			dest = (XRGB32 *)(ptexture->pbuffer + (ti << ptexture->pitch_shift) + (tj << _32BIT_BYTES_SHIFT));
+//			src  = pbitmap->pbuffer +
+//					(bi * pbitmap->bitmapinfoheader.biWidth + bj) * (pbitmap->bitmapinfoheader.biBitCount >> 3);
+//			switch(pbitmap->bitmapinfoheader.biBitCount)
+//			{
+//			case 8:
+//				dest->r = pbitmap->palette[*src].peRed;
+//				dest->g = pbitmap->palette[*src].peGreen;
+//				dest->b = pbitmap->palette[*src].peBlue;
+//				break;
+//
+//			case 16:
+//				dest->r = (unsigned char)_16BIT_GETR(*((unsigned short *)src)) << 3;
+//				dest->g = (unsigned char)_16BIT_GETG(*((unsigned short *)src)) << 2;
+//				dest->b = (unsigned char)_16BIT_GETB(*((unsigned short *)src)) << 3;
+//				break;
+//
+//			case 24:
+//				dest->r = (unsigned char)_32BIT_GETR(*((unsigned int *)src));
+//				dest->g = (unsigned char)_32BIT_GETG(*((unsigned int *)src));
+//				dest->b = (unsigned char)_32BIT_GETB(*((unsigned int *)src));
+//				break;
+//
+//			default:
+//				ON_ERROR_GOTO("unsurported color bit");
+//			}
+//		}
+//	}
+//
+//ON_ERROR:
+//	return false;
+//}
 
 T3DLIB_API void Destroy_Bitmap(BITMAPV1 * pbitmap)
 {
@@ -1482,12 +1482,12 @@ T3DLIB_API void Destroy_Image(IMAGEV1 * pimage)
 	SAFE_FREE(pimage->pbuffer);
 	memset(pimage, 0, sizeof(*pimage));
 }
-
-T3DLIB_API void Destroy_Texture(TEXTUREV1 * ptexture)
-{
-	SAFE_FREE(ptexture->pbuffer);
-	memset(ptexture, 0, sizeof(*ptexture));
-}
+//
+//T3DLIB_API void Destroy_Texture(TEXTUREV1 * ptexture)
+//{
+//	SAFE_FREE(ptexture->pbuffer);
+//	memset(ptexture, 0, sizeof(*ptexture));
+//}
 
 _CTOR_IMPLEMENT(ZBUFFERV1_TYP);
 _DTOR_IMPLEMENT_W1(ZBUFFERV1_TYP, Destroy_ZBuffer, pbuffer);
