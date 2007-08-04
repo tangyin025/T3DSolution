@@ -602,22 +602,34 @@ bool Game_Frame(void)
 	static VECTOR4D cam_pos = {0, 30, -50, 1};
 
 	if(IS_KEY_DOWN(dikey_state, DIK_W))
+	{
 		cam_rot.x -= DEG_TO_RAD((REAL)2);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_S))
+	{
 		cam_rot.x += DEG_TO_RAD((REAL)2);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_A))
+	{
 		cam_rot.z += DEG_TO_RAD((REAL)2);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_D))
+	{
 		cam_rot.z -= DEG_TO_RAD((REAL)2);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_LEFT))
+	{
 		cam_rot.y -= DEG_TO_RAD((REAL)2);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_RIGHT))
+	{
 		cam_rot.y += DEG_TO_RAD((REAL)2);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_UP))
 	{
@@ -632,10 +644,14 @@ bool Game_Frame(void)
 	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_HOME))
+	{
 		cam_pos.y++;
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_END))
+	{
 		cam_pos.y--;
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_DELETE))
 	{
@@ -648,6 +664,35 @@ bool Game_Frame(void)
 		cam_pos.x += cos(cam_rot.y);
 		cam_pos.z -= sin(cam_rot.y);
 	}
+
+	VECTOR4D_Copy(&cam1.vrot, &cam_rot);
+
+	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
+
+	Reset_Object4D(&obj1);
+
+	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_XYZ);
+
+	Model_To_World_Object4D(&obj1);
+
+	// set color to white, it will be instead by Light_Object4d( ... ) at further
+	int i;
+	for(i = 0; i < (int)obj1.ver_list_t.length; i++)
+	{
+		obj1.ver_list_t.elems[i].c_diff = Create_RGBI(255, 255, 255);
+	}
+
+	World_To_Camera_Object4D(&obj1, &cam1);
+
+	//if(!Clip_Object4D(&obj1, &cam1))
+	if(!Clip_Object4D_Gouraud_Texture(&obj1, &cam1))
+		ON_ERROR_RETURN("clip object4d failed");
+
+	Camera_To_Perspective_Object4D(&obj1, &cam1);
+
+	Perspective_To_Screen_Object4D(&obj1, &cam1);
+
+	Clear_ZBuffer(&zbuf);
 
 	// ================================================================================
 	// END TODO.
@@ -664,76 +709,30 @@ bool Game_Frame(void)
 	if(!Lock_DDSurface(&ddsback, &surf))
 		return false;
 
+	// draw the clipper region
 	RENDERCONTEXTV1 rc;
-	rc.s_pbuffer = surf.pbuffer;
-	rc.s_pitch = surf.pitch;
-	rc.s_pitch_shift = surf.pitch_shift;
-	rc.s_color_shift = surf.color_shift;
+	memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
 
 	VERTEXV1 v0, v1;
 	VECTOR4D_InitXYZW(	&v0._4D,
-						(REAL)(resolutions[resolution_index].height / 12 - 1),
-						(REAL)(resolutions[resolution_index].height / 12 - 1),
+						cam1.viewport.x - 1,
+						cam1.viewport.y - 1,
 						0, 0);
 	VECTOR4D_InitXYZW(	&v1._4D,
-						(REAL)(resolutions[resolution_index].width - resolutions[resolution_index].height / 12),
-						(REAL)(resolutions[resolution_index].height - resolutions[resolution_index].height / 12),
+						cam1.viewport.x + cam1.viewport.width,
+						cam1.viewport.y + cam1.viewport.height,
 						0, 0);
 
 	v0.c_diff = Create_RGBI(255, 255, 255);
 	v1.c_diff = Create_RGBI(255, 255, 255);
+
 	Draw_HLine(&rc, &v0, &v1);
 	Draw_HLine(&rc, &v1, &v0);
 	Draw_VLine(&rc, &v0, &v1);
 	Draw_VLine(&rc, &v1, &v0);
 
-	//VECTOR3D_Add(&v0._3D, 1);
-	//VECTOR3D_Sub(&v1._3D, 1);
-	//surf.pbuffer	= surf.pbuffer + ((int)v0.x << surf.color_shift) + ((int)v0.y << surf.pitch_shift);
-	//surf.width		= (int)(v1.x - v0.x) + 1;
-	//surf.height		= (int)(v1.y - v0.y) + 1;
-
-	//CAM4DV1_Init(	&cam1,
-	//				CAM4DV1_MODE_EULAR,
-	//				DEG_TO_RAD(90),
-	//				10,
-	//				100,
-	//				&surf,
-	//				&zbuf,
-	//				VIEWPORT_FIX_MODE_HEIGHT);
-
-	surf.pbuffer = surf.pbuffer + ((int)cam1.viewport.x << surf.color_shift) + ((int)cam1.viewport.y << surf.pitch_shift);
-	surf.width = (int)cam1.viewport.width;
-	surf.height = (int)cam1.viewport.height;
 	cam1.psurf = &surf;
 	cam1.pzbuf = &zbuf;
-
-	VECTOR4D_Copy(&cam1.vrot, &cam_rot);
-
-	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
-
-	Reset_Object4D(&obj1);
-
-	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_XYZ);
-
-	Model_To_World_Object4D(&obj1);
-
-	// set color to white
-	int i;
-	for(i = 0; i < (int)obj1.ver_list_t.length; i++)
-		obj1.ver_list_t.elems[i].c_diff = Create_RGBI(255, 255, 255);
-
-	World_To_Camera_Object4D(&obj1, &cam1);
-
-	//if(!Clip_Object4D(&obj1, &cam1))
-	if(!Clip_Object4D_Gouraud_Texture(&obj1, &cam1))
-		ON_ERROR_RETURN("clip object4d failed");
-
-	Camera_To_Perspective_Object4D(&obj1, &cam1);
-
-	Perspective_To_Screen_Object4D(&obj1, &cam1);
-
-	Clear_ZBuffer(&zbuf);
 
 	//Draw_Object4D(&obj1, &cam1);
 	//Draw_Object4D_Wire(&obj1, &cam1);

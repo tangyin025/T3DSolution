@@ -1550,8 +1550,8 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	int i;
 	for(i = 0; i < (int)pobj->ver_list_t.length; i++)
 	{
-		pobj->ver_list_t.elems[i].x = (aw_inv + pobj->ver_list_t.elems[i].x) * ow_inv;
-		pobj->ver_list_t.elems[i].y = (ah_inv - pobj->ver_list_t.elems[i].y) * oh_inv;
+		pobj->ver_list_t.elems[i].x = (aw_inv + pobj->ver_list_t.elems[i].x) * ow_inv + pcam->viewport.x;
+		pobj->ver_list_t.elems[i].y = (ah_inv - pobj->ver_list_t.elems[i].y) * oh_inv + pcam->viewport.y;
 	}
 
 #undef aw_inv
@@ -1570,10 +1570,10 @@ T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1625,10 +1625,10 @@ T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1682,10 +1682,10 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1729,10 +1729,10 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1774,10 +1774,10 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1831,10 +1831,10 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1891,10 +1891,10 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -1941,10 +1941,10 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
 
-	rc.fmin_clip_x = 0;
-	rc.fmin_clip_y = 0;
-	rc.fmax_clip_x = pcam->viewport.width - 1;
-	rc.fmax_clip_y = pcam->viewport.height - 1;
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
