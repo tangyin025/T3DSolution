@@ -520,6 +520,14 @@ bool Game_Init(void)
 
 	Destroy_MsModel(&model);
 
+	REAL border_width = (REAL)((ddsback.rect.bottom - ddsback.rect.top) / 12);
+
+	CAM4DV1_Init( &cam1,
+			(ddsback.rect.right - ddsback.rect.left) - 2 * border_width,
+			(ddsback.rect.bottom - ddsback.rect.top) - 2 * border_width,
+			border_width,
+			border_width);
+
 	// ================================================================================
 	// END TODO.
 	// ================================================================================
@@ -667,7 +675,7 @@ bool Game_Frame(void)
 						(REAL)(resolutions[resolution_index].height / 12 - 1),
 						(REAL)(resolutions[resolution_index].height / 12 - 1),
 						0, 0);
-	VECTOR4D_InitXYZW(&v1._4D,
+	VECTOR4D_InitXYZW(	&v1._4D,
 						(REAL)(resolutions[resolution_index].width - resolutions[resolution_index].height / 12),
 						(REAL)(resolutions[resolution_index].height - resolutions[resolution_index].height / 12),
 						0, 0);
@@ -679,20 +687,26 @@ bool Game_Frame(void)
 	Draw_VLine(&rc, &v0, &v1);
 	Draw_VLine(&rc, &v1, &v0);
 
-	VECTOR3D_Add(&v0._3D, 1);
-	VECTOR3D_Sub(&v1._3D, 1);
-	surf.pbuffer	= surf.pbuffer + ((int)v0.x << surf.color_shift) + ((int)v0.y << surf.pitch_shift);
-	surf.width		= (int)(v1.x - v0.x) + 1;
-	surf.height		= (int)(v1.y - v0.y) + 1;
+	//VECTOR3D_Add(&v0._3D, 1);
+	//VECTOR3D_Sub(&v1._3D, 1);
+	//surf.pbuffer	= surf.pbuffer + ((int)v0.x << surf.color_shift) + ((int)v0.y << surf.pitch_shift);
+	//surf.width		= (int)(v1.x - v0.x) + 1;
+	//surf.height		= (int)(v1.y - v0.y) + 1;
 
-	CAM4DV1_Init(	&cam1,
-					CAM4DV1_MODE_EULAR,
-					DEG_TO_RAD(90),
-					10,
-					100,
-					&surf,
-					&zbuf,
-					VIEWPORT_FIX_MODE_HEIGHT);
+	//CAM4DV1_Init(	&cam1,
+	//				CAM4DV1_MODE_EULAR,
+	//				DEG_TO_RAD(90),
+	//				10,
+	//				100,
+	//				&surf,
+	//				&zbuf,
+	//				VIEWPORT_FIX_MODE_HEIGHT);
+
+	surf.pbuffer = surf.pbuffer + ((int)cam1.viewport.x << surf.color_shift) + ((int)cam1.viewport.y << surf.pitch_shift);
+	surf.width = (int)cam1.viewport.width;
+	surf.height = (int)cam1.viewport.height;
+	cam1.psurf = &surf;
+	cam1.pzbuf = &zbuf;
 
 	VECTOR4D_Copy(&cam1.vrot, &cam_rot);
 

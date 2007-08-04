@@ -999,34 +999,37 @@ T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D *
 	return pmres;
 }
 
-T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *			pcam,
-									CAM4DV1_MODE		mode,
-									REAL				fov,
-									REAL				min_clip_z,
-									REAL				max_clip_z,
-									SURFACEV1 *			psurf,
-									ZBUFFERV1 *			pzbuf,
-									VIEWPORT_FIX_MODE	fix_mode /*= VIEWPORT_FIX_MODE_HEIGHT*/)
+T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
+									REAL				viewport_x	/*= 0*/,
+									REAL				viewport_y	/*= 0*/,
+									REAL				min_clip_z	/*= 10*/,
+									REAL				max_clip_z	/*= 1000*/,
+									REAL				fov			/*= DEG_TO_RAD(90)*/,
+									VIEWPORT_FIX_MODE	fix_mode	/*= VIEWPORT_FIX_MODE_HEIGHT*/,
+									SURFACEV1 *			psurf		/*= NULL*/,
+									ZBUFFERV1 *			pzbuf		/*= NULL*/)
 {
 	//INIT_ZERO(*pcam);
-	pcam->mode				= mode;
+	pcam->mode				= CAM4DV1_MODE_UNKNOWN;
 	pcam->fov				= fov;
 	pcam->min_clip_z		= min_clip_z;
 	pcam->max_clip_z		= max_clip_z;
-	pcam->viewport.x		= 0;
-	pcam->viewport.y		= 0;
-	pcam->viewport.width	= (REAL)psurf->width;
-	pcam->viewport.height	= (REAL)psurf->height;
+	pcam->viewport.x		= floor(viewport_x);
+	pcam->viewport.y		= floor(viewport_y);
+	pcam->viewport.width	= floor(width);
+	pcam->viewport.height	= floor(height);
 
 	switch(fix_mode)
 	{
 	case VIEWPORT_FIX_MODE_WIDTH:
 		pcam->viewplane.width	= tan(fov / 2) * 2 * CAM4DV1_VIEWPLANE_DIST;
+		assert(pcam->viewplane.width > 0);
 		pcam->viewplane.height	= pcam->viewport.height / pcam->viewport.width * pcam->viewplane.width;
 		break;
 
 	case VIEWPORT_FIX_MODE_HEIGHT:
 		pcam->viewplane.height	= tan(fov / 2) * 2 * CAM4DV1_VIEWPLANE_DIST;
+		assert(pcam->viewplane.height > 0);
 		pcam->viewplane.width	= pcam->viewport.width / pcam->viewport.height * pcam->viewplane.height;
 		break;
 
@@ -1229,6 +1232,7 @@ T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial)
 }
 
 T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
+
 											 size_t max_tri_size /*= 1000*/,
 											 size_t max_ver_size /*= 3000*/,
 											 size_t max_nor_size /*= 3000*/)
@@ -1538,10 +1542,10 @@ T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 
 T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
-	REAL aw_inv = (REAL)0.5 * pcam->viewplane.width;
-	REAL ah_inv = (REAL)0.5 * pcam->viewplane.height;
-	REAL ow_inv = (pcam->viewport.width - 1) / pcam->viewplane.width;
-	REAL oh_inv = (pcam->viewport.height - 1) / pcam->viewplane.height;
+#define aw_inv	(REAL)0.5 * pcam->viewplane.width
+#define ah_inv	(REAL)0.5 * pcam->viewplane.height
+#define ow_inv	pcam->viewport.width / pcam->viewplane.width
+#define oh_inv	pcam->viewport.height / pcam->viewplane.height
 
 	int i;
 	for(i = 0; i < (int)pobj->ver_list_t.length; i++)
@@ -1549,6 +1553,11 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 		pobj->ver_list_t.elems[i].x = (aw_inv + pobj->ver_list_t.elems[i].x) * ow_inv;
 		pobj->ver_list_t.elems[i].y = (ah_inv - pobj->ver_list_t.elems[i].y) * oh_inv;
 	}
+
+#undef aw_inv
+#undef ah_inv
+#undef ow_inv
+#undef oh_inv
 }
 
 T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
@@ -1561,8 +1570,8 @@ T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1616,8 +1625,8 @@ T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1673,8 +1682,8 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1720,8 +1729,8 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1765,8 +1774,8 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1822,8 +1831,8 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1882,8 +1891,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 
@@ -1932,8 +1941,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
 	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
 
-	rc.fmin_clip_x = pcam->viewport.x;
-	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmin_clip_x = 0;
+	rc.fmin_clip_y = 0;
 	rc.fmax_clip_x = pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.height - 1;
 

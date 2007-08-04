@@ -33,6 +33,7 @@ typedef enum T3DLIB_API CAM4DV1_MODE_TYP
 {
 	CAM4DV1_MODE_EULAR,
 	CAM4DV1_MODE_UVN,
+	CAM4DV1_MODE_UNKNOWN,
 
 } CAM4DV1_MODE, * CAM4DV1_MODE_PTR;
 
@@ -222,14 +223,15 @@ T3DLIB_API bool Init_T3dlib6(int bpp);
 
 T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
 
-T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 *			pcam,
-									CAM4DV1_MODE		mode,
-									REAL				fov,
-									REAL				min_clip_z,
-									REAL				max_clip_z,
-									SURFACEV1 *			psurf,
-									ZBUFFERV1 *			pzbuf,
-									VIEWPORT_FIX_MODE	fix_mode = VIEWPORT_FIX_MODE_HEIGHT);
+T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
+									REAL				viewport_x	= 0,
+									REAL				viewport_y	= 0,
+									REAL				min_clip_z	= 10,
+									REAL				max_clip_z	= 1000,
+									REAL				fov			= DEG_TO_RAD(90),
+									VIEWPORT_FIX_MODE	fix_mode	= VIEWPORT_FIX_MODE_HEIGHT,
+									SURFACEV1 *			psurf		= NULL,
+									ZBUFFERV1 *			pzbuf		= NULL);
 
 T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq);
 
