@@ -676,6 +676,8 @@ bool Game_Frame(void)
 
 	Model_To_World_Object4D(&obj1);
 
+	Remove_Object4D_Backface_At_World(&obj1, &cam1);
+
 	// set color to white, it will be instead by Light_Object4d( ... ) at further
 	int i;
 	for(i = 0; i < (int)obj1.ver_list_t.length; i++)
@@ -690,6 +692,8 @@ bool Game_Frame(void)
 		ON_ERROR_RETURN("clip object4d failed");
 
 	Camera_To_Perspective_Object4D(&obj1, &cam1);
+
+	//Remove_Object4D_Backface_At_Perspective(&obj1);
 
 	Perspective_To_Screen_Object4D(&obj1, &cam1);
 

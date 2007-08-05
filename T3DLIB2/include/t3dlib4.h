@@ -380,6 +380,11 @@ inline REAL VECTOR2D_Dot(const VECTOR2D * pv0, const VECTOR2D * pv1)
 	return pv0->x * pv1->x + pv0->y * pv1->y;
 }
 
+inline REAL VECTOR2D_Cross(const VECTOR2D * pv0, const VECTOR2D * pv1)
+{
+	return pv0->x * pv1->y - pv0->y * pv1->x;
+}
+
 inline REAL VECTOR2D_Length(const VECTOR2D * pv0)
 {
 	return sqrt(pv0->x * pv0->x + pv0->y * pv0->y);
@@ -409,6 +414,8 @@ inline REAL VECTOR2D_CosTheta(const VECTOR2D * pv0, const VECTOR2D * pv1)
 {
 	assert(!IS_ZERO_FLOAT(VECTOR2D_Length(pv0)));
 	assert(!IS_ZERO_FLOAT(VECTOR2D_Length(pv1)));
+
+	//return VECTOR2D_Dot(pv0, pv1) / VECTOR2D_Length(pv0) * VECTOR2D_Length(pv1);
 
 	return	(pv0->x * pv1->x + pv0->y * pv1->y) /
 				(sqrt(pv0->x * pv0->x + pv0->y * pv0->y) *
@@ -641,6 +648,8 @@ inline REAL VECTOR3D_CosTheta(const VECTOR3D * pv0, const VECTOR3D * pv1)
 {
 	assert(!IS_ZERO_FLOAT(VECTOR3D_Length(pv0)));
 	assert(!IS_ZERO_FLOAT(VECTOR3D_Length(pv1)));
+
+	//return VECTOR3D_Dot(pv0, pv1) / (VECTOR3D_Length(pv0) * VECTOR3D_Length(pv1));
 
 	return	(pv0->x * pv1->x + pv0->y * pv1->y + pv0->z * pv1->z) /
 				(sqrt(pv0->x * pv0->x + pv0->y * pv0->y + pv0->z * pv0->z) *

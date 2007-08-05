@@ -256,6 +256,8 @@ T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj);
 
 T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj);
 
+T3DLIB_API void Remove_Object4D_Backface_At_World(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
 T3DLIB_API void World_To_Camera_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 //
 //T3DLIB_API bool Clip_Triangle_From_Camera(TRI_ARRAYV1 * ptris, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam);
@@ -267,6 +269,8 @@ T3DLIB_API bool Clip_Object4D_Gouraud_Texture16(OBJECT4DV1 * pobj, CAM4DV1 * pca
 T3DLIB_API bool Clip_Object4D_Gouraud_Texture32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Remove_Object4D_Backface_At_Perspective(OBJECT4DV1 * pobj);
 
 T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 

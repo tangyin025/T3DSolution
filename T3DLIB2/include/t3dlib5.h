@@ -58,12 +58,17 @@ typedef struct T3DLIB_API VERTEXV1_TYP
 
 		struct
 		{
-			VECTOR4D _4D;
+			VECTOR2D _2D;
 		};
 
 		struct
 		{
 			VECTOR3D _3D;
+		};
+
+		struct
+		{
+			VECTOR4D _4D;
 		};
 	};
 
@@ -86,12 +91,17 @@ typedef struct T3DLIB_API VERTEXV1T_TYP
 
 		struct
 		{
-			VECTOR4D _4D;
+			VECTOR2D _2D;
 		};
 
 		struct
 		{
 			VECTOR3D _3D;
+		};
+
+		struct
+		{
+			VECTOR4D _4D;
 		};
 
 		struct

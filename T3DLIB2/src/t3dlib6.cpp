@@ -1259,12 +1259,12 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 					ON_ERROR_GOTO("append triangle list failed");
 
 				ptri->v0_i = pmesh->pTriangles[j].nVertexIndices[0];
-				ptri->v1_i = pmesh->pTriangles[j].nVertexIndices[1];
-				ptri->v2_i = pmesh->pTriangles[j].nVertexIndices[2];
+				ptri->v1_i = pmesh->pTriangles[j].nVertexIndices[2]; // !!!
+				ptri->v2_i = pmesh->pTriangles[j].nVertexIndices[1]; // !!!
 
 				ptri->n0_i = pmesh->pTriangles[j].nNormalIndices[0];
-				ptri->n1_i = pmesh->pTriangles[j].nNormalIndices[1];
-				ptri->n2_i = pmesh->pTriangles[j].nNormalIndices[2];
+				ptri->n1_i = pmesh->pTriangles[j].nNormalIndices[2]; // !!!
+				ptri->n2_i = pmesh->pTriangles[j].nNormalIndices[1]; // !!!
 
 				ptri->state = TRI_STATE_ACTIVE;
 			}
@@ -1282,7 +1282,7 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 				VECTOR4D_InitXYZ(	&pver->_4D,
 									(REAL)pmesh->pVertices[j].Vertex[0],
 									(REAL)pmesh->pVertices[j].Vertex[1],
-									(REAL)pmesh->pVertices[j].Vertex[2]);
+									-(REAL)pmesh->pVertices[j].Vertex[2]); // !!!
 
 				//pver->u = (FIXP16)(pmesh->pVertices[j].u * FIXP16_MAG);
 				//pver->v = (FIXP16)(pmesh->pVertices[j].v * FIXP16_MAG);
@@ -1414,6 +1414,32 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj)
 	}
 }
 
+T3DLIB_API void Remove_Object4D_Backface_At_World(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
+{
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		{
+			VECTOR4D v0, v1, v3, v4;
+			VECTOR3D_Cross(&v3._3D,
+							VECTOR3D_Sub(&v0._3D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._3D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._3D),
+							VECTOR3D_Sub(&v1._3D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._3D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._3D));
+			VECTOR3D_Sub(&v4._3D,
+							&pcam->vpos._3D, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._3D);
+
+			if(VECTOR3D_Dot(&v3._3D, &v4._3D) <= 0)
+			{
+				pobj->tri_list.elems[i].state = TRI_STATE_BACKFACE;
+			}
+		}
+	}
+}
+
 T3DLIB_API void World_To_Camera_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
 	int i;
@@ -1540,24 +1566,41 @@ T3DLIB_API void Camera_To_Perspective_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	UNREFERENCED_PARAMETER(pcam);
 }
 
+T3DLIB_API void Remove_Object4D_Backface_At_Perspective(OBJECT4DV1 * pobj)
+{
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+		{
+			VECTOR2D v0, v1;
+			if(VECTOR2D_Cross(
+							VECTOR2D_Sub(&v0,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._2D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._2D),
+							VECTOR2D_Sub(&v1,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._2D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._2D)) >= 0) // !!!
+			{
+				pobj->tri_list.elems[i].state = TRI_STATE_BACKFACE;
+			}
+		}
+	}
+}
+
 T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 {
-#define aw_inv	(REAL)0.5 * pcam->viewplane.width
-#define ah_inv	(REAL)0.5 * pcam->viewplane.height
-#define ow_inv	pcam->viewport.width / pcam->viewplane.width
-#define oh_inv	pcam->viewport.height / pcam->viewplane.height
-
 	int i;
 	for(i = 0; i < (int)pobj->ver_list_t.length; i++)
 	{
-		pobj->ver_list_t.elems[i].x = (aw_inv + pobj->ver_list_t.elems[i].x) * ow_inv + pcam->viewport.x;
-		pobj->ver_list_t.elems[i].y = (ah_inv - pobj->ver_list_t.elems[i].y) * oh_inv + pcam->viewport.y;
-	}
+		pobj->ver_list_t.elems[i].x =
+			((REAL)0.5 * pcam->viewplane.width + pobj->ver_list_t.elems[i].x)
+				* pcam->viewport.width / pcam->viewplane.width + pcam->viewport.x;
 
-#undef aw_inv
-#undef ah_inv
-#undef ow_inv
-#undef oh_inv
+		pobj->ver_list_t.elems[i].y =
+			((REAL)0.5 * pcam->viewplane.height - pobj->ver_list_t.elems[i].y)
+				* pcam->viewport.height / pcam->viewplane.height + pcam->viewport.y;
+	}
 }
 
 T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)

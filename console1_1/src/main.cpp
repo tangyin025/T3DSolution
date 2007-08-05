@@ -208,53 +208,53 @@ int main(int argc, char ** argv)
 	//std::cout << arr_i.length << ", " << arr_i.size << std::endl;
 	//Destroy_Array(&arr_i);
 
-	int bpp = 16;
-	if(!Init_T3dlib1(bpp)
-		|| !Init_T3dlib4(bpp)
-		|| !Init_T3dlib5(bpp)
-		|| !Init_T3dlib6(bpp))
-	{
-		cout << "Init t3dlibs failed !!!" << endl;
-		exit(1);
-	}
+	//int bpp = 16;
+	//if(!Init_T3dlib1(bpp)
+	//	|| !Init_T3dlib4(bpp)
+	//	|| !Init_T3dlib5(bpp)
+	//	|| !Init_T3dlib6(bpp))
+	//{
+	//	cout << "Init t3dlibs failed !!!" << endl;
+	//	exit(1);
+	//}
 
-	msModel model;
-	char buffer[MAX_BUFFER_SIZE];
-	int line;
-	char file[MAX_BUFFER_SIZE];
-	INIT_ZERO(model);
-	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
-	{
-		Get_Last_Error(buffer, file, &line);
-		std::cout << buffer << " " << line << endl;
-		Destroy_MsModel(&model);
-		exit(1);
-	}
+	//msModel model;
+	//char buffer[MAX_BUFFER_SIZE];
+	//int line;
+	//char file[MAX_BUFFER_SIZE];
+	//INIT_ZERO(model);
+	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+	//{
+	//	Get_Last_Error(buffer, file, &line);
+	//	std::cout << buffer << " " << line << endl;
+	//	Destroy_MsModel(&model);
+	//	exit(1);
+	//}
 
-	MATERIALV1 mat;
-	INIT_ZERO(mat);
-	if(!Create_Material_From_MsModel32(&mat, &model, "Material01"))
-	{
-		Get_Last_Error(buffer, file, &line);
-		std::cout << buffer << " " << line << endl;
-		Destroy_Material(&mat);
-		Destroy_MsModel(&model);
-		exit(1);
-	}
-	Destroy_Material(&mat);
+	//MATERIALV1 mat;
+	//INIT_ZERO(mat);
+	//if(!Create_Material_From_MsModel32(&mat, &model, "Material01"))
+	//{
+	//	Get_Last_Error(buffer, file, &line);
+	//	std::cout << buffer << " " << line << endl;
+	//	Destroy_Material(&mat);
+	//	Destroy_MsModel(&model);
+	//	exit(1);
+	//}
+	//Destroy_Material(&mat);
 
-	OBJECT4DV1 obj;
-	INIT_ZERO(obj);
-	if(!Create_Object4D_From_MsModel(&obj, &model, "Box01"))
-	{
-		Get_Last_Error(buffer, file, &line);
-		std::cout << buffer << " " << line << endl;
-		Destroy_Object4D(&obj);
-		Destroy_MsModel(&model);
-		exit(1);
-	}
-	Destroy_Object4D(&obj);
-	Destroy_MsModel(&model);
+	//OBJECT4DV1 obj;
+	//INIT_ZERO(obj);
+	//if(!Create_Object4D_From_MsModel(&obj, &model, "Box01"))
+	//{
+	//	Get_Last_Error(buffer, file, &line);
+	//	std::cout << buffer << " " << line << endl;
+	//	Destroy_Object4D(&obj);
+	//	Destroy_MsModel(&model);
+	//	exit(1);
+	//}
+	//Destroy_Object4D(&obj);
+	//Destroy_MsModel(&model);
 
 	//int i;
 	//for(i = 0; i < 500; i += 10)
@@ -300,5 +300,18 @@ int main(int argc, char ** argv)
 	//cout << "normal time: " << error << endl;
 
 	//cout << a << endl;
+
+	// ====================================================================================
+	// 2007-08-05
+	// ====================================================================================
+	
+	VECTOR3D v0 = {1, 0, 1};
+	VECTOR3D v1 = {0, 0, 1};
+	VECTOR3D v2;
+
+	VECTOR3D_Cross(&v2, &v0, &v1);
+	VECTOR3D_Print(&v2);
+	cout << VECTOR3D_Dot(&v0, &v1) << endl;
+
 	return 0;
 }
