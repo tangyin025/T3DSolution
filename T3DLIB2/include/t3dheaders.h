@@ -50,4 +50,6 @@
 //#pragma message("dsound.lib ok")
 #endif // T3DLIB2_EXPORTS
 
+//#define T3DLIB2_DOUBLE_PRECISION
+
 #endif // __T3DHEADERS_H__

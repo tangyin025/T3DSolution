@@ -1043,7 +1043,7 @@ T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
 	return pcam;
 }
 
-T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq)
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq /*= ROTATION_SEQ_ZXY*/)
 {
 	MATRIX4X4 mx, my, mz, mmov, mrot, mtmp;
 	MATRIX4X4_Init4X4(	&mmov,

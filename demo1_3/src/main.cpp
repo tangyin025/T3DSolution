@@ -597,9 +597,10 @@ bool Game_Frame(void)
 	// TODO: Game logic here
 	// ================================================================================
 
-	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
-
-	static VECTOR4D cam_pos = {0, 30, -50, 1};
+	//static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
+	//static VECTOR4D cam_pos = {0, 30, -50, 1};
+	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)68), 0, 0, 1};
+	static VECTOR4D cam_pos = {0, 13, -25, 1};
 
 	if(IS_KEY_DOWN(dikey_state, DIK_W))
 	{
@@ -671,7 +672,7 @@ bool Game_Frame(void)
 
 	Reset_Object4D(&obj1);
 
-	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_XYZ);
+	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_ZXY);
 
 	Model_To_World_Object4D(&obj1);
 
