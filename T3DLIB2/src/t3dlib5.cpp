@@ -3549,6 +3549,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
 			}
 			else
 			{
@@ -3617,6 +3620,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y1));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y1) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
 			}
 			else
 			{
@@ -3717,6 +3723,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
 			}
 			else
 			{
@@ -3785,6 +3794,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y1));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y1) * sc.rz_inc;
 			}
 			else
 			{
@@ -3904,6 +3916,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
 			}
 			else
 			{
@@ -3972,6 +3987,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y1));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y1) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
 			}
 			else
 			{
@@ -4072,6 +4090,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
 			}
 			else
 			{
@@ -4140,6 +4161,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 				VECTOR4DI vtmp;
 				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
 				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y1));
+
+				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
+				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y1) * sc.rz_inc;
 			}
 			else
 			{

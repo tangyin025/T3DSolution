@@ -29,11 +29,16 @@
 
 #define IS_VALID_TRIANGLE(s)			((s) == TRI_STATE_ACTIVE || (s) == TRI_STATE_CLIPPED)
 
+#define MATERIAL_ATTR_AMBIENT			(0x01)
+#define MATERIAL_ATTR_DIFFUSE			(0x02)
+#define MATERIAL_ATTR_SPECULAR			(0x04)
+#define MATERIAL_ATTR_EMISSIVE			(0x08)
+
 typedef enum T3DLIB_API CAM4DV1_MODE_TYP
 {
+	CAM4DV1_MODE_UNKNOWN = 0,
 	CAM4DV1_MODE_EULAR,
 	CAM4DV1_MODE_UVN,
-	CAM4DV1_MODE_UNKNOWN,
 
 } CAM4DV1_MODE, * CAM4DV1_MODE_PTR;
 
@@ -289,5 +294,44 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
 
 T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+
+#define LIGHT_STATE_NULL				(0)
+#define LIGHT_STATE_ACTIVE				(1)
+#define LIGHT_STATE_CULLED				(2)
+
+typedef enum T3DLIB_API LIGHT4DV1_MODE_TYP
+{
+	LIGHT4DV1_MODE_UNKNOWN = 0,
+	LIGHT4DV1_MODE_AMBIENT,
+	LIGHT4DV1_MODE_DIRECT,
+	LIGHT4DV1_MODE_POINT,
+
+} LIGHT4DV1_MODE, * LIGHT4DV1_MODE_PTR;
+
+typedef struct T3DLIB_API LIGHT4DV1_TYP
+{
+	LIGHT4DV1_MODE	mode;
+	int				state;
+	int				attr;
+	VECTOR4D		vpos;
+	VECTOR4D		vdir;
+	VECTOR4D		vtag;
+
+	union
+	{
+		unsigned int	intensity;
+
+		unsigned int	color;
+	};
+
+	REAL			kc, kl, kq;
+
+} LIGHT4DV1, * LIGHT4DV1_PTR;
+
+extern T3DLIB_API void (* Light_Object4D)(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIALV1 * pmaterial);
+
+T3DLIB_API void Light_Object4D16(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIALV1 * pmaterial);
+
+T3DLIB_API void Light_Object4D32(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIALV1 * pmaterial);
 
 #endif // __T3DLIB6_H__

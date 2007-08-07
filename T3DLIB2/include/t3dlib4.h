@@ -14,6 +14,8 @@
 #define EPSILON_E6			(1.0e-6)
 
 #define IS_ZERO_FLOAT(f)	(abs((REAL)(f)) < EPSILON_E6)
+#define GET_CEIL_LIMIT(f)	((f) - (REAL)EPSILON_E6)
+#define GET_FLOOR_LIMIT(f)	((f) - 1 + (REAL)EPSILON_E6)
 #define DEG_TO_RAD(deg)		(((deg) / (REAL)180.0) * (REAL)PI)
 #define RAD_TO_DEG(rad)		(((rad) / (REAL)PI) * (REAL)180.0)
 

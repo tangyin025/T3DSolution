@@ -23,28 +23,55 @@
 #define LINE2D_INTERSECT(ca, a0, a1, b0, b1)	((b0) + ((b1) - (b0)) * ((ca) - (a0)) / ((a1) - (a0)))
 
 #pragma warning(disable : 4201)
-typedef struct T3DLIB_API TEXTCOORV1_TYP
-{
-	union
-	{
-		__declspec(align(16)) FIXP16 _M[2];
-
-		struct
-		{
-			FIXP16 u;
-			FIXP16 v;
-		};
-
-		struct
-		{
-			VECTOR2DI _2DI;
-		};
-	};
-
-} TEXTCOORV1, * TEXTCOORV1_PTR;
+//typedef struct T3DLIB_API TEXTCOORV1_TYP
+//{
+//	union
+//	{
+//		__declspec(align(16)) FIXP16 _M[2];
+//
+//		struct
+//		{
+//			FIXP16 u;
+//			FIXP16 v;
+//		};
+//
+//		struct
+//		{
+//			VECTOR2DI _2DI;
+//		};
+//	};
+//
+//} TEXTCOORV1, * TEXTCOORV1_PTR;
 
 typedef struct T3DLIB_API VERTEXV1_TYP
 {
+	//union
+	//{
+	//	__declspec(align(16)) REAL _M[4];
+
+	//	struct
+	//	{
+	//		REAL x, y, z, w;
+	//		unsigned int c_diff;
+	//		unsigned int c_spec;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR2D _2D;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR3D _3D;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR4D _4D;
+	//	};
+	//};
+
 	union
 	{
 		__declspec(align(16)) REAL _M[4];
@@ -52,8 +79,6 @@ typedef struct T3DLIB_API VERTEXV1_TYP
 		struct
 		{
 			REAL x, y, z, w;
-			unsigned int c_diff;
-			unsigned int c_spec;
 		};
 
 		struct
@@ -71,45 +96,120 @@ typedef struct T3DLIB_API VERTEXV1_TYP
 			VECTOR4D _4D;
 		};
 	};
+
+	//union
+	//{
+	//	__declspec(align(16)) REAL _N[4];
+
+	//	struct
+	//	{
+	//		REAL nx, ny, nz, nw;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR4D _normal;
+	//	};
+	//};
+
+	unsigned int c_diff;
+	unsigned int c_spec;
 
 } VERTEXV1, * VERTEXV1_PTR;
 
 typedef struct T3DLIB_API VERTEXV1T_TYP
 {
+	//union
+	//{
+	//	__declspec(align(16)) REAL _M[4];
+
+	//	struct
+	//	{
+	//		REAL x, y, z, w;
+	//		unsigned int c_diff;
+	//		unsigned int c_spec;
+	//		FIXP16 u,	v;
+	//		FIXP16 u1,	v1;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR2D _2D;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR3D _3D;
+	//	};
+
+	//	struct
+	//	{
+	//		VECTOR4D _4D;
+	//	};
+
+	//	struct
+	//	{
+	//		VERTEXV1	_VERTEXV1;
+	//		TEXTCOORV1	_TEXTCOOR[TRI_TEXTURE_NUM];
+	//	};
+	//};
+
 	union
 	{
-		__declspec(align(16)) REAL _M[4];
-
 		struct
 		{
-			REAL x, y, z, w;
+			union
+			{
+				__declspec(align(16)) REAL _M[4];
+
+				struct
+				{
+					REAL x, y, z, w;
+				};
+
+				struct
+				{
+					VECTOR2D _2D;
+				};
+
+				struct
+				{
+					VECTOR3D _3D;
+				};
+
+				struct
+				{
+					VECTOR4D _4D;
+				};
+			};
+
+			//union
+			//{
+			//	__declspec(align(16)) REAL _N[4];
+
+			//	struct
+			//	{
+			//		REAL nx, ny, nz, nw;
+			//	};
+
+			//	struct
+			//	{
+			//		VECTOR4D _normal;
+			//	};
+			//};
+
 			unsigned int c_diff;
 			unsigned int c_spec;
-			FIXP16 u,	v;
-			FIXP16 u1,	v1;
 		};
 
 		struct
 		{
-			VECTOR2D _2D;
-		};
-
-		struct
-		{
-			VECTOR3D _3D;
-		};
-
-		struct
-		{
-			VECTOR4D _4D;
-		};
-
-		struct
-		{
-			VERTEXV1	_VERTEXV1;
-			TEXTCOORV1	_TEXTCOOR[TRI_TEXTURE_NUM];
+			VERTEXV1 _VERTEXV1;
 		};
 	};
+
+	FIXP16 u, v;
+	FIXP16 u1, v1;
 
 } VERTEXV1T, * VERTEXV1T_PTR;
 
