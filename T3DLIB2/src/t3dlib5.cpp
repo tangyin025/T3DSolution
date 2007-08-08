@@ -997,42 +997,87 @@ T3DLIB_API void Draw_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	int ix = _16BIT_BYTES;
-	int	iy = prc->s_pitch;
-	if(dx < 0) { NEG(dx); NEG(ix); }
-	if(dy < 0) { NEG(dy); NEG(iy); }
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
 		{
-			*(unsigned short *)ps = (unsigned short)pv0->c_diff;
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		int error = dy2 - dx;
+		assert(dx >= 0);
+		while(dx--)
+		{
+			*(unsigned short *)ps = (short)pv0->c_diff;
+
 			if(error >= 0)
 			{
-				ps += iy;
+				ps += s_pitch;
 				error -= dx2;
 			}
-			ps += ix;
+
+			ps += _16BIT_BYTES;
 			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
 		{
-			*(unsigned short *)ps = (unsigned short)pv0->c_diff;
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_16BIT_BYTES;
+		}
+		else
+		{
+			s_bytes = _16BIT_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		int error = dx2 - dy;
+		assert(dy >= 0);
+		while(dy--)
+		{
+			*(unsigned short *)ps = (short)pv0->c_diff;
+
 			if(error >= 0)
 			{
-				ps += ix;
+				ps += s_bytes;
 				error -= dy2;
 			}
-			ps += iy;
+
+			ps += prc->s_pitch;
 			error += dx2;
 		}
 	}
@@ -1047,42 +1092,87 @@ T3DLIB_API void Draw_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, c
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	int ix = _32BIT_BYTES;
-	int	iy = prc->s_pitch;
-	if(dx < 0) { NEG(dx); NEG(ix); }
-	if(dy < 0) { NEG(dy); NEG(iy); }
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
+		{
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		int error = dy2 - dx;
+		assert(dx >= 0);
+		while(dx--)
 		{
 			*(unsigned int *)ps = pv0->c_diff;
+
 			if(error >= 0)
 			{
-				ps += iy;
+				ps += s_pitch;
 				error -= dx2;
 			}
-			ps += ix;
+
+			ps += _32BIT_BYTES;
 			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
+		{
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_32BIT_BYTES;
+		}
+		else
+		{
+			s_bytes = _32BIT_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		int error = dx2 - dy;
+		assert(dy >= 0);
+		while(dy--)
 		{
 			*(unsigned int *)ps = pv0->c_diff;
+
 			if(error >= 0)
 			{
-				ps += ix;
+				ps += s_bytes;
 				error -= dy2;
 			}
-			ps += iy;
+
+			ps += prc->s_pitch;
 			error += dx2;
 		}
 	}
@@ -1094,74 +1184,136 @@ T3DLIB_API void Draw_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV
 	int y0 = (int)pv0->y;
 	int x1 = (int)pv1->x;
 	int y1 = (int)pv1->y;
-	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	FIXP28 zdx = 0;
-	FIXP28 zdy = 0;
-	if(dx != 0) zdx = (z1 - z0) / dx;
-	if(dy != 0) zdy = (z1 - z0) / dy;
 
-	int ixs = _16BIT_BYTES;
-	int	iys = prc->s_pitch;
-	int ixz = _ZBUFF_BYTES;
-	int iyz = prc->z_pitch;
-	if(dx < 0) { NEG(dx); NEG(ixs); NEG(ixz); }
-	if(dy < 0) { NEG(dy); NEG(iys); NEG(iyz); }
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
-	unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned short *)ps = (unsigned short)pv0->c_diff;
-				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_pitch;
+		int z_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+			z_pitch = -prc->z_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+			z_pitch = prc->z_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dx > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dx;
+
+			int error = dy2 - dx;
+			while(dx--)
 			{
-				ps += iys;
-				pz += iyz;
-				//z0 += zdy;
-				error -= dx2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned short *)ps = (unsigned short)pv0->c_diff;
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_pitch;
+					error -= dx2;
+
+					pz += z_pitch;
+				}
+
+				ps += _16BIT_BYTES;
+				error += dy2;
+
+				pz += _ZBUFF_BYTES;
+				z0 += dz;
 			}
-			ps += ixs;
-			pz += ixz;
-			z0 += zdx;
-			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned short *)ps = (unsigned short)pv0->c_diff;
-				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_bytes;
+		int z_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_16BIT_BYTES;
+			z_bytes = -_ZBUFF_BYTES;
+		}
+		else
+		{
+			s_bytes = _16BIT_BYTES;
+			z_bytes = _ZBUFF_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dy > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dy;
+
+			int error = dx2 - dy;
+			while(dy--)
 			{
-				ps += ixs;
-				pz += ixz;
-				//z0 += zdx;
-				error -= dy2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned short *)ps = (unsigned short)pv0->c_diff;
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_bytes;
+					error -= dy2;
+
+					pz += z_bytes;
+				}
+
+				ps += prc->s_pitch;
+				error += dx2;
+
+				pz += prc->z_pitch;
+				z0 += dz;
 			}
-			ps += iys;
-			pz += iyz;
-			z0 += zdy;
-			error += dx2;
 		}
 	}
 }
@@ -1172,74 +1324,136 @@ T3DLIB_API void Draw_Line_ZbufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV
 	int y0 = (int)pv0->y;
 	int x1 = (int)pv1->x;
 	int y1 = (int)pv1->y;
-	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	FIXP28 zdx = 0;
-	FIXP28 zdy = 0;
-	if(dx != 0) zdx = (z1 - z0) / dx;
-	if(dy != 0) zdy = (z1 - z0) / dy;
 
-	int ixs = _32BIT_BYTES;
-	int	iys = prc->s_pitch;
-	int ixz = _ZBUFF_BYTES;
-	int iyz = prc->z_pitch;
-	if(dx < 0) { NEG(dx); NEG(ixs); NEG(ixz); }
-	if(dy < 0) { NEG(dy); NEG(iys); NEG(iyz); }
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
-	unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned int *)ps = pv0->c_diff;
-				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_pitch;
+		int z_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+			z_pitch = -prc->z_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+			z_pitch = prc->z_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dx > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dx;
+
+			int error = dy2 - dx;
+			while(dx--)
 			{
-				ps += iys;
-				pz += iyz;
-				//z0 += zdy;
-				error -= dx2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned int *)ps = pv0->c_diff;
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_pitch;
+					error -= dx2;
+
+					pz += z_pitch;
+				}
+
+				ps += _32BIT_BYTES;
+				error += dy2;
+
+				pz += _ZBUFF_BYTES;
+				z0 += dz;
 			}
-			ps += ixs;
-			pz += ixz;
-			z0 += zdx;
-			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned int *)ps = pv0->c_diff;
-				*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_bytes;
+		int z_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_32BIT_BYTES;
+			z_bytes = -_ZBUFF_BYTES;
+		}
+		else
+		{
+			s_bytes = _32BIT_BYTES;
+			z_bytes = _ZBUFF_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dy > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dy;
+
+			int error = dx2 - dy;
+			while(dy--)
 			{
-				ps += ixs;
-				pz += ixz;
-				//z0 += zdx;
-				error -= dy2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned int *)ps = pv0->c_diff;
+
+					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_bytes;
+					error -= dy2;
+
+					pz += z_bytes;
+				}
+
+				ps += prc->s_pitch;
+				error += dx2;
+
+				pz += prc->z_pitch;
+				z0 += dz;
 			}
-			ps += iys;
-			pz += iyz;
-			z0 += zdy;
-			error += dx2;
 		}
 	}
 }
@@ -1253,46 +1467,89 @@ T3DLIB_API void Draw_Line_SrcAlpha16(const RENDERCONTEXTV1 * prc, const VERTEXV1
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	int ix = _16BIT_BYTES;
-	int	iy = prc->s_pitch;
-	if(dx < 0) { NEG(dx); NEG(ix); }
-	if(dy < 0) { NEG(dy); NEG(iy); }
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
+		{
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		int error = dy2 - dx;
+		assert(dx >= 0);
+		while(dx--)
 		{
 			*(unsigned short *)ps = ALPHA16_COMB(
 					prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
 
 			if(error >= 0)
 			{
-				ps += iy;
+				ps += s_pitch;
 				error -= dx2;
 			}
-			ps += ix;
+
+			ps += _16BIT_BYTES;
 			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
+		{
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_16BIT_BYTES;
+		}
+		else
+		{
+			s_bytes = _16BIT_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		int error = dx2 - dy;
+		assert(dy >= 0);
+		while(dy--)
 		{
 			*(unsigned short *)ps = ALPHA16_COMB(
 					prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
 
 			if(error >= 0)
 			{
-				ps += ix;
+				ps += s_bytes;
 				error -= dy2;
 			}
-			ps += iy;
+
+			ps += prc->s_pitch;
 			error += dx2;
 		}
 	}
@@ -1307,46 +1564,89 @@ T3DLIB_API void Draw_Line_SrcAlpha32(const RENDERCONTEXTV1 * prc, const VERTEXV1
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	int ix = _32BIT_BYTES;
-	int	iy = prc->s_pitch;
-	if(dx < 0) { NEG(dx); NEG(ix); }
-	if(dy < 0) { NEG(dy); NEG(iy); }
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
+		{
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		int error = dy2 - dx;
+		assert(dx >= 0);
+		while(dx--)
 		{
 			*(unsigned int *)ps = ALPHA32_COMB(
 					prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
 
 			if(error >= 0)
 			{
-				ps += iy;
+				ps += s_pitch;
 				error -= dx2;
 			}
-			ps += ix;
+
+			ps += _32BIT_BYTES;
 			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
+		{
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
+
+			NEG(dx);
+			NEG(dy);
+		}
+
+		int s_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_32BIT_BYTES;
+		}
+		else
+		{
+			s_bytes = _32BIT_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		int error = dx2 - dy;
+		assert(dy >= 0);
+		while(dy--)
 		{
 			*(unsigned int *)ps = ALPHA32_COMB(
 					prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
 
 			if(error >= 0)
 			{
-				ps += ix;
+				ps += s_bytes;
 				error -= dy2;
 			}
-			ps += iy;
+
+			ps += prc->s_pitch;
 			error += dx2;
 		}
 	}
@@ -1358,74 +1658,138 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha16(const RENDERCONTEXTV1 * prc, const
 	int y0 = (int)pv0->y;
 	int x1 = (int)pv1->x;
 	int y1 = (int)pv1->y;
-	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	FIXP28 zdx = 0;
-	FIXP28 zdy = 0;
-	if(dx != 0) zdx = (z1 - z0) / dx;
-	if(dy != 0) zdy = (z1 - z0) / dy;
 
-	int ixs = _16BIT_BYTES;
-	int	iys = prc->s_pitch;
-	int ixz = _ZBUFF_BYTES;
-	int iyz = prc->z_pitch;
-	if(dx < 0) { NEG(dx); NEG(ixs); NEG(ixz); }
-	if(dy < 0) { NEG(dy); NEG(iys); NEG(iyz); }
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
-	unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned short *)ps = ALPHA16_COMB(
-						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_pitch;
+		int z_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+			z_pitch = -prc->z_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+			z_pitch = prc->z_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dx > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dx;
+
+			int error = dy2 - dx;
+			while(dx--)
 			{
-				ps += iys;
-				pz += iyz;
-				//z0 += zdy;
-				error -= dx2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned short *)ps = ALPHA16_COMB(
+							prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
+
+					//*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_pitch;
+					error -= dx2;
+
+					pz += z_pitch;
+				}
+
+				ps += _16BIT_BYTES;
+				error += dy2;
+
+				pz += _ZBUFF_BYTES;
+				z0 += dz;
 			}
-			ps += ixs;
-			pz += ixz;
-			z0 += zdx;
-			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned short *)ps = ALPHA16_COMB(
-						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_bytes;
+		int z_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_16BIT_BYTES;
+			z_bytes = -_ZBUFF_BYTES;
+		}
+		else
+		{
+			s_bytes = _16BIT_BYTES;
+			z_bytes = _ZBUFF_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _16BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dy > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dy;
+
+			int error = dx2 - dy;
+			while(dy--)
 			{
-				ps += ixs;
-				pz += ixz;
-				//z0 += zdx;
-				error -= dy2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned short *)ps = ALPHA16_COMB(
+							prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned short *)ps);
+
+					//*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_bytes;
+					error -= dy2;
+
+					pz += z_bytes;
+				}
+
+				ps += prc->s_pitch;
+				error += dx2;
+
+				pz += prc->z_pitch;
+				z0 += dz;
 			}
-			ps += iys;
-			pz += iyz;
-			z0 += zdy;
-			error += dx2;
 		}
 	}
 }
@@ -1436,74 +1800,138 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, const
 	int y0 = (int)pv0->y;
 	int x1 = (int)pv1->x;
 	int y1 = (int)pv1->y;
-	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
 
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	FIXP28 zdx = 0;
-	FIXP28 zdy = 0;
-	if(dx != 0) zdx = (z1 - z0) / dx;
-	if(dy != 0) zdy = (z1 - z0) / dy;
 
-	int ixs = _32BIT_BYTES;
-	int	iys = prc->s_pitch;
-	int ixz = _ZBUFF_BYTES;
-	int iyz = prc->z_pitch;
-	if(dx < 0) { NEG(dx); NEG(ixs); NEG(ixz); }
-	if(dy < 0) { NEG(dy); NEG(iys); NEG(iyz); }
+	register int dx2 = abs(dx) << 1;
+	register int dy2 = abs(dy) << 1;
 
-	unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
-	unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
-	int dx2 = dx << 1;
-	int dy2 = dy << 1;
-	int i, error;
-	if(dx > dy)
+	FIXP28 z0 = (FIXP28)(1 / pv0->z * FIXP28_MAG);
+	FIXP28 z1 = (FIXP28)(1 / pv1->z * FIXP28_MAG);
+
+	if(abs(dx) > abs(dy))
 	{
-		error = dy2 - dx;
-		for(i = 0; i < dx; i++)
+		if(dx < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned int *)ps = ALPHA32_COMB(
-						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_pitch;
+		int z_pitch;
+		if(dy < 0)
+		{
+			s_pitch = -prc->s_pitch;
+			z_pitch = -prc->z_pitch;
+		}
+		else
+		{
+			s_pitch = prc->s_pitch;
+			z_pitch = prc->z_pitch;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dx > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dx;
+
+			int error = dy2 - dx;
+			while(dx--)
 			{
-				ps += iys;
-				pz += iyz;
-				//z0 += zdy;
-				error -= dx2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned int *)ps = ALPHA32_COMB(
+							prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
+
+					//*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_pitch;
+					error -= dx2;
+
+					pz += z_pitch;
+				}
+
+				ps += _32BIT_BYTES;
+				error += dy2;
+
+				pz += _ZBUFF_BYTES;
+				z0 += dz;
 			}
-			ps += ixs;
-			pz += ixz;
-			z0 += zdx;
-			error += dy2;
 		}
 	}
 	else
 	{
-		error = dx2 - dy;
-		for(i = 0; i < dy; i++)
+		if(dy < 0)
 		{
-			if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-			{
-				*(unsigned int *)ps = ALPHA32_COMB(
-						prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
-			}
+			int itmp;
+			SWAP(x0, x1, itmp);
+			SWAP(y0, y1, itmp);
 
-			if(error >= 0)
+			NEG(dx);
+			NEG(dy);
+
+			SWAP(z0, z1, itmp);
+		}
+
+		int s_bytes;
+		int z_bytes;
+		if(dx < 0)
+		{
+			s_bytes = -_32BIT_BYTES;
+			z_bytes = -_ZBUFF_BYTES;
+		}
+		else
+		{
+			s_bytes = _32BIT_BYTES;
+			z_bytes = _ZBUFF_BYTES;
+		}
+
+		unsigned char * ps = prc->s_pbuffer + (y0 << prc->s_pitch_shift) + (x0 << _32BIT_BYTES_SHIFT);
+
+		unsigned char * pz = prc->z_pbuffer + (y0 << prc->z_pitch_shift) + (x0 << _ZBUFF_BYTES_SHIFT);
+
+		if(dy > 0)
+		{
+			FIXP28 dz = (z1 - z0) / dy;
+
+			int error = dx2 - dy;
+			while(dy--)
 			{
-				ps += ixs;
-				pz += ixz;
-				//z0 += zdx;
-				error -= dy2;
+				if(z0 >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
+				{
+					*(unsigned int *)ps = ALPHA32_COMB(
+							prc->c_src_alpha, pv0->c_diff, prc->c_dst_alpha, *(unsigned int *)ps);
+
+					//*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z0);
+				}
+
+				if(error >= 0)
+				{
+					ps += s_bytes;
+					error -= dy2;
+
+					pz += z_bytes;
+				}
+
+				ps += prc->s_pitch;
+				error += dx2;
+
+				pz += prc->z_pitch;
+				z0 += dz;
 			}
-			ps += iys;
-			pz += iyz;
-			z0 += zdy;
-			error += dx2;
 		}
 	}
 }

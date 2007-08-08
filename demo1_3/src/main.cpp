@@ -553,8 +553,9 @@ bool Game_Init(void)
 		obj2.ver_list.elems[i].z *= 0.3f;
 	}
 
+	//VECTOR4D_InitXYZ(&obj2.vpos, -16, 10, -44); // a bug position 2007-08-07
+	//VECTOR4D_InitXYZ(&obj2.vpos, -19, 2, -44); // a bug position 2007-08-08
 	VECTOR4D_InitXYZ(&obj2.vpos, 0, 10, 0);
-	//VECTOR4D_InitXYZ(&obj2.vpos, -16, 10, -44); // a bug position
 
 	// ================================================================================
 	// END TODO.
@@ -742,7 +743,7 @@ bool Game_Frame(void)
 	LIGHT4DV1 light1;
 	//light1.mode = LIGHT4DV1_MODE_DIRECT;
 	light1.mode = LIGHT4DV1_MODE_POINT;
-	light1.color = Create_RGBI(255, 255, 0);
+	light1.color = Create_RGBI(255, 255, 255);
 	VECTOR4D_Copy(&light1.vpos, &obj2.vpos);
 	VECTOR3D_Normalize(&VECTOR4D_InitXYZ(&light1.vdir, 0, -1, 0)->_3D);
 	//lights[2].kc	= 1.0f;
@@ -832,8 +833,8 @@ bool Game_Frame(void)
 	//Draw_Object4D_Wire(&obj1, &cam1);
 	Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj1, &cam1, &obj1_material);
 
-	Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj2, &cam1, &obj2_material);
-	//Draw_Object4D_Wire_ZBufferRW(&obj2, &cam1);
+	//Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj2, &cam1, &obj2_material);
+	Draw_Object4D_Wire_ZBufferRW(&obj2, &cam1);
 
 	Unlock_DDSurface(&ddsback);
 

@@ -1676,11 +1676,11 @@ T3DLIB_API void Perspective_To_Screen_Object4D(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	{
 		pobj->ver_list_t.elems[i].x =
 			((REAL)0.5 * pcam->viewplane.width + pobj->ver_list_t.elems[i].x)
-				/ pcam->viewplane.width * GET_CEIL_LIMIT(pcam->viewport.width) + pcam->viewport.x;		// !!!
+				/ pcam->viewplane.width * VIEWPORT_LIMIT_END(pcam->viewport.width) + VIEWPORT_LIMIT_BEG(pcam->viewport.x);		// !!!
 
 		pobj->ver_list_t.elems[i].y =
 			((REAL)0.5 * pcam->viewplane.height - pobj->ver_list_t.elems[i].y)
-				/ pcam->viewplane.height * GET_CEIL_LIMIT(pcam->viewport.height) + pcam->viewport.y;	// !!!
+				/ pcam->viewplane.height * VIEWPORT_LIMIT_END(pcam->viewport.height) + VIEWPORT_LIMIT_BEG(pcam->viewport.y);	// !!!
 	}
 }
 

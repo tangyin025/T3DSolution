@@ -368,6 +368,7 @@ typedef FIXP16_TYP FIXP16, * FIXP16_PTR;
 typedef int FIXP28_TYP;
 typedef FIXP28_TYP FIXP28, * FIXP28_PTR;
 
+#ifdef T3DLIB2_EXPORTS
 #if 0
 #define _ZBUFF_BYTES				FIXP12_BYTES
 #define _ZBUFF_BYTES_SHIFT			FIXP12_BYTES_SHIFT
@@ -389,6 +390,7 @@ typedef FIXP12 _ZBUFF, * _ZBUFF_PTR;
 #define _FIXP28_TO_ZBUFF(f)			(f)
 typedef FIXP28 _ZBUFF, * _ZBUFF_PTR;
 #endif
+#endif // T3DLIB2_EXPORTS
 
 #pragma warning(disable : 4201)
 typedef struct T3DLIB_API ZBUFFERV1_TYP

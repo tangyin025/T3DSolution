@@ -34,6 +34,9 @@
 #define MATERIAL_ATTR_SPECULAR			(0x04)
 #define MATERIAL_ATTR_EMISSIVE			(0x08)
 
+#define VIEWPORT_LIMIT_BEG(f)			(f)
+#define VIEWPORT_LIMIT_END(f)			((f) - (REAL)EPSILON_E3) // !!! E5 ~ E6 will still have bug
+
 typedef enum T3DLIB_API CAM4DV1_MODE_TYP
 {
 	CAM4DV1_MODE_UNKNOWN = 0,
