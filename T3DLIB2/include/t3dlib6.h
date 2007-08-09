@@ -180,12 +180,18 @@ typedef struct TRIANGLEV1_TYP
 		{
 			int v0_i, v1_i, v2_i;
 			int n0_i, n1_i, n2_i;
+
+			unsigned int c_diff0, c_diff1, c_diff2;
+			unsigned int c_spec0, c_spec1, c_spec2;
 		};
 
 		struct
 		{
 			int vers[3];
 			int nors[3];
+
+			unsigned int diffs[3];
+			unsigned int specs[3];
 		};
 	};
 
@@ -252,7 +258,7 @@ T3DLIB_API bool Create_Material_From_MsModel32(MATERIALV1 * pmaterial, msModel *
 T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial);
 
 T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
-											 size_t max_tri_size = 1000,
+											 size_t max_tri_size = 3000,
 											 size_t max_ver_size = 3000,
 											 size_t max_nor_size = 3000);
 

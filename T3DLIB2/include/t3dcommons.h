@@ -5,17 +5,20 @@
 #ifndef __T3DCOMMONS_H__
 #define __T3DCOMMONS_H__
 
+#define T3DLIB2_DOUBLE_PRECISION	0
+#define T3DLIB2_FIXP12_ZBUFFER		0
+
 #ifdef T3DLIB2_EXPORTS
 #define T3DLIB_API __declspec(dllexport)
 #else
 #define T3DLIB_API __declspec(dllimport)
-#endif // T3DLIB2_EXPORTS
+#endif
 
-#ifdef T3DLIB2_DOUBLE_PRECISION
+#if T3DLIB2_DOUBLE_PRECISION
 typedef double	REAL;
 #else
 typedef float	REAL;
-#endif // T3DLIB2_DOUBLE_PRECISION
+#endif
 
 #define MAX_BUFFER_SIZE				MAX_PATH
 #define TEXT_BKMODE_OPAQUE			OPAQUE

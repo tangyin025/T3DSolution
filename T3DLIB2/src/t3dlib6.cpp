@@ -88,22 +88,34 @@ static void Clip_Triangle_YPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARR
 
 static bool Clip_Triangle_ZPlane_Near1(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	size_t i = ptri - &ptris->elems[0];
+
 	TRIANGLEV1 * pt0;
 	if(!Append_Array(ptris, &pt0))
 		return false;
 	memcpy(pt0, ptri, sizeof(*pt0));
+
+	ptri = &ptris->elems[i]; // !!!
 
 	if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
+
+		pt0->c_diff0 = ptri->c_diff0;
+		pt0->c_diff1 = ptri->c_diff1;
+		pt0->c_diff2 = ptri->c_diff2;
 	}
 	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
 		pt0->v2_i = ptri->v0_i;
+
+		pt0->c_diff0 = ptri->c_diff1;
+		pt0->c_diff1 = ptri->c_diff2;
+		pt0->c_diff2 = ptri->c_diff0;
 	}
 	else
 	{
@@ -111,13 +123,16 @@ static bool Clip_Triangle_ZPlane_Near1(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, N
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
 		pt0->v2_i = ptri->v1_i;
+
+		pt0->c_diff0 = ptri->c_diff2;
+		pt0->c_diff1 = ptri->c_diff0;
+		pt0->c_diff2 = ptri->c_diff1;
 	}
 
 	VERTEXV1T * pv0;
 	if(!Append_Array(pvers, &pv0))
 		return false;
 	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
-pv0->c_diff = Create_RGBI(0, 255, 255);
 
 	pv0->z = pcam->min_clip_z;
 	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
@@ -132,20 +147,17 @@ pv0->c_diff = Create_RGBI(0, 255, 255);
 								pvers->elems[pt0->v1_i].y,
 								pvers->elems[pt0->v0_i].y);
 
-	//pt0->v0_i = (int)pvers->length - 1;
-		// !!! note : cannot change the pt0->v0_i, because the following pv1 use the old pt0->v0_i
-
 	TRIANGLEV1 * pt1;
 	if(!Append_Array(ptris, &pt1))
 		return false;
 	memcpy(pt1, ptri, sizeof(*pt1));
-	pt0 = &ptris->elems[ptris->length - 2];
+
+	pt0 = &ptris->elems[ptris->length - 2]; // !!!
 
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
 		return false;
 	memcpy(pv1, &pvers->elems[pt0->v0_i], sizeof(*pv1));
-pv1->c_diff = Create_RGBI(0, 255, 255);
 
 	pv1->z = pcam->min_clip_z;
 	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
@@ -172,22 +184,34 @@ pv1->c_diff = Create_RGBI(0, 255, 255);
 
 static bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	size_t i = ptri - &ptris->elems[0];
+
 	TRIANGLEV1 * pt0;
 	if(!Append_Array(ptris, &pt0))
 		return false;
 	memcpy(pt0, ptri, sizeof(*pt0));
+
+	ptri = &ptris->elems[i]; // !!!
 
 	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
 		pt0->v2_i = ptri->v0_i;
+
+		pt0->c_diff0 = ptri->c_diff1;
+		pt0->c_diff1 = ptri->c_diff2;
+		pt0->c_diff2 = ptri->c_diff0;
 	}
 	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
 		pt0->v2_i = ptri->v1_i;
+
+		pt0->c_diff0 = ptri->c_diff2;
+		pt0->c_diff1 = ptri->c_diff0;
+		pt0->c_diff2 = ptri->c_diff1;
 	}
 	else
 	{
@@ -195,13 +219,16 @@ static bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, N
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
+
+		pt0->c_diff0 = ptri->c_diff0;
+		pt0->c_diff1 = ptri->c_diff1;
+		pt0->c_diff2 = ptri->c_diff2;
 	}
 
 	VERTEXV1T * pv0;
 	if(!Append_Array(pvers, &pv0))
 		return false;
 	memcpy(pv0, &pvers->elems[pt0->v0_i], sizeof(*pv0));
-pv0->c_diff = Create_RGBI(0, 255, 255);
 
 	pv0->z = pcam->min_clip_z;
 	pv0->x = LINE2D_INTERSECT(	pcam->min_clip_z,
@@ -220,7 +247,6 @@ pv0->c_diff = Create_RGBI(0, 255, 255);
 	if(!Append_Array(pvers, &pv1))
 		return false;
 	memcpy(pv1, &pvers->elems[pt0->v1_i], sizeof(*pv1));
-pv1->c_diff = Create_RGBI(0, 255, 255);
 
 	pv1->z = pcam->min_clip_z;
 	pv1->x = LINE2D_INTERSECT(	pcam->min_clip_z,
@@ -286,22 +312,34 @@ static bool Clip_Triangle_ZPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARR
 
 static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	size_t i = ptri - &ptris->elems[0];
+
 	TRIANGLEV1 * pt0;
 	if(!Append_Array(ptris, &pt0))
 		return false;
 	memcpy(pt0, ptri, sizeof(*pt0));
+
+	ptri = &ptris->elems[i]; // !!!
 
 	if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
+
+		pt0->c_diff0 = ptri->c_diff0;
+		pt0->c_diff1 = ptri->c_diff1;
+		pt0->c_diff2 = ptri->c_diff2;
 	}
 	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
 		pt0->v2_i = ptri->v0_i;
+
+		pt0->c_diff0 = ptri->c_diff1;
+		pt0->c_diff1 = ptri->c_diff2;
+		pt0->c_diff2 = ptri->c_diff0;
 	}
 	else
 	{
@@ -309,6 +347,10 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
 		pt0->v2_i = ptri->v1_i;
+
+		pt0->c_diff0 = ptri->c_diff2;
+		pt0->c_diff1 = ptri->c_diff0;
+		pt0->c_diff2 = ptri->c_diff1;
 	}
 
 	VERTEXV1T * pv0;
@@ -341,28 +383,29 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v1_i].v,
 								pvers->elems[pt0->v0_i].v);
 
-	pv0->c_diff = _RGB16BIT(
+	unsigned int c_diff0 = _RGB16BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v1_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v1_i].c_diff),
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_16BIT_GETR(pt0->c_diff1),
+										(REAL)_16BIT_GETR(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v1_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v1_i].c_diff),
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_16BIT_GETG(pt0->c_diff1),
+										(REAL)_16BIT_GETG(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v1_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v1_i].c_diff),
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+										(REAL)_16BIT_GETB(pt0->c_diff1),
+										(REAL)_16BIT_GETB(pt0->c_diff0)));
 
 	TRIANGLEV1 * pt1;
 	if(!Append_Array(ptris, &pt1))
 		return false;
 	memcpy(pt1, ptri, sizeof(*pt1));
-	pt0 = &ptris->elems[ptris->length - 2];
+
+	pt0 = &ptris->elems[ptris->length - 2]; // !!!
 
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
@@ -394,27 +437,32 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v2_i].v,
 								pvers->elems[pt0->v0_i].v);
 
-	pv1->c_diff = _RGB16BIT(
+	unsigned int c_diff1 = _RGB16BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_16BIT_GETR(pt0->c_diff2),
+										(REAL)_16BIT_GETR(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_16BIT_GETG(pt0->c_diff2),
+										(REAL)_16BIT_GETG(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+										(REAL)_16BIT_GETB(pt0->c_diff2),
+										(REAL)_16BIT_GETB(pt0->c_diff0)));
 
 	pt0->v0_i = (int)pvers->length - 2;
 	pt1->v0_i = (int)pvers->length - 2;
 	pt1->v1_i = pt0->v2_i;
 	pt1->v2_i = (int)pvers->length - 1;
+
+	pt0->c_diff0 = c_diff0;
+	pt1->c_diff0 = c_diff0;
+	pt1->c_diff1 = pt0->c_diff2;
+	pt1->c_diff2 = c_diff1;
 
 	ptri->state = TRI_STATE_CULLED;
 	return true;
@@ -423,22 +471,34 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 
 static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	size_t i = ptri - &ptris->elems[0];
+
 	TRIANGLEV1 * pt0;
 	if(!Append_Array(ptris, &pt0))
 		return false;
 	memcpy(pt0, ptri, sizeof(*pt0));
+
+	ptri = &ptris->elems[i]; // !!!
 
 	if(pvers->elems[ptri->v0_i].z < pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
+
+		pt0->c_diff0 = ptri->c_diff0;
+		pt0->c_diff1 = ptri->c_diff1;
+		pt0->c_diff2 = ptri->c_diff2;
 	}
 	else if(pvers->elems[ptri->v1_i].z < pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
 		pt0->v2_i = ptri->v0_i;
+
+		pt0->c_diff0 = ptri->c_diff1;
+		pt0->c_diff1 = ptri->c_diff2;
+		pt0->c_diff2 = ptri->c_diff0;
 	}
 	else
 	{
@@ -446,6 +506,10 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
 		pt0->v2_i = ptri->v1_i;
+
+		pt0->c_diff0 = ptri->c_diff2;
+		pt0->c_diff1 = ptri->c_diff0;
+		pt0->c_diff2 = ptri->c_diff1;
 	}
 
 	VERTEXV1T * pv0;
@@ -478,28 +542,29 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v1_i].v,
 								pvers->elems[pt0->v0_i].v);
 
-	pv0->c_diff = _RGB32BIT(
+	unsigned int c_diff0 = _RGB32BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v1_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v1_i].c_diff),
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_32BIT_GETR(pt0->c_diff1),
+										(REAL)_32BIT_GETR(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v1_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v1_i].c_diff),
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_32BIT_GETG(pt0->c_diff1),
+										(REAL)_32BIT_GETG(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v1_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v1_i].c_diff),
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+										(REAL)_32BIT_GETB(pt0->c_diff1),
+										(REAL)_32BIT_GETB(pt0->c_diff0)));
 
 	TRIANGLEV1 * pt1;
 	if(!Append_Array(ptris, &pt1))
 		return false;
 	memcpy(pt1, ptri, sizeof(*pt1));
-	pt0 = &ptris->elems[ptris->length - 2];
+
+	pt0 = &ptris->elems[ptris->length - 2]; // !!!
 
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
@@ -531,27 +596,32 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v2_i].v,
 								pvers->elems[pt0->v0_i].v);
 
-	pv1->c_diff = _RGB32BIT(
+	unsigned int c_diff1 = _RGB32BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_32BIT_GETR(pt0->c_diff2),
+										(REAL)_32BIT_GETR(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_32BIT_GETG(pt0->c_diff2),
+										(REAL)_32BIT_GETG(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+										(REAL)_32BIT_GETB(pt0->c_diff2),
+										(REAL)_32BIT_GETB(pt0->c_diff0)));
 
 	pt0->v0_i = (int)pvers->length - 2;
 	pt1->v0_i = (int)pvers->length - 2;
 	pt1->v1_i = pt0->v2_i;
 	pt1->v2_i = (int)pvers->length - 1;
+
+	pt0->c_diff0 = c_diff0;
+	pt1->c_diff0 = c_diff0;
+	pt1->c_diff1 = pt0->c_diff2;
+	pt1->c_diff2 = c_diff1;
 
 	ptri->state = TRI_STATE_CULLED;
 	return true;
@@ -560,22 +630,34 @@ static bool Clip_Triangle_ZPlane_Near1_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 
 static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	size_t i = ptri - &ptris->elems[0];
+
 	TRIANGLEV1 * pt0;
 	if(!Append_Array(ptris, &pt0))
 		return false;
 	memcpy(pt0, ptri, sizeof(*pt0));
+
+	ptri = &ptris->elems[i]; // !!!
 
 	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
 		pt0->v2_i = ptri->v0_i;
+
+		pt0->c_diff0 = ptri->c_diff1;
+		pt0->c_diff1 = ptri->c_diff2;
+		pt0->c_diff2 = ptri->c_diff0;
 	}
 	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
 		pt0->v2_i = ptri->v1_i;
+
+		pt0->c_diff0 = ptri->c_diff2;
+		pt0->c_diff1 = ptri->c_diff0;
+		pt0->c_diff2 = ptri->c_diff1;
 	}
 	else
 	{
@@ -583,6 +665,10 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
+
+		pt0->c_diff0 = ptri->c_diff0;
+		pt0->c_diff1 = ptri->c_diff1;
+		pt0->c_diff2 = ptri->c_diff2;
 	}
 
 	VERTEXV1T * pv0;
@@ -615,22 +701,22 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v2_i].v,
 								pvers->elems[pt0->v0_i].v);
 
-	pv0->c_diff = _RGB16BIT(
+	unsigned int c_diff0 = _RGB16BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_16BIT_GETR(pt0->c_diff2),
+										(REAL)_16BIT_GETR(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_16BIT_GETG(pt0->c_diff2),
+										(REAL)_16BIT_GETG(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+										(REAL)_16BIT_GETB(pt0->c_diff2),
+										(REAL)_16BIT_GETB(pt0->c_diff0)));
 
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
@@ -662,25 +748,28 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v2_i].v,
 								pvers->elems[pt0->v1_i].v);
 
-	pv1->c_diff = _RGB16BIT(
+	unsigned int c_diff1 = _RGB16BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v1_i].z,
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETR(pvers->elems[pt0->v1_i].c_diff)),
+										(REAL)_16BIT_GETR(pt0->c_diff2),
+										(REAL)_16BIT_GETR(pt0->c_diff1)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v1_i].z,
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETG(pvers->elems[pt0->v1_i].c_diff)),
+										(REAL)_16BIT_GETG(pt0->c_diff2),
+										(REAL)_16BIT_GETG(pt0->c_diff1)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v1_i].z,
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_16BIT_GETB(pvers->elems[pt0->v1_i].c_diff)));
+										(REAL)_16BIT_GETB(pt0->c_diff2),
+										(REAL)_16BIT_GETB(pt0->c_diff1)));
 
 	pt0->v0_i = (int)pvers->length - 2;
 	pt0->v1_i = (int)pvers->length - 1;
+
+	pt0->c_diff0 = c_diff0;
+	pt0->c_diff1 = c_diff1;
 
 	ptri->state = TRI_STATE_CULLED;
 	return true;
@@ -689,22 +778,34 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 
 static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
+	size_t i = ptri - &ptris->elems[0];
+
 	TRIANGLEV1 * pt0;
 	if(!Append_Array(ptris, &pt0))
 		return false;
 	memcpy(pt0, ptri, sizeof(*pt0));
+
+	ptri = &ptris->elems[i]; // !!!
 
 	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
 		pt0->v2_i = ptri->v0_i;
+
+		pt0->c_diff0 = ptri->c_diff1;
+		pt0->c_diff1 = ptri->c_diff2;
+		pt0->c_diff2 = ptri->c_diff0;
 	}
 	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
 	{
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
 		pt0->v2_i = ptri->v1_i;
+
+		pt0->c_diff0 = ptri->c_diff2;
+		pt0->c_diff1 = ptri->c_diff0;
+		pt0->c_diff2 = ptri->c_diff1;
 	}
 	else
 	{
@@ -712,6 +813,10 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
+
+		pt0->c_diff0 = ptri->c_diff0;
+		pt0->c_diff1 = ptri->c_diff1;
+		pt0->c_diff2 = ptri->c_diff2;
 	}
 
 	VERTEXV1T * pv0;
@@ -744,22 +849,22 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v2_i].v,
 								pvers->elems[pt0->v0_i].v);
 
-	pv0->c_diff = _RGB32BIT(
+	unsigned int c_diff0 = _RGB32BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_32BIT_GETR(pt0->c_diff2),
+										(REAL)_32BIT_GETR(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v0_i].c_diff)),
+										(REAL)_32BIT_GETG(pt0->c_diff2),
+										(REAL)_32BIT_GETG(pt0->c_diff0)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v0_i].z,
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v0_i].c_diff)));
+										(REAL)_32BIT_GETB(pt0->c_diff2),
+										(REAL)_32BIT_GETB(pt0->c_diff0)));
 
 	VERTEXV1T * pv1;
 	if(!Append_Array(pvers, &pv1))
@@ -791,25 +896,28 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 								pvers->elems[pt0->v2_i].v,
 								pvers->elems[pt0->v1_i].v);
 
-	pv1->c_diff = _RGB32BIT(
+	unsigned int c_diff1 = _RGB32BIT(
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v1_i].z,
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETR(pvers->elems[pt0->v1_i].c_diff)),
+										(REAL)_32BIT_GETR(pt0->c_diff2),
+										(REAL)_32BIT_GETR(pt0->c_diff1)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v1_i].z,
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETG(pvers->elems[pt0->v1_i].c_diff)),
+										(REAL)_32BIT_GETG(pt0->c_diff2),
+										(REAL)_32BIT_GETG(pt0->c_diff1)),
 					(unsigned int)LINE2D_INTERSECT(	pcam->min_clip_z,
 										pvers->elems[pt0->v2_i].z,
 										pvers->elems[pt0->v1_i].z,
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v2_i].c_diff),
-										(REAL)_32BIT_GETB(pvers->elems[pt0->v1_i].c_diff)));
+										(REAL)_32BIT_GETB(pt0->c_diff2),
+										(REAL)_32BIT_GETB(pt0->c_diff1)));
 
 	pt0->v0_i = (int)pvers->length - 2;
 	pt0->v1_i = (int)pvers->length - 1;
+
+	pt0->c_diff0 = c_diff0;
+	pt0->c_diff1 = c_diff1;
 
 	ptri->state = TRI_STATE_CULLED;
 	return true;
@@ -1260,7 +1368,7 @@ T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial)
 
 T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
 
-											 size_t max_tri_size /*= 1000*/,
+											 size_t max_tri_size /*= 3000*/,
 											 size_t max_ver_size /*= 3000*/,
 											 size_t max_nor_size /*= 3000*/)
 {
@@ -1284,6 +1392,7 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 				TRIANGLEV1 * ptri;
 				if(!Append_Array(&pobj->tri_list, &ptri))
 					ON_ERROR_GOTO("append triangle list failed");
+				memset(ptri, 0, sizeof(*ptri));
 
 				ptri->v0_i = pmesh->pTriangles[j].nVertexIndices[0];
 				ptri->v1_i = pmesh->pTriangles[j].nVertexIndices[2]; // !!!
@@ -1316,69 +1425,26 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 					// !!! note: the u, v should be absolutely coordinate with texture's width and height
 			}
 
-			if(!Create_Array(&pobj->ver_list_t, max_ver_size))
+			if(!Create_Array(&pobj->ver_list_t, pobj->ver_list.size))
 				ON_ERROR_GOTO("create vertex_t list failed");
 
-			//if(!Create_Array(&pobj->nor_list, max_nor_size))
-			//	ON_ERROR_GOTO("create normal list failed");
-
-			//for(j = 0; j < pmesh->nNumNormals; j++)
-			//{
-			//	VECTOR4D * pnor;
-			//	if(!Append_Array(&pobj->nor_list, &pnor))
-			//		ON_ERROR_GOTO("append normal list failed");
-
-			//	VECTOR4D_InitXYZ(	pnor,
-			//						(REAL)pmesh->pNormals[j][0],
-			//						(REAL)pmesh->pNormals[j][1],
-			//						(REAL)pmesh->pNormals[j][2]);
-			//}
-
-			//if(!Create_Array(&pobj->nor_list_t, max_nor_size))
-			//	ON_ERROR_GOTO("create normal_t list failed");
-				// !!! note: this object4d unsupport tri normals, so normal should be corresponded with ver
-
-			if(!Create_Array(&pobj->nor_list, pobj->ver_list.size))
+			if(!Create_Array(&pobj->nor_list, max_nor_size))
 				ON_ERROR_GOTO("create normal list failed");
 
-			for(j = 0; j < (int)pobj->ver_list.length; j++)
+			for(j = 0; j < pmesh->nNumNormals; j++)
 			{
 				VECTOR4D * pnor;
 				if(!Append_Array(&pobj->nor_list, &pnor))
 					ON_ERROR_GOTO("append normal list failed");
+				memset(pnor, 0, sizeof(*pnor));
 
-				VECTOR4D_InitXYZ(pnor, 0, 0, 0);
+				VECTOR4D_InitXYZ(	pnor,
+									(REAL)pmesh->pNormals[j][0],
+									(REAL)pmesh->pNormals[j][1],
+									(REAL)pmesh->pNormals[j][2]);
 			}
 
-			assert(0 < pobj->tri_list.length);
-			assert(0 < pobj->ver_list.length);
-			assert(pobj->ver_list.length == pobj->nor_list.length);
-
-			for(j = 0; j < (int)pobj->tri_list.length; j++)
-			{
-				VECTOR4D v0, v1, nor;
-				VECTOR3D_Cross( &nor._3D,
-								VECTOR3D_Sub( &v0._3D,
-												&pobj->ver_list.elems[pobj->tri_list.elems[j].v1_i]._3D,
-												&pobj->ver_list.elems[pobj->tri_list.elems[j].v0_i]._3D),
-								VECTOR3D_Sub( &v1._3D,
-												&pobj->ver_list.elems[pobj->tri_list.elems[j].v2_i]._3D,
-												&pobj->ver_list.elems[pobj->tri_list.elems[j].v0_i]._3D));
-
-				VECTOR3D_Add( &pobj->nor_list.elems[pobj->tri_list.elems[j].v0_i]._3D, &nor._3D);
-				VECTOR3D_Add( &pobj->nor_list.elems[pobj->tri_list.elems[j].v1_i]._3D, &nor._3D);
-				VECTOR3D_Add( &pobj->nor_list.elems[pobj->tri_list.elems[j].v2_i]._3D, &nor._3D);
-			}
-
-			for(j = 0; j < (int)pobj->nor_list.length; j++)
-			{
-				if(IS_ZERO_FLOAT(VECTOR3D_Length(&pobj->nor_list.elems[j]._3D)))
-					ON_ERROR_GOTO("find zero normal in this model");
-
-				VECTOR3D_Normalize(&pobj->nor_list.elems[j]._3D);
-			}
-
-			if(!Create_Array(&pobj->nor_list_t, pobj->ver_list.size))
+			if(!Create_Array(&pobj->nor_list_t, pobj->nor_list.size))
 				ON_ERROR_GOTO("create normal_t list failed");
 
 			pobj->tri_orig_num = pobj->tri_list.length;
@@ -1434,7 +1500,12 @@ T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj)
 	int i;
 	pobj->tri_list.length = pobj->tri_orig_num;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		memset(pobj->tri_list.elems[i].diffs, 0, sizeof(pobj->tri_list.elems[i].diffs));
+		memset(pobj->tri_list.elems[i].specs, 0, sizeof(pobj->tri_list.elems[i].specs));
+
 		pobj->tri_list.elems[i].state = TRI_STATE_ACTIVE;
+	}
 	Clear_Array(&pobj->ver_list_t);
 	Clear_Array(&pobj->nor_list_t);
 }
@@ -1459,15 +1530,16 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj)
 		&& IS_ZERO_FLOAT(pobj->vrot.y)
 		&& IS_ZERO_FLOAT(pobj->vrot.z))
 	{
-		assert(pobj->ver_list.length == pobj->nor_list.length);
 		pobj->ver_list_t.length = pobj->ver_list.length;
-		pobj->nor_list_t.length = pobj->nor_list.length;
-
 		for(i = 0; i < (int)pobj->ver_list.length; i++)
 		{
 			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
 			VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &pobj->vpos._3D);
+		}
 
+		pobj->nor_list_t.length = pobj->nor_list.length;
+		for(i = 0; i < (int)pobj->nor_list.length; i++)
+		{
 			memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
 			VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &pobj->vpos._3D);
 		}
@@ -1480,15 +1552,16 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj)
 		mrot.m31 = pobj->vpos.y;
 		mrot.m32 = pobj->vpos.z;
 
-		assert(pobj->ver_list.length == pobj->nor_list.length);
 		pobj->ver_list_t.length = pobj->ver_list.length;
-		pobj->nor_list_t.length = pobj->nor_list.length;
-
 		for(i = 0; i < (int)pobj->ver_list.length; i++)
 		{
 			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
 			Mat_Mul_VECTOR4D_4X4(&pobj->ver_list_t.elems[i]._4D, &pobj->ver_list.elems[i]._4D, &mrot);
+		}
 
+		pobj->nor_list_t.length = pobj->nor_list.length;
+		for(i = 0; i < (int)pobj->nor_list.length; i++)
+		{
 			memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
 			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], &mrot);
 		}
@@ -1702,7 +1775,6 @@ T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
@@ -1713,24 +1785,27 @@ unsigned int c0, c1, c2;
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+
+			//pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			//pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			//pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+
 			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Clipped_Line16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 			break;
 
 		default:
@@ -1757,7 +1832,6 @@ T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
@@ -1768,24 +1842,27 @@ unsigned int c0, c1, c2;
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+
+			//pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			//pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			//pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+
 			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Clipped_Line32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 			break;
 
 		default:
@@ -1824,12 +1901,21 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW16(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
@@ -1871,12 +1957,21 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			Draw_Clipped_Line_ZbufferRW32(&rc, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1);
@@ -1906,7 +2001,6 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
@@ -1917,6 +2011,8 @@ unsigned int c0, c1, c2;
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+
 			Draw_Triangle16(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
@@ -1924,19 +2020,14 @@ unsigned int c0, c1, c2;
 			break;
 
 		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+
+//			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+
 			Draw_Clipped_Triangle16(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 			break;
 
 		default:
@@ -1963,7 +2054,6 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
-unsigned int c0, c1, c2;
 		switch(pobj->tri_list.elems[i].state)
 		{
 		case TRI_STATE_ACTIVE:
@@ -1974,6 +2064,8 @@ unsigned int c0, c1, c2;
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+
 			Draw_Triangle32(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
@@ -1981,19 +2073,14 @@ unsigned int c0, c1, c2;
 			break;
 
 		case TRI_STATE_CLIPPED:
-c0 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff;
-c1 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff;
-c2 = pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff;
+
+//			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
 pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = Create_RGBI(255, 0, 0);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = Create_RGBI(255, 0, 0);
+
 			Draw_Clipped_Triangle32(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = c0;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = c1;
-pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = c2;
 			break;
 
 		default:
@@ -2033,6 +2120,10 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Triangle_Gouraud_Texture_ZBufferRW16(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
@@ -2040,6 +2131,11 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 			break;
 
 		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
@@ -2083,6 +2179,10 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
 			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
 
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Triangle_Gouraud_Texture_ZBufferRW32(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
@@ -2090,6 +2190,11 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 			break;
 
 		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
 			Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(&rc,
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
 							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
@@ -2102,19 +2207,19 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	}
 }
 
-static void Light_VertexT_By_Ambient16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
+static inline unsigned int Light_VertexT_By_Ambient16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	{
 		// I(d)ambient = I0ambient * Clambient
 
-		pver->c_diff = RGB16_ADD(pver->c_diff,
-						RGB16_MUL(plight->intensity, pmaterial->c_ambi));
+		return RGB16_MUL(plight->intensity, pmaterial->c_ambi);
 	}
 
+	UNREFERENCED_PARAMETER(pver);
 	UNREFERENCED_PARAMETER(pnor);
 }
 
-static void Light_VertexT_By_Direct16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
+static inline unsigned int Light_VertexT_By_Direct16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	REAL dot = VECTOR3D_Dot(&pnor->_3D, &plight->vdir._3D);
 
@@ -2122,12 +2227,14 @@ static void Light_VertexT_By_Direct16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4D
 	{
 		// I(d)dir = I0dir * Cldir (n . l)
 
-		pver->c_diff = RGB16_ADD(pver->c_diff,
-						RGB16_MUL(RGB16_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF16(-dot, -dot, -dot)));
+		return RGB16_MUL(RGB16_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF16(-dot, -dot, -dot));
 	}
+
+	return 0;
+	UNREFERENCED_PARAMETER(pver);
 }
 
-static void Light_VertexT_By_Point16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
+static inline unsigned int Light_VertexT_By_Point16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	VECTOR4D dir;
 	REAL dot = VECTOR3D_Dot(&pnor->_3D, VECTOR3D_Sub(&dir._3D, &pver->_3D, &plight->vpos._3D));
@@ -2141,24 +2248,25 @@ static void Light_VertexT_By_Point16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV
 
 		dot /= len * (plight->kc + plight->kl * len + plight->kq * len * len);
 
-		pver->c_diff = RGB16_ADD(pver->c_diff,
-						RGB16_MUL(RGB16_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF16(-dot, -dot, -dot)));
+		return RGB16_MUL(RGB16_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF16(-dot, -dot, -dot));
 	}
+
+	return 0;
 }
 
-static void Light_VertexT_By_Ambient32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
+static inline unsigned int Light_VertexT_By_Ambient32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	{
 		// I(d)ambient = I0ambient * Clambient
 
-		pver->c_diff = RGB32_ADD(pver->c_diff,
-						RGB32_MUL(plight->intensity, pmaterial->c_ambi));
+		return RGB32_MUL(plight->intensity, pmaterial->c_ambi);
 	}
 
+	UNREFERENCED_PARAMETER(pver);
 	UNREFERENCED_PARAMETER(pnor);
 }
 
-static void Light_VertexT_By_Direct32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
+static inline unsigned int Light_VertexT_By_Direct32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	REAL dot = VECTOR3D_Dot(&pnor->_3D, &plight->vdir._3D);
 
@@ -2166,12 +2274,14 @@ static void Light_VertexT_By_Direct32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4D
 	{
 		// I(d)dir = I0dir * Cldir (n . l)
 
-		pver->c_diff = RGB32_ADD(pver->c_diff,
-						RGB32_MUL(RGB32_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF32(-dot, -dot, -dot)));
+		return RGB32_MUL(RGB32_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF32(-dot, -dot, -dot));
 	}
+
+	return 0;
+	UNREFERENCED_PARAMETER(pver);
 }
 
-static void Light_VertexT_By_Point32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
+static inline unsigned int Light_VertexT_By_Point32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	VECTOR4D dir;
 	REAL dot = VECTOR3D_Dot(&pnor->_3D, VECTOR3D_Sub(&dir._3D, &pver->_3D, &plight->vpos._3D));
@@ -2185,36 +2295,86 @@ static void Light_VertexT_By_Point32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV
 
 		dot /= len * (plight->kc + plight->kl * len + plight->kq * len * len);
 
-		pver->c_diff = RGB32_ADD(pver->c_diff,
-						RGB32_MUL(RGB32_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF32(-dot, -dot, -dot)));
+		return RGB32_MUL(RGB32_MUL(plight->intensity, pmaterial->c_diff), Create_RGBF32(-dot, -dot, -dot));
 	}
+
+	return 0;
 }
 
 T3DLIB_API void Light_Object4D16(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
-	assert(pobj->ver_list_t.length == pobj->nor_list_t.length);
-
 	int i;
 	switch(plight->mode)
 	{
 	case LIGHT4DV1_MODE_AMBIENT:
-		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		for(i = 0; i < (int)pobj->tri_list.length; i++)
 		{
-			Light_VertexT_By_Ambient16(&pobj->ver_list_t.elems[i], &pobj->nor_list_t.elems[i], plight, pmaterial);
+			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+			{
+				unsigned int ctmp;
+				ctmp = Light_VertexT_By_Ambient16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n0_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff0 = RGB16_ADD(pobj->tri_list.elems[i].c_diff0, ctmp);
+
+				ctmp = Light_VertexT_By_Ambient16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n1_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff1 = RGB16_ADD(pobj->tri_list.elems[i].c_diff1, ctmp);
+
+				ctmp = Light_VertexT_By_Ambient16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n2_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff2 = RGB16_ADD(pobj->tri_list.elems[i].c_diff2, ctmp);
+			}
 		}
 		break;
 
 	case LIGHT4DV1_MODE_DIRECT:
-		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		for(i = 0; i < (int)pobj->tri_list.length; i++)
 		{
-			Light_VertexT_By_Direct16(&pobj->ver_list_t.elems[i], &pobj->nor_list_t.elems[i], plight, pmaterial);
+			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+			{
+				unsigned int ctmp;
+				ctmp = Light_VertexT_By_Direct16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n0_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff0 = RGB16_ADD(pobj->tri_list.elems[i].c_diff0, ctmp);
+
+				ctmp = Light_VertexT_By_Direct16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n1_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff1 = RGB16_ADD(pobj->tri_list.elems[i].c_diff1, ctmp);
+
+				ctmp = Light_VertexT_By_Direct16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n2_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff2 = RGB16_ADD(pobj->tri_list.elems[i].c_diff2, ctmp);
+			}
 		}
 		break;
 
 	case LIGHT4DV1_MODE_POINT:
-		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		for(i = 0; i < (int)pobj->tri_list.length; i++)
 		{
-			Light_VertexT_By_Point16(&pobj->ver_list_t.elems[i], &pobj->nor_list_t.elems[i], plight, pmaterial);
+			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+			{
+				unsigned int ctmp;
+				ctmp = Light_VertexT_By_Point16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n0_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff0 = RGB16_ADD(pobj->tri_list.elems[i].c_diff0, ctmp);
+
+				ctmp = Light_VertexT_By_Point16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n1_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff1 = RGB16_ADD(pobj->tri_list.elems[i].c_diff1, ctmp);
+
+				ctmp = Light_VertexT_By_Point16(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n2_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff2 = RGB16_ADD(pobj->tri_list.elems[i].c_diff2, ctmp);
+			}
 		}
 		break;
 
@@ -2225,29 +2385,78 @@ T3DLIB_API void Light_Object4D16(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 
 T3DLIB_API void Light_Object4D32(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
-	assert(pobj->ver_list_t.length == pobj->nor_list_t.length);
-
 	int i;
 	switch(plight->mode)
 	{
 	case LIGHT4DV1_MODE_AMBIENT:
-		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		for(i = 0; i < (int)pobj->tri_list.length; i++)
 		{
-			Light_VertexT_By_Ambient32(&pobj->ver_list_t.elems[i], &pobj->nor_list_t.elems[i], plight, pmaterial);
+			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+			{
+				unsigned int ctmp;
+				ctmp = Light_VertexT_By_Ambient32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n0_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff0 = RGB32_ADD(pobj->tri_list.elems[i].c_diff0, ctmp);
+
+				ctmp = Light_VertexT_By_Ambient32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n1_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff1 = RGB32_ADD(pobj->tri_list.elems[i].c_diff1, ctmp);
+
+				ctmp = Light_VertexT_By_Ambient32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n2_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff2 = RGB32_ADD(pobj->tri_list.elems[i].c_diff2, ctmp);
+			}
 		}
 		break;
 
 	case LIGHT4DV1_MODE_DIRECT:
-		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		for(i = 0; i < (int)pobj->tri_list.length; i++)
 		{
-			Light_VertexT_By_Direct32(&pobj->ver_list_t.elems[i], &pobj->nor_list_t.elems[i], plight, pmaterial);
+			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+			{
+				unsigned int ctmp;
+				ctmp = Light_VertexT_By_Direct32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n0_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff0 = RGB32_ADD(pobj->tri_list.elems[i].c_diff0, ctmp);
+
+				ctmp = Light_VertexT_By_Direct32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n1_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff1 = RGB32_ADD(pobj->tri_list.elems[i].c_diff1, ctmp);
+
+				ctmp = Light_VertexT_By_Direct32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n2_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff2 = RGB32_ADD(pobj->tri_list.elems[i].c_diff2, ctmp);
+			}
 		}
 		break;
 
 	case LIGHT4DV1_MODE_POINT:
-		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		for(i = 0; i < (int)pobj->tri_list.length; i++)
 		{
-			Light_VertexT_By_Point32(&pobj->ver_list_t.elems[i], &pobj->nor_list_t.elems[i], plight, pmaterial);
+			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
+			{
+				unsigned int ctmp;
+				ctmp = Light_VertexT_By_Point32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n0_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff0 = RGB32_ADD(pobj->tri_list.elems[i].c_diff0, ctmp);
+
+				ctmp = Light_VertexT_By_Point32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n1_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff1 = RGB32_ADD(pobj->tri_list.elems[i].c_diff1, ctmp);
+
+				ctmp = Light_VertexT_By_Point32(
+								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i],
+								&pobj->nor_list_t.elems[pobj->tri_list.elems[i].n2_i], plight, pmaterial);
+				pobj->tri_list.elems[i].c_diff2 = RGB32_ADD(pobj->tri_list.elems[i].c_diff2, ctmp);
+			}
 		}
 		break;
 
