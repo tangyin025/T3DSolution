@@ -193,7 +193,7 @@ static bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, N
 
 	ptri = &ptris->elems[i]; // !!!
 
-	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
+	if(pvers->elems[ptri->v0_i].z >= pcam->min_clip_z) // !!!
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
@@ -203,7 +203,7 @@ static bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, N
 		pt0->c_diff1 = ptri->c_diff2;
 		pt0->c_diff2 = ptri->c_diff0;
 	}
-	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
+	else if(pvers->elems[ptri->v1_i].z >= pcam->min_clip_z) // !!!
 	{
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
@@ -215,7 +215,7 @@ static bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, N
 	}
 	else
 	{
-		assert(pvers->elems[ptri->v2_i].z > pcam->min_clip_z);
+		assert(pvers->elems[ptri->v2_i].z >= pcam->min_clip_z); // !!!
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
@@ -639,7 +639,7 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 
 	ptri = &ptris->elems[i]; // !!!
 
-	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
+	if(pvers->elems[ptri->v0_i].z >= pcam->min_clip_z) // !!!
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
@@ -649,7 +649,7 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 		pt0->c_diff1 = ptri->c_diff2;
 		pt0->c_diff2 = ptri->c_diff0;
 	}
-	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
+	else if(pvers->elems[ptri->v1_i].z >= pcam->min_clip_z) // !!!
 	{
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
@@ -661,7 +661,7 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture16(TRIANGLEV1 * ptri, VER_
 	}
 	else
 	{
-		assert(pvers->elems[ptri->v2_i].z > pcam->min_clip_z);
+		assert(pvers->elems[ptri->v2_i].z >= pcam->min_clip_z); // !!!
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
@@ -787,7 +787,7 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 
 	ptri = &ptris->elems[i]; // !!!
 
-	if(pvers->elems[ptri->v0_i].z > pcam->min_clip_z)
+	if(pvers->elems[ptri->v0_i].z >= pcam->min_clip_z) // !!!
 	{
 		pt0->v0_i = ptri->v1_i;
 		pt0->v1_i = ptri->v2_i;
@@ -797,7 +797,7 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 		pt0->c_diff1 = ptri->c_diff2;
 		pt0->c_diff2 = ptri->c_diff0;
 	}
-	else if(pvers->elems[ptri->v1_i].z > pcam->min_clip_z)
+	else if(pvers->elems[ptri->v1_i].z >= pcam->min_clip_z) // !!!
 	{
 		pt0->v0_i = ptri->v2_i;
 		pt0->v1_i = ptri->v0_i;
@@ -809,7 +809,7 @@ static bool Clip_Triangle_ZPlane_Near2_Gouraud_Texture32(TRIANGLEV1 * ptri, VER_
 	}
 	else
 	{
-		assert(pvers->elems[ptri->v2_i].z > pcam->min_clip_z);
+		assert(pvers->elems[ptri->v2_i].z >= pcam->min_clip_z); // !!!
 		pt0->v0_i = ptri->v0_i;
 		pt0->v1_i = ptri->v1_i;
 		pt0->v2_i = ptri->v2_i;
@@ -1441,7 +1441,7 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 				VECTOR4D_InitXYZ(	pnor,
 									(REAL)pmesh->pNormals[j][0],
 									(REAL)pmesh->pNormals[j][1],
-									(REAL)pmesh->pNormals[j][2]);
+									-(REAL)pmesh->pNormals[j][2]); // !!!
 			}
 
 			if(!Create_Array(&pobj->nor_list_t, pobj->nor_list.size))

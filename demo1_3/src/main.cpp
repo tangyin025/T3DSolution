@@ -329,7 +329,7 @@ bool Game_Init(void)
 
 	char szConfigFile[MAX_PATH];
 	GetCurrentDirectoryA(MAX_PATH, szConfigFile);
-	strcat(szConfigFile, "Config.ini");
+	strcat(szConfigFile, "\\Config.ini");
 	resolution_index = GetPrivateProfileInt(WND_NAME,
 			"resolution", DEFAULT_RESOLUTION, szConfigFile);
 
