@@ -155,13 +155,7 @@ T3DLIB_API void Destroy_Skeleton4D(SKELETON4DV1 * pske)
 		Destroy_Bone4D(&pske->bone_list.elems[i]);
 	}
 	Destroy_Array(&pske->bone_list);
-
-	for(i = 0; i < pske->bone_list_t.length; i++)
-	{
-		Destroy_Bone4D(&pske->bone_list_t.elems[i]);
-	}
 	Destroy_Array(&pske->bone_list_t);
-
 	INIT_ZERO(pske);
 }
 
@@ -227,6 +221,42 @@ static inline VECTOR4D * Build_Bone4D_VKey_By_Time(VECTOR4D * pvres, const BONE4
 	return VECTOR4D_InitXYZ(pvres, 0, 0, 0);
 }
 
+static inline VECTOR4D * Build_Bone4D_VKey_By_Time_Pos(VECTOR4D * pvres, const BONE4DV1_KEY_ARRAYV1 * pkey_list, REAL time)
+{
+	if(pkey_list->length == 0)
+	{
+		return VECTOR4D_InitXYZ(pvres, 0, 0, 0);
+	}
+
+	if(pkey_list->length == 1)
+	{
+		return VECTOR4D_Copy(pvres, &pkey_list->elems[0].vkey);
+	}
+
+	int i;
+	for(i = 1; i < (int)pkey_list->length; i++)
+	{
+		if(time >= pkey_list->elems[i - 1].time && time <= pkey_list->elems[i].time)
+		{
+			if(IS_ZERO_FLOAT(pkey_list->elems[i - 1].vkey.x)
+				&& IS_ZERO_FLOAT(IS_ZERO_FLOAT(pkey_list->elems[i - 1].vkey.y))
+				&& IS_ZERO_FLOAT(IS_ZERO_FLOAT(pkey_list->elems[i - 1].vkey.z))
+					&& IS_ZERO_FLOAT(IS_ZERO_FLOAT(pkey_list->elems[i].vkey.x))
+					&& IS_ZERO_FLOAT(IS_ZERO_FLOAT(pkey_list->elems[i].vkey.y))
+					&& IS_ZERO_FLOAT(IS_ZERO_FLOAT(pkey_list->elems[i].vkey.z)))
+			{
+				return VECTOR4D_InitXYZ(pvres, 0, 0, 0);
+			}
+			else
+			{
+				return Build_Vector4D_Key_By_Time(pvres, &pkey_list->elems[i - 1], &pkey_list->elems[i], time);
+			}
+		}
+	}
+
+	return VECTOR4D_InitXYZ(pvres, 0, 0, 0);
+}
+
 T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time)
 {
 	assert(NULL != pske->bone_list_t.elems);
@@ -237,15 +267,13 @@ T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time)
 	int i;
 	for(i = 0; i < (int)pske->bone_list.length; i++)
 	{
-		INIT_ZERO(pske->bone_list_t.elems[i]);
 		VECTOR4D vkey;
-
-		VECTOR3D_Add(&pske->bone_list_t.elems[i].vpos._3D,
-			&pske->bone_list.elems[i].vpos._3D, &Build_Bone4D_VKey_By_Time(&vkey, &pske->bone_list.elems[i].pos_key_list, time)->_3D);
+		VECTOR3D_Add( &pske->bone_list_t.elems[i].vpos._3D, &pske->bone_list.elems[i].vpos._3D,
+						&Build_Bone4D_VKey_By_Time(&vkey, &pske->bone_list.elems[i].pos_key_list, time)->_3D);
 		pske->bone_list_t.elems[i].vpos.w = 1;
 
-		VECTOR3D_Add(&pske->bone_list_t.elems[i].vrot._3D,
-			&pske->bone_list.elems[i].vrot._3D, &Build_Bone4D_VKey_By_Time(&vkey, &pske->bone_list.elems[i].rot_key_list, time)->_3D);
+		VECTOR3D_Add( &pske->bone_list_t.elems[i].vrot._3D, &pske->bone_list.elems[i].vrot._3D,
+						&Build_Bone4D_VKey_By_Time_Pos(&vkey, &pske->bone_list.elems[i].rot_key_list, time)->_3D);
 		pske->bone_list_t.elems[i].vrot.w = 1;
 	}
 }

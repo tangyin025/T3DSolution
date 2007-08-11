@@ -61,6 +61,7 @@ struct ARRAYV1
 
 	_CTOR_DECLARE(ARRAYV1);
 	_DTOR_DECLARE(ARRAYV1);
+
 };
 
 _CTOR_IMPLEMENT_T1(ARRAYV1, ELEM_T);
@@ -99,12 +100,12 @@ inline void Clear_Array(ARRAYV1<ELEM_T> * parr)
 }
 
 template <typename ELEM_T>
-inline bool Append_Array(ARRAYV1<ELEM_T> * parr, ELEM_T ** ppelem)
+inline bool Append_Array(ARRAYV1<ELEM_T> * parr, ELEM_T ** ppelem, size_t _increment_size = ARRAYV1_INCREMENT_SIZE)
 {
 	ELEM_T * p = NULL;
 	if(parr->length >= parr->size)
 	{
-		if(NULL == (p = (ELEM_T *)realloc(parr->elems, (parr->size + ARRAYV1_INCREMENT_SIZE) * sizeof(*p))))
+		if(NULL == (p = (ELEM_T *)realloc(parr->elems, (parr->size + _increment_size) * sizeof(*p))))
 			ON_ERROR_GOTO("realloc memory failed");
 
 		parr->elems = p;

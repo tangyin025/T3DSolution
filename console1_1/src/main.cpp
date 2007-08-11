@@ -21,6 +21,34 @@ bool foo(int elem)
 	return true;
 }
 
+void Print_Bone_Position(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_singles, size_t root, int indent)
+{
+	int i;
+	for(i = 0; i < indent; i++)
+		printf("\t");
+
+	VECTOR4D_Print(&pbone_singles->elems[root].vpos);
+
+	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
+	{
+		Print_Bone_Position(pbones, pbone_singles, pbones->elems[root].subs.elems[i], indent + 1);
+	}
+}
+
+void Print_Bone_Rotation(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_singles, size_t root, int indent)
+{
+	int i;
+	for(i = 0; i < indent; i++)
+		printf("\t");
+
+	VECTOR4D_Print(&pbone_singles->elems[root].vrot);
+
+	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
+	{
+		Print_Bone_Rotation(pbones, pbone_singles, pbones->elems[root].subs.elems[i], indent + 1);
+	}
+}
+
 int main(int argc, char ** argv)
 {
 	//cout << foo() << endl;
@@ -319,6 +347,16 @@ int main(int argc, char ** argv)
 		goto on_error;
 
 	Skeleton4D_Print(&ske);
+
+	Animate_Skeleton4D_By_Time(&ske, 25);
+
+	printf("\n");
+
+	Print_Bone_Position(&ske.bone_list, &ske.bone_list_t, ske.root, 0);
+
+	printf("\n");
+
+	Print_Bone_Rotation(&ske.bone_list, &ske.bone_list_t, ske.root, 0);
 
 	Destroy_Skeleton4D(&ske);
 	Destroy_MsModel(&model);
