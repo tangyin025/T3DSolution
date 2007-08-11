@@ -5,12 +5,14 @@
 #include <iostream>
 using namespace std;
 #include <xmmintrin.h>
+#include <crtdbg.h>
 
 #include "t3dheaders.h"
 #include "t3dlib1.h"
 #include "t3dlib4.h"
 #include "t3dlib5.h"
 #include "t3dlib6.h"
+#include "t3dlib7.h"
 #pragma comment(lib, "winmm.lib")
 
 bool foo(int elem)
@@ -302,16 +304,31 @@ int main(int argc, char ** argv)
 	//cout << a << endl;
 
 	// ====================================================================================
-	// 2007-08-05
+	// 2007-08-11
 	// ====================================================================================
-	
-	VECTOR3D v0 = {1, 0, 1};
-	VECTOR3D v1 = {0, 0, 1};
-	VECTOR3D v2;
 
-	VECTOR3D_Cross(&v2, &v0, &v1);
-	VECTOR3D_Print(&v2);
-	cout << VECTOR3D_Dot(&v0, &v1) << endl;
+	msModel model;
+	INIT_ZERO(model);
+	SKELETON4DV1 ske;
+	INIT_ZERO(ske);
 
+	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+		goto on_error;
+
+	if(!Create_Skeleton4D_From_MsModel(&ske, &model, "aaa"))
+		goto on_error;
+
+	Skeleton4D_Print(&ske);
+
+	Destroy_Skeleton4D(&ske);
+	Destroy_MsModel(&model);
+
+	_CrtDumpMemoryLeaks();
 	return 0;
+
+on_error:
+	char message[MAX_BUFFER_SIZE];
+	Get_Last_Error(message);
+	printf("%s \n", message);
+	return 1;
 }

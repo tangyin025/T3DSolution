@@ -248,7 +248,7 @@ void Log_Close(void)
 #define FPS_INTERVAL_TIME		(1000)
 #define	USE_FLIP_MODE			(0)
 #define USE_SYNC_MODE			(0)
-#define USE_MEMS_MODE			(0)
+#define USE_MEMS_MODE			(1)
 
 // ////////////////////////////////////////////////////////////////////////////////////
 // TYPES
@@ -296,14 +296,8 @@ DMPERFORMANCEV1	dmperf;
 // TODO: Game define here
 // ================================================================================
 
-BITMAPV1		bmp1;
-DDSURFACEV1		ddsbmp1;
-SURFACEV1		stmp1;
-SURFACEV1		stmp2;
-DSBUFFERV1		dsbuf1;
-WAVV1			wtmp1;
-DMSEGMENTV1		dmseg1;
-DMLOADERV1		dmloader;
+ZBUFFERV1		zbuf;
+msModel			model;
 
 // ================================================================================
 // END TODO.
@@ -473,68 +467,27 @@ bool Game_Init(void)
 	if(!Create_DMPerformance(&dsound, &dmperf, wnd_handle))
 		ON_ERROR_RETURN("create direct music perf failed");
 
-	if(!Init_T3dlib1(ddsprimary.bpp))
+	if(!Init_T3dlib1(ddsprimary.bpp)
+		|| !Init_T3dlib4(ddsprimary.bpp)
+		|| !Init_T3dlib5(ddsprimary.bpp)
+		|| !Init_T3dlib6(ddsprimary.bpp))
 		ON_ERROR_RETURN("init t3dlib1 failed");
 
 	// ================================================================================
 	// TODO: Game init here
 	// ================================================================================
 
-	INIT_ZERO(bmp1);
-	INIT_ZERO(ddsbmp1);
-	INIT_ZERO(stmp1);
-	INIT_ZERO(stmp2);
-	INIT_ZERO(dsbuf1);
-	INIT_ZERO(wtmp1);
-	INIT_ZERO(dmseg1);
-	INIT_ZERO(dmloader);
+	INIT_ZERO(zbuf);
+	INIT_ZERO(model);
 
-	//if(!Create_Bitmap_From_File(&bmp1, "background-08.bmp"))
-	//if(!Create_Bitmap_From_File(&bmp1, "background-16.bmp"))
-	if(!Create_Bitmap_From_File(&bmp1, "background-24.bmp"))
-	//if(!Create_Bitmap_From_File(&bmp1, "aaa.bmp"))
-		ON_ERROR_RETURN("load bitmap failed");
+	// create zbuffer
+	if(!Create_ZBuffer(&zbuf, ddsback.rect.right - ddsback.rect.left, ddsback.rect.bottom - ddsback.rect.top))
+		ON_ERROR_RETURN("create zbuffer error");
 
-#if USE_MEMS_MODE
-	if(!Create_Memoried_DDSurface(&ddraw, &ddsbmp1, bmp1.bitmapinfoheader.biWidth, bmp1.bitmapinfoheader.biHeight))
-#else
-	if(!Create_Videoied_DDSurface(&ddraw, &ddsbmp1, bmp1.bitmapinfoheader.biWidth, bmp1.bitmapinfoheader.biHeight))
-#endif // USE_MEMS_MODE
-		ON_ERROR_RETURN("create memory surface failed");
+	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+		ON_ERROR_RETURN("load MilkShape 3D ASCII.txt failed");
 
-	if(Lock_DDSurface(&ddsbmp1, &stmp1))
-	{
-		if(!Load_Surface_From_Bitmap(&stmp1, &bmp1, 0, 0, bmp1.bitmapinfoheader.biWidth, bmp1.bitmapinfoheader.biHeight))
-			ON_ERROR_RETURN("load bitmap surface failed");
-
-        if(!Unlock_DDSurface(&ddsbmp1))
-			ON_ERROR_RETURN("unlock bitmap surface failed");
-
-		if(!Set_DDSurface_Color_Key(&ddsbmp1, 0))
-			ON_ERROR_RETURN("set bitmap surface color key failed");
-	}
-	else
-		ON_ERROR_RETURN("lock bitmap surface failed");
-
-	if(!Create_Wav_From_File(&wtmp1, "engines.wav"))
-		ON_ERROR_RETURN("load wav file failed");
-
-	if(!Create_DSBuffer_From_Wav(&dsound, &dsbuf1, &wtmp1))
-		ON_ERROR_RETURN("craete dsound buffer failed");
-
-	if(!Create_DMLoader(&dmloader))
-		ON_ERROR_RETURN("create dmusic loader failed");
-
-	if(!Create_DMSegment_From_Midi_File(
-			&dmloader, &dmseg1, "midifile2.mid", &dmperf))
-		ON_ERROR_RETURN("create dmusic segment failed");
-
-	if(!Play_DMSegment(dmseg1.pdmperf, &dmseg1))
-		ON_ERROR_RETURN("play dmusic segment failed");
-
-	Destroy_DMLoader(&dmloader);
-	Destroy_Wav(&wtmp1);
-	Destroy_Bitmap(&bmp1);
+	Destroy_MsModel(&model);
 
 	// ================================================================================
 	// END TODO.
@@ -553,10 +506,8 @@ void Game_Destroy(void)
 	// TODO: Game destroy here
 	// ================================================================================
 
-	Destroy_DMSegment(&dmseg1);
-	Destroy_DSBuffer(&dsbuf1);
-	Destroy_Bitmap(&bmp1);
-	Destroy_DDSurface(&ddsbmp1);
+	Destroy_MsModel(&model);
+	Destroy_ZBuffer(&zbuf);
 
 	// ================================================================================
 	// END TODO.
@@ -605,9 +556,6 @@ bool Game_Frame(void)
 	// TODO: Game logic here
 	// ================================================================================
 
-	if(IS_KEY_DOWN(dikey_state, DIK_SPACE))
-		Play_DSBuffer(&dsbuf1);
-
 	// ================================================================================
 	// END TODO.
 	// ================================================================================
@@ -619,10 +567,13 @@ bool Game_Frame(void)
 	if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(150, 150, 200)))
 		ON_ERROR_RETURN("fill surface failed");
 
-	//if(!Blit_DDSurface_Fast(&ddsback, ddsbmp1.rect.left, ddsbmp1.rect.top, &ddsbmp1, &ddsbmp1.rect))
-	if(!Blit_DDSurface(&ddsback, &ddsbmp1.rect, &ddsbmp1, &ddsbmp1.rect))
-	//if(!Blit_DDSurface_Src_Color_Key(&ddsback, &ddsbmp1.rect, &ddsbmp1, &ddsbmp1.rect))
-		ON_ERROR_RETURN("blit bitmap surface failed");
+	Clear_ZBuffer(&zbuf);
+
+	SURFACEV1 surf;
+	if(!Lock_DDSurface(&ddsback, &surf))
+		return false;
+
+	Unlock_DDSurface(&ddsback);
 
 	// ================================================================================
 	// END TODO.
@@ -635,10 +586,13 @@ bool Game_Frame(void)
 	char buffer[MAX_PATH];
 	if(!Begin_Text_DC(&ddsback, &tdc))
 		ON_ERROR_RETURN("begin text dc failed");
-	Set_Text_BKMode(&tdc, TEXT_BKMODE_TRANSPARENT);
-	Set_Text_Color(&tdc, RGB(255, 255, 255));
+	Set_Text_BKColor(&tdc, RGB(255, 255, 255));
+	Set_Text_BKMode(&tdc, TEXT_BKMODE_OPAQUE);
+	Set_Text_Color(&tdc, RGB(0, 0, 0));
+
 	sprintf(buffer, "%.1f fps", fps.fps);
 	Text_Out(&tdc, buffer, 10, 10);
+
 	End_Text_DC(&tdc);
 
 	// ================================================================================

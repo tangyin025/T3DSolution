@@ -298,11 +298,6 @@ DMPERFORMANCEV1	dmperf;
 
 ZBUFFERV1		zbuf;
 msModel			model;
-OBJECT4DV1		obj1;
-MATERIALV1		obj1_material;
-CAM4DV1			cam1;
-OBJECT4DV1		obj2;
-MATERIALV1		obj2_material;
 
 // ================================================================================
 // END TODO.
@@ -484,78 +479,15 @@ bool Game_Init(void)
 
 	INIT_ZERO(zbuf);
 	INIT_ZERO(model);
-	INIT_ZERO(obj1);
-	INIT_ZERO(obj1_material);
-	INIT_ZERO(cam1);
 
 	// create zbuffer
-	if(!Create_ZBuffer(&zbuf, resolutions[resolution_index].width, resolutions[resolution_index].height))
+	if(!Create_ZBuffer(&zbuf, ddsback.rect.right - ddsback.rect.left, ddsback.rect.bottom - ddsback.rect.top))
 		ON_ERROR_RETURN("create zbuffer error");
 
-	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
-	//	ON_ERROR_RETURN("load MilkShape 3D ASCII.txt failed");
-
-	// load msModel "MilkShape 3D ASCII.txt"
-	//if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
-	//	ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
-
-	if(!Create_MsModel_From_File(&model, "Plane1_1.ms3d.txt"))
-		ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
-
-	//if(!Create_MsModel_From_File(&model, "face.ms3d.txt"))
-	//	ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
-
-	// convert msModel to Object4D
-	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Box01"))
-	//	ON_ERROR_RETURN("convert object4d failed");
-
-	if(!Create_Object4D_From_MsModel(&obj1, &model, "Plane01"))
-		ON_ERROR_RETURN("convert object4d failed");
-
-	if(!Create_Material_From_MsModel(&obj1_material, &model, obj1.material_name))
-		ON_ERROR_RETURN("create material failed");
-
-	Undate_Object4D_Absolute_UV(&obj1, &model, &obj1_material);
-
-	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Create Face"))
-	//	ON_ERROR_RETURN("convert object4d failed");
+	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+		ON_ERROR_RETURN("load MilkShape 3D ASCII.txt failed");
 
 	Destroy_MsModel(&model);
-
-	REAL border_width = (REAL)((ddsback.rect.bottom - ddsback.rect.top) / 12);
-
-	CAM4DV1_Init( &cam1,
-			(ddsback.rect.right - ddsback.rect.left) - 2 * border_width,
-			(ddsback.rect.bottom - ddsback.rect.top) - 2 * border_width,
-			border_width,
-			border_width);
-
-	INIT_ZERO(obj2);
-	INIT_ZERO(obj2_material);
-
-	if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
-		ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
-
-	if(!Create_Object4D_From_MsModel(&obj2, &model, "Box01"))
-		ON_ERROR_RETURN("convert object4d failed");
-
-	if(!Create_Material_From_MsModel(&obj2_material, &model, obj2.material_name))
-		ON_ERROR_RETURN("create material failed");
-
-	Undate_Object4D_Absolute_UV(&obj2, &model, &obj2_material);
-
-	Destroy_MsModel(&model);
-
-	for(int i = 0; i < (int)obj2.ver_list.length; i++)
-	{
-		obj2.ver_list.elems[i].x *= 0.3f;
-		obj2.ver_list.elems[i].y *= 0.3f;
-		obj2.ver_list.elems[i].z *= 0.3f;
-	}
-
-	//VECTOR4D_InitXYZ(&obj2.vpos, -16, 10, -44); // a bug position 2007-08-07
-	//VECTOR4D_InitXYZ(&obj2.vpos, -19, 2, -44); // a bug position 2007-08-08
-	VECTOR4D_InitXYZ(&obj2.vpos, 0, 10, 0);
 
 	// ================================================================================
 	// END TODO.
@@ -574,10 +506,6 @@ void Game_Destroy(void)
 	// TODO: Game destroy here
 	// ================================================================================
 
-	Destroy_Material(&obj2_material);
-	Destroy_Object4D(&obj2);
-	Destroy_Material(&obj1_material);
-	Destroy_Object4D(&obj1);
 	Destroy_MsModel(&model);
 	Destroy_ZBuffer(&zbuf);
 
@@ -628,159 +556,6 @@ bool Game_Frame(void)
 	// TODO: Game logic here
 	// ================================================================================
 
-	int i;
-	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
-	static VECTOR4D cam_pos = {0, 30, -50, 1};
-	//static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)68), 0, 0, 1};
-	//static VECTOR4D cam_pos = {0, 13, -25, 1};
-
-	if(IS_KEY_DOWN(dikey_state, DIK_W))
-	{
-		cam_rot.x -= DEG_TO_RAD((REAL)2);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_S))
-	{
-		cam_rot.x += DEG_TO_RAD((REAL)2);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_A))
-	{
-		cam_rot.z += DEG_TO_RAD((REAL)2);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_D))
-	{
-		cam_rot.z -= DEG_TO_RAD((REAL)2);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_LEFT))
-	{
-		cam_rot.y -= DEG_TO_RAD((REAL)2);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_RIGHT))
-	{
-		cam_rot.y += DEG_TO_RAD((REAL)2);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_UP))
-	{
-		cam_pos.z += cos(cam_rot.y);
-		cam_pos.x += sin(cam_rot.y);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_DOWN))
-	{
-		cam_pos.z -= cos(cam_rot.y);
-		cam_pos.x -= sin(cam_rot.y);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_HOME))
-	{
-		cam_pos.y++;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_END))
-	{
-		cam_pos.y--;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_DELETE))
-	{
-		cam_pos.x -= cos(cam_rot.y);
-		cam_pos.z += sin(cam_rot.y);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_PGDN))
-	{
-		cam_pos.x += cos(cam_rot.y);
-		cam_pos.z -= sin(cam_rot.y);
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_I))
-	{
-		obj2.vpos.z++;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_K))
-	{
-		obj2.vpos.z--;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_J))
-	{
-		obj2.vpos.x--;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_L))
-	{
-		obj2.vpos.x++;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_O))
-	{
-		obj2.vpos.y++;
-	}
-
-	if(IS_KEY_DOWN(dikey_state, DIK_P))
-	{
-		obj2.vpos.y--;
-	}
-
-	VECTOR4D_Copy(&cam1.vrot, &cam_rot);
-
-	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
-
-	Reset_Object4D(&obj1);
-
-	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_ZXY);
-
-	Model_To_World_Object4D(&obj1);
-
-	Remove_Object4D_Backface_At_World(&obj1, &cam1);
-
-	LIGHT4DV1 light1;
-	//light1.mode = LIGHT4DV1_MODE_DIRECT;
-	light1.mode = LIGHT4DV1_MODE_POINT;
-	light1.color = Create_RGBI(255, 255, 255);
-	VECTOR4D_Copy(&light1.vpos, &obj2.vpos);
-	VECTOR3D_Normalize(&VECTOR4D_InitXYZ(&light1.vdir, 0, -1, 0)->_3D);
-	//lights[2].kc	= 1.0f;
-	//lights[2].kl	= 0.00100f;
-	//lights[2].kq	= 0.00001f;
-	light1.kc = (REAL)1.0;
-	light1.kl = (REAL)0.001;
-	light1.kq = (REAL)0.00001;
-
-	Light_Object4D(&obj1, &light1, &obj1_material);
-
-	World_To_Camera_Object4D(&obj1, &cam1);
-
-	//if(!Clip_Object4D(&obj1, &cam1))
-	if(!Clip_Object4D_Gouraud_Texture(&obj1, &cam1))
-		ON_ERROR_RETURN("clip object4d failed");
-
-	Camera_To_Perspective_Object4D(&obj1, &cam1);
-
-	//Remove_Object4D_Backface_At_Perspective(&obj1);
-
-	Perspective_To_Screen_Object4D(&obj1, &cam1);
-
-	Reset_Object4D(&obj2);
-	Model_To_World_Object4D(&obj2);
-	//Remove_Object4D_Backface_At_World(&obj2, &cam1);
-	light1.mode = LIGHT4DV1_MODE_AMBIENT;
-	light1.color = Create_RGBI(0, 255, 0);
-	Light_Object4D(&obj2, &light1, &obj2_material);
-	World_To_Camera_Object4D(&obj2, &cam1);
-	if(!Clip_Object4D_Gouraud_Texture(&obj2, &cam1))
-		ON_ERROR_RETURN("clip object4d failed");
-	Camera_To_Perspective_Object4D(&obj2, &cam1);
-	Perspective_To_Screen_Object4D(&obj2, &cam1);
-
-	Clear_ZBuffer(&zbuf);
-
 	// ================================================================================
 	// END TODO.
 	// ================================================================================
@@ -789,52 +564,14 @@ bool Game_Frame(void)
 	// TODO: Game render here
 	// ================================================================================
 
-	if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(0, 0, 0)))
+	if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(150, 150, 200)))
 		ON_ERROR_RETURN("fill surface failed");
+
+	Clear_ZBuffer(&zbuf);
 
 	SURFACEV1 surf;
 	if(!Lock_DDSurface(&ddsback, &surf))
 		return false;
-
-	// draw the clipper region
-	RENDERCONTEXTV1 rc;
-	memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
-
-	VERTEXV1T v0, v1;
-	VECTOR4D_InitXYZW(	&v0._4D,
-						cam1.viewport.x - 1,
-						cam1.viewport.y - 1,
-						0, 0);
-	VECTOR4D_InitXYZW(	&v1._4D,
-						cam1.viewport.x + cam1.viewport.width,
-						cam1.viewport.y + cam1.viewport.height,
-						0, 0);
-
-	v0.c_diff = Create_RGBI(255, 255, 255);
-	v1.c_diff = Create_RGBI(255, 255, 255);
-
-	Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
-	Draw_HLine(&rc, &v1._VERTEXV1, &v0._VERTEXV1);
-	Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
-	Draw_VLine(&rc, &v1._VERTEXV1, &v0._VERTEXV1);
-
-	cam1.psurf = &surf;
-	cam1.pzbuf = &zbuf;
-
-	//VECTOR4D_InitXYZ(&v0._4D, 250, 150, 20);
-	//VECTOR4D_InitXYZ(&v1._4D, 550, 450, 20);
-	//v0.u = 0, v0.v = 0;
-	//v1.u = obj2_material.texture.width << FIXP16_SHIFT, v1.v = obj2_material.texture.height << FIXP16_SHIFT;
-	//memcpy(&rc._TEXTURE, &obj2_material.texture, sizeof(rc._TEXTURE));
-	//memcpy(&rc._ZBUFFER, &zbuf, sizeof(rc._ZBUFFER));
-	//Draw_Rectangle_Texture_ZBufferW(&rc, &v0, &v1);
-
-	//Draw_Object4D(&obj1, &cam1);
-	//Draw_Object4D_Wire(&obj1, &cam1);
-	Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj1, &cam1, &obj1_material);
-
-	//Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj2, &cam1, &obj2_material);
-	Draw_Object4D_Wire_ZBufferRW(&obj2, &cam1);
 
 	Unlock_DDSurface(&ddsback);
 
@@ -855,36 +592,6 @@ bool Game_Frame(void)
 
 	sprintf(buffer, "%.1f fps", fps.fps);
 	Text_Out(&tdc, buffer, 10, 10);
-
-	sprintf(buffer, "cam.rot.x = %f, cam.rot.y = %f, cam.rot.z = %f",
-		RAD_TO_DEG(cam1.vrot.x), RAD_TO_DEG(cam1.vrot.y), RAD_TO_DEG(cam1.vrot.z));
-	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 120);
-
-	sprintf(buffer, "cam.pos.x = %f, cam.pos.y = %f, cam.pos.z = %f",
-		cam1.vpos.x, cam1.vpos.y, cam1.vpos.z);
-	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 80);
-
-	int total = 0, active = 0, culled = 0, clipped = 0, backface = 0;
-	for(i = 0; i < (int)obj1.tri_list.length; i++)
-	{
-		total++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_ACTIVE)
-			active++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_CULLED)
-			culled++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_CLIPPED)
-			clipped++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_BACKFACE)
-			backface++;
-	}
-
-	sprintf(buffer, "total = %d, active = %d, culled = %d, clipped = %d, backface = %d, vers = %d",
-		total, active, culled, clipped, backface, obj1.ver_list_t.length);
-	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 40);
-
-	sprintf(buffer, "light.pos.x = %f, light.pos.y = %f, light.pos.z = %f",
-		light1.vpos.x, light1.vpos.y, light1.vpos.z);
-	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 160);
 
 	End_Text_DC(&tdc);
 
