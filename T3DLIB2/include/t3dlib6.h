@@ -235,7 +235,9 @@ extern T3DLIB_API void (* Draw_Object4D_Gouraud_Texture_ZBufferRW)(OBJECT4DV1 * 
 
 T3DLIB_API bool Init_T3dlib6(int bpp);
 
-T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0);
+T3DLIB_API MATRIX4X4 * Build_Mat_PositionXYZ(MATRIX4X4 * pmres, const VECTOR4D * vpos_ptr);
+
+T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * vrot_ptr);
 
 T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
 									REAL				viewport_x	= 0,

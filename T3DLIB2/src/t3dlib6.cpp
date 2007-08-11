@@ -1053,35 +1053,46 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * pv0)
+T3DLIB_API MATRIX4X4 * Build_Mat_PositionXYZ(MATRIX4X4 * pmres, const VECTOR4D * vpos_ptr)
+{
+	MATRIX4X4_Init4X4(pmres,
+					1,				0,				0,				0,
+					0,				1,				0,				0,
+					0,				0,				1,				0,
+					vpos_ptr->x,	vpos_ptr->y,	vpos_ptr->z,	1);
+
+	return pmres;
+}
+
+T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * vrot_ptr)
 {
 	MATRIX4X4 mx, my, mz, mtmp;
 	int rot_seq = 0;
 
-	if(!IS_ZERO_FLOAT(pv0->x))
+	if(!IS_ZERO_FLOAT(vrot_ptr->x))
 	{
 		MATRIX4X4_Init3X3(	&mx,
-							1,				0,				0,
-							0,				cos(pv0->x),	sin(pv0->x),
-							0,				-sin(pv0->x),	cos(pv0->x));
+							1,					0,					0,
+							0,					cos(vrot_ptr->x),	sin(vrot_ptr->x),
+							0,					-sin(vrot_ptr->x),	cos(vrot_ptr->x));
 		rot_seq |= 0x01;
 	}
 
-	if(!IS_ZERO_FLOAT(pv0->y))
+	if(!IS_ZERO_FLOAT(vrot_ptr->y))
 	{
 		MATRIX4X4_Init3X3(	&my,
-							cos(pv0->y),	0,				-sin(pv0->y),
-							0,				1,				0,
-							sin(pv0->y),	0,				cos(pv0->y));
+							cos(vrot_ptr->y),	0,					-sin(vrot_ptr->y),
+							0,					1,					0,
+							sin(vrot_ptr->y),	0,					cos(vrot_ptr->y));
 		rot_seq |= 0x02;
 	}
 
-	if(!IS_ZERO_FLOAT(pv0->z))
+	if(!IS_ZERO_FLOAT(vrot_ptr->z))
 	{
 		MATRIX4X4_Init3X3(	&mz,
-							cos(pv0->z),	sin(pv0->z),	0,
-							-sin(pv0->z),	cos(pv0->z),	0,
-							0,				0,				1);
+							cos(vrot_ptr->z),	sin(vrot_ptr->z),	0,
+							-sin(vrot_ptr->z),	cos(vrot_ptr->z),	0,
+							0,					0,					1);
 		rot_seq |= 0x04;
 	}
 
@@ -1546,24 +1557,22 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj)
 	}
 	else
 	{
-		MATRIX4X4 mrot;
-		Build_Mat_RotationXYZ(&mrot, &pobj->vrot);
-		mrot.m30 = pobj->vpos.x;
-		mrot.m31 = pobj->vpos.y;
-		mrot.m32 = pobj->vpos.z;
+		MATRIX4X4 mrot, mmov, mres;
+		Mat_Mul_4X4(&mres,
+			Build_Mat_RotationXYZ(&mrot, &pobj->vrot), Build_Mat_PositionXYZ(&mmov, &pobj->vpos));
 
 		pobj->ver_list_t.length = pobj->ver_list.length;
 		for(i = 0; i < (int)pobj->ver_list.length; i++)
 		{
 			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
-			Mat_Mul_VECTOR4D_4X4(&pobj->ver_list_t.elems[i]._4D, &pobj->ver_list.elems[i]._4D, &mrot);
+			Mat_Mul_VECTOR4D_4X4(&pobj->ver_list_t.elems[i]._4D, &pobj->ver_list.elems[i]._4D, &mres);
 		}
 
 		pobj->nor_list_t.length = pobj->nor_list.length;
 		for(i = 0; i < (int)pobj->nor_list.length; i++)
 		{
 			memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
-			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], &mrot);
+			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], &mres);
 		}
 	}
 }
