@@ -316,33 +316,33 @@ T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time)
 	}
 }
 
-T3DLIB_API bool Create_Bone_Index_From_MsMesh(SIZE_T_ARRAYV1 * pindices, msMesh * pmesh, size_t max_index_size /*= 3000*/)
+T3DLIB_API bool Create_Bone_Index_List_From_MsMesh(SIZE_T_ARRAYV1 * pindex_list, msMesh * pmesh, size_t max_index_size /*= 3000*/)
 {
-	assert(NULL == pindices->elems);
+	assert(NULL == pindex_list->elems);
 
-	if(!Create_Array(pindices, pmesh->nNumVertices))
+	if(!Create_Array(pindex_list, pmesh->nNumVertices))
 		ON_ERROR_GOTO("cannot create bone index");
 
 	int i;
 	for(i = 0; i < pmesh->nNumVertices; i++)
 	{
-		size_t * pidx;
-		if(!Append_Array(pindices, &pidx))
+		size_t * pindex;
+		if(!Append_Array(pindex_list, &pindex))
 			ON_ERROR_GOTO("append bone index failed");
 
-		assert((int)pindices->size <= pmesh->nNumVertices);
+		assert((int)pindex_list->size <= pmesh->nNumVertices);
 
-		*pidx = pmesh->pVertices[i].nBoneIndex;
+		*pindex = pmesh->pVertices[i].nBoneIndex;
 	}
 	return true;
 
 ON_ERROR:
-	Destroy_Bone_Index(pindices);
+	Destroy_Bone_Index_List(pindex_list);
 	return false;
 	UNREFERENCED_PARAMETER(max_index_size);
 }
 
-T3DLIB_API void Destroy_Bone_Index(SIZE_T_ARRAYV1 * pindex)
+T3DLIB_API void Destroy_Bone_Index_List(SIZE_T_ARRAYV1 * pindex)
 {
 	Destroy_Array(pindex);
 	INIT_ZERO(*pindex);
@@ -353,7 +353,7 @@ T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, ms
 	assert(NULL == pcharacter->skin_list.elems);
 	assert(NULL == pcharacter->material_list.elems);
 	assert(NULL == pcharacter->skeleton_list.elems);
-	assert(NULL == pcharacter->bone_index_list.elems);
+	assert(NULL == pcharacter->skin_bone_index_list.elems);
 
 	if(!Create_Array(&pcharacter->skin_list, pmodel->nNumMeshes))
 		ON_ERROR_GOTO("cannot create skin list");
@@ -397,19 +397,19 @@ T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, ms
 		strcpy(pcharacter->skin_list.elems[i].name, pmaterial->name);
 	}
 
-	if(!Create_Array(&pcharacter->bone_index_list, pmodel->nNumMeshes))
+	if(!Create_Array(&pcharacter->skin_bone_index_list, pmodel->nNumMeshes))
 		ON_ERROR_GOTO("cannot create skin bone list");
 
 	for(i = 0; i < pmodel->nNumMeshes; i++)
 	{
 		SIZE_T_ARRAYV1 * pindices;
-		if(!Append_Array(&pcharacter->bone_index_list, &pindices))
+		if(!Append_Array(&pcharacter->skin_bone_index_list, &pindices))
 			ON_ERROR_GOTO("append bone indices failed");
 		INIT_ZERO(*pindices);
 
-		assert((int)pcharacter->bone_index_list.size <= pmodel->nNumMeshes);
+		assert((int)pcharacter->skin_bone_index_list.size <= pmodel->nNumMeshes);
 
-		if(!Create_Bone_Index_From_MsMesh(pindices, &pmodel->pMeshes[i]))
+		if(!Create_Bone_Index_List_From_MsMesh(pindices, &pmodel->pMeshes[i]))
 			goto ON_ERROR;
 	}
 
@@ -425,7 +425,7 @@ T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, ms
 	assert(NULL == pcharacter->skin_list.elems);
 	assert(NULL == pcharacter->material_list.elems);
 	assert(NULL == pcharacter->skeleton_list.elems);
-	assert(NULL == pcharacter->bone_index_list.elems);
+	assert(NULL == pcharacter->skin_bone_index_list.elems);
 
 	if(!Create_Array(&pcharacter->skin_list, pmodel->nNumMeshes))
 		ON_ERROR_GOTO("cannot create skin list");
@@ -469,19 +469,19 @@ T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, ms
 		strcpy(pcharacter->skin_list.elems[i].name, pmaterial->name);
 	}
 
-	if(!Create_Array(&pcharacter->bone_index_list, pmodel->nNumMeshes))
+	if(!Create_Array(&pcharacter->skin_bone_index_list, pmodel->nNumMeshes))
 		ON_ERROR_GOTO("cannot create skin bone list");
 
 	for(i = 0; i < pmodel->nNumMeshes; i++)
 	{
 		SIZE_T_ARRAYV1 * pindices;
-		if(!Append_Array(&pcharacter->bone_index_list, &pindices))
+		if(!Append_Array(&pcharacter->skin_bone_index_list, &pindices))
 			ON_ERROR_GOTO("append bone indices failed");
 		INIT_ZERO(*pindices);
 
-		assert((int)pcharacter->bone_index_list.size <= pmodel->nNumMeshes);
+		assert((int)pcharacter->skin_bone_index_list.size <= pmodel->nNumMeshes);
 
-		if(!Create_Bone_Index_From_MsMesh(pindices, &pmodel->pMeshes[i]))
+		if(!Create_Bone_Index_List_From_MsMesh(pindices, &pmodel->pMeshes[i]))
 			goto ON_ERROR;
 	}
 
@@ -513,11 +513,11 @@ T3DLIB_API void Destroy_Character4D(CHARACTER4DV1 * pcharacter)
 	}
 	Destroy_Array(&pcharacter->skeleton_list);
 
-	for(i = 0; i < (int)pcharacter->bone_index_list.length; i++)
+	for(i = 0; i < (int)pcharacter->skin_bone_index_list.length; i++)
 	{
-		Destroy_Bone_Index(&pcharacter->bone_index_list.elems[i]);
+		Destroy_Bone_Index_List(&pcharacter->skin_bone_index_list.elems[i]);
 	}
-	Destroy_Array(&pcharacter->bone_index_list);
+	Destroy_Array(&pcharacter->skin_bone_index_list);
 
 	INIT_ZERO(*pcharacter);
 }

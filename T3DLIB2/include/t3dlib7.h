@@ -93,7 +93,7 @@ typedef struct T3DLIB_API CHARACTER4DV1_TYP
 	OBJ_ARRAYV1			skin_list;
 	MATERIAL_ARRAYV1	material_list;
 	SKELETON_ARRAYV1	skeleton_list;
-	BONE_INDEX_ARRAYV1	bone_index_list;
+	BONE_INDEX_ARRAYV1	skin_bone_index_list;
 
 	VECTOR4D			vpos;
 	VECTOR4D			vrot;
@@ -112,9 +112,9 @@ extern T3DLIB_API void (* Draw_Character4D_Gouraud_Texture_ZBufferRW)(CHARACTER4
 
 T3DLIB_API bool Init_T3dlib7(int bpp);
 
-T3DLIB_API bool Create_Bone_Index_From_MsMesh(SIZE_T_ARRAYV1 * pindices, msMesh * pmesh, size_t max_index_size = 3000);
+T3DLIB_API bool Create_Bone_Index_List_From_MsMesh(SIZE_T_ARRAYV1 * pindex_list, msMesh * pmesh, size_t max_index_size = 3000);
 
-T3DLIB_API void Destroy_Bone_Index(SIZE_T_ARRAYV1 * pindex);
+T3DLIB_API void Destroy_Bone_Index_List(SIZE_T_ARRAYV1 * pindex_list);
 
 T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, msModel * pmodel);
 
