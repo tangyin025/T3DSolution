@@ -298,8 +298,7 @@ DMPERFORMANCEV1	dmperf;
 
 ZBUFFERV1		zbuf;
 msModel			model;
-OBJECT4DV1		obj1;
-MATERIALV1		obj1_material;
+CHARACTER4DV1	character1;
 CAM4DV1			cam1;
 OBJECT4DV1		obj2;
 MATERIALV1		obj2_material;
@@ -475,7 +474,8 @@ bool Game_Init(void)
 	if(!Init_T3dlib1(ddsprimary.bpp)
 		|| !Init_T3dlib4(ddsprimary.bpp)
 		|| !Init_T3dlib5(ddsprimary.bpp)
-		|| !Init_T3dlib6(ddsprimary.bpp))
+		|| !Init_T3dlib6(ddsprimary.bpp)
+		|| !Init_T3dlib7(ddsprimary.bpp))
 		ON_ERROR_RETURN("init t3dlib1 failed");
 
 	// ================================================================================
@@ -484,8 +484,7 @@ bool Game_Init(void)
 
 	INIT_ZERO(zbuf);
 	INIT_ZERO(model);
-	INIT_ZERO(obj1);
-	INIT_ZERO(obj1_material);
+	INIT_ZERO(character1);
 	INIT_ZERO(cam1);
 	INIT_ZERO(obj2);
 	INIT_ZERO(obj2_material);
@@ -494,33 +493,17 @@ bool Game_Init(void)
 	if(!Create_ZBuffer(&zbuf, ddsback.rect.right - ddsback.rect.left, ddsback.rect.bottom - ddsback.rect.top))
 		ON_ERROR_RETURN("create zbuffer error");
 
-	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
-	//	ON_ERROR_RETURN("load MilkShape 3D ASCII.txt failed");
+	if(!Create_MsModel_From_File(&model, "militia.ms3d.txt"))
+		ON_ERROR_RETURN("load militia.ms3d.txt failed");
 
-	// load msModel "MilkShape 3D ASCII.txt"
-	//if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
-	//	ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
+	if(!Create_Character4D_From_MsModel(&character1, &model))
+		ON_ERROR_RETURN("load character1 failed");
 
-	if(!Create_MsModel_From_File(&model, "Plane1_1.ms3d.txt"))
-		ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
-
-	//if(!Create_MsModel_From_File(&model, "face.ms3d.txt"))
-	//	ON_ERROR_RETURN("load Plane1_1.ms3d.txt failed");
-
-	// convert msModel to Object4D
-	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Box01"))
-	//	ON_ERROR_RETURN("convert object4d failed");
-
-	if(!Create_Object4D_From_MsModel(&obj1, &model, "Plane01"))
-		ON_ERROR_RETURN("convert object4d failed");
-
-	if(!Create_Material_From_MsModel(&obj1_material, &model, obj1.material_name))
-		ON_ERROR_RETURN("create material failed");
-
-	Undate_Object4D_Absolute_UV(&obj1, &model, &obj1_material);
-
-	//if(!Create_Object4D_From_MsModel(&obj1, &model, "Create Face"))
-	//	ON_ERROR_RETURN("convert object4d failed");
+	int i;
+	for(i = 0; i < (int)character1.skin_list.length; i++)
+	{
+		Undate_Object4D_Absolute_UV(&character1.skin_list.elems[i], &model, &character1.material_list.elems[i]);
+	}
 
 	Destroy_MsModel(&model);
 
@@ -530,15 +513,16 @@ bool Game_Init(void)
 			(ddsback.rect.right - ddsback.rect.left) - 2 * border_width,
 			(ddsback.rect.bottom - ddsback.rect.top) - 2 * border_width,
 			border_width,
-			border_width);
+			border_width,
+			10, 1000, DEG_TO_RAD(90), VIEWPORT_FIX_MODE_WIDTH);
 
 	if(!Create_MsModel_From_File(&model, "Box1_2.ms3d.txt"))
 		ON_ERROR_RETURN("load Box1_2.ms3d.txt failed");
 
-	if(!Create_Object4D_From_MsModel(&obj2, &model, "Box01"))
+	if(!Create_Object4D_From_MsModel_By_Name(&obj2, &model, "Box01"))
 		ON_ERROR_RETURN("convert object4d failed");
 
-	if(!Create_Material_From_MsModel(&obj2_material, &model, obj2.material_name))
+	if(!Create_Material_From_MsModel_By_Name(&obj2_material, &model, obj2.material_name))
 		ON_ERROR_RETURN("create material failed");
 
 	Undate_Object4D_Absolute_UV(&obj2, &model, &obj2_material);
@@ -575,8 +559,7 @@ void Game_Destroy(void)
 
 	Destroy_Material(&obj2_material);
 	Destroy_Object4D(&obj2);
-	Destroy_Material(&obj1_material);
-	Destroy_Object4D(&obj1);
+	Destroy_Character4D(&character1);
 	Destroy_MsModel(&model);
 	Destroy_ZBuffer(&zbuf);
 
@@ -628,10 +611,17 @@ bool Game_Frame(void)
 	// ================================================================================
 
 	int i;
-	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
-	static VECTOR4D cam_pos = {0, 30, -50, 1};
+	//static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
+	static VECTOR4D cam_pos = {0, 30, -60, 1};
 	//static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)68), 0, 0, 1};
 	//static VECTOR4D cam_pos = {0, 13, -25, 1};
+	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)0), 0, 0, 1};
+
+	if(IS_KEY_DOWN(dikey_state, DIK_R))
+	{
+		VECTOR4D_InitXYZ(&cam_pos, 0, 30, -60);
+		VECTOR4D_InitXYZ(&cam_rot, 0, 0, 0);
+	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_W))
 	{
@@ -699,22 +689,26 @@ bool Game_Frame(void)
 
 	if(IS_KEY_DOWN(dikey_state, DIK_I))
 	{
-		obj2.vpos.z++;
+		obj2.vpos.z += cos(cam_rot.y);
+		obj2.vpos.x += sin(cam_rot.y);
 	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_K))
 	{
-		obj2.vpos.z--;
+		obj2.vpos.z -= cos(cam_rot.y);
+		obj2.vpos.x -= sin(cam_rot.y);
 	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_J))
 	{
-		obj2.vpos.x--;
+		obj2.vpos.x -= cos(cam_rot.y);
+		obj2.vpos.z += sin(cam_rot.y);
 	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_L))
 	{
-		obj2.vpos.x++;
+		obj2.vpos.x += cos(cam_rot.y);
+		obj2.vpos.z -= sin(cam_rot.y);
 	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_O))
@@ -731,13 +725,15 @@ bool Game_Frame(void)
 
 	VECTOR4D_Copy(&cam1.vpos, &cam_pos);
 
-	Reset_Object4D(&obj1);
-
 	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_ZXY);
 
-	Model_To_World_Object4D(&obj1);
+	//Remove_Object4D_Backface_At_World(&obj1, &cam1);
 
-	Remove_Object4D_Backface_At_World(&obj1, &cam1);
+	Reset_Character4D(&character1);
+
+	Model_To_World_Character4D(&character1);
+
+	Remove_Character4D_Backface_At_World(&character1, &cam1);
 
 	LIGHT4DV1 light1;
 	//light1.mode = LIGHT4DV1_MODE_DIRECT;
@@ -751,20 +747,20 @@ bool Game_Frame(void)
 	light1.kc = (REAL)1.0;
 	light1.kl = (REAL)0.001;
 	light1.kq = (REAL)0.00001;
+	Light_Character4D(&character1, &light1);
 
-	Light_Object4D(&obj1, &light1, &obj1_material);
+	light1.mode = LIGHT4DV1_MODE_AMBIENT;
+	light1.color = Create_RGBI(128, 128, 128);
+	Light_Character4D(&character1, &light1);
 
-	World_To_Camera_Object4D(&obj1, &cam1);
+	World_To_Camera_Character4D(&character1, &cam1);
 
-	//if(!Clip_Object4D(&obj1, &cam1))
-	if(!Clip_Object4D_Gouraud_Texture(&obj1, &cam1))
-		ON_ERROR_RETURN("clip object4d failed");
+	if(!Clip_Character4D_Gouraud_Texture(&character1, &cam1))
+		ON_ERROR_RETURN("clip character1 failed");
 
-	Camera_To_Perspective_Object4D(&obj1, &cam1);
+	Camera_To_Perspective_Character4D(&character1, &cam1);
 
-	//Remove_Object4D_Backface_At_Perspective(&obj1);
-
-	Perspective_To_Screen_Object4D(&obj1, &cam1);
+	Perspective_To_Screen_Character4D(&character1, &cam1);
 
 	Reset_Object4D(&obj2);
 	Model_To_World_Object4D(&obj2);
@@ -786,7 +782,10 @@ bool Game_Frame(void)
 	// TODO: Game render here
 	// ================================================================================
 
-	if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(0, 0, 0)))
+	//if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(0, 0, 0)))
+	//	ON_ERROR_RETURN("fill surface failed");
+
+	if(!Fill_DDSurface(&ddsback, &ddsback.rect, Create_RGBI(128, 128, 128)))
 		ON_ERROR_RETURN("fill surface failed");
 
 	Clear_ZBuffer(&zbuf);
@@ -830,7 +829,8 @@ bool Game_Frame(void)
 
 	//Draw_Object4D(&obj1, &cam1);
 	//Draw_Object4D_Wire(&obj1, &cam1);
-	Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj1, &cam1, &obj1_material);
+	//Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj1, &cam1, &obj1_material);
+	Draw_Character4D_Gouraud_Texture_ZBufferRW(&character1, &cam1);
 
 	//Draw_Object4D_Gouraud_Texture_ZBufferRW(&obj2, &cam1, &obj2_material);
 	Draw_Object4D_Wire_ZBufferRW(&obj2, &cam1);
@@ -863,22 +863,32 @@ bool Game_Frame(void)
 		cam1.vpos.x, cam1.vpos.y, cam1.vpos.z);
 	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 80);
 
-	int total = 0, active = 0, culled = 0, clipped = 0, backface = 0;
-	for(i = 0; i < (int)obj1.tri_list.length; i++)
+	int total = 0, active = 0, culled = 0, clipped = 0, backface = 0, verties = 0;
+	for(i = 0; i < (int)character1.skin_list.length; i++)
 	{
-		total++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_ACTIVE)
-			active++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_CULLED)
-			culled++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_CLIPPED)
-			clipped++;
-		if(obj1.tri_list.elems[i].state == TRI_STATE_BACKFACE)
-			backface++;
+		OBJECT4DV1 * pobj = &character1.skin_list.elems[i];
+		int j;
+		for(j = 0; j < (int)pobj->tri_list.length; j++)
+		{
+			total++;
+
+			if(pobj->tri_list.elems[j].state == TRI_STATE_ACTIVE)
+				active++;
+
+			if(pobj->tri_list.elems[j].state == TRI_STATE_CULLED)
+				culled++;
+
+			if(pobj->tri_list.elems[j].state == TRI_STATE_CLIPPED)
+				clipped++;
+
+			if(pobj->tri_list.elems[j].state == TRI_STATE_BACKFACE)
+				backface++;
+		}
+		verties += (int)pobj->ver_list_t.length;
 	}
 
 	sprintf(buffer, "total = %d, active = %d, culled = %d, clipped = %d, backface = %d, vers = %d",
-		total, active, culled, clipped, backface, obj1.ver_list_t.length);
+		total, active, culled, clipped, backface, verties);
 	Text_Out(&tdc, buffer, 10, resolutions[resolution_index].height - 40);
 
 	sprintf(buffer, "light.pos.x = %f, light.pos.y = %f, light.pos.z = %f",

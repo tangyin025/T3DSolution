@@ -33,6 +33,7 @@
 #define MATERIAL_ATTR_DIFFUSE			(0x02)
 #define MATERIAL_ATTR_SPECULAR			(0x04)
 #define MATERIAL_ATTR_EMISSIVE			(0x08)
+#define MATERIAL_ATTR_TEXTURE			(0x10)
 
 #define VIEWPORT_LIMIT_BEG(f)			(f)
 #define VIEWPORT_LIMIT_END(f)			((f) - (REAL)EPSILON_E3) // !!! E5 ~ E6 will still have bug
@@ -227,7 +228,8 @@ typedef struct T3DLIB_API OBJECT4DV1_TYP
 
 } OBJECT4DV1, * OBJECT4DV1_PTR;
 
-extern T3DLIB_API bool (* Create_Material_From_MsModel)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+extern T3DLIB_API bool (* Create_Material_From_MsMaterial)(MATERIALV1 * pmaterial, msMaterial * pmsMaterial);
+extern T3DLIB_API bool (* Create_Material_From_MsModel_By_Name)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
 extern T3DLIB_API bool (* Clip_Object4D_Gouraud_Texture)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 extern T3DLIB_API void (* Draw_Object4D_Wire)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 extern T3DLIB_API void (* Draw_Object4D_Wire_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
@@ -254,24 +256,33 @@ T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pca
 
 T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode);
 
-T3DLIB_API bool Create_Material_From_MsModel16(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+T3DLIB_API bool Create_Material_From_MsMaterial16(MATERIALV1 * pmaterial, msMaterial * pmsMaterial);
 
-T3DLIB_API bool Create_Material_From_MsModel32(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+T3DLIB_API bool Create_Material_From_MsMaterial32(MATERIALV1 * pmaterial, msMaterial * pmsMaterial);
 
 T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial);
 
-T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
-											 size_t max_tri_size = 3000,
-											 size_t max_ver_size = 3000,
-											 size_t max_nor_size = 3000);
+T3DLIB_API bool Create_Object4D_From_MsMesh(OBJECT4DV1 * pobj, msMesh * pmesh,
+											size_t max_tri_size = 3000,
+											size_t max_ver_size = 3000,
+											size_t max_nor_size = 3000);
+
+T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj);
+
+T3DLIB_API bool Create_Material_From_MsModel_By_Name16(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+
+T3DLIB_API bool Create_Material_From_MsModel_By_Name32(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name);
+
+T3DLIB_API bool Create_Object4D_From_MsModel_By_Name(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
+													 size_t max_tri_size = 3000,
+													 size_t max_ver_size = 3000,
+													 size_t max_nor_size = 3000);
 
 T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmode, MATERIALV1 * pmaterial);
 
 T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj);
 
-T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj);
-
-T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj);
+T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj, VECTOR4D * vpos_ptr = NULL, VECTOR4D * vrot_ptr = NULL);
 
 T3DLIB_API void Remove_Object4D_Backface_At_World(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 

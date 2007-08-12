@@ -27,7 +27,7 @@ void Print_Bone_Position(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_sing
 	for(i = 0; i < indent; i++)
 		printf("\t");
 
-	VECTOR4D_Print(&pbone_singles->elems[root].vpos);
+	VECTOR4D_Print(&pbone_singles->elems[root].kpos.vkey);
 
 	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
 	{
@@ -41,7 +41,7 @@ void Print_Bone_Rotation(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_sing
 	for(i = 0; i < indent; i++)
 		printf("\t");
 
-	VECTOR4D_Print(&pbone_singles->elems[root].vrot);
+	VECTOR4D_Print(&pbone_singles->elems[root].krot.vkey);
 
 	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
 	{

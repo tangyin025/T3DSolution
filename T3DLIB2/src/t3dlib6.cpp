@@ -1012,7 +1012,8 @@ _DTOR_IMPLEMENT_W1(MATERIALV1_TYP, Destroy_Material, texture.pbuffer);
 _CTOR_IMPLEMENT(OBJECT4DV1_TYP);
 _DTOR_IMPLEMENT_W1(OBJECT4DV1_TYP, Destroy_Object4D, tri_list.elems);
 
-T3DLIB_API bool (* Create_Material_From_MsModel)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name) = NULL;
+T3DLIB_API bool (* Create_Material_From_MsMaterial)(MATERIALV1 * pmaterial, msMaterial * pmsMaterial) = NULL;
+T3DLIB_API bool (* Create_Material_From_MsModel_By_Name)(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name) = NULL;
 T3DLIB_API bool (* Clip_Object4D_Gouraud_Texture)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
 T3DLIB_API void (* Draw_Object4D_Wire)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
 T3DLIB_API void (* Draw_Object4D_Wire_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
@@ -1025,7 +1026,8 @@ T3DLIB_API bool Init_T3dlib6(int bpp)
 	switch(bpp)
 	{
 	case 16:
-		Create_Material_From_MsModel	= Create_Material_From_MsModel16;
+		Create_Material_From_MsMaterial	= Create_Material_From_MsMaterial16;
+		Create_Material_From_MsModel_By_Name	= Create_Material_From_MsModel_By_Name16;
 		Clip_Object4D_Gouraud_Texture	= Clip_Object4D_Gouraud_Texture16;
 		Draw_Object4D_Wire				= Draw_Object4D_Wire16;
 		Draw_Object4D_Wire_ZBufferRW	= Draw_Object4D_Wire_ZBufferRW16;
@@ -1035,7 +1037,8 @@ T3DLIB_API bool Init_T3dlib6(int bpp)
 		break;
 
 	case 32:
-		Create_Material_From_MsModel	= Create_Material_From_MsModel32;
+		Create_Material_From_MsMaterial	= Create_Material_From_MsMaterial32;
+		Create_Material_From_MsModel_By_Name	= Create_Material_From_MsModel_By_Name32;
 		Clip_Object4D_Gouraud_Texture	= Clip_Object4D_Gouraud_Texture32;
 		Draw_Object4D_Wire				= Draw_Object4D_Wire32;
 		Draw_Object4D_Wire_ZBufferRW	= Draw_Object4D_Wire_ZBufferRW32;
@@ -1245,64 +1248,213 @@ T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam,
 	UNREFERENCED_PARAMETER(uvn_mode);
 }
 
-T3DLIB_API bool Create_Material_From_MsModel16(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name)
+T3DLIB_API bool Create_Material_From_MsMaterial16(MATERIALV1 * pmaterial, msMaterial * pmsMaterial)
 {
-	assert(pmaterial->texture.pbuffer == NULL);
-
 	BITMAPV1 btmp;
 	INIT_ZERO(btmp);
-	int i;
-	for(i = 0; i < pmodel->nNumMaterials; i++)
+
+	pmaterial->c_ambi = _RGB16BIT(	(int)(pmsMaterial->Ambient[0] * (MAX_COLOR_INTENSITY16 - 1)),
+									(int)(pmsMaterial->Ambient[1] * (MAX_COLOR_INTENSITY16G - 1)),
+									(int)(pmsMaterial->Ambient[2] * (MAX_COLOR_INTENSITY16 - 1)));
+
+	pmaterial->c_diff = _RGB16BIT(	(int)(pmsMaterial->Diffuse[0] * (MAX_COLOR_INTENSITY16 - 1)),
+									(int)(pmsMaterial->Diffuse[1] * (MAX_COLOR_INTENSITY16G - 1)),
+									(int)(pmsMaterial->Diffuse[2] * (MAX_COLOR_INTENSITY16 - 1)));
+
+	pmaterial->c_spec = _RGB16BIT(	(int)(pmsMaterial->Specular[0] * (MAX_COLOR_INTENSITY16 - 1)),
+									(int)(pmsMaterial->Specular[1] * (MAX_COLOR_INTENSITY16G - 1)),
+									(int)(pmsMaterial->Specular[2] * (MAX_COLOR_INTENSITY16 - 1)));
+
+	pmaterial->c_emis = _RGB16BIT(	(int)(pmsMaterial->Emissive[0] * (MAX_COLOR_INTENSITY16 - 1)),
+									(int)(pmsMaterial->Emissive[1] * (MAX_COLOR_INTENSITY16G - 1)),
+									(int)(pmsMaterial->Emissive[2] * (MAX_COLOR_INTENSITY16 - 1)));
+
+	if(0 != strcmp(pmsMaterial->szDiffuseTexture, ""))
 	{
-		msMaterial * pmat = &pmodel->pMaterials[i];
-		if(0 == strcmp(pmat->szName, material_name))
-		{
-			pmaterial->c_ambi = _RGB16BIT(	(int)(pmat->Ambient[0] * (MAX_COLOR_INTENSITY16 - 1)),
-											(int)(pmat->Ambient[1] * (MAX_COLOR_INTENSITY16G - 1)),
-											(int)(pmat->Ambient[2] * (MAX_COLOR_INTENSITY16 - 1)));
+		if(!Create_Bitmap_From_File(&btmp, pmsMaterial->szDiffuseTexture))
+			ON_ERROR_GOTO(SFORMAT1(gbuffer, "load bitmap %s failed", pmsMaterial->szDiffuseTexture));
 
-			pmaterial->c_diff = _RGB16BIT(	(int)(pmat->Diffuse[0] * (MAX_COLOR_INTENSITY16 - 1)),
-											(int)(pmat->Diffuse[1] * (MAX_COLOR_INTENSITY16G - 1)),
-											(int)(pmat->Diffuse[2] * (MAX_COLOR_INTENSITY16 - 1)));
+		if(!Create_Image16(&pmaterial->texture,
+				btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+			ON_ERROR_GOTO("create image failed");
 
-			pmaterial->c_spec = _RGB16BIT(	(int)(pmat->Specular[0] * (MAX_COLOR_INTENSITY16 - 1)),
-											(int)(pmat->Specular[1] * (MAX_COLOR_INTENSITY16G - 1)),
-											(int)(pmat->Specular[2] * (MAX_COLOR_INTENSITY16 - 1)));
+		if(!Load_Image_From_Bitmap16(&pmaterial->texture, &btmp, 0, 0,
+				btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+			ON_ERROR_GOTO("load image failed");
 
-			pmaterial->c_emis = _RGB16BIT(	(int)(pmat->Emissive[0] * (MAX_COLOR_INTENSITY16 - 1)),
-											(int)(pmat->Emissive[1] * (MAX_COLOR_INTENSITY16G - 1)),
-											(int)(pmat->Emissive[2] * (MAX_COLOR_INTENSITY16 - 1)));
+		Destroy_Bitmap(&btmp);
 
-			if(0 != strcmp(pmat->szDiffuseTexture, ""))
-			{
-				if(!Create_Bitmap_From_File(&btmp, pmat->szDiffuseTexture))
-					ON_ERROR_GOTO(SFORMAT1(gbuffer, "load bitmap %s failed", pmat->szDiffuseTexture));
-
-				if(!Create_Image16(&pmaterial->texture,
-						btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
-					ON_ERROR_GOTO("create image failed");
-
-				if(!Load_Image_From_Bitmap16(&pmaterial->texture, &btmp, 0, 0,
-						btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
-					ON_ERROR_GOTO("load image failed");
-
-				Destroy_Bitmap(&btmp);
-			}
-
-			strcpy(pmaterial->name, pmat->szName);
-
-			return true;
-		}
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_TEXTURE);
 	}
-	ON_ERROR_GOTO(SFORMAT1(gbuffer, "cannot find material %s", material_name));
+
+	if(0 != pmaterial->c_ambi)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_AMBIENT);
+
+	if(0 != pmaterial->c_diff)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_DIFFUSE);
+
+	if(0 != pmaterial->c_spec)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_SPECULAR);
+
+	if(0 != pmaterial->c_emis)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_EMISSIVE);
+
+	strcpy(pmaterial->name, pmsMaterial->szName);
+	return true;
 
 ON_ERROR:
-	Destroy_Image(&pmaterial->texture);
 	Destroy_Bitmap(&btmp);
+	Destroy_Material(pmaterial);
 	return false;
 }
 
-T3DLIB_API bool Create_Material_From_MsModel32(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name)
+T3DLIB_API bool Create_Material_From_MsMaterial32(MATERIALV1 * pmaterial, msMaterial * pmsMaterial)
+{
+	BITMAPV1 btmp;
+	INIT_ZERO(btmp);
+
+	pmaterial->c_ambi = _RGB32BIT(	(int)(pmsMaterial->Ambient[0] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Ambient[1] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Ambient[2] * (MAX_COLOR_INTENSITY32 - 1)));
+
+	pmaterial->c_diff = _RGB32BIT(	(int)(pmsMaterial->Diffuse[0] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Diffuse[1] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Diffuse[2] * (MAX_COLOR_INTENSITY32 - 1)));
+
+	pmaterial->c_spec = _RGB32BIT(	(int)(pmsMaterial->Specular[0] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Specular[1] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Specular[2] * (MAX_COLOR_INTENSITY32 - 1)));
+
+	pmaterial->c_emis = _RGB32BIT(	(int)(pmsMaterial->Emissive[0] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Emissive[1] * (MAX_COLOR_INTENSITY32 - 1)),
+									(int)(pmsMaterial->Emissive[2] * (MAX_COLOR_INTENSITY32 - 1)));
+
+	if(0 != strcmp(pmsMaterial->szDiffuseTexture, ""))
+	{
+		if(!Create_Bitmap_From_File(&btmp, pmsMaterial->szDiffuseTexture))
+			ON_ERROR_GOTO(SFORMAT1(gbuffer, "load bitmap %s failed", pmsMaterial->szDiffuseTexture));
+
+		if(!Create_Image32(&pmaterial->texture,
+				btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+			ON_ERROR_GOTO("create image failed");
+
+		if(!Load_Image_From_Bitmap32(&pmaterial->texture, &btmp, 0, 0,
+				btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+			ON_ERROR_GOTO("load image failed");
+
+		Destroy_Bitmap(&btmp);
+
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_TEXTURE);
+	}
+
+	if(0 != pmaterial->c_ambi)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_AMBIENT);
+
+	if(0 != pmaterial->c_diff)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_DIFFUSE);
+
+	if(0 != pmaterial->c_spec)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_SPECULAR);
+
+	if(0 != pmaterial->c_emis)
+		SET_BIT(pmaterial->attr, MATERIAL_ATTR_EMISSIVE);
+
+	strcpy(pmaterial->name, pmsMaterial->szName);
+	return true;
+
+ON_ERROR:
+	Destroy_Bitmap(&btmp);
+	Destroy_Material(pmaterial);
+	return false;
+}
+
+T3DLIB_API bool Create_Object4D_From_MsMesh(OBJECT4DV1 * pobj, msMesh * pmesh,
+
+											size_t max_tri_size /*= 3000*/,
+											size_t max_ver_size /*= 3000*/,
+											size_t max_nor_size /*= 3000*/)
+{
+	assert(NULL == pobj->tri_list.elems);
+	assert(NULL == pobj->ver_list.elems);
+	assert(NULL == pobj->ver_list_t.elems);
+	assert(NULL == pobj->nor_list.elems);
+	assert(NULL == pobj->nor_list_t.elems);
+
+	if(!Create_Array(&pobj->tri_list, max_tri_size))
+		ON_ERROR_GOTO("create triangle list failed");
+
+	int i;
+	for(i = 0; i < pmesh->nNumTriangles; i++)
+	{
+		TRIANGLEV1 * ptri;
+		if(!Append_Array(&pobj->tri_list, &ptri))
+			ON_ERROR_GOTO("append triangle list failed");
+		INIT_ZERO(*ptri);
+
+		ptri->v0_i = pmesh->pTriangles[i].nVertexIndices[0];
+		ptri->v1_i = pmesh->pTriangles[i].nVertexIndices[2]; // !!!
+		ptri->v2_i = pmesh->pTriangles[i].nVertexIndices[1]; // !!!
+
+		ptri->n0_i = pmesh->pTriangles[i].nNormalIndices[0];
+		ptri->n1_i = pmesh->pTriangles[i].nNormalIndices[2]; // !!!
+		ptri->n2_i = pmesh->pTriangles[i].nNormalIndices[1]; // !!!
+
+		ptri->state = TRI_STATE_ACTIVE;
+	}
+
+	if(!Create_Array(&pobj->ver_list, max_ver_size))
+		ON_ERROR_GOTO("create vertex list failed");
+
+	for(i = 0; i < pmesh->nNumVertices; i++)
+	{
+		VERTEXV1T * pver;
+		if(!Append_Array(&pobj->ver_list, &pver))
+			ON_ERROR_GOTO("append vertex list failed");
+		INIT_ZERO(*pver);
+
+		VECTOR4D_InitXYZ( &pver->_4D,
+						(REAL)pmesh->pVertices[i].Vertex[0],
+						(REAL)pmesh->pVertices[i].Vertex[1],
+						-(REAL)pmesh->pVertices[i].Vertex[2]); // !!!
+
+		//pver->u = (FIXP16)(pmesh->pVertices[i].u * FIXP16_MAG);
+		//pver->v = (FIXP16)(pmesh->pVertices[i].v * FIXP16_MAG);
+			// !!! note: the u, v should be absolutely coordinate with texture's width and height
+	}
+
+	if(!Create_Array(&pobj->ver_list_t, pobj->ver_list.size))
+		ON_ERROR_GOTO("create vertex_t list failed");
+
+	if(!Create_Array(&pobj->nor_list, max_nor_size))
+		ON_ERROR_GOTO("create normal list failed");
+
+	for(i = 0; i < pmesh->nNumNormals; i++)
+	{
+		VECTOR4D * pnor;
+		if(!Append_Array(&pobj->nor_list, &pnor))
+			ON_ERROR_GOTO("append normal list failed");
+		memset(pnor, 0, sizeof(*pnor));
+
+		VECTOR4D_InitXYZ( pnor,
+						(REAL)pmesh->pNormals[i][0],
+						(REAL)pmesh->pNormals[i][1],
+						-(REAL)pmesh->pNormals[i][2]); // !!!
+	}
+
+	if(!Create_Array(&pobj->nor_list_t, pobj->nor_list.size))
+		ON_ERROR_GOTO("create normal_t list failed");
+
+	pobj->tri_orig_num = pobj->tri_list.length;
+
+	strcpy(pobj->name, pmesh->szName);
+	return true;
+
+ON_ERROR:
+	Destroy_Object4D(pobj);
+	return false;
+}
+
+T3DLIB_API bool Create_Material_From_MsModel_By_Name16(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name)
 {
 	assert(pmaterial->texture.pbuffer == NULL);
 
@@ -1314,60 +1466,37 @@ T3DLIB_API bool Create_Material_From_MsModel32(MATERIALV1 * pmaterial, msModel *
 		msMaterial * pmat = &pmodel->pMaterials[i];
 		if(0 == strcmp(pmat->szName, material_name))
 		{
-			pmaterial->c_ambi = _RGB32BIT(	(int)(pmat->Ambient[0] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Ambient[1] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Ambient[2] * (MAX_COLOR_INTENSITY32 - 1)));
-
-			pmaterial->c_diff = _RGB32BIT(	(int)(pmat->Diffuse[0] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Diffuse[1] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Diffuse[2] * (MAX_COLOR_INTENSITY32 - 1)));
-
-			pmaterial->c_spec = _RGB32BIT(	(int)(pmat->Specular[0] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Specular[1] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Specular[2] * (MAX_COLOR_INTENSITY32 - 1)));
-
-			pmaterial->c_emis = _RGB32BIT(	(int)(pmat->Emissive[0] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Emissive[1] * (MAX_COLOR_INTENSITY32 - 1)),
-											(int)(pmat->Emissive[2] * (MAX_COLOR_INTENSITY32 - 1)));
-
-			if(0 != strcmp(pmat->szDiffuseTexture, ""))
-			{
-				if(!Create_Bitmap_From_File(&btmp, pmat->szDiffuseTexture))
-					ON_ERROR_GOTO(SFORMAT1(gbuffer, "load bitmap %s failed", pmat->szDiffuseTexture));
-
-				if(!Create_Image32(&pmaterial->texture,
-						btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
-					ON_ERROR_GOTO("create image failed");
-
-				if(!Load_Image_From_Bitmap32(&pmaterial->texture, &btmp, 0, 0,
-						btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
-					ON_ERROR_GOTO("load image failed");
-
-				Destroy_Bitmap(&btmp);
-			}
-
-			if(0 != pmaterial->c_ambi)
-				SET_BIT(pmaterial->attr, MATERIAL_ATTR_AMBIENT);
-
-			if(0 != pmaterial->c_diff)
-				SET_BIT(pmaterial->attr, MATERIAL_ATTR_DIFFUSE);
-
-			if(0 != pmaterial->c_spec)
-				SET_BIT(pmaterial->attr, MATERIAL_ATTR_SPECULAR);
-
-			if(0 != pmaterial->c_emis)
-				SET_BIT(pmaterial->attr, MATERIAL_ATTR_EMISSIVE);
-
-			strcpy(pmaterial->name, pmat->szName);
-
-			return true;
+			return Create_Material_From_MsMaterial16(pmaterial, pmat);
 		}
 	}
 	ON_ERROR_GOTO(SFORMAT1(gbuffer, "cannot find material %s", material_name));
 
 ON_ERROR:
-	Destroy_Image(&pmaterial->texture);
 	Destroy_Bitmap(&btmp);
+	Destroy_Material(pmaterial);
+	return false;
+}
+
+T3DLIB_API bool Create_Material_From_MsModel_By_Name32(MATERIALV1 * pmaterial, msModel * pmodel, const char * material_name)
+{
+	assert(pmaterial->texture.pbuffer == NULL);
+
+	BITMAPV1 btmp;
+	INIT_ZERO(btmp);
+	int i;
+	for(i = 0; i < pmodel->nNumMaterials; i++)
+	{
+		msMaterial * pmat = &pmodel->pMaterials[i];
+		if(0 == strcmp(pmat->szName, material_name))
+		{
+			return Create_Material_From_MsMaterial32(pmaterial, pmat);
+		}
+	}
+	ON_ERROR_GOTO(SFORMAT1(gbuffer, "cannot find material %s", material_name));
+
+ON_ERROR:
+	Destroy_Bitmap(&btmp);
+	Destroy_Material(pmaterial);
 	return false;
 }
 
@@ -1377,11 +1506,11 @@ T3DLIB_API void Destroy_Material(MATERIALV1 * pmaterial)
 	INIT_ZERO(*pmaterial);
 }
 
-T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
+T3DLIB_API bool Create_Object4D_From_MsModel_By_Name(OBJECT4DV1 * pobj, msModel * pmodel, const char * mesh_name,
 
-											 size_t max_tri_size /*= 3000*/,
-											 size_t max_ver_size /*= 3000*/,
-											 size_t max_nor_size /*= 3000*/)
+													 size_t max_tri_size /*= 3000*/,
+													 size_t max_ver_size /*= 3000*/,
+													 size_t max_nor_size /*= 3000*/)
 {
 	assert(pobj->tri_list.elems == NULL);
 	assert(pobj->ver_list.elems == NULL);
@@ -1389,84 +1518,22 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 	assert(pobj->nor_list.elems == NULL);
 	assert(pobj->nor_list_t.elems == NULL);
 
-	int i, j;
+	int i;
 	for(i = 0; i < pmodel->nNumMeshes; i++)
 	{
 		msMesh * pmesh = &pmodel->pMeshes[i];
 		if(0 == strcmp(pmesh->szName, mesh_name))
 		{
-			if(!Create_Array(&pobj->tri_list, max_tri_size))
-				ON_ERROR_GOTO("create triangle list failed");
+			if(!Create_Object4D_From_MsMesh(pobj, pmesh, max_tri_size, max_ver_size, max_nor_size))
+				return false;
 
-			for(j = 0; j < pmesh->nNumTriangles; j++)
+			if(pmesh->nMaterialIndex >= 0 && pmodel->nNumMaterials > 0)
 			{
-				TRIANGLEV1 * ptri;
-				if(!Append_Array(&pobj->tri_list, &ptri))
-					ON_ERROR_GOTO("append triangle list failed");
-				memset(ptri, 0, sizeof(*ptri));
+				if(pmesh->nMaterialIndex > pmodel->nNumMaterials - 1)
+					ON_ERROR_GOTO("material index overflow");
 
-				ptri->v0_i = pmesh->pTriangles[j].nVertexIndices[0];
-				ptri->v1_i = pmesh->pTriangles[j].nVertexIndices[2]; // !!!
-				ptri->v2_i = pmesh->pTriangles[j].nVertexIndices[1]; // !!!
-
-				ptri->n0_i = pmesh->pTriangles[j].nNormalIndices[0];
-				ptri->n1_i = pmesh->pTriangles[j].nNormalIndices[2]; // !!!
-				ptri->n2_i = pmesh->pTriangles[j].nNormalIndices[1]; // !!!
-
-				ptri->state = TRI_STATE_ACTIVE;
-			}
-
-			if(!Create_Array(&pobj->ver_list, max_ver_size))
-				ON_ERROR_GOTO("create vertex list failed");
-
-			for(j = 0; j < pmesh->nNumVertices; j++)
-			{
-				VERTEXV1T * pver;
-				if(!Append_Array(&pobj->ver_list, &pver))
-					ON_ERROR_GOTO("append vertex list failed");
-				memset(pver, 0, sizeof(*pver));
-
-				VECTOR4D_InitXYZ(	&pver->_4D,
-									(REAL)pmesh->pVertices[j].Vertex[0],
-									(REAL)pmesh->pVertices[j].Vertex[1],
-									-(REAL)pmesh->pVertices[j].Vertex[2]); // !!!
-
-				//pver->u = (FIXP16)(pmesh->pVertices[j].u * FIXP16_MAG);
-				//pver->v = (FIXP16)(pmesh->pVertices[j].v * FIXP16_MAG);
-					// !!! note: the u, v should be absolutely coordinate with texture's width and height
-			}
-
-			if(!Create_Array(&pobj->ver_list_t, pobj->ver_list.size))
-				ON_ERROR_GOTO("create vertex_t list failed");
-
-			if(!Create_Array(&pobj->nor_list, max_nor_size))
-				ON_ERROR_GOTO("create normal list failed");
-
-			for(j = 0; j < pmesh->nNumNormals; j++)
-			{
-				VECTOR4D * pnor;
-				if(!Append_Array(&pobj->nor_list, &pnor))
-					ON_ERROR_GOTO("append normal list failed");
-				memset(pnor, 0, sizeof(*pnor));
-
-				VECTOR4D_InitXYZ(	pnor,
-									(REAL)pmesh->pNormals[j][0],
-									(REAL)pmesh->pNormals[j][1],
-									-(REAL)pmesh->pNormals[j][2]); // !!!
-			}
-
-			if(!Create_Array(&pobj->nor_list_t, pobj->nor_list.size))
-				ON_ERROR_GOTO("create normal_t list failed");
-
-			pobj->tri_orig_num = pobj->tri_list.length;
-
-			if(pmesh->nMaterialIndex >= 0)
-			{
-				assert(pmesh->nMaterialIndex < pmodel->nNumMeshes);
 				strcpy(pobj->material_name, pmodel->pMaterials[pmesh->nMaterialIndex].szName);
 			}
-
-			strcpy(pobj->name, pmesh->szName);
 
 			return true;
 		}
@@ -1474,13 +1541,8 @@ T3DLIB_API bool Create_Object4D_From_MsModel(OBJECT4DV1 * pobj, msModel * pmodel
 	ON_ERROR_GOTO(SFORMAT1(gbuffer, "cannot find mesh %s", mesh_name));
 
 ON_ERROR:
-	Destroy_Array(&pobj->tri_list);
-	Destroy_Array(&pobj->ver_list);
-	Destroy_Array(&pobj->ver_list_t);
-	Destroy_Array(&pobj->nor_list);
-	Destroy_Array(&pobj->nor_list_t);
+	Destroy_Object4D(pobj);
 	return false;
-	UNREFERENCED_PARAMETER(max_nor_size);
 }
 
 T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmode, MATERIALV1 * pmaterial)
@@ -1531,35 +1593,41 @@ T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj)
 	INIT_ZERO(*pobj);
 }
 
-T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj)
+T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj, VECTOR4D * vpos_ptr /*= NULL*/, VECTOR4D * vrot_ptr /*= NULL*/)
 {
 	assert(pobj->ver_list_t.size >= pobj->ver_list.size);
 	assert(pobj->ver_list_t.length == 0);
 
+	if(NULL == vpos_ptr)
+		vpos_ptr = &pobj->vpos;
+
+	if(NULL == vrot_ptr)
+		vrot_ptr = &pobj->vrot;
+
 	int i;
-	if(IS_ZERO_FLOAT(pobj->vrot.x)
-		&& IS_ZERO_FLOAT(pobj->vrot.y)
-		&& IS_ZERO_FLOAT(pobj->vrot.z))
+	if(IS_ZERO_FLOAT(vrot_ptr->x)
+		&& IS_ZERO_FLOAT(vrot_ptr->y)
+		&& IS_ZERO_FLOAT(vrot_ptr->z))
 	{
 		pobj->ver_list_t.length = pobj->ver_list.length;
 		for(i = 0; i < (int)pobj->ver_list.length; i++)
 		{
 			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
-			VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &pobj->vpos._3D);
+			VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
 		}
 
 		pobj->nor_list_t.length = pobj->nor_list.length;
 		for(i = 0; i < (int)pobj->nor_list.length; i++)
 		{
 			memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
-			VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &pobj->vpos._3D);
+			VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
 		}
 	}
 	else
 	{
 		MATRIX4X4 mrot, mmov, mres;
 		Mat_Mul_4X4(&mres,
-			Build_Mat_RotationXYZ(&mrot, &pobj->vrot), Build_Mat_PositionXYZ(&mmov, &pobj->vpos));
+			Build_Mat_RotationXYZ(&mrot, vrot_ptr), Build_Mat_PositionXYZ(&mmov, vpos_ptr));
 
 		pobj->ver_list_t.length = pobj->ver_list.length;
 		for(i = 0; i < (int)pobj->ver_list.length; i++)
