@@ -340,7 +340,10 @@ int main(int argc, char ** argv)
 	SKELETON4DV1 ske;
 	INIT_ZERO(ske);
 
-	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
+	//	goto on_error;
+
+	if(!Create_MsModel_From_File(&model, "militia.ms3d.txt"))
 		goto on_error;
 
 	if(!Create_Skeleton4D_From_MsModel(&ske, &model, "aaa"))

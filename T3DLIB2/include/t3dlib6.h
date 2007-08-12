@@ -278,7 +278,7 @@ T3DLIB_API bool Create_Object4D_From_MsModel_By_Name(OBJECT4DV1 * pobj, msModel 
 													 size_t max_ver_size = 3000,
 													 size_t max_nor_size = 3000);
 
-T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmode, MATERIALV1 * pmaterial);
+T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmodel, MATERIALV1 * pmaterial);
 
 T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj);
 

@@ -67,7 +67,7 @@ T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
 	VECTOR4D_InitXYZ(&pbone->vpos, pmsbone->Position[0], pmsbone->Position[1], pmsbone->Position[2]);
 	VECTOR4D_InitXYZ(&pbone->vrot, pmsbone->Rotation[0], pmsbone->Rotation[1], pmsbone->Rotation[2]);
 
-	if(!Create_Array(&pbone->kpos_list, max_key_size))
+	if(!Create_Array(&pbone->kpos_list, pmsbone->nNumPositionKeys))
 		ON_ERROR_GOTO("create key pos list failed");
 
 	int i;
@@ -77,6 +77,8 @@ T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
 		if(!Append_Array(&pbone->kpos_list, &pkey))
 			ON_ERROR_GOTO("append key pos failed");
 		INIT_ZERO(*pkey);
+
+		assert((int)pbone->kpos_list.size <= pmsbone->nNumPositionKeys);
 
 		pkey->time = pmsbone->pPositionKeys[i].fTime;
 
@@ -89,7 +91,7 @@ T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
 	qsort(&pbone->kpos_list.elems[0], pbone->kpos_list.length,
 					sizeof(pbone->kpos_list.elems[0]), Comp_Bone4D_Key);
 
-	if(!Create_Array(&pbone->krot_list, max_key_size))
+	if(!Create_Array(&pbone->krot_list, pmsbone->nNumRotationKeys))
 		ON_ERROR_GOTO("create key rot list failed");
 
 	for(i = 0; i < pmsbone->nNumRotationKeys; i++)
@@ -98,6 +100,8 @@ T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
 		if(!Append_Array(&pbone->krot_list, &pkey))
 			ON_ERROR_GOTO("append key rot failed");
 		INIT_ZERO(*pkey);
+
+		assert((int)pbone->krot_list.size <= pmsbone->nNumRotationKeys);
 
 		pkey->time = pmsbone->pRotationKeys[i].fTime;
 
@@ -120,6 +124,7 @@ T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
 ON_ERROR:
 	Destroy_Bone4D(pbone);
 	return false;
+	UNREFERENCED_PARAMETER(max_key_size);
 }
 
 T3DLIB_API void Destroy_Bone4D(BONE4DV1 * pbone)
@@ -311,11 +316,44 @@ T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time)
 	}
 }
 
+T3DLIB_API bool Create_Bone_Index_From_MsMesh(SIZE_T_ARRAYV1 * pindices, msMesh * pmesh, size_t max_index_size /*= 3000*/)
+{
+	assert(NULL == pindices->elems);
+
+	if(!Create_Array(pindices, pmesh->nNumVertices))
+		ON_ERROR_GOTO("cannot create bone index");
+
+	int i;
+	for(i = 0; i < pmesh->nNumVertices; i++)
+	{
+		size_t * pidx;
+		if(!Append_Array(pindices, &pidx))
+			ON_ERROR_GOTO("append bone index failed");
+
+		assert((int)pindices->size <= pmesh->nNumVertices);
+
+		*pidx = pmesh->pVertices[i].nBoneIndex;
+	}
+	return true;
+
+ON_ERROR:
+	Destroy_Bone_Index(pindices);
+	return false;
+	UNREFERENCED_PARAMETER(max_index_size);
+}
+
+T3DLIB_API void Destroy_Bone_Index(SIZE_T_ARRAYV1 * pindex)
+{
+	Destroy_Array(pindex);
+	INIT_ZERO(*pindex);
+}
+
 T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, msModel * pmodel)
 {
 	assert(NULL == pcharacter->skin_list.elems);
 	assert(NULL == pcharacter->material_list.elems);
 	assert(NULL == pcharacter->skeleton_list.elems);
+	assert(NULL == pcharacter->bone_index_list.elems);
 
 	if(!Create_Array(&pcharacter->skin_list, pmodel->nNumMeshes))
 		ON_ERROR_GOTO("cannot create skin list");
@@ -359,6 +397,24 @@ T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, ms
 		strcpy(pcharacter->skin_list.elems[i].name, pmaterial->name);
 	}
 
+	if(!Create_Array(&pcharacter->bone_index_list, pmodel->nNumMeshes))
+		ON_ERROR_GOTO("cannot create skin bone list");
+
+	for(i = 0; i < pmodel->nNumMeshes; i++)
+	{
+		SIZE_T_ARRAYV1 * pindices;
+		if(!Append_Array(&pcharacter->bone_index_list, &pindices))
+			ON_ERROR_GOTO("append bone indices failed");
+		INIT_ZERO(*pindices);
+
+		assert((int)pcharacter->bone_index_list.size <= pmodel->nNumMeshes);
+
+		if(!Create_Bone_Index_From_MsMesh(pindices, &pmodel->pMeshes[i]))
+			goto ON_ERROR;
+	}
+
+	return true;
+
 ON_ERROR:
 	Destroy_Character4D(pcharacter);
 	return false;
@@ -369,6 +425,7 @@ T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, ms
 	assert(NULL == pcharacter->skin_list.elems);
 	assert(NULL == pcharacter->material_list.elems);
 	assert(NULL == pcharacter->skeleton_list.elems);
+	assert(NULL == pcharacter->bone_index_list.elems);
 
 	if(!Create_Array(&pcharacter->skin_list, pmodel->nNumMeshes))
 		ON_ERROR_GOTO("cannot create skin list");
@@ -412,6 +469,22 @@ T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, ms
 		strcpy(pcharacter->skin_list.elems[i].name, pmaterial->name);
 	}
 
+	if(!Create_Array(&pcharacter->bone_index_list, pmodel->nNumMeshes))
+		ON_ERROR_GOTO("cannot create skin bone list");
+
+	for(i = 0; i < pmodel->nNumMeshes; i++)
+	{
+		SIZE_T_ARRAYV1 * pindices;
+		if(!Append_Array(&pcharacter->bone_index_list, &pindices))
+			ON_ERROR_GOTO("append bone indices failed");
+		INIT_ZERO(*pindices);
+
+		assert((int)pcharacter->bone_index_list.size <= pmodel->nNumMeshes);
+
+		if(!Create_Bone_Index_From_MsMesh(pindices, &pmodel->pMeshes[i]))
+			goto ON_ERROR;
+	}
+
 	return true;
 
 ON_ERROR:
@@ -440,6 +513,12 @@ T3DLIB_API void Destroy_Character4D(CHARACTER4DV1 * pcharacter)
 	}
 	Destroy_Array(&pcharacter->skeleton_list);
 
+	for(i = 0; i < (int)pcharacter->bone_index_list.length; i++)
+	{
+		Destroy_Bone_Index(&pcharacter->bone_index_list.elems[i]);
+	}
+	Destroy_Array(&pcharacter->bone_index_list);
+
 	INIT_ZERO(*pcharacter);
 }
 
@@ -449,6 +528,20 @@ T3DLIB_API void Reset_Character4D(CHARACTER4DV1 * pcharacter)
 	for(i = 0; i < (int)pcharacter->skin_list.length; i++)
 	{
 		Reset_Object4D(&pcharacter->skin_list.elems[i]);
+	}
+}
+
+T3DLIB_API void Undate_Character4D_Absolute_UV(CHARACTER4DV1 * pcharacter, msModel * pmodel)
+{
+	assert(pcharacter->skin_list.length == pcharacter->material_list.length);
+
+	int i;
+	for(i = 0; i < (int)pcharacter->skin_list.length; i++)
+	{
+		if(MATERIAL_ATTR_TEXTURE | pcharacter->material_list.elems[i].attr)
+		{
+			Undate_Object4D_Absolute_UV(&pcharacter->skin_list.elems[i], pmodel, &pcharacter->material_list.elems[i]);
+		}
 	}
 }
 

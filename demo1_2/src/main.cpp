@@ -499,11 +499,7 @@ bool Game_Init(void)
 	if(!Create_Character4D_From_MsModel(&character1, &model))
 		ON_ERROR_RETURN("load character1 failed");
 
-	int i;
-	for(i = 0; i < (int)character1.skin_list.length; i++)
-	{
-		Undate_Object4D_Absolute_UV(&character1.skin_list.elems[i], &model, &character1.material_list.elems[i]);
-	}
+	Undate_Character4D_Absolute_UV(&character1, &model);
 
 	Destroy_MsModel(&model);
 

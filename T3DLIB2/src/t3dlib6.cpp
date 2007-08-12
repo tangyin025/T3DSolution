@@ -1545,14 +1545,14 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmode, MATERIALV1 * pmaterial)
+T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmodel, MATERIALV1 * pmaterial)
 {
 	assert(pmaterial->texture.pbuffer != NULL);
 
 	int i, j;
-	for(i = 0; i < pmode->nNumMeshes; i++)
+	for(i = 0; i < pmodel->nNumMeshes; i++)
 	{
-		msMesh * pmesh = &pmode->pMeshes[i];
+		msMesh * pmesh = &pmodel->pMeshes[i];
 		if(0 == strcmp(pmesh->szName, pobj->name))
 		{
 			assert((int)pobj->ver_list.length == pmesh->nNumVertices);

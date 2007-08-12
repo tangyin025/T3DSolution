@@ -83,6 +83,7 @@ T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time);
 typedef struct T3DLIB_API ARRAYV1<OBJECT4DV1> OBJ_ARRAYV1, * OBJ_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<MATERIALV1> MATERIAL_ARRAYV1, * MATERIAL_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<SKELETON4DV1> SKELETON_ARRAYV1, * SKELETON_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<SIZE_T_ARRAYV1> BONE_INDEX_ARRAYV1, * BONE_INDEX_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API CHARACTER4DV1_TYP
 {
@@ -92,6 +93,7 @@ typedef struct T3DLIB_API CHARACTER4DV1_TYP
 	OBJ_ARRAYV1			skin_list;
 	MATERIAL_ARRAYV1	material_list;
 	SKELETON_ARRAYV1	skeleton_list;
+	BONE_INDEX_ARRAYV1	bone_index_list;
 
 	VECTOR4D			vpos;
 	VECTOR4D			vrot;
@@ -110,6 +112,10 @@ extern T3DLIB_API void (* Draw_Character4D_Gouraud_Texture_ZBufferRW)(CHARACTER4
 
 T3DLIB_API bool Init_T3dlib7(int bpp);
 
+T3DLIB_API bool Create_Bone_Index_From_MsMesh(SIZE_T_ARRAYV1 * pindices, msMesh * pmesh, size_t max_index_size = 3000);
+
+T3DLIB_API void Destroy_Bone_Index(SIZE_T_ARRAYV1 * pindex);
+
 T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, msModel * pmodel);
 
 T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, msModel * pmodel);
@@ -117,6 +123,8 @@ T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, ms
 T3DLIB_API void Destroy_Character4D(CHARACTER4DV1 * pcharacter);
 
 T3DLIB_API void Reset_Character4D(CHARACTER4DV1 * pcharacter);
+
+T3DLIB_API void Undate_Character4D_Absolute_UV(CHARACTER4DV1 * pcharacter, msModel * pmodel);
 
 T3DLIB_API void Model_To_World_Character4D(CHARACTER4DV1 * pcharacter, VECTOR4D * vpos_ptr = NULL, VECTOR4D * vrot_ptr = NULL);
 
