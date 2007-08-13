@@ -53,6 +53,14 @@ typedef enum T3DLIB_API VIEWPORT_FIX_MODE_TYP
 
 } VIEWPORT_FIX_MODE, * VIEWPORT_FIX_MODE_PTR;
 
+typedef enum T3DLIB_API TRANSFORM_MODE_TYP
+{
+	TRANSFORM_MODE_LOCAL_ONLY,
+	TRANSFORM_MODE_TRANS_ONLY,
+	TRANSFORM_MODE_LOCAL_TO_TRANS,
+
+} TRANSFORM_MODE, * TRANSFORM_MODE_PTR;
+
 template <typename ELEM_T>
 struct ARRAYV1
 {
@@ -282,7 +290,12 @@ T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmodel,
 
 T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj);
 
-T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj, VECTOR4D * vpos_ptr = NULL, VECTOR4D * vrot_ptr = NULL);
+T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TRANSFORM_MODE trans_mode);
+
+T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
+										VECTOR4D * vpos_ptr = NULL,
+										VECTOR4D * vrot_ptr = NULL,
+										TRANSFORM_MODE trans_mode = TRANSFORM_MODE_LOCAL_TO_TRANS);
 
 T3DLIB_API void Remove_Object4D_Backface_At_World(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 

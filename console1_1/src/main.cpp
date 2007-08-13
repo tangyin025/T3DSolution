@@ -21,13 +21,13 @@ bool foo(int elem)
 	return true;
 }
 
-void Print_Bone_Position(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_singles, size_t root, int indent)
+void Print_Bone_Position(BONE_ARRAYV1 * pbones, BONE_FRAME_ARRAYV1 * pbone_singles, size_t root, int indent)
 {
 	int i;
 	for(i = 0; i < indent; i++)
 		printf("\t");
 
-	VECTOR4D_Print(&pbone_singles->elems[root].kpos.vkey);
+	VECTOR4D_Print(&pbone_singles->elems[root].vpos);
 
 	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
 	{
@@ -35,17 +35,33 @@ void Print_Bone_Position(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_sing
 	}
 }
 
-void Print_Bone_Rotation(BONE_ARRAYV1 * pbones, BONE_SINGLE_ARRAYV1 * pbone_singles, size_t root, int indent)
+void Print_Bone_Rotation(BONE_ARRAYV1 * pbones, BONE_FRAME_ARRAYV1 * pbone_singles, size_t root, int indent)
 {
 	int i;
 	for(i = 0; i < indent; i++)
 		printf("\t");
 
-	VECTOR4D_Print(&pbone_singles->elems[root].krot.vkey);
+	VECTOR4D_Print(&pbone_singles->elems[root].vrot);
 
 	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
 	{
 		Print_Bone_Rotation(pbones, pbone_singles, pbones->elems[root].subs.elems[i], indent + 1);
+	}
+}
+
+void Print_Mat_By_Bone_List(BONE_ARRAYV1 * pbones, MAT_ARRAYV1 * pmatrices, size_t root, int indent)
+{
+	assert(root <= pmatrices->length);
+
+	int i;
+	//for(i = 0; i < indent; i++)
+	//	printf("\t");
+
+	MATRIX4X4_Print(&pmatrices->elems[root]);
+
+	for(i = 0; i < (int)pbones->elems[root].subs.length; i++)
+	{
+		Print_Mat_By_Bone_List(pbones, pmatrices, pbones->elems[root].subs.elems[i], indent + 1);
 	}
 }
 
@@ -340,20 +356,20 @@ int main(int argc, char ** argv)
 	SKELETON4DV1 ske;
 	INIT_ZERO(ske);
 
-	//if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
-	//	goto on_error;
-
-	if(!Create_MsModel_From_File(&model, "militia.ms3d.txt"))
+	if(!Create_MsModel_From_File(&model, "MilkShape 3D ASCII.txt"))
 		goto on_error;
+
+	//if(!Create_MsModel_From_File(&model, "militia.ms3d.txt"))
+	//	goto on_error;
 
 	if(!Create_Skeleton4D_From_MsModel(&ske, &model, "aaa"))
 		goto on_error;
 
 	Skeleton4D_Print(&ske);
 
-	Animate_Skeleton4D_By_Time(&ske, 25);
-
 	printf("\n");
+
+	Animate_Skeleton4D_By_Time(&ske, 25);
 
 	Print_Bone_Position(&ske.bone_list, &ske.bone_list_t, ske.root, 0);
 
@@ -361,7 +377,22 @@ int main(int argc, char ** argv)
 
 	Print_Bone_Rotation(&ske.bone_list, &ske.bone_list_t, ske.root, 0);
 
+	printf("\n");
+
+	Build_Reverse_Mat_Skeleton4D(&ske);
+
+	Build_Animate_Mat_Skeleton4D(&ske);
+
+	Print_Mat_By_Bone_List(&ske.bone_list, &ske.imat_list, ske.root, 0);
+
+	printf("\n");
+
+	Print_Mat_By_Bone_List(&ske.bone_list, &ske.kmat_list, ske.root, 0);
+
+	printf("\n");
+
 	Destroy_Skeleton4D(&ske);
+
 	Destroy_MsModel(&model);
 
 	_CrtDumpMemoryLeaks();

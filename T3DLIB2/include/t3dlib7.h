@@ -22,7 +22,7 @@ typedef struct T3DLIB_API BONE4DV1_TYP
 	VECTOR4D				vpos;
 	VECTOR4D				vrot;
 
-	BONE4DV1_KEY_ARRAYV1	kpos_list;	// note : the keys need to be sort, so dont use link
+	BONE4DV1_KEY_ARRAYV1	kpos_list;	// note : these keys need to be sort, so dont use link
 	BONE4DV1_KEY_ARRAYV1	krot_list;
 
 	size_t					parent_i;
@@ -37,25 +37,29 @@ typedef struct T3DLIB_API BONE4DV1_TYP
 
 typedef struct T3DLIB_API BONE4DV1_FRAME_TYP
 {
-	BONE4DV1_KEY			kpos;
-	BONE4DV1_KEY			krot;
+	VECTOR4D				vpos;
+	VECTOR4D				vrot;
 
 } BONE4DV1_FRAME, * BONE4DV1_FRAME_PTR;
 
 typedef struct T3DLIB_API ARRAYV1<BONE4DV1> BONE_ARRAYV1, * BONE_ARRAYV1_PTR;
-typedef struct T3DLIB_API ARRAYV1<BONE4DV1_FRAME> BONE_SINGLE_ARRAYV1, * BONE_SINGLE_ARRAYV1_PTR;
-//typedef struct T3DLIB_API ARRAYV1<MATRIX4X4> MAT_ARRAYV1, * MAT_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<BONE4DV1_FRAME> BONE_FRAME_ARRAYV1, * BONE_FRAME_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<MATRIX4X4> MAT_ARRAYV1, * MAT_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API SKELETON4DV1_TYP
 {
-	unsigned int		state;
-	unsigned int		attr;
+	unsigned int			state;
+	unsigned int			attr;
 
-	BONE_ARRAYV1		bone_list;
-	BONE_SINGLE_ARRAYV1	bone_list_t;
-	size_t				root;
+	BONE_ARRAYV1			bone_list;
+	BONE_FRAME_ARRAYV1		bone_list_t;
+	size_t					root;
+	REAL					time;
 
-	char				name[MS_MAX_NAME];
+	MAT_ARRAYV1				imat_list;
+	MAT_ARRAYV1				kmat_list;
+
+	char					name[MS_MAX_NAME];
 
 	_CTOR_DECLARE(SKELETON4DV1_TYP);
 	_DTOR_DECLARE(SKELETON4DV1_TYP);
@@ -80,6 +84,10 @@ T3DLIB_API void Skeleton4D_Print(SKELETON4DV1 * pske);
 
 T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time);
 
+T3DLIB_API void Build_Reverse_Mat_Skeleton4D(SKELETON4DV1 * pske);
+
+T3DLIB_API void Build_Animate_Mat_Skeleton4D(SKELETON4DV1 * pske);
+
 typedef struct T3DLIB_API ARRAYV1<OBJECT4DV1> OBJ_ARRAYV1, * OBJ_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<MATERIALV1> MATERIAL_ARRAYV1, * MATERIAL_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<SKELETON4DV1> SKELETON_ARRAYV1, * SKELETON_ARRAYV1_PTR;
@@ -92,7 +100,7 @@ typedef struct T3DLIB_API CHARACTER4DV1_TYP
 
 	OBJ_ARRAYV1			skin_list;
 	MATERIAL_ARRAYV1	material_list;
-	SKELETON_ARRAYV1	skeleton_list;
+//	SKELETON_ARRAYV1	skeleton_list;
 	BONE_INDEX_ARRAYV1	skin_bone_index_list;
 
 	VECTOR4D			vpos;
@@ -126,7 +134,10 @@ T3DLIB_API void Reset_Character4D(CHARACTER4DV1 * pcharacter);
 
 T3DLIB_API void Undate_Character4D_Absolute_UV(CHARACTER4DV1 * pcharacter, msModel * pmodel);
 
-T3DLIB_API void Model_To_World_Character4D(CHARACTER4DV1 * pcharacter, VECTOR4D * vpos_ptr = NULL, VECTOR4D * vrot_ptr = NULL);
+T3DLIB_API void Model_To_World_Character4D(CHARACTER4DV1 * pcharacter,
+										   VECTOR4D * vpos_ptr = NULL,
+										   VECTOR4D * vrot_ptr = NULL,
+										   TRANSFORM_MODE trans_mode = TRANSFORM_MODE_LOCAL_TO_TRANS);
 
 T3DLIB_API void Light_Character4D16(CHARACTER4DV1 * pcharacter, LIGHT4DV1 * plight);
 
@@ -147,5 +158,10 @@ T3DLIB_API void Perspective_To_Screen_Character4D(CHARACTER4DV1 * pcharacter, CA
 T3DLIB_API void Draw_Character4D_Gouraud_Texture_ZBufferRW16(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
 
 T3DLIB_API void Draw_Character4D_Gouraud_Texture_ZBufferRW32(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+
+T3DLIB_API void Transform_Object4D_With_Bone_Index(OBJECT4DV1 * pobj,
+												   SIZE_T_ARRAYV1 * pbone_index_list,
+												   MAT_ARRAYV1 * pmat_list,
+												   TRANSFORM_MODE trans_mode);
 
 #endif // __T3DLIB7_H__

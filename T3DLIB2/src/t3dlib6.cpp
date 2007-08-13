@@ -1593,10 +1593,73 @@ T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj)
 	INIT_ZERO(*pobj);
 }
 
-T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj, VECTOR4D * vpos_ptr /*= NULL*/, VECTOR4D * vrot_ptr /*= NULL*/)
+T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TRANSFORM_MODE trans_mode)
 {
-	assert(pobj->ver_list_t.size >= pobj->ver_list.size);
-	assert(pobj->ver_list_t.length == 0);
+	assert(pobj->ver_list_t.size >= pobj->ver_list.length);
+	assert(pobj->nor_list_t.size >= pobj->nor_list.length);
+
+	VECTOR4D vres;
+
+	int i;
+	switch(trans_mode)
+	{
+	case TRANSFORM_MODE_LOCAL_ONLY:
+		for(i = 0; i < (int)pobj->ver_list.length; i++)
+		{
+			VECTOR4D_Copy( &pobj->ver_list.elems[i]._4D,
+							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->ver_list.elems[i]._4D, pmat));
+		}
+
+		for(i = 0; i < (int)pobj->nor_list.length; i++)
+		{
+			VECTOR4D_Copy( &pobj->nor_list.elems[i],
+							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->nor_list.elems[i], pmat));
+		}
+		break;
+
+	case TRANSFORM_MODE_TRANS_ONLY:
+		for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+		{
+			VECTOR4D_Copy( &pobj->ver_list_t.elems[i]._4D,
+							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->ver_list_t.elems[i]._4D, pmat));
+		}
+
+		for(i = 0; i < (int)pobj->nor_list_t.length; i++)
+		{
+			VECTOR4D_Copy( &pobj->nor_list_t.elems[i],
+							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->nor_list_t.elems[i], pmat));
+		}
+		break;
+
+	case TRANSFORM_MODE_LOCAL_TO_TRANS:
+		pobj->ver_list_t.length = pobj->ver_list.length;
+		for(i = 0; i < (int)pobj->ver_list.length; i++)
+		{
+			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(pobj->ver_list.elems[0])); // !!!
+
+			Mat_Mul_VECTOR4D_4X4(&pobj->ver_list_t.elems[i]._4D, &pobj->ver_list.elems[i]._4D, pmat);
+		}
+
+		pobj->nor_list_t.length = pobj->nor_list.length;
+		for(i = 0; i < (int)pobj->nor_list.length; i++)
+		{
+			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], pmat);
+		}
+		break;
+
+	default:
+		assert(0); break;
+	}
+}
+
+T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
+
+										VECTOR4D * vpos_ptr /*= NULL*/,
+										VECTOR4D * vrot_ptr /*= NULL*/,
+										TRANSFORM_MODE trans_mode /*= TRANSFORM_MODE_LOCAL_TO_TRANS*/)
+{
+	assert(pobj->ver_list_t.size >= pobj->ver_list.length);
+	assert(pobj->nor_list_t.size >= pobj->nor_list.length);
 
 	if(NULL == vpos_ptr)
 		vpos_ptr = &pobj->vpos;
@@ -1609,39 +1672,51 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj, VECTOR4D * vpos_ptr /
 		&& IS_ZERO_FLOAT(vrot_ptr->y)
 		&& IS_ZERO_FLOAT(vrot_ptr->z))
 	{
-		pobj->ver_list_t.length = pobj->ver_list.length;
-		for(i = 0; i < (int)pobj->ver_list.length; i++)
+		switch(trans_mode)
 		{
-			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
-			VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
-		}
+		case TRANSFORM_MODE_LOCAL_ONLY:
+			assert(0); break;
 
-		pobj->nor_list_t.length = pobj->nor_list.length;
-		for(i = 0; i < (int)pobj->nor_list.length; i++)
-		{
-			memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
-			VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
+		case TRANSFORM_MODE_TRANS_ONLY:
+			for(i = 0; i < (int)pobj->ver_list_t.length; i++)
+			{
+				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
+			}
+
+			for(i = 0; i < (int)pobj->nor_list_t.length; i++)
+			{
+				VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
+			}
+			break;
+
+		case TRANSFORM_MODE_LOCAL_TO_TRANS:
+			pobj->ver_list_t.length = pobj->ver_list.length;
+			for(i = 0; i < (int)pobj->ver_list.length; i++)
+			{
+				memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
+				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
+			}
+
+			pobj->nor_list_t.length = pobj->nor_list.length;
+			for(i = 0; i < (int)pobj->nor_list.length; i++)
+			{
+				memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
+				VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
+			}
+			break;
+
+		default:
+			assert(0); break;
 		}
 	}
 	else
 	{
+		assert(TRANSFORM_MODE_LOCAL_ONLY != trans_mode);
+
 		MATRIX4X4 mrot, mmov, mres;
-		Mat_Mul_4X4(&mres,
-			Build_Mat_RotationXYZ(&mrot, vrot_ptr), Build_Mat_PositionXYZ(&mmov, vpos_ptr));
-
-		pobj->ver_list_t.length = pobj->ver_list.length;
-		for(i = 0; i < (int)pobj->ver_list.length; i++)
-		{
-			memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
-			Mat_Mul_VECTOR4D_4X4(&pobj->ver_list_t.elems[i]._4D, &pobj->ver_list.elems[i]._4D, &mres);
-		}
-
-		pobj->nor_list_t.length = pobj->nor_list.length;
-		for(i = 0; i < (int)pobj->nor_list.length; i++)
-		{
-			memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
-			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], &mres);
-		}
+		Transform_Object4D(pobj, Mat_Mul_4X4( &mres,
+										Build_Mat_RotationXYZ(&mrot, vrot_ptr),
+										Build_Mat_PositionXYZ(&mmov, vpos_ptr)), trans_mode);
 	}
 }
 

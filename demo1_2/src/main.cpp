@@ -299,6 +299,7 @@ DMPERFORMANCEV1	dmperf;
 ZBUFFERV1		zbuf;
 msModel			model;
 CHARACTER4DV1	character1;
+SKELETON4DV1	skeleton1;
 CAM4DV1			cam1;
 OBJECT4DV1		obj2;
 MATERIALV1		obj2_material;
@@ -485,6 +486,7 @@ bool Game_Init(void)
 	INIT_ZERO(zbuf);
 	INIT_ZERO(model);
 	INIT_ZERO(character1);
+	INIT_ZERO(skeleton1);
 	INIT_ZERO(cam1);
 	INIT_ZERO(obj2);
 	INIT_ZERO(obj2_material);
@@ -500,6 +502,25 @@ bool Game_Init(void)
 		ON_ERROR_RETURN("load character1 failed");
 
 	Undate_Character4D_Absolute_UV(&character1, &model);
+
+	if(!Create_Skeleton4D_From_MsModel(&skeleton1, &model, "aaa"))
+		ON_ERROR_RETURN("load skeleton1 failed");
+
+	Build_Reverse_Mat_Skeleton4D(&skeleton1);
+
+	Build_Animate_Mat_Skeleton4D(&skeleton1);
+
+	//for(int i = 0; i < (int)character1.skin_list.length; i++)
+	//{
+	//	Transform_Object4D_With_Bone_Index(&character1.skin_list.elems[i],
+	//					&character1.skin_bone_index_list.elems[i], &skeleton1.imat_list, TRANSFORM_MODE_LOCAL_ONLY);
+	//}
+
+	//for(int i = 0; i < (int)character1.skin_list.length; i++)
+	//{
+	//	Transform_Object4D_With_Bone_Index(&character1.skin_list.elems[i],
+	//					&character1.skin_bone_index_list.elems[i], &skeleton1.kmat_list, TRANSFORM_MODE_LOCAL_ONLY);
+	//}
 
 	Destroy_MsModel(&model);
 
@@ -555,6 +576,7 @@ void Game_Destroy(void)
 
 	Destroy_Material(&obj2_material);
 	Destroy_Object4D(&obj2);
+	Destroy_Skeleton4D(&skeleton1);
 	Destroy_Character4D(&character1);
 	Destroy_MsModel(&model);
 	Destroy_ZBuffer(&zbuf);
@@ -724,6 +746,8 @@ bool Game_Frame(void)
 	Build_Camera4D_Mat_Euler(&cam1.mcam, &cam1, ROTATION_SEQ_ZXY);
 
 	//Remove_Object4D_Backface_At_World(&obj1, &cam1);
+
+//	Build_Animate_Mat_Skeleton4D(&skeleton1);
 
 	Reset_Character4D(&character1);
 
