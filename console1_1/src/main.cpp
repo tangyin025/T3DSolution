@@ -371,11 +371,11 @@ int main(int argc, char ** argv)
 
 	Animate_Skeleton4D_By_Time(&ske, 25);
 
-	Print_Bone_Position(&ske.bone_list, &ske.bone_list_t, ske.root, 0);
+	Print_Bone_Position(&ske.bone_list, &ske.bone_list_k, ske.root, 0);
 
 	printf("\n");
 
-	Print_Bone_Rotation(&ske.bone_list, &ske.bone_list_t, ske.root, 0);
+	Print_Bone_Rotation(&ske.bone_list, &ske.bone_list_k, ske.root, 0);
 
 	printf("\n");
 

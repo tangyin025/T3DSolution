@@ -1136,6 +1136,75 @@ T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D *
 	return pmres;
 }
 
+T3DLIB_API MATRIX4X4 * Build_Mat_RotationZYX(MATRIX4X4 * pmres, const VECTOR4D * vrot_ptr)
+{
+	MATRIX4X4 mx, my, mz, mtmp;
+	int rot_seq = 0;
+
+	if(!IS_ZERO_FLOAT(vrot_ptr->x))
+	{
+		MATRIX4X4_Init3X3(	&mx,
+							1,					0,					0,
+							0,					cos(vrot_ptr->x),	sin(vrot_ptr->x),
+							0,					-sin(vrot_ptr->x),	cos(vrot_ptr->x));
+		rot_seq |= 0x01;
+	}
+
+	if(!IS_ZERO_FLOAT(vrot_ptr->y))
+	{
+		MATRIX4X4_Init3X3(	&my,
+							cos(vrot_ptr->y),	0,					-sin(vrot_ptr->y),
+							0,					1,					0,
+							sin(vrot_ptr->y),	0,					cos(vrot_ptr->y));
+		rot_seq |= 0x02;
+	}
+
+	if(!IS_ZERO_FLOAT(vrot_ptr->z))
+	{
+		MATRIX4X4_Init3X3(	&mz,
+							cos(vrot_ptr->z),	sin(vrot_ptr->z),	0,
+							-sin(vrot_ptr->z),	cos(vrot_ptr->z),	0,
+							0,					0,					1);
+		rot_seq |= 0x04;
+	}
+
+	switch(rot_seq)
+	{
+	case 1: // seq: x
+		MATRIX4X4_Copy(pmres, &mx);
+		break;
+
+	case 2: // seq: y
+		MATRIX4X4_Copy(pmres, &my);
+		break;
+
+	case 3: // seq: y, x
+		Mat_Mul_4X4(pmres, &my, &mx);
+		break;
+
+	case 4: // seq: z
+		MATRIX4X4_Copy(pmres, &mz);
+		break;
+
+	case 5: // seq: z, x
+		Mat_Mul_4X4(pmres, &mz, &mx);
+		break;
+
+	case 6: // seq: z, y
+		Mat_Mul_4X4(pmres, &mz, &my);
+		break;
+
+	case 7: // seq: z, y, x
+		Mat_Mul_4X4(pmres, Mat_Mul_4X4(&mtmp, &mz, &my), &mx);
+		break;
+
+	default:
+		MATRIX4X4_Copy(pmres, &MATRIX4X4::IDENTITY);
+		break;
+	}
+	return pmres;
+}
+
 T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
 									REAL				viewport_x	/*= 0*/,
 									REAL				viewport_y	/*= 0*/,
@@ -1593,7 +1662,7 @@ T3DLIB_API void Destroy_Object4D(OBJECT4DV1 * pobj)
 	INIT_ZERO(*pobj);
 }
 
-T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TRANSFORM_MODE trans_mode)
+T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, const MATRIX4X4 * pmat_n, TRANSFORM_MODE trans_mode)
 {
 	assert(pobj->ver_list_t.size >= pobj->ver_list.length);
 	assert(pobj->nor_list_t.size >= pobj->nor_list.length);
@@ -1613,7 +1682,7 @@ T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TR
 		for(i = 0; i < (int)pobj->nor_list.length; i++)
 		{
 			VECTOR4D_Copy( &pobj->nor_list.elems[i],
-							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->nor_list.elems[i], pmat));
+							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->nor_list.elems[i], pmat_n));
 		}
 		break;
 
@@ -1627,7 +1696,7 @@ T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TR
 		for(i = 0; i < (int)pobj->nor_list_t.length; i++)
 		{
 			VECTOR4D_Copy( &pobj->nor_list_t.elems[i],
-							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->nor_list_t.elems[i], pmat));
+							Mat_Mul_VECTOR4D_4X4(&vres, &pobj->nor_list_t.elems[i], pmat_n));
 		}
 		break;
 
@@ -1643,7 +1712,7 @@ T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TR
 		pobj->nor_list_t.length = pobj->nor_list.length;
 		for(i = 0; i < (int)pobj->nor_list.length; i++)
 		{
-			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], pmat);
+			Mat_Mul_VECTOR4D_4X4(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], pmat_n);
 		}
 		break;
 
@@ -1683,10 +1752,10 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
 			}
 
-			for(i = 0; i < (int)pobj->nor_list_t.length; i++)
-			{
-				VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
-			}
+			//for(i = 0; i < (int)pobj->nor_list_t.length; i++)
+			//{
+			//	VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
+			//}
 			break;
 
 		case TRANSFORM_MODE_LOCAL_TO_TRANS:
@@ -1697,12 +1766,12 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
 			}
 
-			pobj->nor_list_t.length = pobj->nor_list.length;
-			for(i = 0; i < (int)pobj->nor_list.length; i++)
-			{
-				memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
-				VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
-			}
+			//pobj->nor_list_t.length = pobj->nor_list.length;
+			//for(i = 0; i < (int)pobj->nor_list.length; i++)
+			//{
+			//	memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->ver_list.elems));
+			//	VECTOR3D_Add(&pobj->nor_list_t.elems[i]._3D, &vpos_ptr->_3D);
+			//}
 			break;
 
 		default:
@@ -1714,9 +1783,12 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 		assert(TRANSFORM_MODE_LOCAL_ONLY != trans_mode);
 
 		MATRIX4X4 mrot, mmov, mres;
-		Transform_Object4D(pobj, Mat_Mul_4X4( &mres,
-										Build_Mat_RotationXYZ(&mrot, vrot_ptr),
-										Build_Mat_PositionXYZ(&mmov, vpos_ptr)), trans_mode);
+
+		Mat_Mul_4X4( &mres,
+						Build_Mat_RotationXYZ(&mrot, vrot_ptr),
+						Build_Mat_PositionXYZ(&mmov, vpos_ptr));
+
+		Transform_Object4D(pobj, &mres, &mrot, trans_mode);
 	}
 }
 

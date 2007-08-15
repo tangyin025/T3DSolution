@@ -1876,4 +1876,11 @@ inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
 //	return pv0;
 //}
 
+inline bool VECTOR3D_Equal(VECTOR3D * pv0, VECTOR3D * pv1)
+{
+	return pv0->x == pv1->x
+		&& pv0->y == pv1->y
+		&& pv0->z == pv1->z;
+}
+
 #endif // __T3DLIB4_H__

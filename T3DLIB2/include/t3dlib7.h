@@ -22,7 +22,7 @@ typedef struct T3DLIB_API BONE4DV1_TYP
 	VECTOR4D				vpos;
 	VECTOR4D				vrot;
 
-	BONE4DV1_KEY_ARRAYV1	kpos_list;	// note : these keys need to be sort, so dont use link
+	BONE4DV1_KEY_ARRAYV1	kpos_list;
 	BONE4DV1_KEY_ARRAYV1	krot_list;
 
 	size_t					parent_i;
@@ -52,12 +52,16 @@ typedef struct T3DLIB_API SKELETON4DV1_TYP
 	unsigned int			attr;
 
 	BONE_ARRAYV1			bone_list;
-	BONE_FRAME_ARRAYV1		bone_list_t;
-	size_t					root;
-	REAL					time;
+	BONE_FRAME_ARRAYV1		bone_list_k;
 
 	MAT_ARRAYV1				imat_list;
+	MAT_ARRAYV1				imat_list_n;
+
 	MAT_ARRAYV1				kmat_list;
+	MAT_ARRAYV1				kmat_list_n;
+
+	size_t					root;
+	REAL					time;
 
 	char					name[MS_MAX_NAME];
 
@@ -72,7 +76,7 @@ T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
 
 T3DLIB_API void Destroy_Bone4D(BONE4DV1 * pbone);
 
-T3DLIB_API bool Create_Skeleton4D_From_MsModel(	SKELETON4DV1 * pske, msModel * pmodel, const char * bone_name,
+T3DLIB_API bool Create_Skeleton4D_From_MsModel(	SKELETON4DV1 * pske, msModel * pmodel,
 												size_t max_key_size = 10,
 												size_t max_sub_size = 10);
 
@@ -90,7 +94,6 @@ T3DLIB_API void Build_Animate_Mat_Skeleton4D(SKELETON4DV1 * pske);
 
 typedef struct T3DLIB_API ARRAYV1<OBJECT4DV1> OBJ_ARRAYV1, * OBJ_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<MATERIALV1> MATERIAL_ARRAYV1, * MATERIAL_ARRAYV1_PTR;
-typedef struct T3DLIB_API ARRAYV1<SKELETON4DV1> SKELETON_ARRAYV1, * SKELETON_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<SIZE_T_ARRAYV1> BONE_INDEX_ARRAYV1, * BONE_INDEX_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API CHARACTER4DV1_TYP
@@ -98,13 +101,15 @@ typedef struct T3DLIB_API CHARACTER4DV1_TYP
 	unsigned int		state;
 	unsigned int		attr;
 
-	OBJ_ARRAYV1			skin_list;
-	MATERIAL_ARRAYV1	material_list;
-//	SKELETON_ARRAYV1	skeleton_list;
-	BONE_INDEX_ARRAYV1	skin_bone_index_list;
-
 	VECTOR4D			vpos;
 	VECTOR4D			vrot;
+
+	OBJ_ARRAYV1			skin_list;
+
+	BONE_INDEX_ARRAYV1	skin_ver_bone_index_list;
+	BONE_INDEX_ARRAYV1	skin_nor_bone_index_list;
+
+	MATERIAL_ARRAYV1	material_list;
 
 	unsigned char		name[MS_MAX_NAME];
 
@@ -120,9 +125,17 @@ extern T3DLIB_API void (* Draw_Character4D_Gouraud_Texture_ZBufferRW)(CHARACTER4
 
 T3DLIB_API bool Init_T3dlib7(int bpp);
 
-T3DLIB_API bool Create_Bone_Index_List_From_MsMesh(SIZE_T_ARRAYV1 * pindex_list, msMesh * pmesh, size_t max_index_size = 3000);
+T3DLIB_API bool Create_Ver_Bone_Index_From_MsMesh(SIZE_T_ARRAYV1 * pbone_index, msMesh * pmesh,
+												  size_t max_index_size = 3000);
 
-T3DLIB_API void Destroy_Bone_Index_List(SIZE_T_ARRAYV1 * pindex_list);
+T3DLIB_API void Destroy_Ver_Bone_Index(SIZE_T_ARRAYV1 * pbone_index);
+
+T3DLIB_API bool Create_Nor_Bone_Index_And_Rebuild_By_Object4D(SIZE_T_ARRAYV1 * pnor_bone_index,
+															  SIZE_T_ARRAYV1 * pver_bone_index,
+															  OBJECT4DV1 * pobj,
+															  size_t max_index_size = 3000);
+
+T3DLIB_API void Destroy_Nor_Bone_Index(SIZE_T_ARRAYV1 * pbone_index);
 
 T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, msModel * pmodel);
 
@@ -160,8 +173,8 @@ T3DLIB_API void Draw_Character4D_Gouraud_Texture_ZBufferRW16(CHARACTER4DV1 * pch
 T3DLIB_API void Draw_Character4D_Gouraud_Texture_ZBufferRW32(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
 
 T3DLIB_API void Transform_Object4D_With_Bone_Index(OBJECT4DV1 * pobj,
-												   SIZE_T_ARRAYV1 * pbone_index_list,
-												   MAT_ARRAYV1 * pmat_list,
-												   TRANSFORM_MODE trans_mode);
+												   SIZE_T_ARRAYV1 * pver_bone_index, MAT_ARRAYV1 * pmat_list,
+												   SIZE_T_ARRAYV1 * pnor_bone_index, MAT_ARRAYV1 * pmat_list_n,
+												   TRANSFORM_MODE trans_mode = TRANSFORM_MODE_LOCAL_TO_TRANS);
 
 #endif // __T3DLIB7_H__

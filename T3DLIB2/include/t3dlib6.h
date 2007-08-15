@@ -250,6 +250,8 @@ T3DLIB_API MATRIX4X4 * Build_Mat_PositionXYZ(MATRIX4X4 * pmres, const VECTOR4D *
 
 T3DLIB_API MATRIX4X4 * Build_Mat_RotationXYZ(MATRIX4X4 * pmres, const VECTOR4D * vrot_ptr);
 
+T3DLIB_API MATRIX4X4 * Build_Mat_RotationZYX(MATRIX4X4 * pmres, const VECTOR4D * vrot_ptr);
+
 T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
 									REAL				viewport_x	= 0,
 									REAL				viewport_y	= 0,
@@ -290,7 +292,7 @@ T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmodel,
 
 T3DLIB_API void Reset_Object4D(OBJECT4DV1 * pobj);
 
-T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, TRANSFORM_MODE trans_mode);
+T3DLIB_API void Transform_Object4D(OBJECT4DV1 * pobj, const MATRIX4X4 * pmat, const MATRIX4X4 * pmat_n, TRANSFORM_MODE trans_mode);
 
 T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 										VECTOR4D * vpos_ptr = NULL,

@@ -300,6 +300,7 @@ ZBUFFERV1		zbuf;
 msModel			model;
 CHARACTER4DV1	character1;
 SKELETON4DV1	skeleton1;
+SKELETON4DV1	skeleton2;
 CAM4DV1			cam1;
 OBJECT4DV1		obj2;
 MATERIALV1		obj2_material;
@@ -487,6 +488,7 @@ bool Game_Init(void)
 	INIT_ZERO(model);
 	INIT_ZERO(character1);
 	INIT_ZERO(skeleton1);
+	INIT_ZERO(skeleton2);
 	INIT_ZERO(cam1);
 	INIT_ZERO(obj2);
 	INIT_ZERO(obj2_material);
@@ -494,6 +496,9 @@ bool Game_Init(void)
 	// create zbuffer
 	if(!Create_ZBuffer(&zbuf, ddsback.rect.right - ddsback.rect.left, ddsback.rect.bottom - ddsback.rect.top))
 		ON_ERROR_RETURN("create zbuffer error");
+
+	//if(!Create_MsModel_From_File(&model, "aaa.ms3d.txt"))
+	//	ON_ERROR_RETURN("load aaa.ms3d.txt failed");
 
 	if(!Create_MsModel_From_File(&model, "militia.ms3d.txt"))
 		ON_ERROR_RETURN("load militia.ms3d.txt failed");
@@ -503,24 +508,37 @@ bool Game_Init(void)
 
 	Undate_Character4D_Absolute_UV(&character1, &model);
 
-	if(!Create_Skeleton4D_From_MsModel(&skeleton1, &model, "aaa"))
+	if(!Create_Skeleton4D_From_MsModel(&skeleton1, &model))
 		ON_ERROR_RETURN("load skeleton1 failed");
+
+	//if(!Create_Skeleton4D_From_MsModel(&skeleton2, &model))
+	//	ON_ERROR_RETURN("load skeleton2 failed");
 
 	Build_Reverse_Mat_Skeleton4D(&skeleton1);
 
-	Build_Animate_Mat_Skeleton4D(&skeleton1);
+	for(int i = 0; i < (int)character1.skin_list.length; i++)
+	{
+		Transform_Object4D_With_Bone_Index(&character1.skin_list.elems[i],
+						&character1.skin_ver_bone_index_list.elems[i], &skeleton1.imat_list,
+						&character1.skin_nor_bone_index_list.elems[i], &skeleton1.imat_list_n,
+						TRANSFORM_MODE_LOCAL_ONLY);
+	}
+
+	//Build_Animate_Mat_Skeleton4D(&skeleton1);
 
 	//for(int i = 0; i < (int)character1.skin_list.length; i++)
 	//{
 	//	Transform_Object4D_With_Bone_Index(&character1.skin_list.elems[i],
-	//					&character1.skin_bone_index_list.elems[i], &skeleton1.imat_list, TRANSFORM_MODE_LOCAL_ONLY);
+	//					&character1.skin_ver_bone_index_list.elems[i], &skeleton1.kmat_list, TRANSFORM_MODE_LOCAL_ONLY);
 	//}
 
-	//for(int i = 0; i < (int)character1.skin_list.length; i++)
-	//{
-	//	Transform_Object4D_With_Bone_Index(&character1.skin_list.elems[i],
-	//					&character1.skin_bone_index_list.elems[i], &skeleton1.kmat_list, TRANSFORM_MODE_LOCAL_ONLY);
-	//}
+	Destroy_MsModel(&model);
+
+	if(!Create_MsModel_From_File(&model, "militia-run-skeleton.ms3d.txt"))
+		ON_ERROR_RETURN("load militia-run-skeleton.ms3d.txt failed");
+
+	if(!Create_Skeleton4D_From_MsModel(&skeleton2, &model))
+		ON_ERROR_RETURN("load skeleton2 failed");
 
 	Destroy_MsModel(&model);
 
@@ -555,7 +573,8 @@ bool Game_Init(void)
 
 	//VECTOR4D_InitXYZ(&obj2.vpos, -16, 10, -44); // a bug position 2007-08-07
 	//VECTOR4D_InitXYZ(&obj2.vpos, -19, 2, -44); // a bug position 2007-08-08
-	VECTOR4D_InitXYZ(&obj2.vpos, 0, 10, 0);
+	//VECTOR4D_InitXYZ(&obj2.vpos, 0, 10, 0);
+	VECTOR4D_InitXYZ(&obj2.vpos, 0, 0, 0);
 
 	// ================================================================================
 	// END TODO.
@@ -576,6 +595,7 @@ void Game_Destroy(void)
 
 	Destroy_Material(&obj2_material);
 	Destroy_Object4D(&obj2);
+	Destroy_Skeleton4D(&skeleton2);
 	Destroy_Skeleton4D(&skeleton1);
 	Destroy_Character4D(&character1);
 	Destroy_MsModel(&model);
@@ -630,15 +650,19 @@ bool Game_Frame(void)
 
 	int i;
 	//static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)45), 0, 0, 1};
-	static VECTOR4D cam_pos = {0, 30, -60, 1};
+	static VECTOR4D cam_pos = {0, 0, -60, 1};
 	//static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)68), 0, 0, 1};
 	//static VECTOR4D cam_pos = {0, 13, -25, 1};
 	static VECTOR4D cam_rot = {DEG_TO_RAD((REAL)0), 0, 0, 1};
 
 	if(IS_KEY_DOWN(dikey_state, DIK_R))
 	{
-		VECTOR4D_InitXYZ(&cam_pos, 0, 30, -60);
+		VECTOR4D_InitXYZ(&cam_pos, 0, 0, -60);
 		VECTOR4D_InitXYZ(&cam_rot, 0, 0, 0);
+
+		//VECTOR4D_InitXYZ(&obj2.vpos, 0, 10, 0);
+		VECTOR4D_InitXYZ(&obj2.vpos, 0, 0, 0);
+		VECTOR4D_InitXYZ(&obj2.vrot, 0, 0, 0);
 	}
 
 	if(IS_KEY_DOWN(dikey_state, DIK_W))
@@ -747,11 +771,38 @@ bool Game_Frame(void)
 
 	//Remove_Object4D_Backface_At_World(&obj1, &cam1);
 
-//	Build_Animate_Mat_Skeleton4D(&skeleton1);
-
 	Reset_Character4D(&character1);
 
-	Model_To_World_Character4D(&character1);
+	{
+		// ************************************************************************************
+		// Skeleton System !!!
+		// ************************************************************************************
+
+		static REAL time = 1;
+
+		static DWORD last_time = timeGetTime();
+
+		//if((time += (REAL)0.5) > 37)
+		//	time = 1;
+
+		time = fmod((REAL)(curr_time - last_time) * 37 / 1000, (REAL)37);
+
+//		time = 10;
+
+		Animate_Skeleton4D_By_Time(&skeleton2, time);
+
+		Build_Animate_Mat_Skeleton4D(&skeleton2);
+
+		for(int i = 0; i < (int)character1.skin_list.length; i++)
+		{
+			Transform_Object4D_With_Bone_Index(&character1.skin_list.elems[i],
+							&character1.skin_ver_bone_index_list.elems[i], &skeleton2.kmat_list,
+							&character1.skin_nor_bone_index_list.elems[i], &skeleton2.kmat_list_n,
+							TRANSFORM_MODE_LOCAL_TO_TRANS);
+		}
+
+		Model_To_World_Character4D(&character1, &character1.vpos, &character1.vrot, TRANSFORM_MODE_TRANS_ONLY);
+	}
 
 	Remove_Character4D_Backface_At_World(&character1, &cam1);
 
