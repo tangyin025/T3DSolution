@@ -6,6 +6,17 @@
 #define __T3DLIB7_H__
 
 #include "t3dcommons.h"
+#include "t3dlib6.h"
+
+typedef struct T3DLIB_API ARRAYV1<size_t> SIZE_T_ARRAYV1, * SIZE_T_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<MATRIX4X4> MAT_ARRAYV1, * MAT_ARRAYV1_PTR;
+
+T3DLIB_API void Transform_Object4D_By_Matrix_List(OBJECT4DV1 *		pobj,
+												  SIZE_T_ARRAYV1 *	pmat_index,
+												  MAT_ARRAYV1 *		pmat_list,
+												  SIZE_T_ARRAYV1 *	pmat_index_n,
+												  MAT_ARRAYV1 *		pmat_list_n,
+												  TRANSFORM_MODE	trans_mode);
 
 typedef struct T3DLIB_API BONE4DV1_KEY_TYP
 {
@@ -14,167 +25,267 @@ typedef struct T3DLIB_API BONE4DV1_KEY_TYP
 
 } BONE4DV1_KEY, * BONE4DV1_KEY_PTR;
 
-typedef struct T3DLIB_API ARRAYV1<BONE4DV1_KEY> BONE4DV1_KEY_ARRAYV1, * BONE4DV1_KEY_ARRAYV1_PTR;
-typedef struct T3DLIB_API ARRAYV1<size_t> SIZE_T_ARRAYV1, * SIZE_T_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<BONE4DV1_KEY> BONE4D_KEY_ARRAYV1, * BONE4D_KEY_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API BONE4DV1_TYP
 {
-	VECTOR4D				vpos;
-	VECTOR4D				vrot;
+	VECTOR4D			vpos;
+	VECTOR4D			vrot;
 
-	BONE4DV1_KEY_ARRAYV1	kpos_list;
-	BONE4DV1_KEY_ARRAYV1	krot_list;
+	VECTOR4D			vpos_k;
+	VECTOR4D			vrot_k;
 
-	size_t					parent_i;
-	SIZE_T_ARRAYV1			subs;
+	size_t				parent_i;
+	SIZE_T_ARRAYV1		subs;
 
-	char					name[MS_MAX_NAME];
+	BONE4D_KEY_ARRAYV1	kpos_list;
+	BONE4D_KEY_ARRAYV1	krot_list;
+
+	unsigned int		state;
+	unsigned int		attr;
+	char				name[MS_MAX_NAME];
 
 	_CTOR_DECLARE(BONE4DV1_TYP);
 	_DTOR_DECLARE(BONE4DV1_TYP);
 
 } BONE4DV1, * BONE4DV1_PTR;
 
-typedef struct T3DLIB_API BONE4DV1_FRAME_TYP
-{
-	VECTOR4D				vpos;
-	VECTOR4D				vrot;
-
-} BONE4DV1_FRAME, * BONE4DV1_FRAME_PTR;
-
-typedef struct T3DLIB_API ARRAYV1<BONE4DV1> BONE_ARRAYV1, * BONE_ARRAYV1_PTR;
-typedef struct T3DLIB_API ARRAYV1<BONE4DV1_FRAME> BONE_FRAME_ARRAYV1, * BONE_FRAME_ARRAYV1_PTR;
-typedef struct T3DLIB_API ARRAYV1<MATRIX4X4> MAT_ARRAYV1, * MAT_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<BONE4DV1> BONE4D_ARRAYV1, * BONE4D_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API SKELETON4DV1_TYP
 {
-	unsigned int			state;
-	unsigned int			attr;
+	BONE4D_ARRAYV1		bone_list;
 
-	BONE_ARRAYV1			bone_list;
-	BONE_FRAME_ARRAYV1		bone_list_k;
+	MAT_ARRAYV1			imat_list;
+	MAT_ARRAYV1			imat_list_n;
 
-	MAT_ARRAYV1				imat_list;
-	MAT_ARRAYV1				imat_list_n;
+	MAT_ARRAYV1			kmat_list;
+	MAT_ARRAYV1			kmat_list_n;
 
-	MAT_ARRAYV1				kmat_list;
-	MAT_ARRAYV1				kmat_list_n;
+	SIZE_T_ARRAYV1		roots;
 
-	size_t					root;
-	REAL					time;
-
-	char					name[MS_MAX_NAME];
+	unsigned int		state;
+	unsigned int		attr;
+	char				name[MS_MAX_NAME];
 
 	_CTOR_DECLARE(SKELETON4DV1_TYP);
 	_DTOR_DECLARE(SKELETON4DV1_TYP);
 
-} SKELETON4DV1, * SKELETON4DV1_PTR;
+} SKELETON4DV1, SKELETON4DV1_PTR;
 
-T3DLIB_API bool Create_Bone4D_From_MsBone(	BONE4DV1 * pbone, msBone * pmsbone,
-												size_t max_key_size = 10,
-												size_t max_sub_size = 10);
+T3DLIB_API bool Create_Bone4D_From_MsBone(BONE4DV1 * pbone, msBone * pmsBone, size_t max_sub_size = 10);
 
 T3DLIB_API void Destroy_Bone4D(BONE4DV1 * pbone);
 
-T3DLIB_API bool Create_Skeleton4D_From_MsModel(	SKELETON4DV1 * pske, msModel * pmodel,
-												size_t max_key_size = 10,
-												size_t max_sub_size = 10);
+T3DLIB_API bool Create_Skeleton4D_From_MsModel(SKELETON4DV1 * pskel, msModel * pmodel,
+											   size_t max_sub_size	= 10,
+											   size_t max_root_size	= 10);
 
-T3DLIB_API void Destroy_Skeleton4D(SKELETON4DV1 * pske);
+T3DLIB_API void Destroy_Skeleton4D(SKELETON4DV1 * pskel);
 
-T3DLIB_API void Bone4D_Print(BONE4DV1 * pbone);
+T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pskel, REAL time);
 
-T3DLIB_API void Skeleton4D_Print(SKELETON4DV1 * pske);
+T3DLIB_API void Build_Inverse_Matrix_Skeleton4D(SKELETON4DV1 * pskel);
 
-T3DLIB_API void Animate_Skeleton4D_By_Time(SKELETON4DV1 * pske, REAL time);
+T3DLIB_API void Build_Animate_Matrix_Skeleton4D(SKELETON4DV1 * pskel);
 
-T3DLIB_API void Build_Reverse_Mat_Skeleton4D(SKELETON4DV1 * pske);
-
-T3DLIB_API void Build_Animate_Mat_Skeleton4D(SKELETON4DV1 * pske);
-
-typedef struct T3DLIB_API ARRAYV1<OBJECT4DV1> OBJ_ARRAYV1, * OBJ_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<OBJECT4DV1> OBJECT4D_ARRAYV1, * OBJECT4D_ARRAYV1_PTR;
 typedef struct T3DLIB_API ARRAYV1<MATERIALV1> MATERIAL_ARRAYV1, * MATERIAL_ARRAYV1_PTR;
-typedef struct T3DLIB_API ARRAYV1<SIZE_T_ARRAYV1> BONE_INDEX_ARRAYV1, * BONE_INDEX_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<SKELETON4DV1> SKELETON4D_ARRAYV1, * SKELETON4D_ARRAYV1_PTR;
+typedef struct T3DLIB_API ARRAYV1<SIZE_T_ARRAYV1> INDEX_ARRAYV1, * INDEX_ARRAYV1_PTR;
 
 typedef struct T3DLIB_API CHARACTER4DV1_TYP
 {
-	unsigned int		state;
-	unsigned int		attr;
+	OBJECT4D_ARRAYV1	skin_list;
+
+	MATERIAL_ARRAYV1	material_list;
+	SIZE_T_ARRAYV1		skin_material_index;
+
+	SKELETON4D_ARRAYV1	skel_list;
+	INDEX_ARRAYV1		ver_bone_index_list;
+	INDEX_ARRAYV1		nor_bone_index_list;
 
 	VECTOR4D			vpos;
 	VECTOR4D			vrot;
 
-	OBJ_ARRAYV1			skin_list;
-
-	BONE_INDEX_ARRAYV1	skin_ver_bone_index_list;
-	BONE_INDEX_ARRAYV1	skin_nor_bone_index_list;
-
-	MATERIAL_ARRAYV1	material_list;
-
-	unsigned char		name[MS_MAX_NAME];
+	unsigned int		state;
+	unsigned int		attr;
+	char				name[MS_MAX_NAME];
 
 	_CTOR_DECLARE(CHARACTER4DV1_TYP);
 	_DTOR_DECLARE(CHARACTER4DV1_TYP);
 
 } CHARACTER4DV1, * CHARACTER4DV1_PTR;
 
-extern T3DLIB_API bool (* Create_Character4D_From_MsModel)(CHARACTER4DV1 * pcharacter, msModel * pmodel);
-extern T3DLIB_API void (* Light_Character4D)(CHARACTER4DV1 * pcharacter, LIGHT4DV1 * plight);
-extern T3DLIB_API bool (* Clip_Character4D_Gouraud_Texture)(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
-extern T3DLIB_API void (* Draw_Character4D_Gouraud_Texture_ZBufferRW)(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+T3DLIB_API bool Create_Character4D_From_MsModel(CHARACTER4DV1 * pchar, msModel * pmodel, size_t max_skel_size = 10);
 
-T3DLIB_API bool Init_T3dlib7(int bpp);
+T3DLIB_API void Destroy_Character4D(CHARACTER4DV1 * pchar);
 
-T3DLIB_API bool Create_Ver_Bone_Index_From_MsMesh(SIZE_T_ARRAYV1 * pbone_index, msMesh * pmesh,
-												  size_t max_index_size = 3000);
+inline void Reset_Character4D(CHARACTER4DV1 * pchar)
+{
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Reset_Object4D(&pchar->skin_list.elems[i]);
+	}
+}
 
-T3DLIB_API void Destroy_Ver_Bone_Index(SIZE_T_ARRAYV1 * pbone_index);
+inline void Update_Character4D_Absolute_UV(CHARACTER4DV1 * pchar, msModel * pmodel)
+{
+	assert(pchar->skin_material_index.length == pchar->skin_list.length);
 
-T3DLIB_API bool Create_Nor_Bone_Index_And_Rebuild_By_Object4D(SIZE_T_ARRAYV1 * pnor_bone_index,
-															  SIZE_T_ARRAYV1 * pver_bone_index,
-															  OBJECT4DV1 * pobj,
-															  size_t max_index_size = 3000);
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		assert(pchar->skin_material_index.elems[i] < pchar->material_list.length);
 
-T3DLIB_API void Destroy_Nor_Bone_Index(SIZE_T_ARRAYV1 * pbone_index);
+		MATERIALV1 * pmaterial = &pchar->material_list.elems[pchar->skin_material_index.elems[i]];
 
-T3DLIB_API bool Create_Character4D_From_MsModel16(CHARACTER4DV1 * pcharacter, msModel * pmodel);
+		if(MATERIAL_ATTR_TEXTURE & pmaterial->attr)
+		{
+			Undate_Object4D_Absolute_UV(&pchar->skin_list.elems[i], pmodel, pmaterial);
+		}
+	}
+}
 
-T3DLIB_API bool Create_Character4D_From_MsModel32(CHARACTER4DV1 * pcharacter, msModel * pmodel);
+inline void Model_To_World_Character4D(CHARACTER4DV1 * pchar,
+									   VECTOR4D * vpos_ptr = NULL,
+									   VECTOR4D * vrot_ptr = NULL,
+									   TRANSFORM_MODE trans_mode = TRANSFORM_MODE_LOCAL_TO_TRANS)
+{
+	if(NULL == vpos_ptr)
+		vpos_ptr = &pchar->vpos;
 
-T3DLIB_API void Destroy_Character4D(CHARACTER4DV1 * pcharacter);
+	if(NULL == vrot_ptr)
+		vrot_ptr = &pchar->vrot;
 
-T3DLIB_API void Reset_Character4D(CHARACTER4DV1 * pcharacter);
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Model_To_World_Object4D(&pchar->skin_list.elems[i], vpos_ptr, vrot_ptr, trans_mode);
+	}
+}
 
-T3DLIB_API void Undate_Character4D_Absolute_UV(CHARACTER4DV1 * pcharacter, msModel * pmodel);
+inline void Remove_Character4D_Backface_At_World(CHARACTER4DV1 * pchar, CAM4DV1 * pcam)
+{
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Remove_Object4D_Backface_At_World(&pchar->skin_list.elems[i], pcam);
+	}
+}
 
-T3DLIB_API void Model_To_World_Character4D(CHARACTER4DV1 * pcharacter,
-										   VECTOR4D * vpos_ptr = NULL,
-										   VECTOR4D * vrot_ptr = NULL,
-										   TRANSFORM_MODE trans_mode = TRANSFORM_MODE_LOCAL_TO_TRANS);
+inline void Light_Character4D(CHARACTER4DV1 * pchar, LIGHT4DV1 * plight)
+{
+	assert(NULL != Light_Object4D);
 
-T3DLIB_API void Light_Character4D16(CHARACTER4DV1 * pcharacter, LIGHT4DV1 * plight);
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Light_Object4D(&pchar->skin_list.elems[i], plight, &pchar->material_list.elems[i]);
+	}
+}
 
-T3DLIB_API void Light_Character4D32(CHARACTER4DV1 * pcharacter, LIGHT4DV1 * plight);
+inline void World_To_Camera_Character4D(CHARACTER4DV1 * pchar, CAM4DV1 * pcam)
+{
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		World_To_Camera_Object4D(&pchar->skin_list.elems[i], pcam);
+	}
+}
 
-T3DLIB_API void World_To_Camera_Character4D(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+inline bool Clip_Character4D_Gouraud_Texture(CHARACTER4DV1 * pchar, CAM4DV1 * pcam)
+{
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
 
-T3DLIB_API void Remove_Character4D_Backface_At_World(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		assert(pchar->skin_material_index.elems[i] < pchar->material_list.length);
 
-T3DLIB_API bool Clip_Character4D_Gouraud_Texture16(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+		if(MATERIAL_ATTR_TEXTURE
+			& pchar->material_list.elems[pchar->skin_material_index.elems[i]].attr)
+		{
+			if(!Clip_Object4D_Gouraud_Texture(&pchar->skin_list.elems[i], pcam))
+				return false;
+		}
+		else
+		{
+			if(!Clip_Object4D(&pchar->skin_list.elems[i], pcam))
+				return false;
+		}
+	}
+	return true;
+}
 
-T3DLIB_API bool Clip_Character4D_Gouraud_Texture32(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+inline void Camera_To_Perspective_Character4D(CHARACTER4DV1 * pchar, CAM4DV1 * pcam)
+{
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Camera_To_Perspective_Object4D(&pchar->skin_list.elems[i], pcam);
+	}
+}
 
-T3DLIB_API void Camera_To_Perspective_Character4D(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+inline void Perspective_To_Screen_Character4D(CHARACTER4DV1 * pchar, CAM4DV1 * pcam)
+{
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Perspective_To_Screen_Object4D(&pchar->skin_list.elems[i], pcam);
+	}
+}
 
-T3DLIB_API void Perspective_To_Screen_Character4D(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+inline void Draw_Character4D_Gouraud_Texture_ZBufferRW(CHARACTER4DV1 * pchar, CAM4DV1 * pcam)
+{
+	assert(NULL != Draw_Object4D_Gouraud_Texture_ZBufferRW);
+	assert(NULL != Draw_Object4D_Wire_ZBufferRW);
 
-T3DLIB_API void Draw_Character4D_Gouraud_Texture_ZBufferRW16(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		assert(pchar->skin_material_index.elems[i] < pchar->material_list.length);
 
-T3DLIB_API void Draw_Character4D_Gouraud_Texture_ZBufferRW32(CHARACTER4DV1 * pcharacter, CAM4DV1 * pcam);
+		MATERIALV1 * pmaterial = &pchar->material_list.elems[pchar->skin_material_index.elems[i]];
 
-T3DLIB_API void Transform_Object4D_With_Bone_Index(OBJECT4DV1 * pobj,
-												   SIZE_T_ARRAYV1 * pver_bone_index, MAT_ARRAYV1 * pmat_list,
-												   SIZE_T_ARRAYV1 * pnor_bone_index, MAT_ARRAYV1 * pmat_list_n,
-												   TRANSFORM_MODE trans_mode = TRANSFORM_MODE_LOCAL_TO_TRANS);
+		if(MATERIAL_ATTR_TEXTURE & pmaterial->attr)
+		{
+			Draw_Object4D_Gouraud_Texture_ZBufferRW(&pchar->skin_list.elems[i], pcam, pmaterial);
+		}
+		else
+		{
+			Draw_Object4D_Wire_ZBufferRW(&pchar->skin_list.elems[i], pcam);
+		}
+	}
+}
+
+inline void Inverse_Character4D(CHARACTER4DV1 * pchar, SKELETON4DV1 * pskel, TRANSFORM_MODE trans_mode)
+{
+	Build_Inverse_Matrix_Skeleton4D(pskel);
+
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Transform_Object4D_By_Matrix_List( &pchar->skin_list.elems[i],
+						&pchar->ver_bone_index_list.elems[i], &pskel->imat_list,
+						&pchar->nor_bone_index_list.elems[i], &pskel->imat_list_n, trans_mode);
+	}
+}
+
+inline void Animate_Character4D_By_Time(CHARACTER4DV1 * pchar, SKELETON4DV1 * pskel, REAL time, TRANSFORM_MODE trans_mode)
+{
+	Animate_Skeleton4D_By_Time(pskel, time);
+
+	Build_Animate_Matrix_Skeleton4D(pskel);
+
+	int i;
+	for(i = 0; i < (int)pchar->skin_list.length; i++)
+	{
+		Transform_Object4D_By_Matrix_List( &pchar->skin_list.elems[i],
+						&pchar->ver_bone_index_list.elems[i], &pskel->kmat_list,
+						&pchar->nor_bone_index_list.elems[i], &pskel->kmat_list_n, trans_mode);
+	}
+}
 
 #endif // __T3DLIB7_H__
