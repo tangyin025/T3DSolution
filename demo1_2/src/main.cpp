@@ -492,35 +492,13 @@ bool Game_Init(void)
 	if(!Create_ZBuffer(&zbuf, ddsback.rect.right - ddsback.rect.left, ddsback.rect.bottom - ddsback.rect.top))
 		ON_ERROR_RETURN("create zbuffer error");
 
-	//if(!Create_MsModel_From_File(&model, "aaa.ms3d.txt"))
-	//	ON_ERROR_RETURN("load aaa.ms3d.txt failed");
-
-	if(!Create_MsModel_From_File(&model, "militia.ms3d.txt"))
-		ON_ERROR_RETURN("load militia.ms3d.txt failed");
+	if(!Create_MsModel_From_File(&model, "jack.ms3d.txt"))
+		ON_ERROR_RETURN("load jack.ms3d.txt failed");
 
 	if(!Create_Character4D_From_MsModel(&character1, &model))
 		ON_ERROR_RETURN("load character1 failed");
 
 	Update_Character4D_Absolute_UV(&character1, &model);
-
-	Destroy_MsModel(&model);
-
-	assert(character1.skel_list.length > 0);
-
-	Inverse_Character4D(&character1, &character1.skel_list.elems[0], TRANSFORM_MODE_LOCAL_ONLY);
-
-	if(!Create_MsModel_From_File(&model, "militia-run-skeleton.ms3d.txt"))
-		ON_ERROR_RETURN("load militia-run-skeleton.ms3d.txt failed");
-
-	SKELETON4DV1 * pskel;
-
-	if(!Append_Array(&character1.skel_list, &pskel))
-		ON_ERROR_RETURN("append skeleton failed");
-
-	INIT_ZERO(*pskel);
-
-	if(!Create_Skeleton4D_From_MsModel(pskel, &model))
-		ON_ERROR_RETURN("load skeleton2 failed");
 
 	Destroy_MsModel(&model);
 
@@ -545,6 +523,16 @@ bool Game_Init(void)
 	Undate_Object4D_Absolute_UV(&obj2, &model, &obj2_material);
 
 	Destroy_MsModel(&model);
+
+	for(int i = 0; i < (int)character1.skin_list.length; i++)
+	{
+		for(int j = 0; j < (int)character1.skin_list.elems[i].ver_list.length; j++)
+		{
+			character1.skin_list.elems[i].ver_list.elems[j].x *= 3;
+			character1.skin_list.elems[i].ver_list.elems[j].y *= 3;
+			character1.skin_list.elems[i].ver_list.elems[j].z *= 3;
+		}
+	}
 
 	for(int i = 0; i < (int)obj2.ver_list.length; i++)
 	{
@@ -758,22 +746,23 @@ bool Game_Frame(void)
 		// Skeleton System !!!
 		// ************************************************************************************
 
-		static REAL time = 1;
+//		static REAL time = 1;
+//
+//		static DWORD last_time = timeGetTime();
+//
+//		//if((time += (REAL)0.5) > 37)
+//		//	time = 1;
+//
+//		time = fmod((REAL)(curr_time - last_time) * 37 / 1000, (REAL)37);
+//
+////		time = 10;
+//
+//
+//		Animate_Character4D_By_Time(&character1, &character1.skel_list.elems[1], time, TRANSFORM_MODE_LOCAL_TO_TRANS);
+//
+//		Model_To_World_Character4D(&character1, NULL, NULL, TRANSFORM_MODE_TRANS_ONLY);
 
-		static DWORD last_time = timeGetTime();
-
-		//if((time += (REAL)0.5) > 37)
-		//	time = 1;
-
-		time = fmod((REAL)(curr_time - last_time) * 37 / 1000, (REAL)37);
-
-//		time = 10;
-
-		//Model_To_World_Character4D(&character1, NULL, NULL, TRANSFORM_MODE_LOCAL_TO_TRANS);
-
-		Animate_Character4D_By_Time(&character1, &character1.skel_list.elems[1], time, TRANSFORM_MODE_LOCAL_TO_TRANS);
-
-		Model_To_World_Character4D(&character1, NULL, NULL, TRANSFORM_MODE_TRANS_ONLY);
+		Model_To_World_Character4D(&character1, NULL, NULL, TRANSFORM_MODE_LOCAL_TO_TRANS);
 	}
 
 	Remove_Character4D_Backface_At_World(&character1, &cam1);
@@ -793,7 +782,7 @@ bool Game_Frame(void)
 	Light_Character4D(&character1, &light1);
 
 	light1.mode = LIGHT4DV1_MODE_AMBIENT;
-	light1.color = Create_RGBI(128, 128, 128);
+	light1.color = Create_RGBI(92, 92, 92);
 	Light_Character4D(&character1, &light1);
 
 	World_To_Camera_Character4D(&character1, &cam1);

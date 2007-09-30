@@ -1858,6 +1858,12 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 				memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
 				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
 			}
+
+			pobj->nor_list_t.length = pobj->nor_list.length;
+			for(i = 0; i < (int)pobj->nor_list.length; i++)
+			{
+				memcpy(&pobj->nor_list_t.elems[i], &pobj->nor_list.elems[i], sizeof(*pobj->nor_list.elems));
+			}
 			break;
 
 		default:
@@ -2605,6 +2611,13 @@ T3DLIB_API void Light_Object4D16(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 		{
 			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 			{
+				assert(pobj->tri_list.elems[i].v0_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v1_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v2_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].n0_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n1_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n2_i < (int)pobj->nor_list_t.length);
+
 				unsigned int ctmp;
 				ctmp = Light_VertexT_By_Ambient16(
 								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
@@ -2629,6 +2642,13 @@ T3DLIB_API void Light_Object4D16(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 		{
 			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 			{
+				assert(pobj->tri_list.elems[i].v0_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v1_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v2_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].n0_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n1_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n2_i < (int)pobj->nor_list_t.length);
+
 				unsigned int ctmp;
 				ctmp = Light_VertexT_By_Direct16(
 								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
@@ -2653,6 +2673,13 @@ T3DLIB_API void Light_Object4D16(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 		{
 			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 			{
+				assert(pobj->tri_list.elems[i].v0_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v1_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v2_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].n0_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n1_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n2_i < (int)pobj->nor_list_t.length);
+
 				unsigned int ctmp;
 				ctmp = Light_VertexT_By_Point16(
 								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
@@ -2687,6 +2714,13 @@ T3DLIB_API void Light_Object4D32(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 		{
 			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 			{
+				assert(pobj->tri_list.elems[i].v0_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v1_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v2_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].n0_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n1_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n2_i < (int)pobj->nor_list_t.length);
+
 				unsigned int ctmp;
 				ctmp = Light_VertexT_By_Ambient32(
 								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
@@ -2711,6 +2745,13 @@ T3DLIB_API void Light_Object4D32(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 		{
 			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 			{
+				assert(pobj->tri_list.elems[i].v0_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v1_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v2_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].n0_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n1_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n2_i < (int)pobj->nor_list_t.length);
+
 				unsigned int ctmp;
 				ctmp = Light_VertexT_By_Direct32(
 								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
@@ -2735,6 +2776,13 @@ T3DLIB_API void Light_Object4D32(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIAL
 		{
 			if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 			{
+				assert(pobj->tri_list.elems[i].v0_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v1_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].v2_i < (int)pobj->ver_list_t.length);
+				assert(pobj->tri_list.elems[i].n0_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n1_i < (int)pobj->nor_list_t.length);
+				assert(pobj->tri_list.elems[i].n2_i < (int)pobj->nor_list_t.length);
+
 				unsigned int ctmp;
 				ctmp = Light_VertexT_By_Point32(
 								&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
