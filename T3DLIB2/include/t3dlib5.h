@@ -210,6 +210,7 @@ typedef struct T3DLIB_API VERTEXV1T_TYP
 
 	FIXP16 u, v;
 	FIXP16 u1, v1;
+	FIXP16 u2, v2;
 
 } VERTEXV1T, * VERTEXV1T_PTR;
 
@@ -273,6 +274,21 @@ typedef struct T3DLIB_API RENDERCONTEXTV1_TYP
 		};
 
 		SURFACEV1	_TEXTURE1;
+	};
+
+	union
+	{
+		struct
+		{
+			unsigned char *		t2_pbuffer;
+			long				t2_pitch;
+			int					t2_width;
+			int					t2_height;
+			int					t2_pitch_shift;
+			int					t2_color_shift;
+		};
+
+		SURFACEV1	_TEXTURE2;
 	};
 
 	//unsigned int		c_ambi;

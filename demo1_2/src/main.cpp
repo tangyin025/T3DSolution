@@ -536,9 +536,9 @@ bool Game_Init(void)
 
 	for(int i = 0; i < (int)obj2.ver_list.length; i++)
 	{
-		obj2.ver_list.elems[i].x *= 0.3f;
-		obj2.ver_list.elems[i].y *= 0.3f;
-		obj2.ver_list.elems[i].z *= 0.3f;
+		obj2.ver_list.elems[i].x *= 0.2f;
+		obj2.ver_list.elems[i].y *= 0.2f;
+		obj2.ver_list.elems[i].z *= 0.2f;
 	}
 
 	//VECTOR4D_InitXYZ(&obj2.vpos, -16, 10, -44); // a bug position 2007-08-07
