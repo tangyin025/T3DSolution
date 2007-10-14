@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "T3DLIB2", "T3DLIB2\scripts\T3DLIB2.80.vcproj", "{F92D1E1C-0C7D-4D0C-A572-C74597EAA7B3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "T3DLIB", "T3DLIB\scripts\T3DLIB.80.vcproj", "{F92D1E1C-0C7D-4D0C-A572-C74597EAA7B3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "console1_1", "console1_1\scripts\console1_1.80.vcproj", "{38F4A971-33A9-45A5-8F2C-744649DAD86D}"
 	ProjectSection(ProjectDependencies) = postProject

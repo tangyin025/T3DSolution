@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="T3DLIB2"
+	Name="T3DLIB"
 	ProjectGUID="{F92D1E1C-0C7D-4D0C-A572-C74597EAA7B3}"
-	RootNamespace="T3DLIB2"
+	RootNamespace="T3DLIB"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)../include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;T3DLIB2_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;T3DLIB_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -34,12 +34,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/t3dlib2_d.dll"
+				OutputFile="$(OutDir)/t3dlib_d.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/T3DLIB2.pdb"
+				ProgramDatabaseFile="$(OutDir)/T3DLIB.pdb"
 				SubSystem="2"
-				ImportLibrary="$(ProjectDir)../lib/$(ConfigurationName)/t3dlib2_d.lib"
+				ImportLibrary="$(ProjectDir)../lib/$(ConfigurationName)/t3dlib_d.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)../include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;T3DLIB2_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;T3DLIB_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="t3dheaders.h"
@@ -82,13 +82,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/t3dlib2.dll"
+				OutputFile="$(OutDir)/t3dlib.dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(ProjectDir)../lib/$(ConfigurationName)/t3dlib2.lib"
+				ImportLibrary="$(ProjectDir)../lib/$(ConfigurationName)/t3dlib.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
