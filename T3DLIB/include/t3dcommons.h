@@ -1,20 +1,20 @@
 /*
- * File: T3DLIB2/t3dcommons.h
+ * File: T3DLIB/t3dcommons.h
  */
 
 #ifndef __T3DCOMMONS_H__
 #define __T3DCOMMONS_H__
 
-#define T3DLIB2_DOUBLE_PRECISION	0
-#define T3DLIB2_FIXP12_ZBUFFER		0
+#define T3DLIB_DOUBLE_PRECISION	0
+#define T3DLIB_FIXP12_ZBUFFER		0
 
-#ifdef T3DLIB2_EXPORTS
+#ifdef T3DLIB_EXPORTS
 #define T3DLIB_API __declspec(dllexport)
 #else
 #define T3DLIB_API __declspec(dllimport)
 #endif
 
-#if T3DLIB2_DOUBLE_PRECISION
+#if T3DLIB_DOUBLE_PRECISION
 typedef double	REAL;
 #else
 typedef float	REAL;

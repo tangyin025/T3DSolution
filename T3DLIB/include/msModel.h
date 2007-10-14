@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB2/msModel.h
+ * File: T3DLIB/msModel.h
  */
 
 #ifndef __MS3D_H__

@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB2/t3dlib6.h
+ * File: T3DLIB/t3dlib6.h
  */
 
 #ifndef __T3DLIB6_H__

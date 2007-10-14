@@ -1,9 +1,9 @@
 /*
- * File: T3DLIB2/t3dlib2.h
+ * File: T3DLIB/t3dlib2.h
  */
 
-#ifndef __T3DLIB2_H__
-#define __T3DLIB2_H__
+#ifndef __T3DLIB_H__
+#define __T3DLIB_H__
 
 #include "t3dcommons.h"
 
@@ -92,4 +92,4 @@ T3DLIB_API bool Read_DIKey_State(DIKEYV1 * pdikey, DIKEYSTATEV1 * pstate);
 
 T3DLIB_API bool Read_DIJoy_State(DIJOYV1 * pdijoy, DIJOYSTATE * pstate);
 
-#endif // __T3DLIB2_H__
+#endif // __T3DLIB_H__

@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB2/t3dlib1.h
+ * File: T3DLIB/t3dlib1.h
  */
 
 #ifndef __T3DLIB1_H__
@@ -119,12 +119,12 @@ T3DLIB_API void Set_Text_Color(TEXTDCV1 * ptdc, COLORREF color);
 
 T3DLIB_API bool Text_Out(TEXTDCV1 * ptdc, char * text, int x, int y);
 
-#ifdef T3DLIB2_EXPORTS
+#ifdef T3DLIB_EXPORTS
 extern __declspec(thread) ERRORREP			gerror;
 extern __declspec(thread) char				gbuffer[MAX_BUFFER_SIZE];
 extern __declspec(thread) HRESULT			gresult;
 extern __declspec(thread) DDSURFACEDESC2	gddsd;
-#endif // T3DLIB2_EXPORTS
+#endif // T3DLIB_EXPORTS
 
 #define MAX_COLOR_PALETTE		(256)
 #define _08BIT_BYTES_SHIFT		(0)
@@ -368,8 +368,8 @@ typedef FIXP16_TYP FIXP16, * FIXP16_PTR;
 typedef int FIXP28_TYP;
 typedef FIXP28_TYP FIXP28, * FIXP28_PTR;
 
-#ifdef T3DLIB2_EXPORTS
-#if T3DLIB2_FIXP12_ZBUFFER
+#ifdef T3DLIB_EXPORTS
+#if T3DLIB_FIXP12_ZBUFFER
 #define _ZBUFF_BYTES				FIXP12_BYTES
 #define _ZBUFF_BYTES_SHIFT			FIXP12_BYTES_SHIFT
 #define _ZBUFF_SHIFT				FIXP12_SHIFT
@@ -390,7 +390,7 @@ typedef FIXP12 _ZBUFF, * _ZBUFF_PTR;
 #define _FIXP28_TO_ZBUFF(f)			(f)
 typedef FIXP28 _ZBUFF, * _ZBUFF_PTR;
 #endif
-#endif // T3DLIB2_EXPORTS
+#endif // T3DLIB_EXPORTS
 
 #pragma warning(disable : 4201)
 typedef struct T3DLIB_API ZBUFFERV1_TYP

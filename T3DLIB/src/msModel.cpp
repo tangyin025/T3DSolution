@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB2/msModel.cpp
+ * File: T3DLIB/msModel.cpp
  */
 
 #include "t3dheaders.h"

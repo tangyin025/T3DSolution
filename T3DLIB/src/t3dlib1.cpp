@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB2/t3dlib1.cpp
+ * File: T3DLIB/t3dlib1.cpp
  */
 
 #include "t3dheaders.h"

@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB2/t3dheaders.h
+ * File: T3DLIB/t3dheaders.h
  */
 
 #ifndef __T3DHEADERS_H__
@@ -37,7 +37,7 @@
 #include <crtdbg.h>
 //#pragma message("crtdbg.h ok")
 
-#ifdef T3DLIB2_EXPORTS
+#ifdef T3DLIB_EXPORTS
 #pragma comment(lib, "winmm.lib")
 //#pragma message("winmm.lib ok")
 #pragma comment(lib, "dxguid.lib")
@@ -48,8 +48,8 @@
 //#pragma message("dinput8.lib ok")
 #pragma comment(lib, "dsound.lib")
 //#pragma message("dsound.lib ok")
-#endif // T3DLIB2_EXPORTS
+#endif // T3DLIB_EXPORTS
 
-//#define T3DLIB2_DOUBLE_PRECISION
+//#define T3DLIB_DOUBLE_PRECISION
 
 #endif // __T3DHEADERS_H__
