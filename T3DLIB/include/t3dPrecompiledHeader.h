@@ -1,5 +1,5 @@
 /*
- * File: T3DLIB/t3dheaders.h
+ * File: T3DLIB/t3dPrecompiledHeader.h
  */
 
 #ifndef __T3DHEADERS_H__

@@ -2,7 +2,7 @@
  * File: T3DLIB/t3dlib2.cpp
  */
 
-#include "t3dheaders.h"
+#include "t3dPrecompiledHeader.h"
 #include "t3dlib1.h"
 #include "t3dlib2.h"
 

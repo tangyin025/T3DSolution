@@ -2,7 +2,7 @@
  * File: T3DLIB/msModel.cpp
  */
 
-#include "t3dheaders.h"
+#include "t3dPrecompiledHeader.h"
 #include "msModel.h"
 
 __declspec(thread) static char gline[MAX_BUFFER_SIZE];

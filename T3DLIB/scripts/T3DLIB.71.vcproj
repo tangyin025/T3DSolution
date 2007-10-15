@@ -26,7 +26,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="3"
-				PrecompiledHeaderThrough="t3dheaders.h"
+				PrecompiledHeaderThrough="t3dPrecompiledHeader.h"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"/>
@@ -74,7 +74,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;T3DLIB_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="3"
-				PrecompiledHeaderThrough="t3dheaders.h"
+				PrecompiledHeaderThrough="t3dPrecompiledHeader.h"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -123,7 +123,7 @@
 				RelativePath="..\src\msModel.cpp">
 			</File>
 			<File
-				RelativePath="..\src\t3dheaders.cpp">
+				RelativePath="..\src\t3dPrecompiledHeader.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -176,7 +176,7 @@
 				RelativePath="..\include\t3dcommons.h">
 			</File>
 			<File
-				RelativePath="..\include\t3dheaders.h">
+				RelativePath="..\include\t3dPrecompiledHeader.h">
 			</File>
 			<File
 				RelativePath="..\include\t3dlib1.h">
