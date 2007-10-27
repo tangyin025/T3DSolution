@@ -72,6 +72,20 @@ protected:
 // MyMessageArray
 // ============================================================================
 
+/*
+Detected memory leaks!
+Dumping objects ->
+d:\_program files\microsoft visual studio .net 2003\vc7\include\crtdbg.h(689) : {47} normal block at 0x003D4CF0, 24 bytes long.
+ Data: < L=  L=  L=     > F0 4C 3D 00 F0 4C 3D 00 F0 4C 3D 00 CD CD CD CD 
+d:\_program files\microsoft visual studio .net 2003\vc7\include\crtdbg.h(689) : {46} normal block at 0x003D4C98, 24 bytes long.
+ Data: < L=  L=  L=     > 98 4C 3D 00 98 4C 3D 00 98 4C 3D 00 CD CD CD CD 
+Object dump complete.
+ */
+
+/*
+ * xtree : 1143
+ */
+
 T3DLIB_TEMPLATE struct T3DLIB_API std::less<HWND>;
 T3DLIB_TEMPLATE class T3DLIB_API std::allocator<std::pair<const HWND,MyWindow *> >;
 T3DLIB_TEMPLATE class T3DLIB_API std::allocator<std::_Tree_ptr<std::_Tmap_traits<HWND, MyWindow *, std::less<HWND>, std::allocator<std::pair<const HWND, MyWindow *> >, false> >::_Nodeptr>;
