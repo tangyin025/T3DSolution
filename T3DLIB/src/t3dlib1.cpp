@@ -12,6 +12,7 @@ BOOL APIENTRY DllMain(HANDLE	hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 		break;
 
 	case DLL_THREAD_ATTACH:
@@ -21,7 +22,7 @@ BOOL APIENTRY DllMain(HANDLE	hModule,
 		break;
 
 	case DLL_PROCESS_DETACH:
-		_CrtDumpMemoryLeaks();
+		//_CrtDumpMemoryLeaks(); // dont use like this, because some glabol obj havent destructor
 		break;
 	}
 
