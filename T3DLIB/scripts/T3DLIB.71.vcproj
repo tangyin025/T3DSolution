@@ -123,6 +123,9 @@
 				RelativePath="..\src\msModel.cpp">
 			</File>
 			<File
+				RelativePath="..\src\MyApp.cpp">
+			</File>
+			<File
 				RelativePath="..\src\t3dPrecompiledHeader.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -173,7 +176,10 @@
 				RelativePath="..\include\msModel.h">
 			</File>
 			<File
-				RelativePath="..\include\t3dcommons.h">
+				RelativePath="..\include\MyApp.h">
+			</File>
+			<File
+				RelativePath="..\include\t3dCommons.h">
 			</File>
 			<File
 				RelativePath="..\include\t3dPrecompiledHeader.h">

@@ -5,7 +5,7 @@
 #ifndef __T3DLIB6_H__
 #define __T3DLIB6_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 #include "msModel.h"
 
 #define ARRAYV1_INCREMENT_SIZE			(10)

@@ -5,7 +5,7 @@
 #ifndef __T3DLIB4_H__
 #define __T3DLIB4_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 
 #define PI					(3.1415926535897932384626433832795)
 #define EPSILON_E3			(1.0e-3)

@@ -5,7 +5,7 @@
 #ifndef __T3DLIB_H__
 #define __T3DLIB_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 
 #define IS_KEY_DOWN(dikey_state, key)		((dikey_state).state[(key)])
 

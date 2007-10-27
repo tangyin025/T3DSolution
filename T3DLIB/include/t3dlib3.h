@@ -5,7 +5,7 @@
 #ifndef __T3DLIB3_H__
 #define __T3DLIB3_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 
 #define DSBUFFER_STATUS_STOPPED		0
 #define DSBUFFER_STATUS_PLAYING		1

@@ -5,7 +5,7 @@
 #ifndef __T3DLIB1_H__
 #define __T3DLIB1_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 
 T3DLIB_API void foo(void * pvoid = NULL);
 

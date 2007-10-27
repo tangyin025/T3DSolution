@@ -189,6 +189,9 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\MyApp.cpp">
+			</File>
+			<File
 				RelativePath="..\src\t3dPrecompiledHeader.cpp"
 				>
 				<FileConfiguration
@@ -255,7 +258,10 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\t3dcommons.h"
+				RelativePath="..\include\MyApp.h">
+			</File>
+			<File
+				RelativePath="..\include\t3dCommons.h"
 				>
 			</File>
 			<File

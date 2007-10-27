@@ -5,7 +5,7 @@
 #ifndef __T3DLIB7_H__
 #define __T3DLIB7_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 #include "t3dlib6.h"
 
 typedef struct T3DLIB_API ARRAYV1<size_t> SIZE_T_ARRAYV1, * SIZE_T_ARRAYV1_PTR;

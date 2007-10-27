@@ -5,7 +5,7 @@
 #ifndef __T3DLIB5_H__
 #define __T3DLIB5_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 
 #define TRI_VERTEX_NUM			(3)
 #define TRI_TEXTURE_NUM			(2)

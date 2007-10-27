@@ -5,7 +5,7 @@
 #ifndef __MS3D_H__
 #define __MS3D_H__
 
-#include "t3dcommons.h"
+#include "t3dCommons.h"
 
 #define MS_MAX_NAME             (32)
 #define MS_MAX_PATH             (256)
