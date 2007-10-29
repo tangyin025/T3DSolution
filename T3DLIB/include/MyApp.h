@@ -13,23 +13,19 @@
 
 #include "t3dCommons.h"
 
-#ifdef T3DLIB_EXPORTS
-#define T3DLIB_TEMPLATE template
-#else
-#define T3DLIB_TEMPLATE extern template
-#endif
+/*
+ * disable: <type1> needs to have dll-interface to be used by clients of <type2>
+ */
+#pragma warning(disable : 4251)
 
-#ifndef T3DLIB_EXPORTS
-#pragma warning(disable : 4231)
-#endif
+/*
+ * disable: non dll-interface <type1> used as base for dll-interface <type2>
+ */
+#pragma warning(disable : 4275)
 
 // ============================================================================
 // MyException
 // ============================================================================
-
-class T3DLIB_API std::exception;
-T3DLIB_TEMPLATE class T3DLIB_API std::allocator<char>;
-T3DLIB_TEMPLATE class T3DLIB_API std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
 
 class T3DLIB_API MyException : public std::exception
 {
@@ -71,26 +67,6 @@ protected:
 // ============================================================================
 // MyMessageArray
 // ============================================================================
-
-/*
-Detected memory leaks!
-Dumping objects ->
-d:\_program files\microsoft visual studio .net 2003\vc7\include\crtdbg.h(689) : {47} normal block at 0x003D4CF0, 24 bytes long.
- Data: < L=  L=  L=     > F0 4C 3D 00 F0 4C 3D 00 F0 4C 3D 00 CD CD CD CD 
-d:\_program files\microsoft visual studio .net 2003\vc7\include\crtdbg.h(689) : {46} normal block at 0x003D4C98, 24 bytes long.
- Data: < L=  L=  L=     > 98 4C 3D 00 98 4C 3D 00 98 4C 3D 00 CD CD CD CD 
-Object dump complete.
- */
-
-/*
- * xtree : 1143
- */
-
-T3DLIB_TEMPLATE struct T3DLIB_API std::less<HWND>;
-T3DLIB_TEMPLATE class T3DLIB_API std::allocator<std::pair<const HWND,MyWindow *> >;
-T3DLIB_TEMPLATE class T3DLIB_API std::allocator<std::_Tree_ptr<std::_Tmap_traits<HWND, MyWindow *, std::less<HWND>, std::allocator<std::pair<const HWND, MyWindow *> >, false> >::_Nodeptr>;
-T3DLIB_TEMPLATE class T3DLIB_API std::allocator<std::_Tree_nod<std::_Tmap_traits<HWND, MyWindow *, std::less<HWND>, std::allocator<std::pair<const HWND, MyWindow *> >, false> >::_Node>;
-T3DLIB_TEMPLATE class T3DLIB_API std::map<HWND, MyWindow *>;
 
 class T3DLIB_API MyMessageArray
 {
@@ -139,8 +115,8 @@ public:
 
 LRESULT T3DLIB_API CALLBACK MyWndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
-#ifndef T3DLIB_EXPORTS
-#pragma warning(default : 4231)
-#endif
+#pragma warning(default : 4251)
+
+#pragma warning(default : 4275)
 
 #endif // __MYAPP_H__

@@ -8,7 +8,10 @@
 #define WIN32_LEAN_AND_MEAN
 #define DIRECTINPUT_VERSION 0x0800
 #define _CRTDBG_MAP_ALLOC
+
+#if _MSC_VER >= 1400
 #define _CRT_SECURE_NO_DEPRECATE
+#endif
 
 #include <memory.h>
 //#pragma message("memory.h ok")

@@ -10,8 +10,10 @@
 
 #ifdef T3DLIB_EXPORTS
 #define T3DLIB_API __declspec(dllexport)
+#define T3DLIB_TEMPLATE template
 #else
 #define T3DLIB_API __declspec(dllimport)
+#define T3DLIB_TEMPLATE extern template
 #endif
 
 #if T3DLIB_DOUBLE_PRECISION
