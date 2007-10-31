@@ -126,19 +126,7 @@
 				RelativePath="..\src\MyApp.cpp">
 			</File>
 			<File
-				RelativePath="..\src\t3dPrecompiledHeader.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
+				RelativePath="..\src\MyGame.cpp">
 			</File>
 			<File
 				RelativePath="..\src\t3dlib1.cpp">
@@ -167,6 +155,21 @@
 			<File
 				RelativePath="..\src\t3dlib9.cpp">
 			</File>
+			<File
+				RelativePath="..\src\t3dPrecompiledHeader.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -179,10 +182,10 @@
 				RelativePath="..\include\MyApp.h">
 			</File>
 			<File
-				RelativePath="..\include\t3dCommons.h">
+				RelativePath="..\include\MyGame.h">
 			</File>
 			<File
-				RelativePath="..\include\t3dPrecompiledHeader.h">
+				RelativePath="..\include\t3dCommons.h">
 			</File>
 			<File
 				RelativePath="..\include\t3dlib1.h">
@@ -210,6 +213,9 @@
 			</File>
 			<File
 				RelativePath="..\include\t3dlib9.h">
+			</File>
+			<File
+				RelativePath="..\include\t3dPrecompiledHeader.h">
 			</File>
 		</Filter>
 		<Filter

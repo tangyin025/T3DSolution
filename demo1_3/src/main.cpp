@@ -17,6 +17,7 @@
 #include "t3dlib8.h"
 #include "t3dlib9.h"
 #include "MyApp.h"
+#include "MyGame.h"
 #pragma comment(lib, "winmm.lib")
 
 // ////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +29,18 @@ class DemoWindow : public MyWindow
 protected:
 	virtual LRESULT OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
+		switch(message)
+		{
+		case WM_CREATE:
+			SetWindowText("Demo1_3");
+			CenterWindow();
+			ShowWindow();
+			return 0;
+
+		default:
+			break;
+		}
+
 		return MyWindow::OnProc(hwnd, message, wparam, lparam);
 	}
 };
@@ -37,7 +50,7 @@ class DemoApplication : public MyApplication
 public:
 	virtual void run(void)
 	{
-		g_msgArr.addWindow(new DemoWindow);
+		g_msgArr->addWindow(MyWindowBasePtr(new DemoWindow));
 
 		MyApplication::run();
 	}

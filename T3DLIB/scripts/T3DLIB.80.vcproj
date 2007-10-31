@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\MyGame.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\t3dlib1.cpp"
 				>
 			</File>
@@ -260,6 +264,10 @@
 			</File>
 			<File
 				RelativePath="..\include\MyApp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MyGame.h"
 				>
 			</File>
 			<File
