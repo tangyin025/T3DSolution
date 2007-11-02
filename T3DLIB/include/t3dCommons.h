@@ -88,4 +88,14 @@ T3DLIB_API char * Set_Last_Error(const char * pmessage, const char * pfile, cons
 
 extern __declspec(thread) char				gbuffer[MAX_BUFFER_SIZE];
 
+/*
+ * disable: <type1> needs to have dll-interface to be used by clients of <type2>
+ */
+#pragma warning(disable : 4251)
+
+/*
+ * disable: non dll-interface <type1> used as base for dll-interface <type2>
+ */
+#pragma warning(disable : 4275)
+
 #endif // __T3DCOMMONS_H__

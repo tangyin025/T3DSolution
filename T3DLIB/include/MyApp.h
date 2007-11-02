@@ -14,16 +14,6 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-/*
- * disable: <type1> needs to have dll-interface to be used by clients of <type2>
- */
-#pragma warning(disable : 4251)
-
-/*
- * disable: non dll-interface <type1> used as base for dll-interface <type2>
- */
-#pragma warning(disable : 4275)
-
 // ============================================================================
 // MyException
 // ============================================================================
@@ -95,7 +85,7 @@ public:
 	virtual LRESULT OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 public:
-	void loop(void);
+	int loop(void);
 
 	MyWindowBasePtr addWindow(MyWindowBasePtr wnd);
 
@@ -124,7 +114,7 @@ public:
 	virtual ~MyApplication();
 
 public:
-	virtual void run(void);
+	virtual int run(void);
 
 	virtual void OnIdle(void);
 };
@@ -243,12 +233,26 @@ public:
 			throw MyException("set window position failed");
 	}
 
-	RECT GetCliendRect(void)
+	RECT GetClientRectOriginal(void)
 	{
 		assert(NULL != m_hwnd);
 		RECT rect;
 		if(!::GetClientRect(m_hwnd, &rect))
 			throw MyException("get client rect failed");
+		return rect;
+	}
+
+	RECT GetClientRect(void)
+	{
+		assert(NULL != m_hwnd);
+		RECT rect = GetClientRectOriginal();
+		RECT radj = rect;
+		if(!::AdjustWindowRectEx(&radj,
+				GetWindowStyle(), ::GetMenu(m_hwnd) != NULL, GetWindowExstyle()))
+			throw MyException("adjust window rect failed");
+		RECT rwnd = GetWindowRect();
+		if(!::OffsetRect(&rect, rwnd.left - radj.left, rwnd.top - radj.top))
+			throw MyException("offset client rect failed");
 		return rect;
 	}
 
@@ -276,8 +280,6 @@ public:
 	}
 };
 
-#pragma warning(default : 4251)
-
-#pragma warning(default : 4275)
+typedef boost::shared_ptr<MyWindow> MyWindowPtr;
 
 #endif // __MY_APP_H__

@@ -732,9 +732,9 @@ T3DLIB_API void Set_Text_Color(TEXTDCV1 * ptdc, COLORREF color)
 	SetTextColor(ptdc->hdc, color);
 }
 
-T3DLIB_API bool Text_Out(TEXTDCV1 * ptdc, char * text, int x, int y)
+T3DLIB_API bool Text_Out(TEXTDCV1 * ptdc, const char * text, int x, int y)
 {
-	if(!TextOut(ptdc->hdc, x, y, text, (int)strlen(text)))
+	if(!TextOutA(ptdc->hdc, x, y, text, (int)strlen(text)))
 		ON_ERROR_GOTO("draw text failed");
 	return true;
 

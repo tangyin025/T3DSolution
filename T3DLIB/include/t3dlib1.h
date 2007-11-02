@@ -117,7 +117,7 @@ T3DLIB_API void Set_Text_BKMode(TEXTDCV1 * ptdc, int mode);
 
 T3DLIB_API void Set_Text_Color(TEXTDCV1 * ptdc, COLORREF color);
 
-T3DLIB_API bool Text_Out(TEXTDCV1 * ptdc, char * text, int x, int y);
+T3DLIB_API bool Text_Out(TEXTDCV1 * ptdc, const char * text, int x, int y);
 
 #ifdef T3DLIB_EXPORTS
 extern __declspec(thread) ERRORREP			gerror;

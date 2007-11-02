@@ -64,7 +64,7 @@ void MyWindowBase::Register(void)
 			::GetModuleHandle(NULL),
 			::LoadIcon(NULL, IDI_APPLICATION),
 			::LoadCursor(NULL, IDC_ARROW),
-			(HBRUSH)(COLOR_WINDOW + 1), NULL, class_name.c_str(),
+			/*(HBRUSH)(COLOR_WINDOW + 1)*/NULL, NULL, class_name.c_str(),
 			::LoadIcon(NULL, IDI_APPLICATION) };
 
 		if(NULL == ::RegisterClassEx(&tmp))
@@ -155,12 +155,13 @@ LRESULT MyMessageArray::OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lp
 	return ::DefWindowProc(hwnd, message, wparam, lparam);
 }
 
-void MyMessageArray::loop(void)
+int MyMessageArray::loop(void)
 {
 	if(!m_activeWnd.empty())
 	{
 		MSG msg;
-		msg.message = WM_QUIT + 1;
+		INIT_ZERO(msg);
+		assert(WM_QUIT != msg.message);
 
 		while(WM_QUIT != msg.message)
 		{
@@ -174,7 +175,11 @@ void MyMessageArray::loop(void)
 				m_app->OnIdle();
 			}
 		}
+
+		return (int)msg.wParam;
 	}
+
+	return 0;
 }
 
 MyWindowBasePtr MyMessageArray::addWindow(MyWindowBasePtr wnd)
@@ -182,6 +187,12 @@ MyWindowBasePtr MyMessageArray::addWindow(MyWindowBasePtr wnd)
 	assert(g_wndHook == NULL);
 	g_wndHook = wnd;
 
+	/*
+	 * Note, cannot create window at its constructor function, because this class may be drived
+	 * by client applications window class, so if create at father class construct, then OnProc
+	 * will be call, and the first Window Message will not send to drived object, because the
+	 * drived object havent constructor, it virtual function pointer havent instead fathers yet
+	 */
 	wnd->Register();
 	wnd->Create();
 
@@ -243,9 +254,9 @@ MyApplication::~MyApplication()
 {
 }
 
-void MyApplication::run(void)
+int MyApplication::run(void)
 {
-	g_msgArr->loop();
+	return g_msgArr->loop();
 }
 
 void MyApplication::OnIdle(void)

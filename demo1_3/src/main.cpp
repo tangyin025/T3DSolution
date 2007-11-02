@@ -29,31 +29,69 @@ class DemoWindow : public MyWindow
 protected:
 	virtual LRESULT OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		switch(message)
-		{
-		case WM_CREATE:
-			SetWindowText("Demo1_3");
-			CenterWindow();
-			ShowWindow();
-			return 0;
-
-		default:
-			break;
-		}
-
-		return MyWindow::OnProc(hwnd, message, wparam, lparam);
+		return ::DefWindowProc(hwnd, message, wparam, lparam);
 	}
 };
 
 class DemoApplication : public MyApplication
 {
 public:
-	virtual void run(void)
+	virtual int run(void)
 	{
-		g_msgArr->addWindow(MyWindowBasePtr(new DemoWindow));
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = 800;
+		rect.bottom = 600;
 
-		MyApplication::run();
+		wnd = MyWindowPtr(new DemoWindow);
+		g_msgArr->addWindow(wnd);
+
+		wnd->SetWindowText("demo1_3");
+		wnd->SetClientRect(rect);
+		wnd->CenterWindow();
+
+		ddraw = t3dDDrawPtr(new t3dDDraw);
+
+		ddraw->set_coop_level(t3dDDraw::normal);
+
+		prim = ddraw->create_screen_surface();
+		prim->set_clipper(ddraw->create_screen_clipper(wnd));
+
+		back = ddraw->create_memory_surface(MyWindow::GetRectWidth(rect), MyWindow::GetRectHeight(rect));
+		back->set_clipper(ddraw->create_single_clipper(rect));
+
+		t3d_INIT(prim->get_BPP());
+
+		obj.load("Box1_2.ms3d.txt", "Box01");
+
+		wnd->ShowWindow();
+
+		fps.init();
+
+		return MyApplication::run();
 	}
+
+	virtual void OnIdle(void)
+	{
+		fps.OnFrame();
+
+		back->fill(rect, Create_RGBI(128, 128, 128));
+
+		back->text_out(str_printf("%.2f fps", fps.get_FPS()), 10, 10);
+
+		prim->blit(wnd->GetClientRect(), back, rect);
+	}
+
+protected:
+	t3dDDrawPtr ddraw;
+	t3dSurfacePtr prim;
+	t3dSurfacePtr back;
+
+	MyWindowPtr wnd;
+	RECT rect;
+
+	t3dFPS fps;
+	t3dObject obj;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////
