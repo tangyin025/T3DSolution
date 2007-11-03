@@ -62,7 +62,9 @@ public:
 
 		t3d_INIT(prim->get_BPP());
 
-		obj.load("Box1_2.ms3d.txt", "Box01");
+		//obj.load("Box1_2.ms3d.txt", "Box01");
+
+		obj.load("jack.ms3d.txt");
 
 		wnd->ShowWindow();
 
@@ -76,6 +78,24 @@ public:
 		fps.OnFrame();
 
 		back->fill(rect, Create_RGBI(128, 128, 128));
+
+		VECTOR4D c_pos = {0, 10, -20, 1};
+
+		VECTOR4D c_rot = {DEG_TO_RAD((REAL)0), 0, 0, 1};
+
+		VECTOR4D o_emp = {0, 0, 0, 1};
+
+		t3dRender render;
+		render.set_camera(t3dCameraPtr(new t3dCameraEuler(rect, c_pos, c_rot)));
+		render.set_material(obj.m_material);
+		render.set_surface(back);
+		render.set_zbuffer(t3dZbufferPtr(new t3dZbuffer(MyWindow::GetRectWidth(rect), MyWindow::GetRectHeight(rect))));
+		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
+		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), o_emp)));
+
+		obj.reset();
+		obj.to_WORLD(o_emp, o_emp);
+		render.draw(&obj);
 
 		back->text_out(str_printf("%.2f fps", fps.get_FPS()), 10, 10);
 

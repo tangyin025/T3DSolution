@@ -2072,6 +2072,9 @@ T3DLIB_API void Draw_Object4D_Wire16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
@@ -2128,6 +2131,9 @@ T3DLIB_API void Draw_Object4D_Wire32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -2188,6 +2194,11 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
@@ -2244,6 +2255,11 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
@@ -2298,6 +2314,9 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
 
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
 	{
@@ -2350,6 +2369,9 @@ T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -2406,6 +2428,11 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
@@ -2465,6 +2492,11 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	rc.fmin_clip_y = pcam->viewport.y;
 	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
 	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
 
 	int i;
 	for(i = 0; i < (int)pobj->tri_list.length; i++)
