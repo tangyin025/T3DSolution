@@ -261,6 +261,160 @@ t3dClipperPtr t3dDDraw::create_single_clipper(RECT rect)
 }
 
 // ============================================================================
+// t3dMouse
+// ============================================================================
+
+t3dMouse::t3dMouse(t3dDInput * input)
+{
+	INIT_ZERO(m_mouse);
+
+	LPDIRECTINPUTDEVICE8A lpdimouse;
+	if(FAILED(gresult = input->m_dinput.lpdinput->CreateDevice(GUID_SysMouse, &lpdimouse, NULL)))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("create dimouse failed");
+	}
+
+	if(FAILED(gresult = lpdimouse->SetDataFormat(&c_dfDIMouse)))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("set dimouse data format failed");
+	}
+
+	m_mouse.lpdimouse = lpdimouse;
+}
+
+t3dMouse::~t3dMouse()
+{
+}
+
+void t3dMouse::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
+{
+	if(FAILED(gresult = m_mouse.lpdimouse->SetCooperativeLevel(
+			wnd->get_hwnd(), type)))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("set dimouse cooperative level failed");
+	}
+
+	if(FAILED(gresult = m_mouse.lpdimouse->Acquire()))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("acquire dimouse failed");
+	}
+}
+
+// ============================================================================
+// t3dKey
+// ============================================================================
+
+t3dKeyState::t3dKeyState()
+{
+	INIT_ZERO(m_dikeystate);
+}
+
+t3dKeyState::~t3dKeyState()
+{
+}
+
+unsigned char t3dKeyState::is_key_down(const DWORD key_i)
+{
+	return m_dikeystate.state[key_i];
+}
+
+t3dKey::t3dKey(t3dDInput * input)
+{
+	INIT_ZERO(m_dikey);
+
+	LPDIRECTINPUTDEVICE8A lpdikey;
+	if(FAILED(gresult = input->m_dinput.lpdinput->CreateDevice(GUID_SysKeyboard, &lpdikey, NULL)))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("create dikey failed");
+	}
+
+	if(FAILED(gresult = lpdikey->SetDataFormat(&c_dfDIKeyboard)))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("set dikey data format failed");
+	}
+
+	m_dikey.lpdikey = lpdikey;
+	m_state = t3dKeyStatePtr(new t3dKeyState);
+}
+
+t3dKey::~t3dKey()
+{
+	Destroy_DIKey(&m_dikey);
+}
+
+void t3dKey::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
+{
+	if(FAILED(gresult = m_dikey.lpdikey->SetCooperativeLevel(
+			wnd->get_hwnd(), type)))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("set dikey cooperative level failed");
+	}
+
+	if(FAILED(gresult = m_dikey.lpdikey->Acquire()))
+	{
+		Get_DInput_Error(gbuffer, gresult);
+		throw MyException("acquire dikey failed");
+	}
+}
+
+t3dKeyStatePtr t3dKey::get_state(void)
+{
+	if(!Read_DIKey_State(&m_dikey, &m_state->m_dikeystate))
+		throw MyException("read dikey state failed");
+
+	return m_state;
+}
+
+// ============================================================================
+// t3dDInput
+// ============================================================================
+
+t3dDInput::t3dDInput()
+{
+	INIT_ZERO(m_dinput);
+	if(!Create_DInput(&m_dinput, ::GetModuleHandle(NULL)))
+		throw MyException("create dinput failed");
+}
+
+t3dDInput::~t3dDInput()
+{
+	Destroy_DInput(&m_dinput);
+}
+
+t3dMousePtr t3dDInput::create_mouse(void)
+{
+	return t3dMousePtr(new t3dMouse(this));
+}
+
+t3dKeyPtr t3dDInput::create_key(void)
+{
+	return t3dKeyPtr(new t3dKey(this));
+}
+
+// ============================================================================
+// t3dWav
+// ============================================================================
+
+// ============================================================================
+// t3dDSound
+// ============================================================================
+
+// ============================================================================
+// t3dMidi
+// ============================================================================
+
+// ============================================================================
+// t3dDMusic
+// ============================================================================
+
+// ============================================================================
 // t3d_INIT( const int BPP )
 // ============================================================================
 

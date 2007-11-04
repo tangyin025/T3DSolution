@@ -194,6 +194,128 @@ public:
 typedef boost::shared_ptr<t3dDDraw> t3dDDrawPtr;
 
 // ============================================================================
+// t3dMouse
+// ============================================================================
+
+class t3dDInput;
+
+class T3DLIB_API t3dMouse
+{
+	friend class t3dDInput;
+
+public:
+	typedef enum
+	{
+		foreground	= DISCL_NONEXCLUSIVE | DISCL_FOREGROUND,
+		background	= DISCL_NONEXCLUSIVE | DISCL_BACKGROUND,
+
+	} coop_level_type;
+
+protected:
+	t3dMouse(t3dDInput * input);
+
+public:
+	~t3dMouse();
+
+public:
+	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
+
+protected:
+	DIMOUSEV1 m_mouse;
+};
+
+typedef boost::shared_ptr<t3dMouse> t3dMousePtr;
+
+// ============================================================================
+// t3dKey
+// ============================================================================
+
+class T3DLIB_API t3dKeyState
+{
+public:
+	t3dKeyState();
+
+	~t3dKeyState();
+
+public:
+	unsigned char is_key_down(const DWORD key_i);
+
+public:
+	DIKEYSTATEV1 m_dikeystate;
+};
+
+typedef boost::shared_ptr<t3dKeyState> t3dKeyStatePtr;
+
+class T3DLIB_API t3dKey
+{
+	friend class t3dDInput;
+
+public:
+	typedef enum
+	{
+		foreground	= DISCL_NONEXCLUSIVE | DISCL_FOREGROUND,
+		background	= DISCL_NONEXCLUSIVE | DISCL_BACKGROUND,
+
+	} coop_level_type;
+
+protected:
+	t3dKey(t3dDInput * input);
+
+public:
+	~t3dKey();
+
+public:
+	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
+
+	t3dKeyStatePtr get_state(void);
+
+protected:
+	DIKEYV1 m_dikey;
+
+	t3dKeyStatePtr m_state;
+};
+
+typedef boost::shared_ptr<t3dKey> t3dKeyPtr;
+
+// ============================================================================
+// t3dDInput
+// ============================================================================
+
+class T3DLIB_API t3dDInput
+{
+public:
+	t3dDInput();
+
+	~t3dDInput();
+
+public:
+	t3dMousePtr create_mouse(void);
+
+	t3dKeyPtr create_key(void);
+
+public:
+	DINPUTV1 m_dinput;
+};
+
+typedef boost::shared_ptr<t3dDInput> t3dDInputPtr;
+
+// ============================================================================
+// t3dWav
+// ============================================================================
+
+// ============================================================================
+// t3dDSound
+// ============================================================================
+
+// ============================================================================
+// t3dMidi
+// ============================================================================
+
+// ============================================================================
+// t3dDMusic
+// ============================================================================
+
+// ============================================================================
 // t3d_INIT( const int BPP )
 // ============================================================================
 
