@@ -71,6 +71,20 @@ public:
 
 		obj.load("jack.ms3d.txt");
 
+		obj2.load("ct.ms3d.txt", "Sphere01");
+
+		for(size_t i = 0; i < obj2.m_object.ver_list.length; i++)
+		{
+			VECTOR3D_Mul(&obj2.m_object.ver_list.elems[i]._3D, 0.2f);
+		}
+
+		obj3.load("ct.ms3d.txt", "Box01");
+
+		for(size_t i = 0; i < obj3.m_object.ver_list.length; i++)
+		{
+			VECTOR3D_Mul(&obj3.m_object.ver_list.elems[i]._3D, 0.2f);
+		}
+
 		wnd->ShowWindow();
 
 		fps.init();
@@ -84,6 +98,7 @@ public:
 		static VECTOR4D c_rot = {DEG_TO_RAD((REAL)0), 0, 0, 1};
 		static VECTOR4D o_emp = {0, 0, 0, 1};
 		static VECTOR4D l_pos = {-20, 20, -20, 1};
+		static VECTOR4D sphere_pos = {0, 0, 0, 1};
 
 		fps.OnFrame();
 
@@ -96,6 +111,7 @@ public:
 		{
 			VECTOR4D_InitXYZ(&c_pos, 0, 10, -30);
 			VECTOR4D_InitXYZ(&c_rot, 0, 0, 0);
+			VECTOR4D_InitXYZ(&sphere_pos, 0, 0, 0);
 		}
 
 		if(ks->is_key_down(DIK_W))
@@ -162,21 +178,76 @@ public:
 			c_pos.z -= sin(c_rot.y);
 		}
 
+		if(ks->is_key_down(DIK_NUMPAD8))
+		{
+			sphere_pos.z += cos(c_rot.y);
+			sphere_pos.x += sin(c_rot.y);
+		}
+
+		if(ks->is_key_down(DIK_NUMPAD5))
+		{
+			sphere_pos.z -= cos(c_rot.y);
+			sphere_pos.x -= sin(c_rot.y);
+		}
+
+		if(ks->is_key_down(DIK_NUMPAD4))
+		{
+			sphere_pos.x -= cos(c_rot.y);
+			sphere_pos.z += sin(c_rot.y);
+		}
+
+		if(ks->is_key_down(DIK_NUMPAD6))
+		{
+			sphere_pos.x += cos(c_rot.y);
+			sphere_pos.z -= sin(c_rot.y);
+		}
+
+		if(ks->is_key_down(DIK_NUMPAD1))
+		{
+			sphere_pos.y++;
+		}
+
+		if(ks->is_key_down(DIK_NUMPAD2))
+		{
+			sphere_pos.y--;
+		}
+
 		back->fill(rect, Create_RGBI(128, 128, 128));
 
 		t3dRender render;
 		render.set_camera(t3dCameraPtr(new t3dCameraEuler(rect, c_pos, c_rot, DEG_TO_RAD(60), 10, 1000)));
-		render.set_material(obj.m_material);
 		render.set_surface(back);
 		render.set_zbuffer(t3dZbufferPtr(new t3dZbuffer(MyWindow::GetRectWidth(rect), MyWindow::GetRectHeight(rect))));
+
 		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
 		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), l_pos)));
 
 		obj.reset();
 		obj.to_WORLD(o_emp, o_emp);
+		render.set_material(obj.m_material);
 		render.draw(&obj);
 
+		obj3.reset();
+		obj3.to_WORLD(o_emp, o_emp);
+
+		VECTOR4D vres;
+		if(obj3.collision_test(vres, sphere_pos, 3))
+		{
+			VECTOR4D_Copy(&sphere_pos, &vres);
+		}
+
+		obj2.reset();
+		obj2.to_WORLD(sphere_pos, o_emp);
+
+		render.set_material(obj3.m_material);
+		render.draw(&obj3);
+
+		render.set_material(obj2.m_material);
+		render.draw(&obj2);
+
 		back->text_out(str_printf("%.1f fps", fps.get_FPS()), 10, 10);
+
+		back->text_out(str_printf("%.1f, %.1f, %.1f", vres.x, vres.y, vres.z), 10, 50);
 
 		prim->blit(wnd->GetClientRect(), back, rect);
 	}
@@ -194,6 +265,9 @@ protected:
 
 	t3dFPS fps;
 	t3dObject obj;
+
+	t3dObject obj2;
+	t3dObject obj3;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////

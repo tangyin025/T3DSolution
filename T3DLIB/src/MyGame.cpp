@@ -431,6 +431,13 @@ void T3DLIB_API t3d_INIT( const int BPP )
 
 	if(!Init_T3dlib6(BPP))
 		throw MyException("initial t3dlib6 failed");
+
+	t3dMaterialPtr mat = t3dMaterialPtr(new t3dMaterial);
+	mat->m_material.c_ambi = Create_RGBI(255, 255, 255);
+	mat->m_material.c_diff = Create_RGBI(255, 255, 255);
+
+	assert(g_materialMap.end() == g_materialMap.find(t3dMaterial::default_name));
+	g_materialMap[t3dMaterial::default_name] = mat;
 }
 
 // ============================================================================
@@ -755,6 +762,124 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 	}
 
 	Destroy_MsModel(&model);
+}
+
+/*
+ * return:
+ * if the intersection point vint is inside the triangle
+ */
+static bool TRIANGLE_Inside_Test(const VECTOR4D & v0,
+								 const VECTOR4D & v1,
+								 const VECTOR4D & v2,
+								 const VECTOR4D & vint)
+{
+	VECTOR4D dir1, dir2;
+	REAL angle = 0;
+
+	angle += acos(VECTOR3D_CosTheta(
+					VECTOR3D_Sub(&dir1._3D, &v0._3D, &vint._3D),
+					VECTOR3D_Sub(&dir2._3D, &v1._3D, &vint._3D)));
+
+	angle += acos(VECTOR3D_CosTheta(
+					VECTOR3D_Sub(&dir1._3D, &v1._3D, &vint._3D),
+					VECTOR3D_Sub(&dir2._3D, &v2._3D, &vint._3D)));
+
+	angle += acos(VECTOR3D_CosTheta(
+					VECTOR3D_Sub(&dir1._3D, &v2._3D, &vint._3D),
+					VECTOR3D_Sub(&dir2._3D, &v0._3D, &vint._3D)));
+
+	return angle >= (DEG_TO_RAD(360) - DEG_TO_RAD(EPSILON_E3));
+}
+
+/*
+ * return value:
+ * vres - the reaction velocity of this collision test
+ */
+static bool TRIANGLE_Collision_Test(VECTOR4D & vres,
+									const VECTOR4D & v0,
+									const VECTOR4D & v1,
+									const VECTOR4D & v2,
+									const VECTOR4D & vcen,
+									const REAL radius)
+{
+	VECTOR4D dir1, dir2;
+	VECTOR4D p_nor;
+	VECTOR3D_Cross(&p_nor._3D,
+					VECTOR3D_Sub(&dir1._3D, &v1._3D, &v0._3D),
+					VECTOR3D_Sub(&dir2._3D, &v2._3D, &v0._3D));
+
+	VECTOR4D l_dir;
+	VECTOR3D_Mul(&l_dir._3D, &p_nor._3D, -1);
+
+	REAL t = line_intersection(&l_dir, &vcen, &p_nor, &v0);
+
+	VECTOR4D l_inc;
+	REAL distance = VECTOR3D_Length(VECTOR3D_Mul(&l_inc._3D, &l_dir._3D, t));
+
+	if(t > 0 && distance < radius)
+	{
+		VECTOR4D l_int;
+		VECTOR3D_Add(&l_int._3D, &vcen._3D, &l_inc._3D);
+
+		if(TRIANGLE_Inside_Test(v0, v1, v2, l_int))
+		{
+			/*
+			 * vres = l_dir * ( t - radius / |l_dir| )
+			 */
+			VECTOR3D_Mul(&vres._3D, &l_dir._3D, t - radius / VECTOR3D_Length(&l_dir._3D));
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*
+ * return value:
+ * vres - the new center of sphere, witch is recommanded
+ */
+bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & vcen, const REAL radius)
+{
+	assert(&vres != &vcen);
+	VECTOR4D_Copy(&vres, &vcen);
+
+	size_t i;
+	bool bres = false;
+
+	for(i = 0; i < m_object.tri_list.length; i++)
+	{
+		assert(m_object.tri_list.elems[i].v0_i < (int)m_object.ver_list_t.length);
+		assert(m_object.tri_list.elems[i].v1_i < (int)m_object.ver_list_t.length);
+		assert(m_object.tri_list.elems[i].v2_i < (int)m_object.ver_list_t.length);
+
+		VERTEXV1T & v0 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v0_i];
+		VERTEXV1T & v1 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v1_i];
+		VERTEXV1T & v2 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v2_i];
+
+		if(	max(max(v0.x, v1.x), v2.x) < vres.x - radius
+			|| max(max(v0.y, v1.y), v2.y) < vres.y - radius
+			|| max(max(v0.z, v1.z), v2.z) < vres.z - radius)
+		{
+			continue;
+		}
+
+		if(	min(min(v0.x, v1.x), v2.x) > vres.x + radius
+			|| min(min(v0.y, v1.y), v2.y) > vres.y + radius
+			|| min(min(v0.z, v1.z), v2.z) > vres.z + radius)
+		{
+			continue;
+		}
+
+		VECTOR4D vint;
+		if(TRIANGLE_Collision_Test(vint, v0._4D, v1._4D, v2._4D, vres, radius))
+		{
+			bres = true;
+			VECTOR3D_Add(&vres._3D, &vint._3D);
+		}
+	}
+
+	return bres;
 }
 
 void t3dObject::reset(void)

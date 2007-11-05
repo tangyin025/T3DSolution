@@ -491,6 +491,8 @@ protected:
 public:
 	void load(const std::string file_name, const std::string mesh_name = "");
 
+	virtual bool collision_test(VECTOR4D & vres, const VECTOR4D & vcen, const REAL radius);
+
 	void reset(void);
 
 	void to_WORLD(VECTOR4D & pos, VECTOR4D & rot);

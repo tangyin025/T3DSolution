@@ -1754,68 +1754,68 @@ extern T3DLIB_API unsigned char COLOR_TABLE_MUL16G[MAX_COLOR_INTENSITY16G][MAX_C
 extern T3DLIB_API unsigned char COLOR_TABLE_MUL[MAX_COLOR_INTENSITY32][MAX_COLOR_INTENSITY32];
 
 T3DLIB_API bool Init_T3dlib4(int bpp);
-
-inline void RGB16_Print(const RGB16 * pc0)
-{
-	printf("RGB16 {%d, %d, %d}\n", _16BIT_GETR(*pc0), _16BIT_GETG(*pc0), _16BIT_GETB(*pc0));
-}
-
-inline void RGB32_Print(const RGB32 * pc0)
-{
-	printf("RGB32 {%d, %d, %d}\n", _32BIT_GETR(*pc0), _32BIT_GETG(*pc0), _32BIT_GETB(*pc0));
-}
-
-inline RGB16 * RGB16_Add(RGB16 * pcres, const RGB16 * pc0, const RGB16 * pc1)
-{
-	//((XRGB16 *)pcres)->r = COLOR_ADD_16R(((XRGB16 *)pc0)->r, ((XRGB16 *)pc1)->r);
-	//((XRGB16 *)pcres)->g = COLOR_ADD_16G(((XRGB16 *)pc0)->g, ((XRGB16 *)pc1)->g);
-	//((XRGB16 *)pcres)->b = COLOR_ADD_16B(((XRGB16 *)pc0)->b, ((XRGB16 *)pc1)->b);
-
-	*pcres = (unsigned short)_RGB16BIT(
-			COLOR_ADD_16R(_16BIT_GETR(*pc0), _16BIT_GETR(*pc1)),
-			COLOR_ADD_16G(_16BIT_GETG(*pc0), _16BIT_GETG(*pc1)),
-			COLOR_ADD_16B(_16BIT_GETB(*pc0), _16BIT_GETB(*pc1)));
-	return pcres;
-}
-
-inline RGB16 * RGB16_Mul(RGB16 * pcres, const RGB16 * pc0, const RGB16 * pc1)
-{
-	//((XRGB16 *)pcres)->r = COLOR_MUL_16R(((XRGB16 *)pc0)->r, ((XRGB16 *)pc1)->r);
-	//((XRGB16 *)pcres)->g = COLOR_MUL_16G(((XRGB16 *)pc0)->g, ((XRGB16 *)pc1)->g);
-	//((XRGB16 *)pcres)->b = COLOR_MUL_16B(((XRGB16 *)pc0)->b, ((XRGB16 *)pc1)->b);
-
-	*pcres = (unsigned short)_RGB16BIT(
-			COLOR_MUL_16R(_16BIT_GETR(*pc0), _16BIT_GETR(*pc1)),
-			COLOR_MUL_16G(_16BIT_GETG(*pc0), _16BIT_GETG(*pc1)),
-			COLOR_MUL_16B(_16BIT_GETB(*pc0), _16BIT_GETB(*pc1)));
-	return pcres;
-}
-
-inline RGB32 * RGB32_Add(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
-{
-	//((XRGB32 *)pcres)->r = COLOR_ADD_32R(((XRGB32 *)pc0)->r, ((XRGB32 *)pc1)->r);
-	//((XRGB32 *)pcres)->g = COLOR_ADD_32G(((XRGB32 *)pc0)->g, ((XRGB32 *)pc1)->g);
-	//((XRGB32 *)pcres)->b = COLOR_ADD_32B(((XRGB32 *)pc0)->b, ((XRGB32 *)pc1)->b);
-
-	*pcres = (unsigned int)_RGB32BIT(
-			COLOR_ADD_32R(_32BIT_GETR(*pc0), _32BIT_GETR(*pc1)),
-			COLOR_ADD_32G(_32BIT_GETG(*pc0), _32BIT_GETG(*pc1)),
-			COLOR_ADD_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
-	return pcres;
-}
-
-inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
-{
-	//((XRGB32 *)pcres)->r = COLOR_MUL_32R(((XRGB32 *)pc0)->r, ((XRGB32 *)pc1)->r);
-	//((XRGB32 *)pcres)->g = COLOR_MUL_32G(((XRGB32 *)pc0)->g, ((XRGB32 *)pc1)->g);
-	//((XRGB32 *)pcres)->b = COLOR_MUL_32B(((XRGB32 *)pc0)->b, ((XRGB32 *)pc1)->b);
-
-	*pcres = (unsigned int)_RGB32BIT(
-			COLOR_MUL_32R(_32BIT_GETR(*pc0), _32BIT_GETR(*pc1)),
-			COLOR_MUL_32G(_32BIT_GETG(*pc0), _32BIT_GETG(*pc1)),
-			COLOR_MUL_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
-	return pcres;
-}
+//
+//inline void RGB16_Print(const RGB16 * pc0)
+//{
+//	printf("RGB16 {%d, %d, %d}\n", _16BIT_GETR(*pc0), _16BIT_GETG(*pc0), _16BIT_GETB(*pc0));
+//}
+//
+//inline void RGB32_Print(const RGB32 * pc0)
+//{
+//	printf("RGB32 {%d, %d, %d}\n", _32BIT_GETR(*pc0), _32BIT_GETG(*pc0), _32BIT_GETB(*pc0));
+//}
+//
+//inline RGB16 * RGB16_Add(RGB16 * pcres, const RGB16 * pc0, const RGB16 * pc1)
+//{
+//	//((XRGB16 *)pcres)->r = COLOR_ADD_16R(((XRGB16 *)pc0)->r, ((XRGB16 *)pc1)->r);
+//	//((XRGB16 *)pcres)->g = COLOR_ADD_16G(((XRGB16 *)pc0)->g, ((XRGB16 *)pc1)->g);
+//	//((XRGB16 *)pcres)->b = COLOR_ADD_16B(((XRGB16 *)pc0)->b, ((XRGB16 *)pc1)->b);
+//
+//	*pcres = (unsigned short)_RGB16BIT(
+//			COLOR_ADD_16R(_16BIT_GETR(*pc0), _16BIT_GETR(*pc1)),
+//			COLOR_ADD_16G(_16BIT_GETG(*pc0), _16BIT_GETG(*pc1)),
+//			COLOR_ADD_16B(_16BIT_GETB(*pc0), _16BIT_GETB(*pc1)));
+//	return pcres;
+//}
+//
+//inline RGB16 * RGB16_Mul(RGB16 * pcres, const RGB16 * pc0, const RGB16 * pc1)
+//{
+//	//((XRGB16 *)pcres)->r = COLOR_MUL_16R(((XRGB16 *)pc0)->r, ((XRGB16 *)pc1)->r);
+//	//((XRGB16 *)pcres)->g = COLOR_MUL_16G(((XRGB16 *)pc0)->g, ((XRGB16 *)pc1)->g);
+//	//((XRGB16 *)pcres)->b = COLOR_MUL_16B(((XRGB16 *)pc0)->b, ((XRGB16 *)pc1)->b);
+//
+//	*pcres = (unsigned short)_RGB16BIT(
+//			COLOR_MUL_16R(_16BIT_GETR(*pc0), _16BIT_GETR(*pc1)),
+//			COLOR_MUL_16G(_16BIT_GETG(*pc0), _16BIT_GETG(*pc1)),
+//			COLOR_MUL_16B(_16BIT_GETB(*pc0), _16BIT_GETB(*pc1)));
+//	return pcres;
+//}
+//
+//inline RGB32 * RGB32_Add(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
+//{
+//	//((XRGB32 *)pcres)->r = COLOR_ADD_32R(((XRGB32 *)pc0)->r, ((XRGB32 *)pc1)->r);
+//	//((XRGB32 *)pcres)->g = COLOR_ADD_32G(((XRGB32 *)pc0)->g, ((XRGB32 *)pc1)->g);
+//	//((XRGB32 *)pcres)->b = COLOR_ADD_32B(((XRGB32 *)pc0)->b, ((XRGB32 *)pc1)->b);
+//
+//	*pcres = (unsigned int)_RGB32BIT(
+//			COLOR_ADD_32R(_32BIT_GETR(*pc0), _32BIT_GETR(*pc1)),
+//			COLOR_ADD_32G(_32BIT_GETG(*pc0), _32BIT_GETG(*pc1)),
+//			COLOR_ADD_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
+//	return pcres;
+//}
+//
+//inline RGB32 * RGB32_Mul(RGB32 * pcres, const RGB32 * pc0, const RGB32 * pc1)
+//{
+//	//((XRGB32 *)pcres)->r = COLOR_MUL_32R(((XRGB32 *)pc0)->r, ((XRGB32 *)pc1)->r);
+//	//((XRGB32 *)pcres)->g = COLOR_MUL_32G(((XRGB32 *)pc0)->g, ((XRGB32 *)pc1)->g);
+//	//((XRGB32 *)pcres)->b = COLOR_MUL_32B(((XRGB32 *)pc0)->b, ((XRGB32 *)pc1)->b);
+//
+//	*pcres = (unsigned int)_RGB32BIT(
+//			COLOR_MUL_32R(_32BIT_GETR(*pc0), _32BIT_GETR(*pc1)),
+//			COLOR_MUL_32G(_32BIT_GETG(*pc0), _32BIT_GETG(*pc1)),
+//			COLOR_MUL_32B(_32BIT_GETB(*pc0), _32BIT_GETB(*pc1)));
+//	return pcres;
+//}
 //
 //#define SIN_TABLE_SIZE				(361)
 //
@@ -1881,6 +1881,20 @@ inline bool VECTOR3D_Equal(VECTOR3D * pv0, VECTOR3D * pv1)
 	return pv0->x == pv1->x
 		&& pv0->y == pv1->y
 		&& pv0->z == pv1->z;
+}
+
+inline REAL line_intersection(const VECTOR4D * l_dir, const VECTOR4D * l_pos, const VECTOR4D * p_nor, const VECTOR4D * p_pos)
+{
+	assert(0 != VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D));
+
+	//return (VECTOR3D_Dot(&p_nor->_3D, &p_pos->_3D) - VECTOR3D_Dot(&l_dir->_3D, &l_pos->_3D)) / VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D);
+
+	REAL a = p_nor->x;
+	REAL b = p_nor->y;
+	REAL c = p_nor->z;
+	REAL d = - p_nor->x * p_pos->x - p_nor->y * p_pos->y - p_nor->z * p_pos->z;
+	REAL t = -(a * l_pos->x + b * l_pos->y + c * l_pos->z + d) / (a * l_dir->x + b * l_dir->y + c * l_dir->z);
+	return t;
 }
 
 #endif // __T3DLIB4_H__
