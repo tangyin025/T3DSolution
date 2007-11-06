@@ -82,10 +82,14 @@ public:
 
 		for(size_t i = 0; i < obj3.m_object.ver_list.length; i++)
 		{
-			VECTOR3D_Mul(&obj3.m_object.ver_list.elems[i]._3D, 0.2f);
+			VECTOR3D_Mul(&obj3.m_object.ver_list.elems[i]._3D, 0.5f);
 		}
 
 		wnd->ShowWindow();
+
+		//dsound.set_coop_level(t3dDSound::normal, wnd);
+		//wav1 = dsound.create_wav();
+		//wav1->load("engines.wav");
 
 		fps.init();
 
@@ -94,13 +98,17 @@ public:
 
 	virtual void OnIdle(void)
 	{
-		static VECTOR4D c_pos = {0, 10, -30, 1};
+		static VECTOR4D c_pos = {0, 0, -80, 1};
 		static VECTOR4D c_rot = {DEG_TO_RAD((REAL)0), 0, 0, 1};
 		static VECTOR4D o_emp = {0, 0, 0, 1};
 		static VECTOR4D l_pos = {-20, 20, -20, 1};
+		//static VECTOR4D sphere_pos = {18, 18, 18, 1};
 		static VECTOR4D sphere_pos = {0, 0, 0, 1};
 
 		fps.OnFrame();
+
+		REAL cam_mov_speed = fps.get_TPF_SAFE() * 100;
+		REAL cam_rot_speed = fps.get_TPF_SAFE() * 100;
 
 		t3dKeyStatePtr ks = key->get_state();
 
@@ -109,61 +117,61 @@ public:
 
 		if(ks->is_key_down(DIK_R))
 		{
-			VECTOR4D_InitXYZ(&c_pos, 0, 10, -30);
+			VECTOR4D_InitXYZ(&c_pos, 0, 0, -80);
 			VECTOR4D_InitXYZ(&c_rot, 0, 0, 0);
 			VECTOR4D_InitXYZ(&sphere_pos, 0, 0, 0);
 		}
 
 		if(ks->is_key_down(DIK_W))
 		{
-			c_rot.x -= DEG_TO_RAD((REAL)2);
+			c_rot.x -= cam_rot_speed * DEG_TO_RAD((REAL)2);
 		}
 
 		if(ks->is_key_down(DIK_S))
 		{
-			c_rot.x += DEG_TO_RAD((REAL)2);
+			c_rot.x += cam_rot_speed * DEG_TO_RAD((REAL)2);
 		}
 
 		if(ks->is_key_down(DIK_A))
 		{
-			c_rot.z += DEG_TO_RAD((REAL)2);
+			c_rot.z += cam_rot_speed * DEG_TO_RAD((REAL)2);
 		}
 
 		if(ks->is_key_down(DIK_D))
 		{
-			c_rot.z -= DEG_TO_RAD((REAL)2);
+			c_rot.z -= cam_rot_speed * DEG_TO_RAD((REAL)2);
 		}
 
 		if(ks->is_key_down(DIK_LEFT))
 		{
-			c_rot.y -= DEG_TO_RAD((REAL)2);
+			c_rot.y -= cam_rot_speed * DEG_TO_RAD((REAL)2);
 		}
 
 		if(ks->is_key_down(DIK_RIGHT))
 		{
-			c_rot.y += DEG_TO_RAD((REAL)2);
+			c_rot.y += cam_rot_speed * DEG_TO_RAD((REAL)2);
 		}
 
 		if(ks->is_key_down(DIK_UP))
 		{
-			c_pos.z += cos(c_rot.y);
-			c_pos.x += sin(c_rot.y);
+			c_pos.z += cam_mov_speed * cos(c_rot.y);
+			c_pos.x += cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_DOWN))
 		{
-			c_pos.z -= cos(c_rot.y);
-			c_pos.x -= sin(c_rot.y);
+			c_pos.z -= cam_mov_speed * cos(c_rot.y);
+			c_pos.x -= cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_HOME))
 		{
-			c_pos.y++;
+			c_pos.y += cam_mov_speed;
 		}
 
 		if(ks->is_key_down(DIK_END))
 		{
-			c_pos.y--;
+			c_pos.y -= cam_mov_speed;
 		}
 
 		if(ks->is_key_down(DIK_DELETE))
@@ -174,42 +182,47 @@ public:
 
 		if(ks->is_key_down(DIK_PGDN))
 		{
-			c_pos.x += cos(c_rot.y);
-			c_pos.z -= sin(c_rot.y);
+			c_pos.x += cam_mov_speed * cos(c_rot.y);
+			c_pos.z -= cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_NUMPAD8))
 		{
-			sphere_pos.z += cos(c_rot.y);
-			sphere_pos.x += sin(c_rot.y);
+			sphere_pos.z += cam_mov_speed * cos(c_rot.y);
+			sphere_pos.x += cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_NUMPAD5))
 		{
-			sphere_pos.z -= cos(c_rot.y);
-			sphere_pos.x -= sin(c_rot.y);
+			sphere_pos.z -= cam_mov_speed * cos(c_rot.y);
+			sphere_pos.x -= cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_NUMPAD4))
 		{
-			sphere_pos.x -= cos(c_rot.y);
-			sphere_pos.z += sin(c_rot.y);
+			sphere_pos.x -= cam_mov_speed * cos(c_rot.y);
+			sphere_pos.z += cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_NUMPAD6))
 		{
-			sphere_pos.x += cos(c_rot.y);
-			sphere_pos.z -= sin(c_rot.y);
+			sphere_pos.x += cam_mov_speed * cos(c_rot.y);
+			sphere_pos.z -= cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_NUMPAD1))
 		{
-			sphere_pos.y++;
+			sphere_pos.y += cam_mov_speed;
 		}
 
-		if(ks->is_key_down(DIK_NUMPAD2))
+		if(ks->is_key_down(DIK_NUMPAD3))
 		{
-			sphere_pos.y--;
+			sphere_pos.y -= cam_mov_speed;
+		}
+
+		if(ks->is_key_down(DIK_SPACE))
+		{
+			//wav1->play();
 		}
 
 		back->fill(rect, Create_RGBI(128, 128, 128));
@@ -219,13 +232,8 @@ public:
 		render.set_surface(back);
 		render.set_zbuffer(t3dZbufferPtr(new t3dZbuffer(MyWindow::GetRectWidth(rect), MyWindow::GetRectHeight(rect))));
 
-		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
-		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), l_pos)));
-
 		obj.reset();
 		obj.to_WORLD(o_emp, o_emp);
-		render.set_material(obj.m_material);
-		render.draw(&obj);
 
 		obj3.reset();
 		obj3.to_WORLD(o_emp, o_emp);
@@ -239,6 +247,12 @@ public:
 		obj2.reset();
 		obj2.to_WORLD(sphere_pos, o_emp);
 
+		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
+		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), l_pos)));
+
+		render.set_material(obj.m_material);
+		render.draw(&obj);
+
 		render.set_material(obj3.m_material);
 		render.draw(&obj3);
 
@@ -247,7 +261,11 @@ public:
 
 		back->text_out(str_printf("%.1f fps", fps.get_FPS()), 10, 10);
 
-		back->text_out(str_printf("%.1f, %.1f, %.1f", vres.x, vres.y, vres.z), 10, 50);
+		back->text_out(str_printf("%f tpf", fps.get_TPF()), 10, 50);
+
+		back->text_out(str_printf("%f 1/tpf", 1/fps.get_TPF()), 10, 90);
+
+		back->text_out(str_printf("%.1f, %.1f, %.1f", vres.x, vres.y, vres.z), 10, 130);
 
 		prim->blit(wnd->GetClientRect(), back, rect);
 	}
@@ -268,6 +286,9 @@ protected:
 
 	t3dObject obj2;
 	t3dObject obj3;
+
+	//t3dDSound dsound;
+	//t3dWavPtr wav1;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////

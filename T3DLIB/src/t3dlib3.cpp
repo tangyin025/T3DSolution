@@ -100,12 +100,12 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API bool Create_Wav_From_File(WAVV1 * pwav, char * fname)
+T3DLIB_API bool Create_Wav_From_File(WAVV1 * pwav, const char * fname)
 {
 	HMMIO	hwav = NULL;
 	unsigned char * pbuffer = NULL;
 
-	if(NULL == (hwav = mmioOpenA(fname, NULL, MMIO_READ | MMIO_ALLOCBUF)))
+	if(NULL == (hwav = mmioOpenA((LPSTR)fname, NULL, MMIO_READ | MMIO_ALLOCBUF)))
 		ON_ERROR_GOTO("open wave file failed");
 
 	pwav->parent.fccType = mmioFOURCC('W', 'A', 'V', 'E');

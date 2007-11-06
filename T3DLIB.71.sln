@@ -58,6 +58,9 @@ Global
 		{4FC80B99-699B-418B-B3F4-80F44BF8AE67}.Debug.ActiveCfg = Debug|Win32
 		{4FC80B99-699B-418B-B3F4-80F44BF8AE67}.Release.ActiveCfg = Release|Win32
 	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		T3DLIB.71.vsd = T3DLIB.71.vsd
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
 	GlobalSection(ExtensibilityAddIns) = postSolution

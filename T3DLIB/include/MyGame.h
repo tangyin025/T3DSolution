@@ -37,7 +37,7 @@ protected:
 	t3dClipper(t3dDDraw * ddraw, RECT rect);
 
 public:
-	~t3dClipper();
+	virtual ~t3dClipper();
 
 public:
 	DDCLIPPERV1 m_clipper;
@@ -119,7 +119,7 @@ class T3DLIB_API t3dZbuffer
 public:
 	t3dZbuffer(int width, int height);
 
-	~t3dZbuffer();
+	virtual ~t3dZbuffer();
 
 public:
 	ZBUFFERV1 m_zbuffer;
@@ -136,7 +136,7 @@ class T3DLIB_API t3dCamera
 protected:
 	t3dCamera();
 
-	~t3dCamera();
+	virtual ~t3dCamera();
 
 public:
 	CAM4DV1 m_camera;
@@ -172,7 +172,7 @@ public:
 public:
 	t3dDDraw();
 
-	~t3dDDraw();
+	virtual ~t3dDDraw();
 
 public:
 	void set_coop_level(coop_level_type type);
@@ -215,7 +215,7 @@ protected:
 	t3dMouse(t3dDInput * input);
 
 public:
-	~t3dMouse();
+	virtual ~t3dMouse();
 
 public:
 	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
@@ -235,7 +235,7 @@ class T3DLIB_API t3dKeyState
 public:
 	t3dKeyState();
 
-	~t3dKeyState();
+	virtual ~t3dKeyState();
 
 public:
 	unsigned char is_key_down(const DWORD key_i);
@@ -262,7 +262,7 @@ protected:
 	t3dKey(t3dDInput * input);
 
 public:
-	~t3dKey();
+	virtual ~t3dKey();
 
 public:
 	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
@@ -286,7 +286,7 @@ class T3DLIB_API t3dDInput
 public:
 	t3dDInput();
 
-	~t3dDInput();
+	virtual ~t3dDInput();
 
 public:
 	t3dMousePtr create_mouse(void);
@@ -303,17 +303,58 @@ typedef boost::shared_ptr<t3dDInput> t3dDInputPtr;
 // t3dWav
 // ============================================================================
 
+class T3DLIB_API t3dWav
+{
+	friend class t3dDSound;
+
+protected:
+	t3dWav(t3dDSound * dsound);
+
+public:
+	virtual ~t3dWav();
+
+public:
+	void load(std::string f_name);
+
+	void play(void);
+
+	void stop(void);
+
+	void set_volumn(const long volumn);
+
+protected:
+	DSBUFFERV1 m_dsbuffer;
+	t3dDSound * m_pds;
+};
+
+typedef boost::shared_ptr<t3dWav> t3dWavPtr;
+
 // ============================================================================
 // t3dDSound
 // ============================================================================
 
-// ============================================================================
-// t3dMidi
-// ============================================================================
+class T3DLIB_API t3dDSound
+{
+public:
+	typedef enum
+	{
+		normal = DSSCL_NORMAL,
 
-// ============================================================================
-// t3dDMusic
-// ============================================================================
+	} coop_level_type;
+
+public:
+	t3dDSound();
+
+	virtual ~t3dDSound();
+
+public:
+	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
+
+	t3dWavPtr create_wav(void);
+
+public:
+	DSOUNDV1 m_dsound;
+};
 
 // ============================================================================
 // t3d_INIT( const int BPP )
@@ -325,15 +366,97 @@ void T3DLIB_API t3d_INIT( const int BPP );
 // t3dFPS
 // ============================================================================
 
+template <typename ELEM_T>
+class CircularQueue
+{
+#define INCREMENT_SIZE(iter, incr, size) ((iter + incr) % size)
+#define DECREMENT_SIZE(iter, decr, size) ((iter - decr) % size)
+
+public:
+	CircularQueue(const size_t _max_size)
+	{
+		elems = NULL;
+
+		m_head = 0;
+		m_rear = 0;
+		m_size = 0;
+		max_size = _max_size;
+
+		elems = new ELEM_T[max_size];
+		if(NULL == elems)
+			throw MyException("construct circular queue failed");
+	}
+
+	virtual ~CircularQueue()
+	{
+		delete [] elems;
+	}
+
+public:
+	void push_head(ELEM_T elem)
+	{
+		m_head = INCREMENT_SIZE(m_head, 1, max_size);
+		assert(m_head < max_size);
+
+		if(m_head == m_rear)
+		{
+			m_rear = INCREMENT_SIZE(m_rear, 1, max_size);
+			assert(m_rear < max_size);
+
+			assert(m_size + 1 == max_size);
+		}
+		else
+		{
+			m_size++;
+		}
+
+		elems[m_head] = elem;
+	}
+
+	ELEM_T * head(void)
+	{
+		return & elems[m_head];
+	}
+
+	ELEM_T * rear(void)
+	{
+		return & elems[m_rear];
+	}
+
+	ELEM_T * rear_B(void)
+	{
+		const size_t rear_B = DECREMENT_SIZE(m_rear, 1, max_size);
+		assert(rear_B < max_size);
+		return & elems[rear_B];
+	}
+
+	size_t size(void)
+	{
+		return m_size;
+	}
+
+public:
+	ELEM_T * elems;
+
+	size_t m_head;
+	size_t m_rear;
+	size_t m_size;
+	size_t max_size;
+};
+
 class T3DLIB_API t3dFPS
 {
 protected:
 	static const unsigned int interval_time;
 
+	static const REAL max_fps;
+
+	static const REAL min_fps;
+
 public:
 	t3dFPS();
 
-	~t3dFPS();
+	virtual ~t3dFPS();
 
 public:
 	void init(void);
@@ -342,12 +465,25 @@ public:
 
 	REAL get_FPS(void);
 
+	REAL get_TPF(void);
+
+	REAL get_TPF_SAFE(void);
+
+protected:
+	void update_FPS(void);
+
+	void update_TPF(void);
+
 protected:
 	unsigned int	curr_time;
 	unsigned int	last_time;
 	unsigned int	pass_time;
 	unsigned int	pass_frames;
 	REAL			fps;
+
+	CircularQueue<unsigned int> m_tqueue;
+	REAL			tpf;
+	REAL			tpf_s;
 };
 
 typedef boost::shared_ptr<t3dFPS> t3dFPSPtr;
@@ -364,7 +500,7 @@ public:
 public:
 	t3dMaterial();
 
-	~t3dMaterial();
+	virtual ~t3dMaterial();
 
 public:
 	void load(msModel & model, const std::string material_name = "");
@@ -392,7 +528,7 @@ class T3DLIB_API t3dLight
 protected:
 	t3dLight();
 
-	~t3dLight();
+	virtual ~t3dLight();
 
 public:
 	void light(t3dLightObject * obj, t3dMaterialPtr mat);
@@ -441,7 +577,7 @@ class T3DLIB_API t3dRender
 public:
 	t3dRender();
 
-	~t3dRender();
+	virtual ~t3dRender();
 
 public:
 	void draw(t3dRenderObject * obj);

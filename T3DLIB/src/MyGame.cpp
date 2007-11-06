@@ -402,17 +402,86 @@ t3dKeyPtr t3dDInput::create_key(void)
 // t3dWav
 // ============================================================================
 
+t3dWav::t3dWav(t3dDSound * dsound)
+{
+	INIT_ZERO(m_dsbuffer);
+	m_pds = dsound;
+}
+
+t3dWav::~t3dWav()
+{
+	Destroy_DSBuffer(&m_dsbuffer);
+}
+
+void t3dWav::load(std::string f_name)
+{
+	WAVV1 wav;
+	INIT_ZERO(wav);
+	if(!Create_Wav_From_File(&wav, f_name.c_str()))
+		throw MyException("load wav failed");
+
+	if(!Create_DSBuffer_From_Wav(&m_pds->m_dsound, &m_dsbuffer, &wav))
+	{
+		Destroy_Wav(&wav);
+		throw MyException("create dsbuffer failed");
+	}
+
+	Destroy_Wav(&wav);
+}
+
+void t3dWav::play(void)
+{
+	if(!Play_DSBuffer(&m_dsbuffer))
+		throw MyException("play dsbuffer failed");
+}
+
+void t3dWav::stop(void)
+{
+	if(!Stop_DSBuffer(&m_dsbuffer))
+		throw MyException("stop dsbuffer failed");
+}
+
+void t3dWav::set_volumn(const long volumn)
+{
+	if(!Set_DSBuffer_Volume(&m_dsbuffer, volumn))
+		throw MyException("set dsbuffer volumn failed");
+}
+
 // ============================================================================
 // t3dDSound
 // ============================================================================
 
-// ============================================================================
-// t3dMidi
-// ============================================================================
+t3dDSound::t3dDSound()
+{
+	INIT_ZERO(m_dsound);
+	LPDIRECTSOUND8 lpds = NULL;
+	if(FAILED(gresult = DirectSoundCreate8(NULL, &lpds, NULL)))
+	{
+		Get_DSound_Error(gbuffer, gresult);
+		throw MyException("create dsound failed");
+	}
 
-// ============================================================================
-// t3dDMusic
-// ============================================================================
+	m_dsound.lpdsound = lpds;
+}
+
+t3dDSound::~t3dDSound()
+{
+	Destroy_DSound(&m_dsound);
+}
+
+void t3dDSound::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
+{
+	if(FAILED(gresult = m_dsound.lpdsound->SetCooperativeLevel(wnd->get_hwnd(), type)))
+	{
+		Get_DSound_Error(gbuffer, gresult);
+		throw MyException("set dsound cooperative level failed");
+	}
+}
+
+t3dWavPtr t3dDSound::create_wav(void)
+{
+	return t3dWavPtr(new t3dWav(this));
+}
 
 // ============================================================================
 // t3d_INIT( const int BPP )
@@ -446,9 +515,20 @@ void T3DLIB_API t3d_INIT( const int BPP )
 
 const unsigned int t3dFPS::interval_time = 1000;
 
+const REAL t3dFPS::max_fps = 100;
+
+const REAL t3dFPS::min_fps = 30;
+
 t3dFPS::t3dFPS()
+	: m_tqueue((size_t)min_fps + 1)
 {
-	INIT_ZERO(*this);
+	curr_time = 0;
+	last_time = 0;
+	pass_time = 0;
+	pass_frames = 0;
+	fps = 0;
+	tpf = 0;
+	tpf_s = 0;
 }
 
 t3dFPS::~t3dFPS()
@@ -459,6 +539,8 @@ void t3dFPS::init(void)
 {
 	last_time = ::timeGetTime();
 	pass_frames = 0;
+
+	m_tqueue.push_head(last_time);
 }
 
 void t3dFPS::OnFrame(void)
@@ -469,6 +551,15 @@ void t3dFPS::OnFrame(void)
 	pass_time += curr_time - last_time;
 	last_time = curr_time;
 
+	m_tqueue.push_head(curr_time);
+
+	update_FPS();
+
+	update_TPF();
+}
+
+void t3dFPS::update_FPS(void)
+{
 	if(pass_time >= interval_time)
 	{
 		fps = (REAL)pass_frames / (REAL)pass_time * 1000;
@@ -477,9 +568,29 @@ void t3dFPS::OnFrame(void)
 	}
 }
 
+void t3dFPS::update_TPF(void)
+{
+	if(m_tqueue.head() == m_tqueue.rear_B())
+	{
+		tpf = (*m_tqueue.head() - *m_tqueue.rear()) / (REAL)1000 / (REAL)m_tqueue.size();
+
+		tpf_s = (1 / min_fps < tpf) ? (1 / max_fps) : tpf;
+	}
+}
+
 REAL t3dFPS::get_FPS(void)
 {
 	return fps;
+}
+
+REAL t3dFPS::get_TPF(void)
+{
+	return tpf;
+}
+
+REAL t3dFPS::get_TPF_SAFE(void)
+{
+	return tpf_s;
 }
 
 // ============================================================================
@@ -719,12 +830,18 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 	if(!mesh_name.empty())
 	{
 		if(!Create_Object4D_From_MsModel_By_Name(&m_object, &model, mesh_name.c_str()))
+		{
+			Destroy_MsModel(&model);
 			throw MyException(std::string("cannot read mesh " + mesh_name));
+		}
 	}
 	else
 	{
 		if(0 >= model.nNumMeshes)
+		{
+			Destroy_MsModel(&model);
 			throw MyException(std::string("no mesh in this file " + file_name));
+		}
 
 		//if(!Create_Object4D_From_MsMesh(&m_object, &model.pMeshes[0]))
 		//	throw MyException(std::string("read first mesh from " + file_name + " failed"));
@@ -733,7 +850,10 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 		//	strcpy(m_object.material_name, model.pMaterials[model.pMeshes[0].nMaterialIndex].szName);
 
 		if(!Create_Object4D_From_MsModel_By_Name(&m_object, &model, model.pMeshes[0].szName))
+		{
+			Destroy_MsModel(&model);
 			throw MyException(std::string("read first mesh from " + file_name + " failed"));
+		}
 	}
 
 	if(strlen(m_object.material_name) > 0)
@@ -742,7 +862,15 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 		if(g_materialMap.end() == g_materialMap.find(m_object.material_name))
 		{
 			t3dMaterialPtr material = t3dMaterialPtr(new t3dMaterial);
-			material->load(model, m_object.material_name);
+			try
+			{
+				material->load(model, m_object.material_name);
+			}
+			catch(std::exception & e)
+			{
+				Destroy_MsModel(&model);
+				throw e;
+			}
 			g_materialMap[m_object.material_name] = material;
 
 			assert(strcmp(m_object.material_name, material->m_material.name) == 0);
@@ -766,9 +894,30 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 
 /*
  * return:
+ * make the special cos theta invalid, such as [-1, 1]
+ */
+static inline REAL make_cos_theta_invalid(REAL theta)
+{
+	if(theta > 1)
+	{
+		assert(theta <  (1 + EPSILON_E6));
+		return 1;
+	}
+
+	if(theta < -1)
+	{
+		assert(theta > -(1 + EPSILON_E6));
+		return -1;
+	}
+
+	return theta;
+}
+
+/*
+ * return:
  * if the intersection point vint is inside the triangle
  */
-static bool TRIANGLE_Inside_Test(const VECTOR4D & v0,
+static inline bool TRIANGLE_Inside_Test(const VECTOR4D & v0,
 								 const VECTOR4D & v1,
 								 const VECTOR4D & v2,
 								 const VECTOR4D & vint)
@@ -776,26 +925,35 @@ static bool TRIANGLE_Inside_Test(const VECTOR4D & v0,
 	VECTOR4D dir1, dir2;
 	REAL angle = 0;
 
-	angle += acos(VECTOR3D_CosTheta(
+	// Note: acos(-1.0000001) == -1.#IND000
+
+	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
 					VECTOR3D_Sub(&dir1._3D, &v0._3D, &vint._3D),
-					VECTOR3D_Sub(&dir2._3D, &v1._3D, &vint._3D)));
+					VECTOR3D_Sub(&dir2._3D, &v1._3D, &vint._3D))));
 
-	angle += acos(VECTOR3D_CosTheta(
+	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
 					VECTOR3D_Sub(&dir1._3D, &v1._3D, &vint._3D),
-					VECTOR3D_Sub(&dir2._3D, &v2._3D, &vint._3D)));
+					VECTOR3D_Sub(&dir2._3D, &v2._3D, &vint._3D))));
 
-	angle += acos(VECTOR3D_CosTheta(
+	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
 					VECTOR3D_Sub(&dir1._3D, &v2._3D, &vint._3D),
-					VECTOR3D_Sub(&dir2._3D, &v0._3D, &vint._3D)));
+					VECTOR3D_Sub(&dir2._3D, &v0._3D, &vint._3D))));
 
-	return angle >= (DEG_TO_RAD(360) - DEG_TO_RAD(EPSILON_E3));
+	// DEG_TO_RAD(360)	== 6.2831855
+	// DEG_TO_RAD(1)	== 0.017453294
+	// angle			== 6.2828398 || -1.#IND000
+
+	assert(!_isnan(angle));
+
+	return angle >= (DEG_TO_RAD(360) - DEG_TO_RAD(1)); // !!!
+	//return angle >= 2 * PI * 0.999; // !!!
 }
 
 /*
  * return value:
  * vres - the reaction velocity of this collision test
  */
-static bool TRIANGLE_Collision_Test(VECTOR4D & vres,
+static inline bool TRIANGLE_Collision_Test(VECTOR4D & vres,
 									const VECTOR4D & v0,
 									const VECTOR4D & v1,
 									const VECTOR4D & v2,

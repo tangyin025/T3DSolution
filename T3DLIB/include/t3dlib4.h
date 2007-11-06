@@ -652,9 +652,15 @@ inline REAL VECTOR3D_CosTheta(const VECTOR3D * pv0, const VECTOR3D * pv1)
 
 	//return VECTOR3D_Dot(pv0, pv1) / (VECTOR3D_Length(pv0) * VECTOR3D_Length(pv1));
 
-	return	(pv0->x * pv1->x + pv0->y * pv1->y + pv0->z * pv1->z) /
-				(sqrt(pv0->x * pv0->x + pv0->y * pv0->y + pv0->z * pv0->z) *
-					sqrt(pv1->x * pv1->x + pv1->y * pv1->y + pv1->z * pv1->z));
+	//return	(pv0->x * pv1->x + pv0->y * pv1->y + pv0->z * pv1->z) /
+	//			(sqrt(pv0->x * pv0->x + pv0->y * pv0->y + pv0->z * pv0->z) *
+	//				sqrt(pv1->x * pv1->x + pv1->y * pv1->y + pv1->z * pv1->z));
+
+	REAL a = (pv0->x * pv1->x + pv0->y * pv1->y + pv0->z * pv1->z);
+	REAL b = sqrt(pv0->x * pv0->x + pv0->y * pv0->y + pv0->z * pv0->z);
+	REAL c = sqrt(pv1->x * pv1->x + pv1->y * pv1->y + pv1->z * pv1->z);
+	REAL d = a / (b * c);
+	return d;
 }
 
 inline void VECTOR3D_Print(const VECTOR3D * pv0)
@@ -1887,7 +1893,9 @@ inline REAL line_intersection(const VECTOR4D * l_dir, const VECTOR4D * l_pos, co
 {
 	assert(0 != VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D));
 
-	//return (VECTOR3D_Dot(&p_nor->_3D, &p_pos->_3D) - VECTOR3D_Dot(&l_dir->_3D, &l_pos->_3D)) / VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D);
+	//return (VECTOR3D_Dot(&p_nor->_3D, &p_pos->_3D)
+	//				- VECTOR3D_Dot(&p_nor->_3D, &l_pos->_3D))
+	//							/ VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D);
 
 	REAL a = p_nor->x;
 	REAL b = p_nor->y;

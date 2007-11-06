@@ -292,6 +292,7 @@ protected:
 		switch(message)
 		{
 		case WM_CREATE:
+			SetWindowText("my window");
 			ShowWindow();
 			return 0;
 
