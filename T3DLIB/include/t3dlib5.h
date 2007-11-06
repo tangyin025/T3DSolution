@@ -396,6 +396,8 @@ T3DLIB_API void Draw_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * prc, const
 
 T3DLIB_API bool Clip_Line(const RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1);
 
+T3DLIB_API bool Clip_Line_Zbuffer(const RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1);
+
 T3DLIB_API void Draw_Clipped_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);
 
 T3DLIB_API void Draw_Clipped_Line32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1);

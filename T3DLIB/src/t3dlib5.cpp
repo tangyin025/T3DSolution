@@ -2119,6 +2119,24 @@ T3DLIB_API bool Clip_Line(const RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 
 	return false;
 }
 
+T3DLIB_API bool Clip_Line_Zbuffer(const RENDERCONTEXTV1 * prc, VERTEXV1 * pv0, VERTEXV1 * pv1)
+{
+	VERTEXV1 cv0, cv1;
+	memcpy(&cv0, pv0, sizeof(*pv0));
+	memcpy(&cv1, pv1, sizeof(*pv1));
+
+	if(Clip_Line(prc, &cv0, &cv1))
+	{
+		cv0.z = 1 / LINE2D_INTERSECT(cv0.x, pv1->x, pv0->x, 1 / pv1->z, 1 / pv0->z);
+		cv1.z = 1 / LINE2D_INTERSECT(cv1.x, pv1->x, pv0->x, 1 / pv1->z, 1 / pv0->z);
+
+		memcpy(pv0, &cv0, sizeof(*pv0));
+		memcpy(pv1, &cv1, sizeof(*pv1));
+		return true;
+	}
+	return false;
+}
+
 T3DLIB_API void Draw_Clipped_Line16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1)
 {
 	VERTEXV1 cv0, cv1;
@@ -2145,7 +2163,7 @@ T3DLIB_API void Draw_Clipped_Line_ZbufferRW16(const RENDERCONTEXTV1 * prc, const
 	memcpy(&cv0, pv0, sizeof(*pv0));
 	memcpy(&cv1, pv1, sizeof(*pv1));
 
-	if(Clip_Line(prc, &cv0, &cv1))
+	if(Clip_Line_Zbuffer(prc, &cv0, &cv1))
 		Draw_Line_ZbufferRW16(prc, &cv0, &cv1);
 }
 
@@ -2155,7 +2173,7 @@ T3DLIB_API void Draw_Clipped_Line_ZbufferRW32(const RENDERCONTEXTV1 * prc, const
 	memcpy(&cv0, pv0, sizeof(*pv0));
 	memcpy(&cv1, pv1, sizeof(*pv1));
 
-	if(Clip_Line(prc, &cv0, &cv1))
+	if(Clip_Line_Zbuffer(prc, &cv0, &cv1))
 		Draw_Line_ZbufferRW32(prc, &cv0, &cv1);
 }
 
@@ -2185,7 +2203,7 @@ T3DLIB_API void Draw_Clipped_Line_ZbufferR_SrcAlpha16(const RENDERCONTEXTV1 * pr
 	memcpy(&cv0, pv0, sizeof(*pv0));
 	memcpy(&cv1, pv1, sizeof(*pv1));
 
-	if(Clip_Line(prc, &cv0, &cv1))
+	if(Clip_Line_Zbuffer(prc, &cv0, &cv1))
 		Draw_Line_ZbufferR_SrcAlpha16(prc, &cv0, &cv1);
 }
 
@@ -2195,7 +2213,7 @@ T3DLIB_API void Draw_Clipped_Line_ZbufferR_SrcAlpha32(const RENDERCONTEXTV1 * pr
 	memcpy(&cv0, pv0, sizeof(*pv0));
 	memcpy(&cv1, pv1, sizeof(*pv1));
 
-	if(Clip_Line(prc, &cv0, &cv1))
+	if(Clip_Line_Zbuffer(prc, &cv0, &cv1))
 		Draw_Line_ZbufferR_SrcAlpha32(prc, &cv0, &cv1);
 }
 

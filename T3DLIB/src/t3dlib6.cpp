@@ -86,6 +86,9 @@ static void Clip_Triangle_YPlane(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARR
 	UNREFERENCED_PARAMETER(pnors);
 }
 
+/*
+ * 1 point was out of near clip plane
+ */
 static bool Clip_Triangle_ZPlane_Near1(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
 	size_t i = ptri - &ptris->elems[0];
@@ -182,6 +185,9 @@ static bool Clip_Triangle_ZPlane_Near1(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, N
 	UNREFERENCED_PARAMETER(pnors);
 }
 
+/*
+ * 2 point was out of near clip plane
+ */
 static bool Clip_Triangle_ZPlane_Near2(TRIANGLEV1 * ptri, VER_ARRAYV1 * pvers, NOR_ARRAYV1 * pnors, CAM4DV1 * pcam, TRI_ARRAYV1 * ptris)
 {
 	size_t i = ptri - &ptris->elems[0];

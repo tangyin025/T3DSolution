@@ -85,6 +85,8 @@ public:
 			VECTOR3D_Mul(&obj3.m_object.ver_list.elems[i]._3D, 0.5f);
 		}
 
+		obj3.m_material = g_materialMap[t3dMaterial::default_name];
+
 		wnd->ShowWindow();
 
 		//dsound.set_coop_level(t3dDSound::normal, wnd);
@@ -176,8 +178,8 @@ public:
 
 		if(ks->is_key_down(DIK_DELETE))
 		{
-			c_pos.x -= cos(c_rot.y);
-			c_pos.z += sin(c_rot.y);
+			c_pos.x -= cam_mov_speed * cos(c_rot.y);
+			c_pos.z += cam_mov_speed * sin(c_rot.y);
 		}
 
 		if(ks->is_key_down(DIK_PGDN))

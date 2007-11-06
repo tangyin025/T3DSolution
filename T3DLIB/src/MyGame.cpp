@@ -9,7 +9,7 @@
 // GLOBALS
 // ////////////////////////////////////////////////////////////////////////////
 
-static std::map<std::string, t3dMaterialPtr> g_materialMap;
+std::map<std::string, t3dMaterialPtr> g_materialMap;
 
 // ////////////////////////////////////////////////////////////////////////////
 // IMPLEMENTS
@@ -517,7 +517,7 @@ const unsigned int t3dFPS::interval_time = 1000;
 
 const REAL t3dFPS::max_fps = 100;
 
-const REAL t3dFPS::min_fps = 30;
+const REAL t3dFPS::min_fps = 25;
 
 t3dFPS::t3dFPS()
 	: m_tqueue((size_t)min_fps + 1)
