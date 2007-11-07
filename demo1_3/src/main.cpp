@@ -67,29 +67,34 @@ public:
 
 		t3d_INIT(prim->get_BPP());
 
-		//obj.load("Box1_2.ms3d.txt", "Box01");
+		obj = t3dObjectPtr(new t3dObjectGouraud);
+		obj2 = t3dObjectPtr(new t3dObjectWire);
+		obj3 = t3dObjectPtr(new t3dObjectGouraud);
 
-		obj.load("jack.ms3d.txt");
+		//obj->load("Box1_2.ms3d.txt", "Box01");
 
-		obj2.load("ct.ms3d.txt", "Sphere01");
+		obj->load("jack.ms3d.txt");
 
-		for(size_t i = 0; i < obj2.m_object.ver_list.length; i++)
+		obj2->load("ct.ms3d.txt", "Sphere01");
+
+		for(size_t i = 0; i < obj2->m_object.ver_list.length; i++)
 		{
-			VECTOR3D_Mul(&obj2.m_object.ver_list.elems[i]._3D, 0.2f);
+			VECTOR3D_Mul(&obj2->m_object.ver_list.elems[i]._3D, 0.2f);
 		}
 
-		obj3.load("ct.ms3d.txt", "Box01");
+		obj3->load("ct.ms3d.txt", "Box01");
 
-		for(size_t i = 0; i < obj3.m_object.ver_list.length; i++)
+		for(size_t i = 0; i < obj3->m_object.ver_list.length; i++)
 		{
-			VECTOR3D_Mul(&obj3.m_object.ver_list.elems[i]._3D, 0.5f);
+			VECTOR3D_Mul(&obj3->m_object.ver_list.elems[i]._3D, 0.5f);
 		}
 
-		obj3.m_material = g_materialMap[t3dMaterial::default_name];
+		obj3->m_material = g_materialMap[t3dMaterial::default_name];
 
 		wnd->ShowWindow();
 
-		//dsound.set_coop_level(t3dDSound::normal, wnd);
+		dsound = t3dDSoundPtr(new t3dDSound);
+		dsound->set_coop_level(t3dDSound::normal, wnd);
 		//wav1 = dsound.create_wav();
 		//wav1->load("engines.wav");
 
@@ -234,32 +239,32 @@ public:
 		render.set_surface(back);
 		render.set_zbuffer(t3dZbufferPtr(new t3dZbuffer(MyWindow::GetRectWidth(rect), MyWindow::GetRectHeight(rect))));
 
-		obj.reset();
-		obj.to_WORLD(o_emp, o_emp);
+		obj->reset();
+		obj->to_WORLD(o_emp, o_emp);
 
-		obj3.reset();
-		obj3.to_WORLD(o_emp, o_emp);
+		obj3->reset();
+		obj3->to_WORLD(o_emp, o_emp);
 
 		VECTOR4D vres;
-		if(obj3.collision_test(vres, sphere_pos, 3))
+		if(obj3->collision_test(vres, sphere_pos, 3))
 		{
 			VECTOR4D_Copy(&sphere_pos, &vres);
 		}
 
-		obj2.reset();
-		obj2.to_WORLD(sphere_pos, o_emp);
+		obj2->reset();
+		obj2->to_WORLD(sphere_pos, o_emp);
 
 		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
-		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), l_pos)));
+		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), sphere_pos)));
 
-		render.set_material(obj.m_material);
-		render.draw(&obj);
+		render.set_material(obj->m_material);
+		render.draw(obj.get());
 
-		render.set_material(obj3.m_material);
-		render.draw(&obj3);
+		render.set_material(obj3->m_material);
+		render.draw(obj3.get());
 
-		render.set_material(obj2.m_material);
-		render.draw(&obj2);
+		render.set_material(obj2->m_material);
+		render.draw(obj2.get());
 
 		back->text_out(str_printf("%.1f fps", fps.get_FPS()), 10, 10);
 
@@ -284,12 +289,12 @@ protected:
 	RECT rect;
 
 	t3dFPS fps;
-	t3dObject obj;
+	t3dObjectPtr obj;
 
-	t3dObject obj2;
-	t3dObject obj3;
+	t3dObjectPtr obj2;
+	t3dObjectPtr obj3;
 
-	//t3dDSound dsound;
+	t3dDSoundPtr dsound;
 	//t3dWavPtr wav1;
 };
 

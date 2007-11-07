@@ -203,6 +203,32 @@ typedef boost::shared_ptr<t3dDDraw> t3dDDrawPtr;
 
 class t3dDInput;
 
+class T3DLIB_API t3dMouseState
+{
+public:
+	t3dMouseState();
+
+	virtual ~t3dMouseState();
+
+public:
+	long get_X(void);
+
+	long get_Y(void);
+
+	long get_Z(void);
+
+	unsigned char is_lbutton_down(void);
+
+	unsigned char is_mbutton_down(void);
+
+	unsigned char is_rbutton_down(void);
+
+public:
+	DIMOUSESTATE m_dimousestate;
+};
+
+typedef boost::shared_ptr<t3dMouseState> t3dMouseStatePtr;
+
 class T3DLIB_API t3dMouse
 {
 	friend class t3dDInput;
@@ -224,8 +250,12 @@ public:
 public:
 	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
 
+	t3dMouseStatePtr get_state(void);
+
 protected:
-	DIMOUSEV1 m_mouse;
+	DIMOUSEV1 m_dimouse;
+
+	t3dMouseStatePtr m_state;
 };
 
 typedef boost::shared_ptr<t3dMouse> t3dMousePtr;
@@ -318,7 +348,7 @@ public:
 	virtual ~t3dWav();
 
 public:
-	void load(std::string f_name);
+	void load(const std::string f_name);
 
 	void play(void);
 
@@ -332,6 +362,70 @@ protected:
 };
 
 typedef boost::shared_ptr<t3dWav> t3dWavPtr;
+
+// ============================================================================
+// t3dMidi
+// ============================================================================
+
+class T3DLIB_API t3dMidiPerf
+{
+	friend class t3dMidi;
+
+protected:
+	t3dMidiPerf(t3dDSound * dsound, MyWindowBasePtr wnd);
+
+public:
+	virtual ~t3dMidiPerf();
+
+public:
+	DMPERFORMANCEV1 m_dmperf;
+};
+
+typedef boost::shared_ptr<t3dMidiPerf> t3dMidiPerfPtr;
+
+class T3DLIB_API t3dMidiLoader
+{
+	friend class t3dMidi;
+
+protected:
+	t3dMidiLoader();
+
+public:
+	virtual ~t3dMidiLoader();
+
+public:
+	DMLOADERV1 m_dmloader;
+};
+
+typedef boost::shared_ptr<t3dMidiLoader> t3dMidiLoaderPtr;
+
+class T3DLIB_API t3dMidi
+{
+	friend class t3dDSound;
+
+protected:
+	static t3dMidiPerfPtr m_perf;
+
+	static t3dMidiLoaderPtr m_loader;
+
+protected:
+	t3dMidi(t3dDSound * dsound, MyWindowBasePtr wnd);
+
+public:
+	virtual ~t3dMidi();
+
+public:
+	void load(const std::string f_name);
+
+	void play(void);
+
+	void stop(void);
+
+protected:
+	DMSEGMENTV1 m_dmsegment;
+};
+
+typedef boost::shared_ptr<t3dMidi> t3dMidiPtr;
 
 // ============================================================================
 // t3dDSound
@@ -356,9 +450,13 @@ public:
 
 	t3dWavPtr create_wav(void);
 
+	t3dMidiPtr create_midi(MyWindowBasePtr wnd);
+
 public:
 	DSOUNDV1 m_dsound;
 };
+
+typedef boost::shared_ptr<t3dDSound> t3dDSoundPtr;
 
 // ============================================================================
 // t3d_INIT( const int BPP )
@@ -626,10 +724,10 @@ public:
 protected:
 	virtual void light_SELF(t3dLight * light, t3dMaterialPtr mat);
 
-	virtual void draw_SELF(t3dRender * render);
+	virtual void draw_SELF(t3dRender * render) = 0;
 
 public:
-	void load(const std::string file_name, const std::string mesh_name = "");
+	virtual void load(const std::string file_name, const std::string mesh_name = "");
 
 	virtual bool collision_test(VECTOR4D & vres, const VECTOR4D & vcen, const REAL radius);
 
@@ -641,6 +739,20 @@ public:
 	OBJECT4DV1 m_object;
 
 	t3dMaterialPtr m_material;
+};
+
+typedef boost::shared_ptr<t3dObject> t3dObjectPtr;
+
+class T3DLIB_API t3dObjectWire : public t3dObject
+{
+protected:
+	virtual void draw_SELF(t3dRender * render);
+};
+
+class T3DLIB_API t3dObjectGouraud : public t3dObject
+{
+protected:
+	virtual void draw_SELF(t3dRender * render);
 };
 
 // ////////////////////////////////////////////////////////////////////////////

@@ -264,9 +264,48 @@ t3dClipperPtr t3dDDraw::create_single_clipper(RECT rect)
 // t3dMouse
 // ============================================================================
 
+t3dMouseState::t3dMouseState()
+{
+	INIT_ZERO(m_dimousestate);
+}
+
+t3dMouseState::~t3dMouseState()
+{
+}
+
+long t3dMouseState::get_X(void)
+{
+	return m_dimousestate.lX;
+}
+
+long t3dMouseState::get_Y(void)
+{
+	return m_dimousestate.lY;
+}
+
+long t3dMouseState::get_Z(void)
+{
+	return m_dimousestate.lZ;
+}
+
+unsigned char t3dMouseState::is_lbutton_down(void)
+{
+	return m_dimousestate.rgbButtons[0];
+}
+
+unsigned char t3dMouseState::is_mbutton_down(void)
+{
+	return m_dimousestate.rgbButtons[1];
+}
+
+unsigned char t3dMouseState::is_rbutton_down(void)
+{
+	return m_dimousestate.rgbButtons[2];
+}
+
 t3dMouse::t3dMouse(t3dDInput * input)
 {
-	INIT_ZERO(m_mouse);
+	INIT_ZERO(m_dimouse);
 
 	LPDIRECTINPUTDEVICE8A lpdimouse;
 	if(FAILED(gresult = input->m_dinput.lpdinput->CreateDevice(GUID_SysMouse, &lpdimouse, NULL)))
@@ -281,27 +320,37 @@ t3dMouse::t3dMouse(t3dDInput * input)
 		throw MyException("set dimouse data format failed");
 	}
 
-	m_mouse.lpdimouse = lpdimouse;
+	m_dimouse.lpdimouse = lpdimouse;
+	m_state = t3dMouseStatePtr(new t3dMouseState);
 }
 
 t3dMouse::~t3dMouse()
 {
+	Destroy_DIMouse(&m_dimouse);
 }
 
 void t3dMouse::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_mouse.lpdimouse->SetCooperativeLevel(
+	if(FAILED(gresult = m_dimouse.lpdimouse->SetCooperativeLevel(
 			wnd->get_hwnd(), type)))
 	{
 		Get_DInput_Error(gbuffer, gresult);
 		throw MyException("set dimouse cooperative level failed");
 	}
 
-	if(FAILED(gresult = m_mouse.lpdimouse->Acquire()))
+	if(FAILED(gresult = m_dimouse.lpdimouse->Acquire()))
 	{
 		Get_DInput_Error(gbuffer, gresult);
 		throw MyException("acquire dimouse failed");
 	}
+}
+
+t3dMouseStatePtr t3dMouse::get_state(void)
+{
+	if(!Read_DIMouse_State(&m_dimouse, &m_state->m_dimousestate))
+		throw MyException("read dimouse state failed");
+
+	return m_state;
 }
 
 // ============================================================================
@@ -413,7 +462,7 @@ t3dWav::~t3dWav()
 	Destroy_DSBuffer(&m_dsbuffer);
 }
 
-void t3dWav::load(std::string f_name)
+void t3dWav::load(const std::string f_name)
 {
 	WAVV1 wav;
 	INIT_ZERO(wav);
@@ -445,6 +494,77 @@ void t3dWav::set_volumn(const long volumn)
 {
 	if(!Set_DSBuffer_Volume(&m_dsbuffer, volumn))
 		throw MyException("set dsbuffer volumn failed");
+}
+
+// ============================================================================
+// t3dMidi
+// ============================================================================
+
+t3dMidiPerf::t3dMidiPerf(t3dDSound * dsound, MyWindowBasePtr wnd)
+{
+	INIT_ZERO(m_dmperf);
+	if(!Create_DMPerformance(&dsound->m_dsound, &m_dmperf, wnd->get_hwnd()))
+		throw MyException("create dmperf failed");
+}
+
+t3dMidiPerf::~t3dMidiPerf()
+{
+	Destroy_DMPerformance(&m_dmperf);
+}
+
+t3dMidiLoader::t3dMidiLoader()
+{
+	INIT_ZERO(m_dmloader);
+	if(!Create_DMLoader(&m_dmloader))
+		throw MyException("create dmloader failed");
+}
+
+t3dMidiLoader::~t3dMidiLoader()
+{
+	Destroy_DMLoader(&m_dmloader);
+}
+
+t3dMidi::t3dMidi(t3dDSound * dsound, MyWindowBasePtr wnd)
+{
+	INIT_ZERO(m_dmsegment);
+
+	if(m_perf == NULL)
+	{
+		m_perf = t3dMidiPerfPtr(new t3dMidiPerf(dsound, wnd));
+	}
+
+	if(m_loader == NULL)
+	{
+		m_loader = t3dMidiLoaderPtr(new t3dMidiLoader);
+	}
+}
+
+t3dMidiPerfPtr t3dMidi::m_perf;
+
+t3dMidiLoaderPtr t3dMidi::m_loader;
+
+t3dMidi::~t3dMidi()
+{
+	Destroy_DMSegment(&m_dmsegment);
+}
+
+void t3dMidi::load(const std::string f_name)
+{
+	if(!Create_DMSegment_From_Midi_File(
+			&m_loader->m_dmloader, &m_dmsegment, f_name.c_str(), &m_perf->m_dmperf))
+		throw MyException("load midi segment failed");
+}
+
+void t3dMidi::play(void)
+{
+	if(!Play_DMSegment(&m_perf->m_dmperf, &m_dmsegment))
+		throw MyException("play midi segment failed");
+}
+
+void t3dMidi::stop(void)
+{
+	if(!Stop_DMSegment(&m_perf->m_dmperf, &m_dmsegment))
+		throw MyException("stop midi segment failed");
 }
 
 // ============================================================================
@@ -481,6 +601,11 @@ void t3dDSound::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 t3dWavPtr t3dDSound::create_wav(void)
 {
 	return t3dWavPtr(new t3dWav(this));
+}
+
+t3dMidiPtr t3dDSound::create_midi(MyWindowBasePtr wnd)
+{
+	return t3dMidiPtr(new t3dMidi(this, wnd));
 }
 
 // ============================================================================
@@ -520,7 +645,11 @@ const REAL t3dFPS::max_fps = 100;
 const REAL t3dFPS::min_fps = 25;
 
 t3dFPS::t3dFPS()
-	: m_tqueue((size_t)min_fps + 1)
+#ifdef _DEBUG
+	: m_tqueue(30 + 1)
+#else
+	: m_tqueue(60 + 1)
+#endif
 {
 	curr_time = 0;
 	last_time = 0;
@@ -759,59 +888,6 @@ void t3dObject::light_SELF(t3dLight * light, t3dMaterialPtr mat)
 	Light_Object4D(&m_object, &light->m_light, &mat->m_material);
 }
 
-void t3dObject::draw_SELF(t3dRender * render)
-{
-	assert(NULL != Clip_Object4D);
-	assert(NULL != Clip_Object4D_Gouraud_Texture);
-
-	if(NULL != render->m_mat->m_material.texture.pbuffer)
-	{
-		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
-		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
-		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
-		{
-			l_iter->second->light(this, render->m_mat);
-		}
-
-		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
-		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
-		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
-		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
-
-		SURFACEV1 surf = render->m_surf->lock();
-		render->m_cam->m_camera.psurf = &surf;
-		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
-		{
-			Draw_Object4D_Gouraud_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
-		}
-		render->m_surf->unlock();
-	}
-	else
-	{
-		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
-		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
-		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
-		{
-			l_iter->second->light(this, render->m_mat);
-		}
-
-		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
-		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
-		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
-		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
-
-		SURFACEV1 surf = render->m_surf->lock();
-		render->m_cam->m_camera.psurf = &surf;
-		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
-		{
-			Draw_Object4D_Wire_ZBufferRW(&m_object, &render->m_cam->m_camera);
-		}
-		render->m_surf->unlock();
-	}
-}
-
 void t3dObject::load(const std::string file_name, const std::string mesh_name /*= ""*/)
 {
 	msModel model;
@@ -1048,4 +1124,95 @@ void t3dObject::reset(void)
 void t3dObject::to_WORLD(VECTOR4D & pos, VECTOR4D & rot)
 {
 	Model_To_World_Object4D(&m_object, &pos, &rot, TRANSFORM_MODE_LOCAL_TO_TRANS);
+}
+
+void t3dObjectWire::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		t3dLightAmbient light(Create_RGBI(255, 255, 255));
+		light.light(this, render->m_mat);
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Wire_ZBufferRW(&m_object, &render->m_cam->m_camera);
+		}
+		render->m_surf->unlock();
+	}
+}
+
+void t3dObjectGouraud::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	if(NULL != render->m_mat->m_material.texture.pbuffer)
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, render->m_mat);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Gouraud_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+		}
+		render->m_surf->unlock();
+	}
+	else
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, render->m_mat);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Gouraud_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+		}
+		render->m_surf->unlock();
+	}
 }
