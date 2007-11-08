@@ -729,7 +729,7 @@ protected:
 public:
 	virtual void load(const std::string file_name, const std::string mesh_name = "");
 
-	virtual bool collision_test(VECTOR4D & vres, const VECTOR4D & vcen, const REAL radius);
+	virtual bool collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, const REAL sphere_radius);
 
 	void reset(void);
 

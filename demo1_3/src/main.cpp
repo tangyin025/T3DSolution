@@ -69,7 +69,7 @@ public:
 
 		obj = t3dObjectPtr(new t3dObjectGouraud);
 		obj2 = t3dObjectPtr(new t3dObjectWire);
-		obj3 = t3dObjectPtr(new t3dObjectGouraud);
+		obj3 = t3dObjectPtr(new t3dObjectWire);
 
 		//obj->load("Box1_2.ms3d.txt", "Box01");
 
@@ -250,6 +250,49 @@ public:
 		{
 			VECTOR4D_Copy(&sphere_pos, &vres);
 		}
+
+#ifdef _DEBUG
+		//Sleep(30);
+
+		for(size_t i = 0; i < obj3->m_object.tri_list.length; i++)
+		{
+			TRIANGLEV1 & tri = obj3->m_object.tri_list.elems[i];
+			VERTEXV1T & v0 = obj3->m_object.ver_list_t.elems[tri.v0_i];
+			VERTEXV1T & v1 = obj3->m_object.ver_list_t.elems[tri.v1_i];
+			VERTEXV1T & v2 = obj3->m_object.ver_list_t.elems[tri.v2_i];
+			VECTOR4D & nor = obj3->m_object.nor_list_t.elems[tri.n0_i];
+
+			if(nor.x < -0.1 && sphere_pos.x > max(max(v0.x, v1.x), v2.x))
+			{
+				assert(false);
+			}
+
+			if(nor.y < -0.1 && sphere_pos.y > max(max(v0.y, v1.y), v2.y))
+			{
+				assert(false);
+			}
+
+			if(nor.z < -0.1 && sphere_pos.z > max(max(v0.z, v1.z), v2.z))
+			{
+				assert(false);
+			}
+
+			if(nor.x >  0.1 && sphere_pos.x < min(min(v0.x, v1.x), v2.x))
+			{
+				assert(false);
+			}
+
+			if(nor.y >  0.1 && sphere_pos.y < min(min(v0.y, v1.y), v2.y))
+			{
+				assert(false);
+			}
+
+			if(nor.z >  0.1 && sphere_pos.z < min(min(v0.z, v1.z), v2.z))
+			{
+				assert(false);
+			}
+		}
+#endif
 
 		obj2->reset();
 		obj2->to_WORLD(sphere_pos, o_emp);

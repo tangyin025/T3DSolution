@@ -1033,9 +1033,11 @@ static inline bool TRIANGLE_Collision_Test(VECTOR4D & vres,
 									const VECTOR4D & v0,
 									const VECTOR4D & v1,
 									const VECTOR4D & v2,
-									const VECTOR4D & vcen,
-									const REAL radius)
+									const VECTOR4D & sphere_center,
+									const REAL sphere_radius)
 {
+	assert(sphere_radius > 0);
+
 	VECTOR4D dir1, dir2;
 	VECTOR4D p_nor;
 	VECTOR3D_Cross(&p_nor._3D,
@@ -1045,22 +1047,28 @@ static inline bool TRIANGLE_Collision_Test(VECTOR4D & vres,
 	VECTOR4D l_dir;
 	VECTOR3D_Mul(&l_dir._3D, &p_nor._3D, -1);
 
-	REAL t = line_intersection(&l_dir, &vcen, &p_nor, &v0);
+	REAL t = line_intersection(&l_dir, &sphere_center, &p_nor, &v0);
 
 	VECTOR4D l_inc;
 	REAL distance = VECTOR3D_Length(VECTOR3D_Mul(&l_inc._3D, &l_dir._3D, t));
 
-	if(t > 0 && distance < radius)
+	/*
+	 * if t < 0, then the sphere center was at this planes back, in some case, fix this velocity
+	 * was no meanfull, because if the raduis is 3, the speed is 4, the sphere center move back
+	 * of one triangle plane, but, if the speed have 2 axis move, both is 4, the speed actually
+	 * is sqrt( 4 * 4 + 4 * 4 ), it will move both triangle back, this collision test is non-effect
+	 */
+	if(t > 0 && distance < sphere_radius)
 	{
 		VECTOR4D l_int;
-		VECTOR3D_Add(&l_int._3D, &vcen._3D, &l_inc._3D);
+		VECTOR3D_Add(&l_int._3D, &sphere_center._3D, &l_inc._3D);
 
 		if(TRIANGLE_Inside_Test(v0, v1, v2, l_int))
 		{
 			/*
-			 * vres = l_dir * ( t - radius / |l_dir| )
+			 * vres = l_dir * ( t - sphere_radius / |l_dir| )
 			 */
-			VECTOR3D_Mul(&vres._3D, &l_dir._3D, t - radius / VECTOR3D_Length(&l_dir._3D));
+			VECTOR3D_Mul(&vres._3D, &l_dir._3D, t - sphere_radius / VECTOR3D_Length(&l_dir._3D));
 
 			return true;
 		}
@@ -1073,10 +1081,10 @@ static inline bool TRIANGLE_Collision_Test(VECTOR4D & vres,
  * return value:
  * vres - the new center of sphere, witch is recommanded
  */
-bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & vcen, const REAL radius)
+bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, const REAL sphere_radius)
 {
-	assert(&vres != &vcen);
-	VECTOR4D_Copy(&vres, &vcen);
+	assert(&vres != &sphere_center);
+	VECTOR4D_Copy(&vres, &sphere_center);
 
 	size_t i;
 	bool bres = false;
@@ -1091,22 +1099,22 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & vcen, const REA
 		VERTEXV1T & v1 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v1_i];
 		VERTEXV1T & v2 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v2_i];
 
-		if(	max(max(v0.x, v1.x), v2.x) < vres.x - radius
-			|| max(max(v0.y, v1.y), v2.y) < vres.y - radius
-			|| max(max(v0.z, v1.z), v2.z) < vres.z - radius)
+		if(	max(max(v0.x, v1.x), v2.x) < vres.x - sphere_radius
+			|| max(max(v0.y, v1.y), v2.y) < vres.y - sphere_radius
+			|| max(max(v0.z, v1.z), v2.z) < vres.z - sphere_radius)
 		{
 			continue;
 		}
 
-		if(	min(min(v0.x, v1.x), v2.x) > vres.x + radius
-			|| min(min(v0.y, v1.y), v2.y) > vres.y + radius
-			|| min(min(v0.z, v1.z), v2.z) > vres.z + radius)
+		if(	min(min(v0.x, v1.x), v2.x) > vres.x + sphere_radius
+			|| min(min(v0.y, v1.y), v2.y) > vres.y + sphere_radius
+			|| min(min(v0.z, v1.z), v2.z) > vres.z + sphere_radius)
 		{
 			continue;
 		}
 
 		VECTOR4D vint;
-		if(TRIANGLE_Collision_Test(vint, v0._4D, v1._4D, v2._4D, vres, radius))
+		if(TRIANGLE_Collision_Test(vint, v0._4D, v1._4D, v2._4D, vres, sphere_radius))
 		{
 			bres = true;
 			VECTOR3D_Add(&vres._3D, &vint._3D);
