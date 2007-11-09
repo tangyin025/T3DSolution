@@ -1164,6 +1164,67 @@ void t3dObjectWire::draw_SELF(t3dRender * render)
 	}
 }
 
+void t3dObjectFlat::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	if(NULL != render->m_mat->m_material.texture.pbuffer)
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, render->m_mat);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+		}
+		render->m_surf->unlock();
+	}
+	else
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, render->m_mat);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_ZBufferRW(&m_object, &render->m_cam->m_camera);
+		}
+		render->m_surf->unlock();
+	}
+}
+
 void t3dObjectGouraud::draw_SELF(t3dRender * render)
 {
 	assert(NULL != Clip_Object4D);
@@ -1219,7 +1280,7 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		render->m_cam->m_camera.psurf = &surf;
 		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
 		{
-			Draw_Object4D_Gouraud_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+			Draw_Object4D_Gouraud_ZBufferRW(&m_object, &render->m_cam->m_camera);
 		}
 		render->m_surf->unlock();
 	}

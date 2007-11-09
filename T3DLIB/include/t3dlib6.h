@@ -242,7 +242,9 @@ extern T3DLIB_API bool (* Clip_Object4D_Gouraud_Texture)(OBJECT4DV1 * pobj, CAM4
 extern T3DLIB_API void (* Draw_Object4D_Wire)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 extern T3DLIB_API void (* Draw_Object4D_Wire_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 extern T3DLIB_API void (* Draw_Object4D)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
-extern T3DLIB_API void (* Draw_Object4D_Gouraud_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+extern T3DLIB_API void (* Draw_Object4D_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+extern T3DLIB_API void (* Draw_Object4D_Texture_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+extern T3DLIB_API void (* Draw_Object4D_Gouraud_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 extern T3DLIB_API void (* Draw_Object4D_Gouraud_Texture_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
 
 T3DLIB_API bool Init_T3dlib6(int bpp);
@@ -335,9 +337,17 @@ T3DLIB_API void Draw_Object4D16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Draw_Object4D32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
-T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+T3DLIB_API void Draw_Object4D_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
-T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+T3DLIB_API void Draw_Object4D_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+
+T3DLIB_API void Draw_Object4D_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+
+T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
+
+T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam);
 
 T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
 
