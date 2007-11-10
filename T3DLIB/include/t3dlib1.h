@@ -359,13 +359,13 @@ inline void Mem_Set_Quad(void * dest, unsigned int value, long count)
 #define FIXP28_DMASK				(0x0FFFFFFF)
 #define FIXP28_WMASK				(0xF0000000)
 
-typedef short FIXP12_TYP;
+typedef short FIXP12_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
 typedef FIXP12_TYP FIXP12, * FIXP12_PTR;
 
-typedef int FIXP16_TYP;
+typedef int FIXP16_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
 typedef FIXP16_TYP FIXP16, * FIXP16_PTR;
 
-typedef int FIXP28_TYP;
+typedef int FIXP28_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
 typedef FIXP28_TYP FIXP28, * FIXP28_PTR;
 
 #ifdef T3DLIB_EXPORTS

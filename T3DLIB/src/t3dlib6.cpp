@@ -1643,6 +1643,9 @@ T3DLIB_API void Undate_Object4D_Absolute_UV(OBJECT4DV1 * pobj, msModel * pmodel,
 
 			for(j = 0; j < (int)pobj->ver_list.length; j++)
 			{
+				assert(pmesh->pVertices[j].u >= 0 && pmesh->pVertices[j].u <= 1);
+				assert(pmesh->pVertices[j].v >= 0 && pmesh->pVertices[j].v <= 1);
+
 				VERTEXV1T * pver = &pobj->ver_list.elems[j];
 
 				pver->u = (FIXP16)(pmesh->pVertices[j].u * FIXP16_MAG * (pmaterial->texture.width - 1));

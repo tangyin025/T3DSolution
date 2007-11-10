@@ -69,34 +69,41 @@ public:
 
 		obj = t3dObjectPtr(new t3dObjectGouraud);
 		obj2 = t3dObjectPtr(new t3dObjectWire);
-		obj3 = t3dObjectPtr(new t3dObjectWire);
+		obj3 = t3dObjectPtr(new t3dObjectGouraud);
 
 		//obj->load("Box1_2.ms3d.txt", "Box01");
 
 		obj->load("jack.ms3d.txt");
 
-		obj2->load("ct.ms3d.txt", "Sphere01");
+		//obj2->load("ct.ms3d.txt", "Sphere01");
+		//obj3->load("ct.ms3d.txt", "Box01");
+
+		obj2->load("ct2.ms3d.txt", "Sphere01");
+		obj3->load("ct.ms3d.txt", "Box01");
+
+		//obj3->m_material = g_materialMap[t3dMaterial::default_name];
 
 		for(size_t i = 0; i < obj2->m_object.ver_list.length; i++)
 		{
 			VECTOR3D_Mul(&obj2->m_object.ver_list.elems[i]._3D, 0.2f);
 		}
 
-		obj3->load("ct.ms3d.txt", "Box01");
-
 		for(size_t i = 0; i < obj3->m_object.ver_list.length; i++)
 		{
 			VECTOR3D_Mul(&obj3->m_object.ver_list.elems[i]._3D, 0.5f);
 		}
 
-		obj3->m_material = g_materialMap[t3dMaterial::default_name];
-
 		wnd->ShowWindow();
 
 		dsound = t3dDSoundPtr(new t3dDSound);
 		dsound->set_coop_level(t3dDSound::normal, wnd);
+
 		//wav1 = dsound.create_wav();
 		//wav1->load("engines.wav");
+
+		//midi1 = dsound->create_midi(wnd);
+		//midi1->load("screen.mid");
+		//midi1->play();
 
 		fps.init();
 
@@ -254,44 +261,44 @@ public:
 #ifdef _DEBUG
 		//Sleep(30);
 
-		for(size_t i = 0; i < obj3->m_object.tri_list.length; i++)
-		{
-			TRIANGLEV1 & tri = obj3->m_object.tri_list.elems[i];
-			VERTEXV1T & v0 = obj3->m_object.ver_list_t.elems[tri.v0_i];
-			VERTEXV1T & v1 = obj3->m_object.ver_list_t.elems[tri.v1_i];
-			VERTEXV1T & v2 = obj3->m_object.ver_list_t.elems[tri.v2_i];
-			VECTOR4D & nor = obj3->m_object.nor_list_t.elems[tri.n0_i];
+		//for(size_t i = 0; i < obj3->m_object.tri_list.length; i++)
+		//{
+		//	TRIANGLEV1 & tri = obj3->m_object.tri_list.elems[i];
+		//	VERTEXV1T & v0 = obj3->m_object.ver_list_t.elems[tri.v0_i];
+		//	VERTEXV1T & v1 = obj3->m_object.ver_list_t.elems[tri.v1_i];
+		//	VERTEXV1T & v2 = obj3->m_object.ver_list_t.elems[tri.v2_i];
+		//	VECTOR4D & nor = obj3->m_object.nor_list_t.elems[tri.n0_i];
 
-			if(nor.x < -0.1 && sphere_pos.x > max(max(v0.x, v1.x), v2.x))
-			{
-				assert(false);
-			}
+		//	if(nor.x < -0.1 && sphere_pos.x > max(max(v0.x, v1.x), v2.x))
+		//	{
+		//		assert(false);
+		//	}
 
-			if(nor.y < -0.1 && sphere_pos.y > max(max(v0.y, v1.y), v2.y))
-			{
-				assert(false);
-			}
+		//	if(nor.y < -0.1 && sphere_pos.y > max(max(v0.y, v1.y), v2.y))
+		//	{
+		//		assert(false);
+		//	}
 
-			if(nor.z < -0.1 && sphere_pos.z > max(max(v0.z, v1.z), v2.z))
-			{
-				assert(false);
-			}
+		//	if(nor.z < -0.1 && sphere_pos.z > max(max(v0.z, v1.z), v2.z))
+		//	{
+		//		assert(false);
+		//	}
 
-			if(nor.x >  0.1 && sphere_pos.x < min(min(v0.x, v1.x), v2.x))
-			{
-				assert(false);
-			}
+		//	if(nor.x >  0.1 && sphere_pos.x < min(min(v0.x, v1.x), v2.x))
+		//	{
+		//		assert(false);
+		//	}
 
-			if(nor.y >  0.1 && sphere_pos.y < min(min(v0.y, v1.y), v2.y))
-			{
-				assert(false);
-			}
+		//	if(nor.y >  0.1 && sphere_pos.y < min(min(v0.y, v1.y), v2.y))
+		//	{
+		//		assert(false);
+		//	}
 
-			if(nor.z >  0.1 && sphere_pos.z < min(min(v0.z, v1.z), v2.z))
-			{
-				assert(false);
-			}
-		}
+		//	if(nor.z >  0.1 && sphere_pos.z < min(min(v0.z, v1.z), v2.z))
+		//	{
+		//		assert(false);
+		//	}
+		//}
 #endif
 
 		obj2->reset();
@@ -339,6 +346,7 @@ protected:
 
 	t3dDSoundPtr dsound;
 	//t3dWavPtr wav1;
+	//t3dMidiPtr midi1;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////
