@@ -338,35 +338,45 @@ inline void Mem_Set_Quad(void * dest, unsigned int value, long count)
 	} // __asm
 }
 
-#define FIXP12_BYTES_SHIFT			(1)
-#define FIXP12_BYTES				(1 << FIXP12_BYTES_SHIFT)
-#define FIXP12_SHIFT				(12)
-#define FIXP12_MAG					(0x1000)
-#define FIXP12_DMASK				(0x0FFF)
-#define FIXP12_WMASK				(0xF000)
-
-#define FIXP16_BYTES_SHIFT			(2)
-#define FIXP16_BYTES				(1 << FIXP16_BYTES_SHIFT)
-#define FIXP16_SHIFT				(16)
-#define FIXP16_MAG					(0x00010000)
-#define FIXP16_DMASK				(0x0000FFFF)
-#define FIXP16_WMASK				(0xFFFF0000)
-
-#define FIXP28_BYTES_SHIFT			(2)
-#define FIXP28_BYTES				(1 << FIXP28_BYTES_SHIFT)
-#define FIXP28_SHIFT				(28)
-#define FIXP28_MAG					(0x10000000)
-#define FIXP28_DMASK				(0x0FFFFFFF)
-#define FIXP28_WMASK				(0xF0000000)
-
 typedef short FIXP12_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
 typedef FIXP12_TYP FIXP12, * FIXP12_PTR;
 
 typedef int FIXP16_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
 typedef FIXP16_TYP FIXP16, * FIXP16_PTR;
 
+typedef int FIXP22_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
+typedef FIXP22_TYP FIXP22, * FIXP22_PTR;
+
 typedef int FIXP28_TYP; // note, this will be used at x_inc, the increase may be negative, so dont use unsigned
 typedef FIXP28_TYP FIXP28, * FIXP28_PTR;
+
+#define FIXP12_BYTES				((signed)sizeof(FIXP12))
+#define FIXP12_BYTES_SHIFT			(FIXP12_BYTES / 2)
+#define FIXP12_SHIFT				(12)
+#define FIXP12_MAG					(0x1000)
+#define FIXP12_DMASK				(0x0FFF)
+#define FIXP12_WMASK				(0xF000)
+
+#define FIXP16_BYTES				((signed)sizeof(FIXP16))
+#define FIXP16_BYTES_SHIFT			(FIXP16_BYTES / 2)
+#define FIXP16_SHIFT				(16)
+#define FIXP16_MAG					(0x00010000)
+#define FIXP16_DMASK				(0x0000FFFF)
+#define FIXP16_WMASK				(0xFFFF0000)
+
+#define FIXP22_BYTES				((signed)sizeof(FIXP22))
+#define FIXP22_BYTES_SHIFT			(FIXP22_BYTES / 2)
+#define FIXP22_SHIFT				(22)
+#define FIXP22_MAG					(0x00400000)
+#define FIXP22_DMASK				(0x003FFFFF)
+#define FIXP22_WMASK				(0xFFC00000)
+
+#define FIXP28_BYTES				((signed)sizeof(FIXP28))
+#define FIXP28_BYTES_SHIFT			(FIXP28_BYTES / 2)
+#define FIXP28_SHIFT				(28)
+#define FIXP28_MAG					(0x10000000)
+#define FIXP28_DMASK				(0x0FFFFFFF)
+#define FIXP28_WMASK				(0xF0000000)
 
 #ifdef T3DLIB_EXPORTS
 #if T3DLIB_FIXP12_ZBUFFER

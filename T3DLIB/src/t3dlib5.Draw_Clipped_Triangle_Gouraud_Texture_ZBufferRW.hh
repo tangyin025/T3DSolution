@@ -1,6 +1,14 @@
 
-#ifndef _DEBUG
-#pragma warning(disable : 4701)
+#if ( !defined __draw_16 && !defined __draw_32 )
+#error must define one between __draw_16 and __draw_32
+#endif
+
+#if (  defined __draw_16 &&  defined __draw_32 )
+#error must define one between __draw_16 and __draw_32
+#endif
+
+#if (defined __draw_UV_PerspectiveLP) && (!defined __draw_UV)
+#error __draw_UV_PerspectiveLP must be used with __draw_UV
 #endif
 
 #ifndef __draw_func
@@ -18,6 +26,12 @@
 	const VERTEXV1T * ptmp;
 	SCANCONTEXT sc;
 
+#ifndef _DEBUG
+#pragma warning(disable : 4701)
+#else
+	INIT_ZERO(sc);
+#endif
+
 #ifndef __draw_GR
 	sc.lc.x = pv0->c_diff;
 #endif
@@ -34,6 +48,27 @@
 	int y1 = (int)pv1->y;
 	int y2 = (int)pv2->y;
 
+#ifdef __draw_UV_PerspectiveLP
+	FIXP22 u0 = (FIXP22)(((float)pv0->u / pv0->z) * (FIXP22_MAG / FIXP16_MAG));
+	FIXP22 u1 = (FIXP22)(((float)pv1->u / pv1->z) * (FIXP22_MAG / FIXP16_MAG));
+	FIXP22 u2 = (FIXP22)(((float)pv2->u / pv2->z) * (FIXP22_MAG / FIXP16_MAG));
+
+	FIXP22 v0 = (FIXP22)(((float)pv0->v / pv0->z) * (FIXP22_MAG / FIXP16_MAG));
+	FIXP22 v1 = (FIXP22)(((float)pv1->v / pv1->z) * (FIXP22_MAG / FIXP16_MAG));
+	FIXP22 v2 = (FIXP22)(((float)pv2->v / pv2->z) * (FIXP22_MAG / FIXP16_MAG));
+
+	#ifdef _DEBUG
+	{
+		//assert(u0 >= 0 && u0 < FIXP22_MAG);
+		//assert(u1 >= 0 && u1 < FIXP22_MAG);
+		//assert(u2 >= 0 && u2 < FIXP22_MAG);
+		//assert(v0 >= 0 && v0 < FIXP22_MAG);
+		//assert(v1 >= 0 && v1 < FIXP22_MAG);
+		//assert(v2 >= 0 && v2 < FIXP22_MAG);
+	}
+	#endif
+#endif
+
 	if(pv1->x < x3)
 	{
 		sc.lx = pv0->x;
@@ -41,10 +76,17 @@
 		sc.lx_inc, sc.rx_inc;
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+		sc.lu = u0;
+		sc.lv = v0;
+		sc.ru = u0;
+		sc.rv = v0;
+	#else
 		sc.lu = pv0->u;
 		sc.lv = pv0->v;
 		sc.ru = pv0->u;
 		sc.rv = pv0->v;
+	#endif
 		sc.lu_inc, sc.lv_inc;
 		sc.ru_inc, sc.rv_inc;
 #endif
@@ -52,6 +94,16 @@
 #ifdef __draw_GR
 		sc.lc, sc.lc_inc;
 		sc.rc, sc.rc_inc;
+	#ifdef __draw_16
+		VECTOR4DI_InitXYZW( &sc.lc,
+						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+		VECTOR4DI_InitXYZW( &sc.rc,
+						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+	#else
 		VECTOR4DI_InitXYZW( &sc.lc,
 						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
@@ -60,6 +112,7 @@
 						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -73,15 +126,27 @@
 			sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			sc.lu_inc = (u1 - u0) / (y1 - y0);
+			sc.lv_inc = (v1 - v0) / (y1 - y0);
+	#else
 			sc.lu_inc = (pv1->u - pv0->u) / (y1 - y0);
 			sc.lv_inc = (pv1->v - pv0->v) / (y1 - y0);
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
+							((_16BIT_GETR(pv1->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETG(pv1->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETB(pv1->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
+	#else
 			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
 							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -94,15 +159,27 @@
 			sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			sc.ru_inc = (u2 - u0) / (y2 - y0);
+			sc.rv_inc = (v2 - v0) / (y2 - y0);
+	#else
 			sc.ru_inc = (pv2->u - pv0->u) / (y2 - y0);
 			sc.rv_inc = (pv2->v - pv0->v) / (y2 - y0);
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
+							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
+	#else
 			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
 							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -168,15 +245,27 @@
 		sc.lx = pv1->x; // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+		sc.lu = u1;
+		sc.lv = v1;
+	#else
 		sc.lu = pv1->u;
 		sc.lv = pv1->v;
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+		VECTOR4DI_InitXYZW( &sc.lc,
+						_16BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
+	#else
 		VECTOR4DI_InitXYZW( &sc.lc,
 						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -188,15 +277,27 @@
 			sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			sc.lu_inc = (u2 - u1) / (y2 - y1);
+			sc.lv_inc = (v2 - v1) / (y2 - y1);
+	#else
 			sc.lu_inc = (pv2->u - pv1->u) / (y2 - y1);
 			sc.lv_inc = (pv2->v - pv1->v) / (y2 - y1);
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
+							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
+	#else
 			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
 							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -265,10 +366,17 @@
 		sc.lx_inc, sc.rx_inc;
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+		sc.lu = u0;
+		sc.lv = v0;
+		sc.ru = u0;
+		sc.rv = v0;
+	#else
 		sc.lu = pv0->u;
 		sc.lv = pv0->v;
 		sc.ru = pv0->u;
 		sc.rv = pv0->v;
+	#endif
 		sc.lu_inc, sc.lv_inc;
 		sc.ru_inc, sc.rv_inc;
 #endif
@@ -276,6 +384,16 @@
 #ifdef __draw_GR
 		sc.lc, sc.lc_inc;
 		sc.rc, sc.rc_inc;
+	#ifdef __draw_16
+		VECTOR4DI_InitXYZW( &sc.lc,
+						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+		VECTOR4DI_InitXYZW( &sc.rc,
+						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+	#else
 		VECTOR4DI_InitXYZW( &sc.lc,
 						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
@@ -284,6 +402,7 @@
 						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -297,15 +416,27 @@
 			sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			sc.lu_inc = (u2 - u0) / (y2 - y0);
+			sc.lv_inc = (v2 - v0) / (y2 - y0);
+	#else
 			sc.lu_inc = (pv2->u - pv0->u) / (y2 - y0);
 			sc.lv_inc = (pv2->v - pv0->v) / (y2 - y0);
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
+							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
+	#else
 			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
 							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -318,15 +449,27 @@
 			sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			sc.ru_inc = (u1 - u0) / (y1 - y0);
+			sc.rv_inc = (v1 - v0) / (y1 - y0);
+	#else
 			sc.ru_inc = (pv1->u - pv0->u) / (y1 - y0);
 			sc.rv_inc = (pv1->v - pv0->v) / (y1 - y0);
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
+							((_16BIT_GETR(pv1->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETG(pv1->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETB(pv1->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
+	#else
 			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
 							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -392,15 +535,27 @@
 		sc.rx = pv1->x; // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+		sc.ru = u1;
+		sc.rv = v1;
+	#else
 		sc.ru = pv1->u;
 		sc.rv = pv1->v;
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+		VECTOR4DI_InitXYZW( &sc.rc,
+						_16BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
+						_16BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
+	#else
 		VECTOR4DI_InitXYZW( &sc.rc,
 						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
 						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -412,15 +567,27 @@
 			sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			sc.ru_inc = (u2 - u1) / (y2 - y1);
+			sc.rv_inc = (v2 - v1) / (y2 - y1);
+	#else
 			sc.ru_inc = (pv2->u - pv1->u) / (y2 - y1);
 			sc.rv_inc = (pv2->v - pv1->v) / (y2 - y1);
+	#endif
 #endif
 
 #ifdef __draw_GR
+	#ifdef __draw_16
+			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
+							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
+							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
+	#else
 			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
 							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
 							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
+	#endif
 #endif
 
 #ifdef __draw_ZB
@@ -485,8 +652,11 @@
 }
 
 #undef __draw_UV
+#undef __draw_UV_PerspectiveLP
 #undef __draw_GR
 #undef __draw_ZB
 #undef __draw_CLIP
+#undef __draw_16
+#undef __draw_32
 #undef __draw_func
 #undef __draw_func_clipped

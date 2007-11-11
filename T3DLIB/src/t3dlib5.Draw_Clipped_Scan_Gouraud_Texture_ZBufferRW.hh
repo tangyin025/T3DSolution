@@ -7,6 +7,10 @@
 #error must define one between __draw_16 and __draw_32
 #endif
 
+#if (defined __draw_UV_PerspectiveLP) && (!defined __draw_UV)
+#error __draw_UV_PerspectiveLP must be used with __draw_UV
+#endif
+
 //static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
 	int y;
@@ -17,6 +21,43 @@
 		int dx = (int)sc.rx - (int)sc.lx;
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+		//FIXP16 lu = ((sc.lu << (FIXP28_SHIFT - FIXP22_SHIFT)) / (sc.lz >> (FIXP28_SHIFT - FIXP22_SHIFT))) << (FIXP16_SHIFT - ((FIXP22_SHIFT + (FIXP28_SHIFT - FIXP22_SHIFT)) - (FIXP28_SHIFT - (FIXP28_SHIFT - FIXP22_SHIFT)))); // no body can understand !!!
+
+		/*
+		 * Note: this UV PerspectiveLP algorithm have an overflow bug, because of the sc.lu is FIXP22
+		 * type when UV PerspectiveLP mode, so sc.lu << 6 will restrict the orignal uv must between
+		 * [0, 127), if the uv is 127, such as sc.lu = 33555212, then sc.lu << 6 will be negative,
+		 * lead the lu to be -127, bug use float mode will not case any bug, except slow performance
+		 */
+
+		//int lu = ((sc.lu << 6) / (sc.lz >> 6)) << 10;
+		//int ru = ((sc.ru << 6) / (sc.rz >> 6)) << 10;
+		//int lv = ((sc.lv << 6) / (sc.lz >> 6)) << 10;
+		//int rv = ((sc.rv << 6) / (sc.rz >> 6)) << 10;
+
+		int lu = ((sc.lu << 0) / (sc.lz >> 12)) << 10;
+		int ru = ((sc.ru << 0) / (sc.rz >> 12)) << 10;
+		int lv = ((sc.lv << 0) / (sc.lz >> 12)) << 10;
+		int rv = ((sc.rv << 0) / (sc.rz >> 12)) << 10;
+
+#ifdef _DEBUG
+		{
+			if(y == 510)
+			{
+				int j = 10;
+				j++;
+			}
+
+			int itmp;
+			assert((itmp = lu >> FIXP16_SHIFT) >= 0 && (itmp = lu >> FIXP16_SHIFT) <= prc->t_width - 1);
+			assert((itmp = ru >> FIXP16_SHIFT) >= 0 && (itmp = ru >> FIXP16_SHIFT) <= prc->t_width - 1);
+			assert((itmp = lv >> FIXP16_SHIFT) >= 0 && (itmp = lv >> FIXP16_SHIFT) <= prc->t_height - 1);
+			assert((itmp = rv >> FIXP16_SHIFT) >= 0 && (itmp = rv >> FIXP16_SHIFT) <= prc->t_height - 1);
+		}
+#endif
+	#endif
+
 		FIXP16 u_beg, v_beg;
 		FIXP16 du, dv;
 #endif
@@ -34,8 +75,13 @@
 		if(dx > 0)
 		{
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+			du = (ru - lu) / dx;
+			dv = (rv - lv) / dx;
+	#else
 			du = (sc.ru - sc.lu) / dx;
 			dv = (sc.rv - sc.lv) / dx;
+	#endif
 #endif
 
 #ifdef __draw_GR
@@ -55,8 +101,13 @@
 				s_beg = (int)prc->fmin_clip_x;
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+				u_beg = lu + ((int)prc->fmin_clip_x - (int)sc.lx) * du;
+				v_beg = lv + ((int)prc->fmin_clip_x - (int)sc.lx) * dv;
+	#else
 				u_beg = sc.lu + ((int)prc->fmin_clip_x - (int)sc.lx) * du;
 				v_beg = sc.lv + ((int)prc->fmin_clip_x - (int)sc.lx) * dv;
+	#endif
 #endif
 
 #ifdef __draw_GR
@@ -76,8 +127,13 @@
 				s_beg = (int)sc.lx;
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+				u_beg = lu;
+				v_beg = lv;
+	#else
 				u_beg = sc.lu;
 				v_beg = sc.lv;
+	#endif
 #endif
 
 #ifdef __draw_GR
@@ -94,8 +150,13 @@
 				s_end = (int)sc.rx;
 
 #ifdef __draw_UV
+	#ifdef __draw_UV_PerspectiveLP
+				u_beg = lu;
+				v_beg = lv;
+	#else
 				u_beg = sc.lu;
 				v_beg = sc.lv;
+	#endif
 #endif
 
 #ifdef __draw_GR
@@ -107,7 +168,11 @@
 #endif
 #endif
 
-			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+#ifdef __draw_16
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _16BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+#else
+				unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
+#endif
 
 #ifdef __draw_ZB
 			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
@@ -123,45 +188,45 @@
 				{
 #ifdef __draw_UV
 	#ifdef __draw_GR
-#ifdef __draw_16
+		#ifdef __draw_16
 					*(unsigned short *)ps = (unsigned short)_RGB16BIT(
 							COLOR_MUL_16R(c_beg.x >> FIXP16_SHIFT, _16BIT_GETR(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_16G(c_beg.y >> FIXP16_SHIFT, _16BIT_GETG(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_16B(c_beg.z >> FIXP16_SHIFT, _16BIT_GETB(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-#else
+		#else
 					*(unsigned int *)ps = _RGB32BIT(
 							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-#endif
+		#endif
 	#else
-#ifdef __draw_16
+		#ifdef __draw_16
 					*(unsigned short *)ps = (unsigned short)_RGB16BIT(
 							COLOR_MUL_16R(_16BIT_GETR(sc.lc.x), _16BIT_GETR(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_16G(_16BIT_GETG(sc.lc.x), _16BIT_GETG(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_16B(_16BIT_GETB(sc.lc.x), _16BIT_GETB(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-#else
+		#else
 					*(unsigned int *)ps = _RGB32BIT(
 							COLOR_MUL_32R(_32BIT_GETR(sc.lc.x), _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_32G(_32BIT_GETG(sc.lc.x), _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
 							COLOR_MUL_32B(_32BIT_GETB(sc.lc.x), _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-#endif
+		#endif
 	#endif
 #else
 	#ifdef __draw_GR
-#ifdef __draw_16
+		#ifdef __draw_16
 					*(unsigned short *)ps = (unsigned short)_RGB16BIT(
 							c_beg.x >> FIXP16_SHIFT, c_beg.y >> FIXP16_SHIFT, c_beg.z >> FIXP16_SHIFT);
-#else
+		#else
 					*(unsigned int *)ps = _RGB32BIT(
 							c_beg.x >> FIXP16_SHIFT, c_beg.y >> FIXP16_SHIFT, c_beg.z >> FIXP16_SHIFT);
-#endif
+		#endif
 	#else
-#ifdef __draw_16
+		#ifdef __draw_16
 					*(unsigned short *)ps = (unsigned short)sc.lc.x;
-#else
+		#else
 					*(unsigned int *)ps = sc.lc.x;
-#endif
+		#endif
 	#endif
 #endif
 
@@ -170,7 +235,11 @@
 #endif
 				}
 
+#ifdef __draw_16
+				ps += _16BIT_BYTES;
+#else
 				ps += _32BIT_BYTES;
+#endif
 
 #ifdef __draw_UV
 				u_beg += du;
@@ -220,6 +289,7 @@
 }
 
 #undef __draw_UV
+#undef __draw_UV_PerspectiveLP
 #undef __draw_GR
 #undef __draw_ZB
 #undef __draw_CLIP

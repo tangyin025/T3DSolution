@@ -69,7 +69,8 @@ public:
 
 		obj = t3dObjectPtr(new t3dObjectGouraud);
 		obj2 = t3dObjectPtr(new t3dObjectWire);
-		obj3 = t3dObjectPtr(new t3dObjectGouraud);
+		//obj3 = t3dObjectPtr(new t3dObjectFlat);
+		obj3 = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
 
 		//obj->load("Box1_2.ms3d.txt", "Box01");
 
@@ -79,7 +80,7 @@ public:
 		//obj3->load("ct.ms3d.txt", "Box01");
 
 		obj2->load("ct2.ms3d.txt", "Sphere01");
-		obj3->load("ct.ms3d.txt", "Box01");
+		obj3->load("ct2.ms3d.txt", "Box01");
 
 		//obj3->m_material = g_materialMap[t3dMaterial::default_name];
 
@@ -322,7 +323,11 @@ public:
 
 		back->text_out(str_printf("%f 1/tpf", 1/fps.get_TPF()), 10, 90);
 
-		back->text_out(str_printf("%.1f, %.1f, %.1f", vres.x, vres.y, vres.z), 10, 130);
+		back->text_out(str_printf("sphere: %.1f, %.1f, %.1f", vres.x, vres.y, vres.z), 10, 130);
+
+		back->text_out(str_printf("c_pos: %.1f, %.1f, %.1f", c_pos.x, c_pos.y, c_pos.z), 10, 170);
+
+		back->text_out(str_printf("c_rot: %.1f, %.1f, %.1f", c_rot.x, c_rot.y, c_rot.z), 10, 210);
 
 		prim->blit(wnd->GetClientRect(), back, rect);
 	}

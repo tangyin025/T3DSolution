@@ -12,8 +12,8 @@
 typedef struct SCANCONTEXT_TYP
 {
 	REAL		lx, rx, lx_inc, rx_inc;
-	FIXP16		lu, ru, lu_inc, ru_inc;
-	FIXP16		lv, rv, lv_inc, rv_inc;
+	int			lu, ru, lu_inc, ru_inc;
+	int			lv, rv, lv_inc, rv_inc;
 	VECTOR4DI	lc, rc, lc_inc, rc_inc;
 	FIXP28		lz, rz, lz_inc, rz_inc;
 
@@ -105,12 +105,20 @@ static void Draw_Scan_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, con
 
 static void Draw_Scan_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	assert(false);
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
 }
 
 static void Draw_Scan_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	assert(false);
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
 }
 
 static void Draw_Scan_Gouraud_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -292,16 +300,16 @@ static void Draw_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_
 		sc.rz += sc.rz_inc;
 	}
 }
-
-static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
-{
-	assert(false);
-}
-
-static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
-{
-	assert(false);
-}
+//
+//static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
+//{
+//	assert(false);
+//}
+//
+//static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
+//{
+//	assert(false);
+//}
 
 static void Draw_Clipped_Scan16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
@@ -393,12 +401,22 @@ static void Draw_Clipped_Scan_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_
 
 static void Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	assert(false);
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_16
+#define __draw_CLIP
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
 }
 
 static void Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	assert(false);
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_32
+#define __draw_CLIP
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
 }
 
 static void Draw_Clipped_Scan_Gouraud_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -644,16 +662,16 @@ static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, cons
 		sc.rz += sc.rz_inc;
 	}
 }
-
-static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
-{
-	assert(false);
-}
-
-static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
-{
-	assert(false);
-}
+//
+//static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
+//{
+//	assert(false);
+//}
+//
+//static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
+//{
+//	assert(false);
+//}
 
 _CTOR_IMPLEMENT(RENDERCONTEXTV1_TYP);
 _DTOR_IMPLEMENT(RENDERCONTEXTV1_TYP, foo);
@@ -689,6 +707,7 @@ T3DLIB_API void (* Draw_Clipped_Rectangle_ZbufferR_TextureAlpha)(const RENDERCON
 T3DLIB_API void (* Draw_Triangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
+T3DLIB_API void (* Draw_Triangle_Texture_PerspectiveLP_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_Gouraud_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_Gouraud_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
@@ -733,6 +752,7 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Triangle									= Draw_Triangle16;
 		Draw_Triangle_ZBufferRW							= Draw_Triangle_ZBufferRW16;
 		Draw_Triangle_Texture_ZBufferRW					= Draw_Triangle_Texture_ZBufferRW16;
+		Draw_Triangle_Texture_PerspectiveLP_ZBufferRW	= Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Triangle_Gouraud_ZBufferRW					= Draw_Triangle_Gouraud_ZBufferRW16;
 		Draw_Triangle_Gouraud_Texture_ZBufferRW			= Draw_Triangle_Gouraud_Texture_ZBufferRW16;
 		Draw_Clipped_Triangle							= Draw_Clipped_Triangle16;
@@ -774,6 +794,7 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Triangle									= Draw_Triangle32;
 		Draw_Triangle_ZBufferRW							= Draw_Triangle_ZBufferRW32;
 		Draw_Triangle_Texture_ZBufferRW					= Draw_Triangle_Texture_ZBufferRW32;
+		Draw_Triangle_Texture_PerspectiveLP_ZBufferRW	= Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Triangle_Gouraud_ZBufferRW					= Draw_Triangle_Gouraud_ZBufferRW32;
 		Draw_Triangle_Gouraud_Texture_ZBufferRW			= Draw_Triangle_Gouraud_Texture_ZBufferRW32;
 		Draw_Clipped_Triangle							= Draw_Clipped_Triangle32;
@@ -3541,6 +3562,7 @@ T3DLIB_API void Draw_Triangle_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VER
 {
 #define __draw_func Draw_Scan_ZBufferRW16
 #define __draw_ZB
+#define __draw_16
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -3548,6 +3570,7 @@ T3DLIB_API void Draw_Triangle_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VER
 {
 #define __draw_func Draw_Scan_ZBufferRW32
 #define __draw_ZB
+#define __draw_32
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -3556,6 +3579,7 @@ T3DLIB_API void Draw_Triangle_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, c
 #define __draw_func Draw_Scan_Texture_ZBufferRW16
 #define __draw_UV
 #define __draw_ZB
+#define __draw_16
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -3564,6 +3588,27 @@ T3DLIB_API void Draw_Triangle_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, c
 #define __draw_func Draw_Scan_Texture_ZBufferRW32
 #define __draw_UV
 #define __draw_ZB
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+}
+
+T3DLIB_API void Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+#define __draw_func Draw_Scan_Texture_PerspectiveLP_ZBufferRW16
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+}
+
+T3DLIB_API void Draw_Triangle_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+#define __draw_func Draw_Scan_Texture_PerspectiveLP_ZBufferRW32
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_32
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -3572,6 +3617,7 @@ T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 * prc, c
 #define __draw_func Draw_Scan_Gouraud_ZBufferRW16
 #define __draw_GR
 #define __draw_ZB
+#define __draw_16
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -3580,6 +3626,7 @@ T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 * prc, c
 #define __draw_func Draw_Scan_Gouraud_ZBufferRW32
 #define __draw_GR
 #define __draw_ZB
+#define __draw_32
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -4323,6 +4370,7 @@ T3DLIB_API void Draw_Clipped_Triangle_ZBufferRW16(const RENDERCONTEXTV1 * prc, c
 #define __draw_func_clipped Draw_Clipped_Scan_ZBufferRW16
 #define __draw_ZB
 #define __draw_CLIP
+#define __draw_16
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
 }
 
@@ -4332,6 +4380,7 @@ T3DLIB_API void Draw_Clipped_Triangle_ZBufferRW32(const RENDERCONTEXTV1 * prc, c
 #define __draw_func_clipped Draw_Clipped_Scan_ZBufferRW32
 #define __draw_ZB
 #define __draw_CLIP
+#define __draw_32
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
 }
 
@@ -4342,6 +4391,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Texture_ZBufferRW16(const RENDERCONTEXTV1 
 #define __draw_UV
 #define __draw_ZB
 #define __draw_CLIP
+#define __draw_16
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
 }
 
@@ -4352,6 +4402,31 @@ T3DLIB_API void Draw_Clipped_Triangle_Texture_ZBufferRW32(const RENDERCONTEXTV1 
 #define __draw_UV
 #define __draw_ZB
 #define __draw_CLIP
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+}
+
+T3DLIB_API void Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+#define __draw_func Draw_Scan_Texture_PerspectiveLP_ZBufferRW16
+#define __draw_func_clipped Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW16
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_CLIP
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+}
+
+T3DLIB_API void Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+{
+#define __draw_func Draw_Scan_Texture_PerspectiveLP_ZBufferRW32
+#define __draw_func_clipped Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW32
+#define __draw_UV
+#define __draw_UV_PerspectiveLP
+#define __draw_ZB
+#define __draw_CLIP
+#define __draw_32
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
 }
 
@@ -4362,6 +4437,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 
 #define __draw_GR
 #define __draw_ZB
 #define __draw_CLIP
+#define __draw_16
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 
@@ -4372,6 +4448,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 
 #define __draw_GR
 #define __draw_ZB
 #define __draw_CLIP
+#define __draw_32
 #include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
 }
 

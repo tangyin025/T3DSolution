@@ -1147,7 +1147,7 @@ void t3dObjectWire::draw_SELF(t3dRender * render)
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
-		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+		if(!Clip_Object4D(&m_object, &render->m_cam->m_camera))
 			throw MyException("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
@@ -1193,6 +1193,87 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
 		{
 			Draw_Object4D_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+		}
+		render->m_surf->unlock();
+	}
+	else
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, render->m_mat);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_ZBufferRW(&m_object, &render->m_cam->m_camera);
+		}
+		render->m_surf->unlock();
+	}
+}
+
+void t3dObjectFlatPerspectiveLP::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	if(NULL != render->m_mat->m_material.texture.pbuffer)
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, render->m_mat);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			//RENDERCONTEXTV1 rc;
+			//INIT_ZERO(rc);
+
+			//memcpy(&rc._SURFACE, render->m_cam->m_camera.psurf, sizeof(rc._SURFACE));
+			//memcpy(&rc._ZBUFFER, render->m_cam->m_camera.pzbuf, sizeof(rc._ZBUFFER));
+			//memcpy(&rc._TEXTURE, &render->m_mat->m_material.texture, sizeof(rc._TEXTURE));
+
+			//rc.fmin_clip_x = render->m_cam->m_camera.viewport.x;
+			//rc.fmin_clip_y = render->m_cam->m_camera.viewport.y;
+			//rc.fmax_clip_x = render->m_cam->m_camera.viewport.x + render->m_cam->m_camera.viewport.width - 1;
+			//rc.fmax_clip_y = render->m_cam->m_camera.viewport.y + render->m_cam->m_camera.viewport.height - 1;
+
+			//assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+			//assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+			//assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+			//assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
+			//Draw_Triangle_Texture_PerspectiveLP_ZBufferRW32(&rc,
+			//		&m_object.ver_list_t.elems[18], &m_object.ver_list_t.elems[13], &m_object.ver_list_t.elems[7]);
+
+			Draw_Object4D_Texture_PerspectiveLP_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
 		}
 		render->m_surf->unlock();
 	}

@@ -755,6 +755,12 @@ protected:
 	virtual void draw_SELF(t3dRender * render);
 };
 
+class T3DLIB_API t3dObjectFlatPerspectiveLP : public t3dObject
+{
+protected:
+	virtual void draw_SELF(t3dRender * render);
+};
+
 class T3DLIB_API t3dObjectGouraud : public t3dObject
 {
 protected:
