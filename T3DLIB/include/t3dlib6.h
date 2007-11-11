@@ -357,6 +357,10 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * p
 T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
 
 T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+//
+//T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
+//
+//T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial);
 
 #define LIGHT_STATE_NULL				(0)
 #define LIGHT_STATE_ACTIVE				(1)

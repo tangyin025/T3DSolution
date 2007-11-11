@@ -496,6 +496,10 @@ T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 * prc, c
 T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
 
 T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
+//
+//T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
+//
+//T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
 
 T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2);
 
@@ -520,5 +524,9 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 
 T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
 
 T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
+//
+//T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
+//
+//T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2);
 
 #endif // __T3DLIB5_H__

@@ -21,16 +21,12 @@
 #endif
 #endif
 
+#pragma warning(disable : 4701)
+
 //T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
 {
 	const VERTEXV1T * ptmp;
 	SCANCONTEXT sc;
-
-#ifndef _DEBUG
-#pragma warning(disable : 4701)
-#else
-	INIT_ZERO(sc);
-#endif
 
 #ifndef __draw_GR
 	sc.lc.x = pv0->c_diff;

@@ -7,8 +7,6 @@
 #include "t3dlib4.h"
 #include "t3dlib5.h"
 
-#pragma warning(disable : 4100)
-
 typedef struct SCANCONTEXT_TYP
 {
 	REAL		lx, rx, lx_inc, rx_inc;
@@ -4023,6 +4021,26 @@ T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 
 		Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y1, y2, prc);
 	}
 }
+//
+//T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(prc);
+//	UNREFERENCED_PARAMETER(pv0);
+//	UNREFERENCED_PARAMETER(pv1);
+//	UNREFERENCED_PARAMETER(pv2);
+//}
+//
+//T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(prc);
+//	UNREFERENCED_PARAMETER(pv0);
+//	UNREFERENCED_PARAMETER(pv1);
+//	UNREFERENCED_PARAMETER(pv2);
+//}
 
 T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
@@ -5185,3 +5203,23 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 		}
 	}
 }
+//
+//T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(prc);
+//	UNREFERENCED_PARAMETER(pv0);
+//	UNREFERENCED_PARAMETER(pv1);
+//	UNREFERENCED_PARAMETER(pv2);
+//}
+//
+//T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(prc);
+//	UNREFERENCED_PARAMETER(pv0);
+//	UNREFERENCED_PARAMETER(pv1);
+//	UNREFERENCED_PARAMETER(pv2);
+//}

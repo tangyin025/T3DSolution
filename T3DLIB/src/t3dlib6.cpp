@@ -3071,6 +3071,24 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 		}
 	}
 }
+//
+//T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(pobj);
+//	UNREFERENCED_PARAMETER(pcam);
+//	UNREFERENCED_PARAMETER(pmaterial);
+//}
+//
+//T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(pobj);
+//	UNREFERENCED_PARAMETER(pcam);
+//	UNREFERENCED_PARAMETER(pmaterial);
+//}
 
 static inline unsigned int Light_VertexT_By_Ambient16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
