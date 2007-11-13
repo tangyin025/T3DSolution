@@ -1,5 +1,5 @@
 /*
- * File: MyGame.h
+ * File: MyGameBase.h
  */
 
 #ifndef __MY_GAME_H__
@@ -126,6 +126,9 @@ public:
 	virtual ~t3dZbuffer();
 
 public:
+	void clear(void);
+
+public:
 	ZBUFFERV1 m_zbuffer;
 };
 
@@ -176,10 +179,12 @@ public:
 public:
 	t3dDDraw();
 
-	virtual ~t3dDDraw();
+	/*virtual*/ ~t3dDDraw(); // the vc80's bug, basic class with virtual distructor cannot delete with only basic object, __vfptr == NULL ?
 
 public:
-	void set_coop_level(coop_level_type type);
+	void set_coop_level(coop_level_type type, MyWindowBasePtr wnd);
+
+	void set_display_mode(int width, int height, int bpp);
 
 	t3dSurfacePtr create_screen_surface(void);
 
@@ -765,6 +770,157 @@ class T3DLIB_API t3dObjectGouraud : public t3dObject
 {
 protected:
 	virtual void draw_SELF(t3dRender * render);
+};
+//
+//class T3DLIB_API t3dObjectGouraudPerspectiveLP : public t3dObject
+//{
+//protected:
+//	virtual void draw_SELF(t3dRender * render);
+//};
+
+// ============================================================================
+// MyConfigBase
+// ============================================================================
+
+class T3DLIB_API MyConfigBase
+{
+public:
+	typedef enum
+	{
+		fullscreen,
+		windowed,
+
+	} screen_mode_type;
+
+public:
+	MyConfigBase();
+
+	virtual ~MyConfigBase();
+
+public:
+	virtual screen_mode_type get_screen_mode(void);
+
+	virtual int get_screen_width(void);
+
+	virtual int get_screen_height(void);
+
+	virtual int get_screen_bpp(void);
+};
+
+typedef boost::shared_ptr<MyConfigBase> MyConfigPtr;
+
+// ============================================================================
+// MyGameBase
+// ============================================================================
+
+class T3DLIB_API MyGameBase : public MyApplication
+{
+protected:
+	virtual MyConfigPtr init_CFG(void)
+	{
+		return MyConfigPtr(new MyConfigBase);
+	}
+
+	virtual MyWindowPtr init_WND(void)
+	{
+		return MyWindowPtr(new MyWindow);
+	}
+
+	virtual void init(void)
+	{
+	}
+
+	virtual void OnFrame(void)
+	{
+	}
+
+	virtual void shutdown(void)
+	{
+	}
+
+public:
+	MyGameBase();
+
+	virtual ~MyGameBase();
+
+public:
+	virtual int run(void);
+
+	virtual void OnIdle(void);
+
+protected:
+	MyWindowPtr		m_wnd;
+	t3dDDrawPtr		m_ddraw;
+};
+
+// ====================================================================================
+// MyConfig
+// ====================================================================================
+
+class T3DLIB_API MyConfig : public MyConfigBase
+{
+public:
+	MyConfig(std::string app_name);
+
+	~MyConfig();
+
+public:
+	virtual MyConfigBase::screen_mode_type get_screen_mode(void);
+
+	virtual int get_screen_width(void);
+
+	virtual int get_screen_height(void);
+
+	virtual int get_screen_bpp(void);
+
+public:
+	screen_mode_type m_mode;
+	int m_width;
+	int m_height;
+	int m_bpp;
+};
+
+// ====================================================================================
+// MyGame
+// ====================================================================================
+
+class T3DLIB_API MyGame : public MyGameBase
+{
+protected:
+	virtual void do_INIT(void)
+	{
+	}
+
+	virtual void do_DRAW(void)
+	{
+		m_back->text_out(str_printf("%.1f fps", m_fps->get_FPS()), 10, 10);
+	}
+
+public:
+	MyGame(std::string appName);
+
+	~MyGame();
+
+protected:
+	MyConfigPtr init_CFG(void);
+
+private:
+	void init(void);
+
+	void OnFrame(void);
+
+protected:
+	std::string		m_appName;
+	MyConfigPtr		m_config;
+	t3dFPSPtr		m_fps;
+	t3dSurfacePtr	m_prim;
+	t3dSurfacePtr	m_back;
+	t3dZbufferPtr	m_zbuf;
+
+	t3dDInputPtr	m_dinput;
+	t3dKeyPtr		m_key;
+	t3dMousePtr		m_mouse;
+	t3dDSoundPtr	m_dsound;
 };
 
 // ////////////////////////////////////////////////////////////////////////////

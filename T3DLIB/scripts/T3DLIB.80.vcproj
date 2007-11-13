@@ -321,10 +321,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath="..\src\t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

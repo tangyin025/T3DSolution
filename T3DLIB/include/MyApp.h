@@ -144,16 +144,6 @@ public:
 protected:
 	virtual LRESULT OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		switch(message)
-		{
-		case WM_CREATE:
-			ShowWindow();
-			return 0;
-
-		default:
-			break;
-		}
-
 		return MyWindowBase::OnProc(hwnd, message, wparam, lparam);
 	}
 
@@ -199,7 +189,7 @@ public:
 	void SetWindowStyle(DWORD style)
 	{
 		assert(NULL != m_hwnd);
-		if(::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)style))
+		if(0 == ::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)style))
 			throw MyException("set window style failed");
 	}
 
@@ -212,7 +202,7 @@ public:
 	void SetWindowExstyle(DWORD exstyle)
 	{
 		assert(NULL != m_hwnd);
-		if(::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)exstyle))
+		if(0 == ::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)exstyle))
 			throw MyException("set window extension style failed");
 	}
 

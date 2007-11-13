@@ -1,5 +1,5 @@
 /*
- * File: MyGame.cpp
+ * File: MyGameBase.cpp
  */
 
 #include "t3dPrecompiledHeader.h"
@@ -175,6 +175,11 @@ t3dZbuffer::~t3dZbuffer()
 	Destroy_ZBuffer(&m_zbuffer);
 }
 
+void t3dZbuffer::clear(void)
+{
+	Clear_ZBuffer(&m_zbuffer);
+}
+
 // ============================================================================
 // t3dCamera
 // ============================================================================
@@ -226,13 +231,19 @@ t3dDDraw::~t3dDDraw()
 	Destroy_DDraw(&m_ddraw);
 }
 
-void t3dDDraw::set_coop_level(coop_level_type type)
+void t3dDDraw::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_ddraw.lpddraw->SetCooperativeLevel(NULL, type)))
+	if(FAILED(gresult = m_ddraw.lpddraw->SetCooperativeLevel(wnd->get_hwnd(), type)))
 	{
 		Set_Last_Error(Get_DDraw_Error(gbuffer, gresult), __FILE__, __LINE__);
 		throw MyException("set cooperative level failed");
 	}
+}
+
+void t3dDDraw::set_display_mode(int width, int height, int bpp)
+{
+	if(!Set_Display_Model(&m_ddraw, width, height, bpp))
+		throw MyException("set display mode failed");
 }
 
 t3dSurfacePtr t3dDDraw::create_screen_surface(void)
@@ -1365,4 +1376,221 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		}
 		render->m_surf->unlock();
 	}
+}
+//
+//void t3dObjectGouraudPerspectiveLP::draw_SELF(t3dRender * render)
+//{
+//	assert(false);
+//
+//	UNREFERENCED_PARAMETER(render);
+//}
+
+// ============================================================================
+// MyConfigBase
+// ============================================================================
+
+MyConfigBase::MyConfigBase()
+{
+}
+
+MyConfigBase::~MyConfigBase()
+{
+}
+
+MyConfigBase::screen_mode_type MyConfigBase::get_screen_mode(void)
+{
+	return MyConfigBase::windowed;
+}
+
+int MyConfigBase::get_screen_width(void)
+{
+	return 800;
+}
+
+int MyConfigBase::get_screen_height(void)
+{
+	return 600;
+}
+
+int MyConfigBase::get_screen_bpp(void)
+{
+	return 32;
+}
+
+// ============================================================================
+// MyGameBase
+// ============================================================================
+
+MyGameBase::MyGameBase()
+{
+}
+
+MyGameBase::~MyGameBase()
+{
+}
+
+int MyGameBase::run(void)
+{
+	MyConfigPtr config = init_CFG();
+	assert(config != NULL);
+	RECT rect = {0, 0, config->get_screen_width(), config->get_screen_height()};
+
+	m_wnd = init_WND();
+	g_msgArr->addWindow(m_wnd);
+	m_wnd->SetClientRect(rect);
+
+	m_ddraw = t3dDDrawPtr(new t3dDDraw);
+	if(config->get_screen_mode() == MyConfig::fullscreen)
+	{
+		m_wnd->SetWindowStyle(WS_POPUP | WS_VISIBLE);
+		if(0 == ::SetWindowPos(m_wnd->get_hwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED))
+			throw MyException("set window top most failed");
+
+		m_ddraw->set_coop_level(t3dDDraw::fullscreen, m_wnd);
+		m_ddraw->set_display_mode(
+						config->get_screen_width(),
+						config->get_screen_height(),
+						config->get_screen_bpp());
+	}
+	else
+	{
+		m_wnd->CenterWindow();
+
+		m_ddraw->set_coop_level(t3dDDraw::normal, m_wnd);
+	}
+
+	DDSURFACEDESC2 ddsd;
+	INIT_ZERO(ddsd);
+	ddsd.dwSize = sizeof(ddsd);
+
+	if(FAILED(gresult = m_ddraw->m_ddraw.lpddraw->GetDisplayMode(&ddsd)))
+	{
+		Set_Last_Error(Get_DDraw_Error(gbuffer, gresult), __FILE__, __LINE__);
+		throw MyException("get display mode failed");
+	}
+
+	if(16 != ddsd.ddpfPixelFormat.dwRGBBitCount && 32 != ddsd.ddpfPixelFormat.dwRGBBitCount)
+	{
+		if(config->get_screen_mode() == MyConfig::fullscreen)
+		{
+			m_ddraw->m_ddraw.lpddraw->RestoreDisplayMode();
+		}
+		throw MyException("unsupported screen bpp");
+	}
+
+	t3d_INIT(ddsd.ddpfPixelFormat.dwRGBBitCount);
+	init();
+
+	m_wnd->ShowWindow();
+	return MyApplication::run();
+}
+
+void MyGameBase::OnIdle(void)
+{
+	OnFrame();
+}
+
+// ====================================================================================
+// MyConfig
+// ====================================================================================
+
+MyConfig::MyConfig(std::string app_name)
+	: m_mode(MyConfigBase::windowed), m_width(800), m_height(600), m_bpp(32)
+{
+	char buffer[MAX_BUFFER_SIZE];
+	if(0 == GetCurrentDirectoryA(MAX_BUFFER_SIZE, buffer))
+		throw MyException("get config file dir failed");
+
+	std::string f_path(buffer);
+	f_path += "\\config.ini";
+
+	if(GetPrivateProfileInt(app_name.c_str(), "fullscreen", 0, f_path.c_str()))
+		m_mode	= MyConfigBase::fullscreen;
+	else
+		m_mode	= MyConfigBase::windowed;
+	m_width		= GetPrivateProfileInt(app_name.c_str(), "width", m_width, f_path.c_str());
+	m_height	= GetPrivateProfileInt(app_name.c_str(), "height", m_height, f_path.c_str());
+	m_bpp		= GetPrivateProfileInt(app_name.c_str(), "bpp", m_bpp, f_path.c_str());
+}
+
+MyConfig::~MyConfig()
+{
+}
+
+MyConfigBase::screen_mode_type MyConfig::get_screen_mode(void)
+{
+	return m_mode;
+}
+
+int MyConfig::get_screen_width(void)
+{
+	return m_width;
+}
+
+int MyConfig::get_screen_height(void)
+{
+	return m_height;
+}
+
+int MyConfig::get_screen_bpp(void)
+{
+	return m_bpp;
+}
+
+// ============================================================================
+// MyGame
+// ============================================================================
+
+MyGame::MyGame(std::string appName)
+	: m_appName(appName)
+{
+}
+
+MyGame::~MyGame()
+{
+}
+
+MyConfigPtr MyGame::init_CFG(void)
+{
+	return m_config = MyConfigPtr(new MyConfig(m_appName));
+}
+
+void MyGame::init(void)
+{
+	m_wnd->SetWindowText(m_appName);
+
+	m_prim = m_ddraw->create_screen_surface();
+	m_prim->set_clipper(m_ddraw->create_screen_clipper(m_wnd));
+
+	m_back = m_ddraw->create_memory_surface(
+			m_config->get_screen_width(), m_config->get_screen_height());
+	m_back->set_clipper(m_ddraw->create_single_clipper(m_back->m_ddsurface.rect));
+
+	m_zbuf = t3dZbufferPtr(new t3dZbuffer(
+			m_config->get_screen_width(), m_config->get_screen_height()));
+
+	m_dinput = t3dDInputPtr(new t3dDInput);
+
+	m_key = m_dinput->create_key();
+	m_key->set_coop_level(t3dKey::background, m_wnd);
+
+	m_mouse = m_dinput->create_mouse();
+	m_mouse->set_coop_level(t3dMouse::background, m_wnd);
+
+	m_dsound = t3dDSoundPtr(new t3dDSound);
+	m_dsound->set_coop_level(t3dDSound::normal, m_wnd);
+
+	do_INIT();
+
+	m_fps = t3dFPSPtr(new t3dFPS);
+	m_fps->init();
+}
+
+void MyGame::OnFrame(void)
+{
+	m_fps->OnFrame();
+
+	do_DRAW();
+
+	m_prim->blit(m_wnd->GetClientRect(), m_back, m_back->m_ddsurface.rect);
 }
