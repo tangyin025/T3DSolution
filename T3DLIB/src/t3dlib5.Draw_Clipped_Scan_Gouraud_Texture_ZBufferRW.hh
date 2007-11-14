@@ -201,15 +201,19 @@
 		#endif
 	#else
 		#ifdef __draw_16
-					*(unsigned short *)ps = (unsigned short)_RGB16BIT(
-							COLOR_MUL_16R(_16BIT_GETR(sc.lc.x), _16BIT_GETR(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_16G(_16BIT_GETG(sc.lc.x), _16BIT_GETG(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_16B(_16BIT_GETB(sc.lc.x), _16BIT_GETB(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+					//*(unsigned short *)ps = (unsigned short)_RGB16BIT(
+					//		COLOR_MUL_16R(_16BIT_GETR(sc.lc.x), _16BIT_GETR(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+					//		COLOR_MUL_16G(_16BIT_GETG(sc.lc.x), _16BIT_GETG(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+					//		COLOR_MUL_16B(_16BIT_GETB(sc.lc.x), _16BIT_GETB(*(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+
+					*(unsigned short *)ps = *(unsigned short *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift));
 		#else
-					*(unsigned int *)ps = _RGB32BIT(
-							COLOR_MUL_32R(_32BIT_GETR(sc.lc.x), _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_32G(_32BIT_GETG(sc.lc.x), _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_32B(_32BIT_GETB(sc.lc.x), _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+					//*(unsigned int *)ps = _RGB32BIT(
+					//		COLOR_MUL_32R(_32BIT_GETR(sc.lc.x), _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+					//		COLOR_MUL_32G(_32BIT_GETG(sc.lc.x), _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
+					//		COLOR_MUL_32B(_32BIT_GETB(sc.lc.x), _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
+
+					*(unsigned int *)ps = *(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift));
 		#endif
 	#endif
 #else

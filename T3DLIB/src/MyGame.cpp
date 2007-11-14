@@ -4,6 +4,7 @@
 
 #include "t3dPrecompiledHeader.h"
 #include "MyGame.h"
+#include <vector>
 
 // ////////////////////////////////////////////////////////////////////////////
 // GLOBALS
@@ -184,35 +185,118 @@ void t3dZbuffer::clear(void)
 // t3dCamera
 // ============================================================================
 
-t3dCamera::t3dCamera()
+t3dCamera::t3dCamera(RECT rect,
+					 REAL fov					/*= DEG_TO_RAD(90)*/,
+					 REAL min_clip_z			/*= 10*/,
+					 REAL max_clip_z			/*= 1000*/,
+					 VIEWPORT_FIX_MODE fixMode	/*= fix_mode_width*/,
+					 int rotSeq					/*= ROTATION_SEQ_ZXY*/)
 {
 	INIT_ZERO(m_camera);
+
+	set_fov(fov);
+	set_min_clipZ(min_clip_z);
+	set_max_clipZ(max_clip_z);
+	set_viewport(rect);
+	set_fix_mode(fixMode);
+	set_rot_seq(rotSeq);
+
+	m_camera.mode				= CAM4DV1_MODE_UNKNOWN;
 }
 
 t3dCamera::~t3dCamera()
 {
 }
 
-t3dCameraEuler::t3dCameraEuler(RECT rect, const VECTOR4D & pos, const VECTOR4D & rot,
-							   REAL fov /*= DEG_TO_RAD(90)*/,
-							   REAL min_clip_z /*= 10*/,
-							   REAL max_clip_z /*= 1000*/,
-							   VIEWPORT_FIX_MODE fix_mode /*= VIEWPORT_FIX_MODE_WIDTH*/,
-							   int rot_seq /*= ROTATION_SEQ_ZXY*/)
+void t3dCamera::set_viewport(RECT rect)
 {
-	CAM4DV1_Init(	&m_camera,
-					(REAL)MyWindow::GetRectWidth(rect),
-					(REAL)MyWindow::GetRectHeight(rect),
-					(REAL)rect.left,
-					(REAL)rect.top,
-					min_clip_z,
-					max_clip_z,
-					fov,
-					fix_mode, NULL, NULL);
+	m_camera.viewport.x			= floor((REAL)rect.left);
+	m_camera.viewport.y			= floor((REAL)rect.top);
+	m_camera.viewport.width		= floor((REAL)MyWindow::GetRectWidth(rect));
+	m_camera.viewport.height	= floor((REAL)MyWindow::GetRectHeight(rect));
+}
 
+void t3dCamera::set_fov(REAL fov)
+{
+	m_camera.fov				= fov;
+}
+
+void t3dCamera::set_min_clipZ(REAL min_z)
+{
+	m_camera.min_clip_z			= min_z;
+}
+
+void t3dCamera::set_max_clipZ(REAL max_z)
+{
+	m_camera.max_clip_z			= max_z;
+}
+
+void t3dCamera::set_fix_mode(VIEWPORT_FIX_MODE fixMode)
+{
+	m_fixMode = fixMode;
+}
+
+void t3dCamera::set_rot_seq(int rotSeq)
+{
+	m_rotSeq = rotSeq;
+}
+
+void t3dCamera::build_VIEWPLANE(void)
+{
+	switch(m_fixMode)
+	{
+	case VIEWPORT_FIX_MODE_WIDTH:
+		m_camera.viewplane.width	= tan(m_camera.fov / 2) * 2 * CAM4DV1_VIEWPLANE_DIST;
+		assert(m_camera.viewplane.width > 0);
+		m_camera.viewplane.height	= m_camera.viewport.height / m_camera.viewport.width * m_camera.viewplane.width;
+		break;
+
+	case VIEWPORT_FIX_MODE_HEIGHT:
+		m_camera.viewplane.height	= tan(m_camera.fov / 2) * 2 * CAM4DV1_VIEWPLANE_DIST;
+		assert(m_camera.viewplane.height > 0);
+		m_camera.viewplane.width	= m_camera.viewport.width / m_camera.viewport.height * m_camera.viewplane.height;
+		break;
+
+	default:
+		assert(0);
+		break;
+	}
+}
+
+t3dCameraEuler::t3dCameraEuler(RECT rect,
+							   REAL fov						/*= DEG_TO_RAD(90)*/,
+							   REAL min_clip_z				/*= 10*/,
+							   REAL max_clip_z				/*= 1000*/,
+							   VIEWPORT_FIX_MODE fixMode	/*= VIEWPORT_FIX_MODE_WIDTH*/,
+							   int rotSeq					/*= ROTATION_SEQ_ZXY*/)
+	: t3dCamera(rect, fov, min_clip_z, max_clip_z, fixMode, rotSeq)
+{
+	m_camera.mode				= CAM4DV1_MODE_EULAR;
+}
+
+t3dCameraEuler::~t3dCameraEuler()
+{
+}
+
+void t3dCameraEuler::update(void)
+{
+	build_VIEWPLANE();
+	build_MAT();
+}
+
+void t3dCameraEuler::set_position(VECTOR4D & pos)
+{
 	m_camera.vpos = pos;
+}
+
+void t3dCameraEuler::set_rotation(VECTOR4D & rot)
+{
 	m_camera.vrot = rot;
-	Build_Camera4D_Mat_Euler(&m_camera.mcam, &m_camera, rot_seq);
+}
+
+void t3dCameraEuler::build_MAT(void)
+{
+	Build_Camera4D_Mat_Euler(&m_camera.mcam, &m_camera, m_rotSeq);
 }
 
 // ============================================================================
@@ -833,27 +917,8 @@ void t3dRender::draw(t3dRenderObject * obj)
 	assert(m_cam != NULL);
 	assert(m_surf != NULL);
 	assert(m_zbuf != NULL);
-	assert(m_mat != NULL);
 
 	obj->draw_SELF(this);
-}
-
-void t3dRender::add_light(std::string l_name, t3dLightPtr light)
-{
-	assert(m_lightMap.end() == m_lightMap.find(l_name));
-	m_lightMap[l_name] = light;
-}
-
-void t3dRender::del_light(std::string l_name)
-{
-	assert(m_lightMap.end() != m_lightMap.find(l_name));
-	m_lightMap.erase(l_name);
-}
-
-t3dLightPtr t3dRender::get_light(std::string l_name)
-{
-	assert(m_lightMap.end() != m_lightMap.find(l_name));
-	return m_lightMap[l_name];
 }
 
 void t3dRender::set_camera(t3dCameraPtr cam)
@@ -874,10 +939,22 @@ void t3dRender::set_zbuffer(t3dZbufferPtr zbuf)
 	m_zbuf = zbuf;
 }
 
-void t3dRender::set_material(t3dMaterialPtr mat)
+void t3dRender::add_light(std::string l_name, t3dLightPtr light)
 {
-	assert(mat != NULL);
-	m_mat = mat;
+	assert(m_lightMap.end() == m_lightMap.find(l_name));
+	m_lightMap[l_name] = light;
+}
+
+void t3dRender::del_light(std::string l_name)
+{
+	assert(m_lightMap.end() != m_lightMap.find(l_name));
+	m_lightMap.erase(l_name);
+}
+
+t3dLightPtr t3dRender::get_light(std::string l_name)
+{
+	assert(m_lightMap.end() != m_lightMap.find(l_name));
+	return m_lightMap[l_name];
 }
 
 // ============================================================================
@@ -1004,10 +1081,10 @@ static inline REAL make_cos_theta_invalid(REAL theta)
  * return:
  * if the intersection point vint is inside the triangle
  */
-static inline bool TRIANGLE_Inside_Test(const VECTOR4D & v0,
-								 const VECTOR4D & v1,
-								 const VECTOR4D & v2,
-								 const VECTOR4D & vint)
+static inline bool is_inside_triangle(const VECTOR4D & v0,
+									 const VECTOR4D & v1,
+									 const VECTOR4D & v2,
+									 const VECTOR4D & vint)
 {
 	VECTOR4D dir1, dir2;
 	REAL angle = 0;
@@ -1040,7 +1117,7 @@ static inline bool TRIANGLE_Inside_Test(const VECTOR4D & v0,
  * return value:
  * vres - the reaction velocity of this collision test
  */
-static inline bool TRIANGLE_Collision_Test(VECTOR4D & vres,
+static inline bool TRIANGLE_Inside_Test(VECTOR4D & vres,
 									const VECTOR4D & v0,
 									const VECTOR4D & v1,
 									const VECTOR4D & v2,
@@ -1071,20 +1148,92 @@ static inline bool TRIANGLE_Collision_Test(VECTOR4D & vres,
 	 */
 	if(t > 0 && distance < sphere_radius)
 	{
-		VECTOR4D l_int;
-		VECTOR3D_Add(&l_int._3D, &sphere_center._3D, &l_inc._3D);
+		VECTOR3D_Add(&vres._3D, &sphere_center._3D, &l_inc._3D);
 
-		if(TRIANGLE_Inside_Test(v0, v1, v2, l_int))
+		if(is_inside_triangle(v0, v1, v2, vres))
 		{
-			/*
-			 * vres = l_dir * ( t - sphere_radius / |l_dir| )
-			 */
-			VECTOR3D_Mul(&vres._3D, &l_dir._3D, t - sphere_radius / VECTOR3D_Length(&l_dir._3D));
-
 			return true;
 		}
 	}
+	return false;
+}
 
+/*
+ * return:
+ * get the nearest point between sphere_center and line v0, v1
+ */
+static inline bool get_near_intersection(VECTOR4D & vres,
+									const VECTOR4D & v0,
+									const VECTOR4D & v1,
+									const VECTOR4D & sphere_center)
+{
+	VECTOR4D dir1, dir2;
+
+	REAL len1 = VECTOR3D_Dot(
+					VECTOR3D_Sub(&dir1._3D, &sphere_center._3D, &v0._3D),
+					VECTOR3D_Sub(&dir2._3D, &v1._3D, &v0._3D));
+
+	REAL len2 = VECTOR3D_Length(&dir2._3D);
+
+	len1 /= len2;
+
+	if(len1 <= 0)
+	{
+		VECTOR4D_Copy(&vres, &v0);
+		return false;
+	}
+	else if(len1 >= len2)
+	{
+		VECTOR4D_Copy(&vres, &v1);
+		return false;
+	}
+	else
+	{
+		VECTOR3D_Add(&vres._3D, &v0._3D, VECTOR3D_Mul(&dir2._3D, len1 / len2));
+		vres.w = 1;
+		return true;
+	}
+}
+
+/*
+ * return:
+ * if the sphere is cross the edge, return its intersection
+ */
+static inline bool TRIANGLE_Edge_Test(VECTOR4D & vres,
+									const VECTOR4D & v0,
+									const VECTOR4D & v1,
+									const VECTOR4D & v2,
+									const VECTOR4D & sphere_center,
+									const REAL sphere_radius)
+{
+	VECTOR4D res_s[3];
+	REAL len_s[3] = {sphere_radius + 100, sphere_radius + 100, sphere_radius + 100};
+
+	VECTOR4D vdir;
+	if(get_near_intersection(res_s[0], v0, v1, sphere_center))
+	{
+		len_s[0] = VECTOR3D_Length(VECTOR3D_Sub(&vdir._3D, &res_s[0]._3D, &sphere_center._3D));
+	}
+
+	if(get_near_intersection(res_s[1], v1, v2, sphere_center))
+	{
+		len_s[1] = VECTOR3D_Length(VECTOR3D_Sub(&vdir._3D, &res_s[1]._3D, &sphere_center._3D));
+	}
+
+	if(get_near_intersection(res_s[2], v2, v0, sphere_center))
+	{
+		len_s[2] = VECTOR3D_Length(VECTOR3D_Sub(&vdir._3D, &res_s[2]._3D, &sphere_center._3D));
+	}
+
+	size_t i;
+	i = len_s[0] < len_s[1] ? 0 : 1;
+	i = len_s[i] < len_s[2] ? i : 2;
+
+	if(len_s[i] < sphere_radius)
+	{
+		VECTOR4D_Copy(&vres, &res_s[i]);
+		return true;
+	}
 	return false;
 }
 
@@ -1097,10 +1246,12 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 	assert(&vres != &sphere_center);
 	VECTOR4D_Copy(&vres, &sphere_center);
 
-	size_t i;
-	bool bres = false;
+#define COLLISION_UNKNOWN	0
+#define COLLISION_EDGE		1
 
-	for(i = 0; i < m_object.tri_list.length; i++)
+	std::vector<int> collision_type(m_object.tri_list.length, COLLISION_UNKNOWN);
+	bool bres = false;
+	for(size_t i = 0; i < m_object.tri_list.length; i++)
 	{
 		assert(m_object.tri_list.elems[i].v0_i < (int)m_object.ver_list_t.length);
 		assert(m_object.tri_list.elems[i].v1_i < (int)m_object.ver_list_t.length);
@@ -1125,13 +1276,47 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 		}
 
 		VECTOR4D vint;
-		if(TRIANGLE_Collision_Test(vint, v0._4D, v1._4D, v2._4D, vres, sphere_radius))
+		if(TRIANGLE_Inside_Test(vint, v0._4D, v1._4D, v2._4D, vres, sphere_radius))
 		{
+			/*
+			 * vres = vint + (vres - vint) * radius / |vres - vint|
+			 */
+			VECTOR4D vtmp;
+			VECTOR3D_Sub(&vtmp._3D, &vres._3D, &vint._3D);
+			VECTOR3D_Add(&vres._3D, &vint._3D, VECTOR3D_Mul(&vtmp._3D, sphere_radius / VECTOR3D_Length(&vtmp._3D)));
+
 			bres = true;
-			VECTOR3D_Add(&vres._3D, &vint._3D);
+		}
+		else
+		{
+			collision_type[i] = COLLISION_EDGE;
 		}
 	}
 
+	for(size_t i = 0; i < m_object.tri_list.length; i++)
+	{
+		if(COLLISION_EDGE != collision_type[i])
+		{
+			continue;
+		}
+
+		VERTEXV1T & v0 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v0_i];
+		VERTEXV1T & v1 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v1_i];
+		VERTEXV1T & v2 = m_object.ver_list_t.elems[m_object.tri_list.elems[i].v2_i];
+
+		VECTOR4D vint;
+		if(TRIANGLE_Edge_Test(vint, v0._4D, v1._4D, v2._4D, vres, sphere_radius))
+		{
+			/*
+			 * vres = vint + (vres - vint) * radius / |vres - vint|
+			 */
+			VECTOR4D vtmp;
+			VECTOR3D_Sub(&vtmp._3D, &vres._3D, &vint._3D);
+			VECTOR3D_Add(&vres._3D, &vint._3D, VECTOR3D_Mul(&vtmp._3D, sphere_radius / VECTOR3D_Length(&vtmp._3D)));
+
+			bres = true;
+		}
+	}
 	return bres;
 }
 
@@ -1154,7 +1339,7 @@ void t3dObjectWire::draw_SELF(t3dRender * render)
 		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
 
 		t3dLightAmbient light(Create_RGBI(255, 255, 255));
-		light.light(this, render->m_mat);
+		light.light(this, m_material);
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1180,15 +1365,15 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 	assert(NULL != Clip_Object4D);
 	assert(NULL != Clip_Object4D_Gouraud_Texture);
 
-	if(NULL != render->m_mat->m_material.texture.pbuffer)
+	if(NULL != m_material->m_material.texture.pbuffer)
 	{
 		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
 
-		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
-		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
-		{
-			l_iter->second->light(this, render->m_mat);
-		}
+		//std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		//for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		//{
+		//	l_iter->second->light(this, m_material);
+		//}
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1203,7 +1388,7 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 		render->m_cam->m_camera.psurf = &surf;
 		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
 		{
-			Draw_Object4D_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+			Draw_Object4D_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &m_material->m_material);
 		}
 		render->m_surf->unlock();
 	}
@@ -1214,7 +1399,7 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
 		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
 		{
-			l_iter->second->light(this, render->m_mat);
+			l_iter->second->light(this, m_material);
 		}
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
@@ -1241,15 +1426,15 @@ void t3dObjectFlatPerspectiveLP::draw_SELF(t3dRender * render)
 	assert(NULL != Clip_Object4D);
 	assert(NULL != Clip_Object4D_Gouraud_Texture);
 
-	if(NULL != render->m_mat->m_material.texture.pbuffer)
+	if(NULL != m_material->m_material.texture.pbuffer)
 	{
 		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
 
-		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
-		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
-		{
-			l_iter->second->light(this, render->m_mat);
-		}
+		//std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		//for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		//{
+		//	l_iter->second->light(this, m_material);
+		//}
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1264,56 +1449,13 @@ void t3dObjectFlatPerspectiveLP::draw_SELF(t3dRender * render)
 		render->m_cam->m_camera.psurf = &surf;
 		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
 		{
-			//RENDERCONTEXTV1 rc;
-			//INIT_ZERO(rc);
-
-			//memcpy(&rc._SURFACE, render->m_cam->m_camera.psurf, sizeof(rc._SURFACE));
-			//memcpy(&rc._ZBUFFER, render->m_cam->m_camera.pzbuf, sizeof(rc._ZBUFFER));
-			//memcpy(&rc._TEXTURE, &render->m_mat->m_material.texture, sizeof(rc._TEXTURE));
-
-			//rc.fmin_clip_x = render->m_cam->m_camera.viewport.x;
-			//rc.fmin_clip_y = render->m_cam->m_camera.viewport.y;
-			//rc.fmax_clip_x = render->m_cam->m_camera.viewport.x + render->m_cam->m_camera.viewport.width - 1;
-			//rc.fmax_clip_y = render->m_cam->m_camera.viewport.y + render->m_cam->m_camera.viewport.height - 1;
-
-			//assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
-			//assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
-			//assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
-			//assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
-
-			//Draw_Triangle_Texture_PerspectiveLP_ZBufferRW32(&rc,
-			//		&m_object.ver_list_t.elems[18], &m_object.ver_list_t.elems[13], &m_object.ver_list_t.elems[7]);
-
-			Draw_Object4D_Texture_PerspectiveLP_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+			Draw_Object4D_Texture_PerspectiveLP_ZBufferRW(&m_object, &render->m_cam->m_camera, &m_material->m_material);
 		}
 		render->m_surf->unlock();
 	}
 	else
 	{
-		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
-
-		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
-		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
-		{
-			l_iter->second->light(this, render->m_mat);
-		}
-
-		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
-
-		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
-
-		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
-
-		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
-
-		SURFACEV1 surf = render->m_surf->lock();
-		render->m_cam->m_camera.psurf = &surf;
-		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
-		{
-			Draw_Object4D_ZBufferRW(&m_object, &render->m_cam->m_camera);
-		}
-		render->m_surf->unlock();
+		t3dObjectFlat::draw_SELF(render);
 	}
 }
 
@@ -1322,14 +1464,14 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 	assert(NULL != Clip_Object4D);
 	assert(NULL != Clip_Object4D_Gouraud_Texture);
 
-	if(NULL != render->m_mat->m_material.texture.pbuffer)
+	if(NULL != m_material->m_material.texture.pbuffer)
 	{
 		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
 
 		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
 		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
 		{
-			l_iter->second->light(this, render->m_mat);
+			l_iter->second->light(this, m_material);
 		}
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
@@ -1345,7 +1487,7 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		render->m_cam->m_camera.psurf = &surf;
 		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
 		{
-			Draw_Object4D_Gouraud_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &render->m_mat->m_material);
+			Draw_Object4D_Gouraud_Texture_ZBufferRW(&m_object, &render->m_cam->m_camera, &m_material->m_material);
 		}
 		render->m_surf->unlock();
 	}
@@ -1356,7 +1498,7 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
 		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
 		{
-			l_iter->second->light(this, render->m_mat);
+			l_iter->second->light(this, m_material);
 		}
 
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
@@ -1490,9 +1632,9 @@ void MyGameBase::OnIdle(void)
 	OnFrame();
 }
 
-// ====================================================================================
+// ============================================================================
 // MyConfig
-// ====================================================================================
+// ============================================================================
 
 MyConfig::MyConfig(std::string app_name)
 	: m_mode(MyConfigBase::windowed), m_width(800), m_height(600), m_bpp(32)
@@ -1541,7 +1683,7 @@ int MyConfig::get_screen_bpp(void)
 // MyGame
 // ============================================================================
 
-MyGame::MyGame(std::string appName)
+MyGame::MyGame(std::string appName /*= "My_Game"*/)
 	: m_appName(appName)
 {
 }
@@ -1593,4 +1735,56 @@ void MyGame::OnFrame(void)
 	do_DRAW();
 
 	m_prim->blit(m_wnd->GetClientRect(), m_back, m_back->m_ddsurface.rect);
+}
+
+// ============================================================================
+// FPSGameCamera
+// ============================================================================
+
+FPSGameCamera::FPSGameCamera(RECT rect)
+	: t3dCameraEuler(rect)
+{
+}
+
+FPSGameCamera::~FPSGameCamera()
+{
+}
+
+VECTOR4D & FPSGameCamera::mov_scale(VECTOR4D & vres, t3dKeyStatePtr k_state)
+{
+	VECTOR4D_InitXYZ(&vres, 0, 0, 0);
+
+	if(k_state->is_key_down(DIK_W) || k_state->is_key_down(DIK_UP))
+	{
+		vres.x =  sin(m_camera.vrot.y);
+		vres.z =  cos(m_camera.vrot.y);
+	}
+
+	if(k_state->is_key_down(DIK_S) || k_state->is_key_down(DIK_DOWN))
+	{
+		vres.x = -sin(m_camera.vrot.y);
+		vres.z = -cos(m_camera.vrot.y);
+	}
+
+	if(k_state->is_key_down(DIK_A) || k_state->is_key_down(DIK_LEFT))
+	{
+		vres.x = -cos(m_camera.vrot.y);
+		vres.z =  sin(m_camera.vrot.y);
+	}
+
+	if(k_state->is_key_down(DIK_D) || k_state->is_key_down(DIK_RIGHT))
+	{
+		vres.x =  cos(m_camera.vrot.y);
+		vres.z = -sin(m_camera.vrot.y);
+	}
+
+	return vres;
+}
+
+VECTOR4D & FPSGameCamera::rot_scale(VECTOR4D & vres, t3dMouseStatePtr m_state)
+{
+	VECTOR4D_InitXYZ(&vres,
+			DEG_TO_RAD(m_state->get_Y()) * (REAL)0.1, DEG_TO_RAD(m_state->get_X()) * (REAL)0.1, 0 /*(REAL)m_state->get_Z()*/);
+
+	return vres;
 }

@@ -141,12 +141,38 @@ typedef boost::shared_ptr<t3dZbuffer> t3dZbufferPtr;
 class T3DLIB_API t3dCamera
 {
 protected:
-	t3dCamera();
+	t3dCamera(	RECT rect,
+				REAL fov					= DEG_TO_RAD(90),
+				REAL min_clip_z				= 10,
+				REAL max_clip_z				= 1000,
+				VIEWPORT_FIX_MODE fixMode	= VIEWPORT_FIX_MODE_WIDTH,
+				int rotSeq					= ROTATION_SEQ_ZXY);
 
 	virtual ~t3dCamera();
 
 public:
+	virtual void update(void) = 0;
+
+public:
+	void set_viewport(RECT rect);
+
+	void set_fov(REAL fov);
+
+	void set_min_clipZ(REAL min_z);
+
+	void set_max_clipZ(REAL max_z);
+
+	void set_fix_mode(VIEWPORT_FIX_MODE fixMode);
+
+	void set_rot_seq(int rotSeq);
+
+	void build_VIEWPLANE(void);
+
+public:
 	CAM4DV1 m_camera;
+
+	VIEWPORT_FIX_MODE	m_fixMode;
+	int					m_rotSeq;
 };
 
 typedef boost::shared_ptr<t3dCamera> t3dCameraPtr;
@@ -154,13 +180,27 @@ typedef boost::shared_ptr<t3dCamera> t3dCameraPtr;
 class T3DLIB_API t3dCameraEuler : public t3dCamera
 {
 public:
-	t3dCameraEuler(	RECT rect, const VECTOR4D & pos, const VECTOR4D & rot,
-					REAL fov = DEG_TO_RAD(90),
-					REAL min_clip_z = 10,
-					REAL max_clip_z = 1000,
-					VIEWPORT_FIX_MODE fix_mode = VIEWPORT_FIX_MODE_WIDTH,
-					int rot_seq = ROTATION_SEQ_ZXY);
+	t3dCameraEuler(	RECT rect,
+					REAL fov					= DEG_TO_RAD(90),
+					REAL min_clip_z				= 10,
+					REAL max_clip_z				= 1000,
+					VIEWPORT_FIX_MODE fixMode	= VIEWPORT_FIX_MODE_WIDTH,
+					int rotSeq					= ROTATION_SEQ_ZXY);
+
+	~t3dCameraEuler();
+
+public:
+	virtual void update(void);
+
+public:
+	void set_position(VECTOR4D & pos);
+
+	void set_rotation(VECTOR4D & rot);
+
+	void build_MAT(void);
 };
+
+typedef boost::shared_ptr<t3dCameraEuler> t3dCameraEulerPtr;
 
 // ============================================================================
 // t3dDDraw
@@ -689,30 +729,26 @@ public:
 public:
 	void draw(t3dRenderObject * obj);
 
-	void add_light(std::string l_name, t3dLightPtr light);
-
-	void del_light(std::string l_name);
-
-	t3dLightPtr get_light(std::string l_name);
-
 	void set_camera(t3dCameraPtr cam);
 
 	void set_surface(t3dSurfacePtr surf);
 
 	void set_zbuffer(t3dZbufferPtr zbuf);
 
-	void set_material(t3dMaterialPtr mat);
+	void add_light(std::string l_name, t3dLightPtr light);
+
+	void del_light(std::string l_name);
+
+	t3dLightPtr get_light(std::string l_name);
 
 public:
-	std::map<std::string, t3dLightPtr> m_lightMap;
-
 	t3dCameraPtr m_cam;
 
 	t3dSurfacePtr m_surf;
 
 	t3dZbufferPtr m_zbuf;
 
-	t3dMaterialPtr m_mat;
+	std::map<std::string, t3dLightPtr> m_lightMap;
 };
 
 // ============================================================================
@@ -760,7 +796,7 @@ protected:
 	virtual void draw_SELF(t3dRender * render);
 };
 
-class T3DLIB_API t3dObjectFlatPerspectiveLP : public t3dObject
+class T3DLIB_API t3dObjectFlatPerspectiveLP : public t3dObjectFlat
 {
 protected:
 	virtual void draw_SELF(t3dRender * render);
@@ -772,7 +808,7 @@ protected:
 	virtual void draw_SELF(t3dRender * render);
 };
 //
-//class T3DLIB_API t3dObjectGouraudPerspectiveLP : public t3dObject
+//class T3DLIB_API t3dObjectGouraudPerspectiveLP : public t3dObjectGouraud
 //{
 //protected:
 //	virtual void draw_SELF(t3dRender * render);
@@ -853,9 +889,9 @@ protected:
 	t3dDDrawPtr		m_ddraw;
 };
 
-// ====================================================================================
+// ============================================================================
 // MyConfig
-// ====================================================================================
+// ============================================================================
 
 class T3DLIB_API MyConfig : public MyConfigBase
 {
@@ -880,9 +916,9 @@ public:
 	int m_bpp;
 };
 
-// ====================================================================================
+// ============================================================================
 // MyGame
-// ====================================================================================
+// ============================================================================
 
 class T3DLIB_API MyGame : public MyGameBase
 {
@@ -897,7 +933,7 @@ protected:
 	}
 
 public:
-	MyGame(std::string appName);
+	MyGame(std::string appName = "My_Game");
 
 	~MyGame();
 
@@ -922,6 +958,25 @@ protected:
 	t3dMousePtr		m_mouse;
 	t3dDSoundPtr	m_dsound;
 };
+
+// ============================================================================
+// FPSGameCamera
+// ============================================================================
+
+class T3DLIB_API FPSGameCamera : public t3dCameraEuler
+{
+public:
+	FPSGameCamera(RECT rect);
+
+	~FPSGameCamera();
+
+public:
+	VECTOR4D & mov_scale(VECTOR4D & vres, t3dKeyStatePtr k_state);
+
+	VECTOR4D & rot_scale(VECTOR4D & vres, t3dMouseStatePtr m_state);
+};
+
+typedef boost::shared_ptr<FPSGameCamera> FPSGameCameraPtr;
 
 // ////////////////////////////////////////////////////////////////////////////
 // GLOBALS
