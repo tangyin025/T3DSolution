@@ -8,6 +8,7 @@
 
 #include "t3dPrecompiledHeader.h"
 #include "MyGame.h"
+#include "vector"
 
 // ////////////////////////////////////////////////////////////////////////////////////
 // CLASSES
@@ -33,31 +34,21 @@ protected:
 	void do_INIT(void)
 	{
 		RECT rect = {m_back->m_ddsurface.rect.left + 10, m_back->m_ddsurface.rect.top + 10, m_back->m_ddsurface.rect.right - 10, m_back->m_ddsurface.rect.bottom - 10};
-		m_cam = FPSGameCameraPtr(new FPSGameCamera(rect));
-		//m_cam->m_camera.vpos.y = 10;
-		//m_cam->m_camera.vpos.z = -60;
+		m_cam = t3dCameraEulerPtr(new t3dCameraEuler(rect));
 		m_cam->set_fov(DEG_TO_RAD(60));
 
-		//m_obj = t3dObjectPtr(new t3dObjectGouraud);
-		//m_obj->load("jack.ms3d.txt");
-		//m_obj = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
-		m_obj = t3dObjectPtr(new t3dObjectWire);
-		//m_obj->load("ct2.ms3d.txt", "Box01");
+		m_obj = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
 		m_obj->load("room.ms3d.txt", "pCube1");
 
 		for(size_t i = 0; i < m_obj->m_object.ver_list.length; i++)
 		{
 			VECTOR3D_Mul(&m_obj->m_object.ver_list.elems[i]._3D, 5.0f);
+			m_obj->m_object.ver_list.elems[i].x *= 2;
+			m_obj->m_object.ver_list.elems[i].z *= 2;
 			m_obj->m_object.ver_list.elems[i].y += -10;
 		}
 
-		m_obj2 = t3dObjectPtr(new t3dObjectWire);
-		m_obj2->load("ct2.ms3d.txt", "Sphere01");
-
-		for(size_t i = 0; i < m_obj2->m_object.ver_list.length; i++)
-		{
-			VECTOR3D_Mul(&m_obj2->m_object.ver_list.elems[i]._3D, 0.2f);
-		}
+		m_player.add_scene(m_obj);
 	}
 
 	void do_DRAW(void)
@@ -100,61 +91,22 @@ protected:
 			return;
 		}
 
-		static VECTOR4D sphere_pos = {0, 0, 0, 1};
+		static VECTOR4D emplyVector = {0, 0, 0, 1};
 
-		if(k_state->is_key_down(DIK_NUMPAD8))
-		{
-			sphere_pos.z += cos(m_cam->m_camera.vrot.y);
-			sphere_pos.x += sin(m_cam->m_camera.vrot.y);
-		}
-
-		if(k_state->is_key_down(DIK_NUMPAD5))
-		{
-			sphere_pos.z -= cos(m_cam->m_camera.vrot.y);
-			sphere_pos.x -= sin(m_cam->m_camera.vrot.y);
-		}
-
-		if(k_state->is_key_down(DIK_NUMPAD4))
-		{
-			sphere_pos.x -= cos(m_cam->m_camera.vrot.y);
-			sphere_pos.z += sin(m_cam->m_camera.vrot.y);
-		}
-
-		if(k_state->is_key_down(DIK_NUMPAD6))
-		{
-			sphere_pos.x += cos(m_cam->m_camera.vrot.y);
-			sphere_pos.z -= sin(m_cam->m_camera.vrot.y);
-		}
-
-		if(k_state->is_key_down(DIK_NUMPAD1))
-		{
-			sphere_pos.y += 1;
-		}
-
-		if(k_state->is_key_down(DIK_NUMPAD3))
-		{
-			sphere_pos.y -= 1;
-		}
-
-		VECTOR4D vtmp;
-		VECTOR3D_Add(&m_cam->m_camera.vpos._3D, &m_cam->mov_scale(vtmp, k_state)._3D);
-		VECTOR3D_Add(&m_cam->m_camera.vrot._3D, &m_cam->rot_scale(vtmp, m_state)._3D);
-		m_cam->update();
-
-		static VECTOR4D o_emp = {0, 0, 0, 1};
 		m_obj->reset();
-		m_obj->to_WORLD(o_emp, o_emp);
+		m_obj->to_WORLD(emplyVector, emplyVector);
 
-		VECTOR4D vres;
-		//VECTOR4D_InitXYZ(&sphere_pos, 14, -6, 0);
-		//VECTOR4D_InitXYZ(&sphere_pos, 16.6f, -7, 0);
-		if(m_obj->collision_test(vres, sphere_pos, 4))
+		if(k_state->is_key_down(DIK_R))
 		{
-			VECTOR4D_Copy(&sphere_pos, &vres);
+			m_player.reset();
 		}
 
-		m_obj2->reset();
-		m_obj2->to_WORLD(sphere_pos, o_emp);
+		// update camera attribute
+		m_player.update(k_state, m_state, m_fps);
+
+		m_cam->set_position(m_player.m_posHead);
+		m_cam->set_rotation(m_player.m_rot);
+		m_cam->update();
 
 		t3dRender render;
 		render.set_camera(m_cam);
@@ -162,22 +114,24 @@ protected:
 		render.set_zbuffer(m_zbuf);
 
 		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
-		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), o_emp)));
+		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), emplyVector)));
 
 		render.draw(m_obj.get());
-		render.draw(m_obj2.get());
 
 		m_back->text_out(str_printf("%.1f fps", m_fps->get_FPS()), 10, 10);
 
-		m_back->text_out(str_printf("sphere: %f, %f, %f", sphere_pos.x, sphere_pos.y, sphere_pos.z), 10, 50);
+		m_back->text_out(str_printf("cam.pos: %f, %f, %f", m_cam->m_camera.vpos.x, m_cam->m_camera.vpos.y, m_cam->m_camera.vpos.z), 10, 50);
 
-		Sleep(30);
+		m_back->text_out(str_printf("cam.rot: %f, %f, %f", m_cam->m_camera.vrot.x, m_cam->m_camera.vrot.y, m_cam->m_camera.vrot.z), 10, 90);
+
+		//Sleep(30);
 	}
 
 protected:
-	FPSGameCameraPtr m_cam;
+	t3dCameraEulerPtr m_cam;
 	t3dObjectPtr m_obj;
-	t3dObjectPtr m_obj2;
+
+	FPSPlayer m_player;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////

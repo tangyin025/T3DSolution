@@ -202,6 +202,32 @@ public:
 
 typedef boost::shared_ptr<t3dCameraEuler> t3dCameraEulerPtr;
 
+class T3DLIB_API t3dCameraUVN : public t3dCamera
+{
+public:
+	t3dCameraUVN(	RECT rect,
+					REAL fov					= DEG_TO_RAD(90),
+					REAL min_clip_z				= 10,
+					REAL max_clip_z				= 1000,
+					VIEWPORT_FIX_MODE fixMode	= VIEWPORT_FIX_MODE_WIDTH,
+					int rotSeq					= ROTATION_SEQ_ZXY);
+
+	~t3dCameraUVN();
+
+public:
+	virtual void update(void);
+
+public:
+	void set_position(VECTOR4D & pos);
+
+	void set_target(VECTOR4D & targ);
+
+	void build_MAT(void);
+
+public:
+	VECTOR4D m_targ;
+};
+
 // ============================================================================
 // t3dDDraw
 // ============================================================================
@@ -960,23 +986,48 @@ protected:
 };
 
 // ============================================================================
-// FPSGameCamera
+// FPSPlayer
 // ============================================================================
 
-class T3DLIB_API FPSGameCamera : public t3dCameraEuler
+class T3DLIB_API FPSPlayer
 {
+	typedef enum
+	{
+		player_state_walk,
+		player_state_hang
+
+	} player_state_type;
+
 public:
-	FPSGameCamera(RECT rect);
+	FPSPlayer();
 
-	~FPSGameCamera();
+	~FPSPlayer();
 
 public:
-	VECTOR4D & mov_scale(VECTOR4D & vres, t3dKeyStatePtr k_state);
+	void add_scene(t3dObjectPtr scene);
 
-	VECTOR4D & rot_scale(VECTOR4D & vres, t3dMouseStatePtr m_state);
+	void reset(void);
+
+	void update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps);
+
+protected:
+	bool get_mov_scale(VECTOR4D & vres, t3dKeyStatePtr ks);
+
+	bool get_rot_scale(VECTOR4D & vres, t3dMouseStatePtr ms);
+
+protected:
+	std::vector<t3dObjectPtr> m_sceneList;
+
+public:
+	VECTOR4D m_pos;
+	VECTOR4D m_posHead;
+	VECTOR4D m_rot;
+
+	VECTOR4D m_movSpeed;
+	VECTOR4D m_rotSpeed;
+
+	player_state_type m_lastState;
 };
-
-typedef boost::shared_ptr<FPSGameCamera> FPSGameCameraPtr;
 
 // ////////////////////////////////////////////////////////////////////////////
 // GLOBALS

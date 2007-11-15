@@ -268,7 +268,7 @@ T3DLIB_API CAM4DV1 * CAM4DV1_Init(	CAM4DV1 * pcam, REAL width, REAL height,
 
 T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pcam, int rot_seq = ROTATION_SEQ_ZXY);
 
-T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode);
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int targ_mode = 0);
 
 T3DLIB_API bool Create_Material_From_MsMaterial16(MATERIALV1 * pmaterial, msMaterial * pmsMaterial);
 

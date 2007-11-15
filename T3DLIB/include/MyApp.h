@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include <exception>
 #include <string>
+#include <vector>
 #include <list>
 #include <map>
 #include <boost/shared_ptr.hpp>

@@ -4,7 +4,6 @@
 
 #include "t3dPrecompiledHeader.h"
 #include "MyGame.h"
-#include <vector>
 
 // ////////////////////////////////////////////////////////////////////////////
 // GLOBALS
@@ -286,17 +285,53 @@ void t3dCameraEuler::update(void)
 
 void t3dCameraEuler::set_position(VECTOR4D & pos)
 {
-	m_camera.vpos = pos;
+	VECTOR4D_Copy(&m_camera.vpos, &pos);
 }
 
 void t3dCameraEuler::set_rotation(VECTOR4D & rot)
 {
-	m_camera.vrot = rot;
+	VECTOR4D_Copy(&m_camera.vrot, &rot);
 }
 
 void t3dCameraEuler::build_MAT(void)
 {
 	Build_Camera4D_Mat_Euler(&m_camera.mcam, &m_camera, m_rotSeq);
+}
+
+t3dCameraUVN::t3dCameraUVN(RECT rect,
+						   REAL fov						/*= DEG_TO_RAD(90)*/,
+						   REAL min_clip_z				/*= 10*/,
+						   REAL max_clip_z				/*= 1000*/,
+						   VIEWPORT_FIX_MODE fixMode	/*= VIEWPORT_FIX_MODE_WIDTH*/,
+						   int rotSeq					/*= ROTATION_SEQ_ZXY*/)
+	: t3dCamera(rect, fov, min_clip_z, max_clip_z, fixMode, rotSeq)
+{
+	VECTOR4D_InitXYZ(&m_targ, 0, 0, 1);
+}
+
+t3dCameraUVN::~t3dCameraUVN()
+{
+	build_VIEWPLANE();
+	build_MAT();
+}
+
+void t3dCameraUVN::update(void)
+{
+}
+
+void t3dCameraUVN::set_position(VECTOR4D & pos)
+{
+	VECTOR4D_Copy(&m_camera.vpos, &pos);
+}
+
+void t3dCameraUVN::set_target(VECTOR4D & targ)
+{
+	VECTOR4D_Copy(&m_targ, &targ);
+}
+
+void t3dCameraUVN::build_MAT(void)
+{
+	Build_Camera4D_Mat_UVN(&m_camera.mcam, &m_camera);
 }
 
 // ============================================================================
@@ -1738,53 +1773,255 @@ void MyGame::OnFrame(void)
 }
 
 // ============================================================================
-// FPSGameCamera
+// FPSPlayer
 // ============================================================================
 
-FPSGameCamera::FPSGameCamera(RECT rect)
-	: t3dCameraEuler(rect)
+FPSPlayer::FPSPlayer()
+{
+	reset();
+}
+
+FPSPlayer::~FPSPlayer()
 {
 }
 
-FPSGameCamera::~FPSGameCamera()
+void FPSPlayer::add_scene(t3dObjectPtr scene)
 {
+	m_sceneList.push_back(scene);
 }
 
-VECTOR4D & FPSGameCamera::mov_scale(VECTOR4D & vres, t3dKeyStatePtr k_state)
+void FPSPlayer::reset(void)
 {
-	VECTOR4D_InitXYZ(&vres, 0, 0, 0);
-
-	if(k_state->is_key_down(DIK_W) || k_state->is_key_down(DIK_UP))
-	{
-		vres.x =  sin(m_camera.vrot.y);
-		vres.z =  cos(m_camera.vrot.y);
-	}
-
-	if(k_state->is_key_down(DIK_S) || k_state->is_key_down(DIK_DOWN))
-	{
-		vres.x = -sin(m_camera.vrot.y);
-		vres.z = -cos(m_camera.vrot.y);
-	}
-
-	if(k_state->is_key_down(DIK_A) || k_state->is_key_down(DIK_LEFT))
-	{
-		vres.x = -cos(m_camera.vrot.y);
-		vres.z =  sin(m_camera.vrot.y);
-	}
-
-	if(k_state->is_key_down(DIK_D) || k_state->is_key_down(DIK_RIGHT))
-	{
-		vres.x =  cos(m_camera.vrot.y);
-		vres.z = -sin(m_camera.vrot.y);
-	}
-
-	return vres;
+	VECTOR4D_InitXYZ(&m_pos, 0, 0, 0);
+	VECTOR4D_InitXYZ(&m_posHead, 0, 0, 0);
+	VECTOR4D_InitXYZ(&m_rot, 0, 0, 0);
+	VECTOR4D_InitXYZ(&m_movSpeed, 0, 0, 0);
+	VECTOR4D_InitXYZ(&m_rotSpeed, 0, 0, 0);
+	m_lastState = player_state_hang;
 }
 
-VECTOR4D & FPSGameCamera::rot_scale(VECTOR4D & vres, t3dMouseStatePtr m_state)
+void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
+{
+	const REAL MOV_SPEED_ACCEL = fps->get_TPF_SAFE() * 30;
+	const REAL MOV_SPEED_LIMIT = fps->get_TPF_SAFE() * 50;
+
+	// change move speed
+	if(player_state_walk == m_lastState)
+	{
+		// get move speed
+		VECTOR4D movAccel;
+		if(get_mov_scale(movAccel, ks))
+		{
+			// add accel to mov speed
+			VECTOR3D_Mul(&movAccel._3D, MOV_SPEED_ACCEL);
+			VECTOR3D_Add(&m_movSpeed._3D, &movAccel._3D);
+
+			// limit the move speed
+			VECTOR2D movSpeed2D;
+			VECTOR2D_InitXY(&movSpeed2D, m_movSpeed.x, m_movSpeed.z);
+			REAL curr_mov_speed = VECTOR2D_Length(&movSpeed2D);
+			if(curr_mov_speed > MOV_SPEED_LIMIT)
+			{
+				VECTOR2D_Mul(&movSpeed2D, MOV_SPEED_LIMIT / curr_mov_speed);
+			}
+			m_movSpeed.x = movSpeed2D.x;
+			m_movSpeed.z = movSpeed2D.y;
+		}
+		else
+		{
+			// resistance from mov speed
+			VECTOR2D movSpeed2D;
+			VECTOR2D_InitXY(&movSpeed2D, m_movSpeed.x, m_movSpeed.z);
+			REAL curr_mov_speed = VECTOR2D_Length(&movSpeed2D);
+			if(curr_mov_speed > 0)
+			{
+				if(curr_mov_speed < MOV_SPEED_ACCEL)
+				{
+					VECTOR2D_InitXY(&movSpeed2D, 0, 0);
+				}
+				else
+				{
+					VECTOR2D_Mul(&movSpeed2D, 1 - MOV_SPEED_ACCEL / curr_mov_speed);
+				}
+			}
+			m_movSpeed.x = movSpeed2D.x;
+			m_movSpeed.z = movSpeed2D.y;
+		}
+	}
+
+	const REAL GRAVITY_SPEED_ACCEL = fps->get_TPF_SAFE() * -20;
+	const REAL GRAVITY_SPEED_LIMIT = fps->get_TPF_SAFE() * -100;
+
+	// change gravity speed
+	m_movSpeed.y = max(GRAVITY_SPEED_LIMIT, m_movSpeed.y + GRAVITY_SPEED_ACCEL);
+
+	// get new position
+	VECTOR4D pos_dest;
+	VECTOR3D_Add(&pos_dest._3D, &m_pos._3D, &m_movSpeed._3D);
+
+	const REAL PLAYER_SPHERE_RADIUS = 4;
+
+	// collision test
+	bool bcollisioned = false;
+	VECTOR4D pos_result;
+	VECTOR4D_Copy(&pos_result, &pos_dest);
+	for(size_t i = 0; i < m_sceneList.size(); i++)
+	{
+		VECTOR4D vtmp;
+		if(m_sceneList[i]->collision_test(vtmp, pos_result, PLAYER_SPHERE_RADIUS))
+		{
+			// update new sphere center to continue
+			VECTOR4D_Copy(&pos_result, &vtmp);
+			bcollisioned = true;
+		}
+	}
+
+	// update player state
+	if(!bcollisioned)
+	{
+		m_lastState = player_state_hang;
+	}
+	else if(pos_result.y <= pos_dest.y)
+	{
+		m_lastState = player_state_hang;
+	}
+	else
+	{
+		m_lastState = player_state_walk;
+	}
+
+	// update player position
+	if(bcollisioned)
+	{
+		// do not forget update speed, or else some value will be large forever
+		VECTOR3D_Sub(&m_movSpeed._3D, &pos_result._3D, &m_pos._3D);
+		VECTOR4D_Copy(&m_pos, &pos_result);
+	}
+	else
+	{
+		VECTOR4D_Copy(&m_pos, &pos_dest);
+	}
+	if(m_pos.y < -50)
+	{
+		m_pos.y = 50;
+	}
+
+	const REAL PLAYER_HEAD_STATURE = 10;
+
+	// update header position
+	VECTOR4D_InitXYZ(&m_posHead, m_pos.x, m_pos.y + PLAYER_HEAD_STATURE, m_pos.z);
+
+	// update player rotation
+	VECTOR4D rotSpeed;
+	if(get_rot_scale(rotSpeed, ms))
+	{
+		VECTOR3D_Add(&m_rot._3D, &rotSpeed._3D);
+		//m_rot.y = fmod(m_rot.y, DEG_TO_RAD(360));
+		m_rot.x = min(DEG_TO_RAD( 90), m_rot.x);
+		m_rot.x = max(DEG_TO_RAD(-90), m_rot.x);
+	}
+}
+
+bool FPSPlayer::get_mov_scale(VECTOR4D & vres, t3dKeyStatePtr ks)
+{
+	const unsigned int MOV_STATE_UP		= 0x01;
+	const unsigned int MOV_STATE_DOWN	= 0x02;
+	const unsigned int MOV_STATE_LEFT	= 0x04;
+	const unsigned int MOV_STATE_RIGHT	= 0x08;
+
+	unsigned int state = 0;
+	if(ks->is_key_down(DIK_W) || ks->is_key_down(DIK_UP))
+	{
+		state |= MOV_STATE_UP;
+	}
+
+	if(ks->is_key_down(DIK_S) || ks->is_key_down(DIK_DOWN))
+	{
+		state |= MOV_STATE_DOWN;
+	}
+
+	if(ks->is_key_down(DIK_A) || ks->is_key_down(DIK_LEFT))
+	{
+		state |= MOV_STATE_LEFT;
+	}
+
+	if(ks->is_key_down(DIK_D) || ks->is_key_down(DIK_RIGHT))
+	{
+		state |= MOV_STATE_RIGHT;
+	}
+
+	REAL angle = DEG_TO_RAD(0);
+	bool bres = false;
+	switch(state)
+	{
+	case MOV_STATE_UP:
+		angle = DEG_TO_RAD(0);
+		bres = true;
+		break;
+
+	case MOV_STATE_UP | MOV_STATE_RIGHT:
+		angle = DEG_TO_RAD(45);
+		bres = true;
+		break;
+
+	case MOV_STATE_RIGHT:
+		angle = DEG_TO_RAD(90);
+		bres = true;
+		break;
+
+	case MOV_STATE_DOWN | MOV_STATE_RIGHT:
+		angle = DEG_TO_RAD(135);
+		bres = true;
+		break;
+
+	case MOV_STATE_DOWN:
+		angle = DEG_TO_RAD(180);
+		bres = true;
+		break;
+
+	case MOV_STATE_DOWN | MOV_STATE_LEFT:
+		angle = DEG_TO_RAD(225);
+		bres = true;
+		break;
+
+	case MOV_STATE_LEFT:
+		angle = DEG_TO_RAD(270);
+		bres = true;
+		break;
+
+	case MOV_STATE_UP | MOV_STATE_LEFT:
+		angle = DEG_TO_RAD(315);
+		bres = true;
+		break;
+
+	default:
+		break;
+	}
+
+	angle += m_rot.y;
+
+	if(bres)
+	{
+		VECTOR4D_InitXYZ(&vres, sin(angle), 0, cos(angle));
+	}
+	else
+	{
+		VECTOR4D_InitXYZ(&vres, 0, 0, 0);
+	}
+
+	if(ks->is_key_down(DIK_SPACE))
+	{
+		vres.y = 10;
+		return true;
+	}
+
+	return bres;
+}
+
+bool FPSPlayer::get_rot_scale(VECTOR4D & vres, t3dMouseStatePtr ms)
 {
 	VECTOR4D_InitXYZ(&vres,
-			DEG_TO_RAD(m_state->get_Y()) * (REAL)0.1, DEG_TO_RAD(m_state->get_X()) * (REAL)0.1, 0 /*(REAL)m_state->get_Z()*/);
+			DEG_TO_RAD(ms->get_Y()) * (REAL)0.1, DEG_TO_RAD(ms->get_X()) * (REAL)0.1, 0 /*DEG_TO_RAD(ms->get_Z()) * (REAL)0.1*/);
 
-	return vres;
+	return true;
 }

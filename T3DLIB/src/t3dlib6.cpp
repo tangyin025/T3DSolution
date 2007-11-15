@@ -1325,14 +1325,35 @@ T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_Euler(MATRIX4X4 * pmres, CAM4DV1 * pca
 	return Mat_Mul_4X4(pmres, &mmov, &mrot);
 }
 
-T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int uvn_mode)
+T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam, int targ_mode /*= 0*/)
 {
-	assert(0);
+	MATRIX4X4 mt_inv, mt_uvn;
 
-	return NULL;
-	UNREFERENCED_PARAMETER(pmres);
-	UNREFERENCED_PARAMETER(pcam);
-	UNREFERENCED_PARAMETER(uvn_mode);
+	VECTOR3D_Sub(&pcam->n._3D, &pcam->vtag._3D, &pcam->vpos._3D);
+	VECTOR4D_InitXYZ(&pcam->v, 0.0f, 1.0f, 0.0f);
+	VECTOR3D_Cross(&pcam->u._3D, &pcam->v._3D, &pcam->n._3D);
+	VECTOR3D_Cross(&pcam->v._3D, &pcam->n._3D, &pcam->u._3D);
+	VECTOR3D_Normalize(&pcam->u._3D);
+	VECTOR3D_Normalize(&pcam->v._3D);
+	VECTOR3D_Normalize(&pcam->n._3D);
+
+	pcam->u.w = 1;
+	pcam->v.w = 1;
+	pcam->n.w = 1;
+
+	MATRIX4X4_Init4X4(&mt_inv,	1.0f,				0.0f,				0.0f,				0.0f,
+								0.0f,				1.0f,				0.0f,				0.0f,
+								0.0f,				0.0f,				1.0f,				0.0f,
+								-pcam->vpos.x,		-pcam->vpos.y,		-pcam->vpos.z,		1.0f);
+
+	MATRIX4X4_Init4X4(&mt_uvn,	pcam->u.x,			pcam->v.x,			pcam->n.x,			0.0f,
+								pcam->u.y,			pcam->v.y,			pcam->n.y,			0.0f,
+								pcam->u.z,			pcam->v.z,			pcam->n.z,			0.0f,
+								0.0f,				0.0f,				0.0f,				1.0f);
+
+	return 	Mat_Mul_4X4(pmres, &mt_inv, &mt_uvn);
+
+	UNREFERENCED_PARAMETER(targ_mode);
 }
 
 T3DLIB_API bool Create_Material_From_MsMaterial16(MATERIALV1 * pmaterial, msMaterial * pmsMaterial)
