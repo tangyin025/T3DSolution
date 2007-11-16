@@ -192,6 +192,9 @@ public:
 		assert(NULL != m_hwnd);
 		if(0 == ::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)style))
 			throw MyException("set window style failed");
+		if(0 == ::SetWindowPos(m_hwnd, 0, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
+			throw MyException("set window position failed");
 	}
 
 	DWORD GetWindowExstyle(void)
@@ -205,6 +208,9 @@ public:
 		assert(NULL != m_hwnd);
 		if(0 == ::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)exstyle))
 			throw MyException("set window extension style failed");
+		if(0 == ::SetWindowPos(m_hwnd, 0, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
+			throw MyException("set window position failed");
 	}
 
 	RECT GetWindowRect(void)

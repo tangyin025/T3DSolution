@@ -49,11 +49,19 @@ protected:
 		}
 
 		m_player.add_scene(m_obj);
+
+		rect = m_wnd->GetClientRect();
+		rect.left += MyWindow::GetRectWidth(rect) / 2;
+		rect.top += MyWindow::GetRectHeight(rect) / 2;
+		rect.right = rect.left;
+		rect.bottom = rect.top;
+		::ClipCursor(&rect);
+		::ShowCursor(FALSE);
 	}
 
 	void do_DRAW(void)
 	{
-		m_back->fill(m_back->m_ddsurface.rect, Create_RGBI(128, 128, 128));
+		//m_back->fill(m_back->m_ddsurface.rect, Create_RGBI(128, 128, 128));
 		m_zbuf->clear();
 
 		{

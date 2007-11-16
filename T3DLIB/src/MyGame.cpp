@@ -1148,11 +1148,15 @@ static inline bool is_inside_triangle(const VECTOR4D & v0,
 	//return angle >= 2 * PI * 0.999; // !!!
 }
 
+#define COLLISION_STATE_NONE	(0)
+#define COLLISION_STATE_INSIDE	(1)
+#define COLLISION_STATE_EDGE	(2)
+
 /*
  * return value:
  * vres - the reaction velocity of this collision test
  */
-static inline bool TRIANGLE_Inside_Test(VECTOR4D & vres,
+static inline int TRIANGLE_Inside_Test(VECTOR4D & vres,
 									const VECTOR4D & v0,
 									const VECTOR4D & v1,
 									const VECTOR4D & v2,
@@ -1187,10 +1191,14 @@ static inline bool TRIANGLE_Inside_Test(VECTOR4D & vres,
 
 		if(is_inside_triangle(v0, v1, v2, vres))
 		{
-			return true;
+			return COLLISION_STATE_INSIDE;
+		}
+		else
+		{
+			return COLLISION_STATE_EDGE;
 		}
 	}
-	return false;
+	return COLLISION_STATE_NONE;
 }
 
 /*
@@ -1215,19 +1223,20 @@ static inline bool get_near_intersection(VECTOR4D & vres,
 	if(len1 <= 0)
 	{
 		VECTOR4D_Copy(&vres, &v0);
-		return false;
+		//return false; // process vertex, return true
 	}
 	else if(len1 >= len2)
 	{
 		VECTOR4D_Copy(&vres, &v1);
-		return false;
+		//return false; // process vertex, return true
 	}
 	else
 	{
 		VECTOR3D_Add(&vres._3D, &v0._3D, VECTOR3D_Mul(&dir2._3D, len1 / len2));
 		vres.w = 1;
-		return true;
 	}
+
+	return true;
 }
 
 /*
@@ -1281,10 +1290,7 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 	assert(&vres != &sphere_center);
 	VECTOR4D_Copy(&vres, &sphere_center);
 
-#define COLLISION_UNKNOWN	0
-#define COLLISION_EDGE		1
-
-	std::vector<int> collision_type(m_object.tri_list.length, COLLISION_UNKNOWN);
+	std::vector<int> collision_type(m_object.tri_list.length, COLLISION_STATE_NONE);
 	bool bres = false;
 	for(size_t i = 0; i < m_object.tri_list.length; i++)
 	{
@@ -1311,7 +1317,8 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 		}
 
 		VECTOR4D vint;
-		if(TRIANGLE_Inside_Test(vint, v0._4D, v1._4D, v2._4D, vres, sphere_radius))
+		collision_type[i] = TRIANGLE_Inside_Test(vint, v0._4D, v1._4D, v2._4D, vres, sphere_radius);
+		if(COLLISION_STATE_INSIDE == collision_type[i])
 		{
 			/*
 			 * vres = vint + (vres - vint) * radius / |vres - vint|
@@ -1322,15 +1329,11 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 
 			bres = true;
 		}
-		else
-		{
-			collision_type[i] = COLLISION_EDGE;
-		}
 	}
 
 	for(size_t i = 0; i < m_object.tri_list.length; i++)
 	{
-		if(COLLISION_EDGE != collision_type[i])
+		if(COLLISION_STATE_EDGE != collision_type[i])
 		{
 			continue;
 		}
@@ -1614,26 +1617,46 @@ int MyGameBase::run(void)
 
 	m_wnd = init_WND();
 	g_msgArr->addWindow(m_wnd);
-	m_wnd->SetClientRect(rect);
 
 	m_ddraw = t3dDDrawPtr(new t3dDDraw);
 	if(config->get_screen_mode() == MyConfig::fullscreen)
 	{
+		//m_wnd->SetWindowExstyle(WS_EX_TOPMOST);
 		m_wnd->SetWindowStyle(WS_POPUP | WS_VISIBLE);
-		if(0 == ::SetWindowPos(m_wnd->get_hwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED))
-			throw MyException("set window top most failed");
+		m_wnd->SetClientRect(rect);
 
 		m_ddraw->set_coop_level(t3dDDraw::fullscreen, m_wnd);
 		m_ddraw->set_display_mode(
 						config->get_screen_width(),
 						config->get_screen_height(),
 						config->get_screen_bpp());
+
+#ifdef _DEBUG
+		{
+			RECT _10119_rect = m_wnd->GetClientRect();
+			assert(config->get_screen_width()	== MyWindow::GetRectWidth(_10119_rect));
+			assert(config->get_screen_height()	== MyWindow::GetRectHeight(_10119_rect));
+
+			assert(0 == _10119_rect.left);
+			assert(0 == _10119_rect.top);
+		}
+#endif
 	}
 	else
 	{
+		m_wnd->SetWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
+		m_wnd->SetClientRect(rect);
 		m_wnd->CenterWindow();
 
 		m_ddraw->set_coop_level(t3dDDraw::normal, m_wnd);
+
+#ifdef _DEBUG
+		{
+			RECT _10119_rect = m_wnd->GetClientRect();
+			assert(config->get_screen_width()	== MyWindow::GetRectWidth(_10119_rect));
+			assert(config->get_screen_height()	== MyWindow::GetRectHeight(_10119_rect));
+		}
+#endif
 	}
 
 	DDSURFACEDESC2 ddsd;
@@ -1802,8 +1825,10 @@ void FPSPlayer::reset(void)
 
 void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 {
-	const REAL MOV_SPEED_ACCEL = fps->get_TPF_SAFE() * 30;
+	const REAL MOV_RESIS_SPEED = fps->get_TPF_SAFE() * 30;
+	const REAL MOV_SPEED_ACCEL = MOV_RESIS_SPEED * 2;
 	const REAL MOV_SPEED_LIMIT = fps->get_TPF_SAFE() * 50;
+	const REAL JMP_SPEED_ACCEL = fps->get_TPF_SAFE() * 200;
 
 	// change move speed
 	if(player_state_walk == m_lastState)
@@ -1813,9 +1838,43 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 		if(get_mov_scale(movAccel, ks))
 		{
 			// add accel to mov speed
-			VECTOR3D_Mul(&movAccel._3D, MOV_SPEED_ACCEL);
-			VECTOR3D_Add(&m_movSpeed._3D, &movAccel._3D);
+			//VECTOR3D_Mul(&movAccel._3D, MOV_SPEED_ACCEL);
 
+			movAccel.x *= MOV_SPEED_ACCEL;
+			movAccel.z *= MOV_SPEED_ACCEL;
+			VECTOR3D_Add(&m_movSpeed._3D, &movAccel._3D);
+		}
+
+		// get jump speed
+		VECTOR4D jmpAccel;
+		if(get_jmp_scale(jmpAccel, ks))
+		{
+			jmpAccel.y *= JMP_SPEED_ACCEL;
+			VECTOR3D_Add(&m_movSpeed._3D, &jmpAccel._3D);
+		}
+
+		// add resistance
+		{
+			VECTOR2D movSpeed2D;
+			VECTOR2D_InitXY(&movSpeed2D, m_movSpeed.x, m_movSpeed.z);
+			REAL curr_mov_speed = VECTOR2D_Length(&movSpeed2D);
+			if(curr_mov_speed > 0)
+			{
+				if(curr_mov_speed < MOV_RESIS_SPEED)
+				{
+					VECTOR2D_InitXY(&movSpeed2D, 0, 0);
+				}
+				else
+				{
+					VECTOR2D_Mul(&movSpeed2D, 1 - MOV_RESIS_SPEED / curr_mov_speed);
+				}
+			}
+			m_movSpeed.x = movSpeed2D.x;
+			m_movSpeed.z = movSpeed2D.y;
+		}
+
+		// limit the move speed
+		{
 			// limit the move speed
 			VECTOR2D movSpeed2D;
 			VECTOR2D_InitXY(&movSpeed2D, m_movSpeed.x, m_movSpeed.z);
@@ -1827,29 +1886,9 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 			m_movSpeed.x = movSpeed2D.x;
 			m_movSpeed.z = movSpeed2D.y;
 		}
-		else
-		{
-			// resistance from mov speed
-			VECTOR2D movSpeed2D;
-			VECTOR2D_InitXY(&movSpeed2D, m_movSpeed.x, m_movSpeed.z);
-			REAL curr_mov_speed = VECTOR2D_Length(&movSpeed2D);
-			if(curr_mov_speed > 0)
-			{
-				if(curr_mov_speed < MOV_SPEED_ACCEL)
-				{
-					VECTOR2D_InitXY(&movSpeed2D, 0, 0);
-				}
-				else
-				{
-					VECTOR2D_Mul(&movSpeed2D, 1 - MOV_SPEED_ACCEL / curr_mov_speed);
-				}
-			}
-			m_movSpeed.x = movSpeed2D.x;
-			m_movSpeed.z = movSpeed2D.y;
-		}
 	}
 
-	const REAL GRAVITY_SPEED_ACCEL = fps->get_TPF_SAFE() * -20;
+	const REAL GRAVITY_SPEED_ACCEL = fps->get_TPF_SAFE() * -9;
 	const REAL GRAVITY_SPEED_LIMIT = fps->get_TPF_SAFE() * -100;
 
 	// change gravity speed
@@ -1890,12 +1929,28 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 		m_lastState = player_state_walk;
 	}
 
+	const REAL PLAYER_SLIDE_LIMIT = fps->get_TPF_SAFE() * 1;
+
 	// update player position
 	if(bcollisioned)
 	{
-		// do not forget update speed, or else some value will be large forever
+		// Note ! do not add result's speed to move speed
 		VECTOR3D_Sub(&m_movSpeed._3D, &pos_result._3D, &m_pos._3D);
-		VECTOR4D_Copy(&m_pos, &pos_result);
+
+		// do not forget update speed, or else some value will be large forever
+		//VECTOR3D_Sub(&m_movSpeed._3D, &pos_dest._3D, &m_pos._3D);
+
+		// ignore very small speed to avoid slide
+		if(abs(pos_result.x - m_pos.x) <= PLAYER_SLIDE_LIMIT
+			&& abs(pos_result.y - m_pos.y) <= PLAYER_SLIDE_LIMIT
+			&& abs(pos_result.z - m_pos.z) <= PLAYER_SLIDE_LIMIT)
+		{
+			VECTOR4D_InitXYZ(&m_movSpeed, 0, 0, 0);
+		}
+		else
+		{
+			VECTOR4D_Copy(&m_pos, &pos_result);
+		}
 	}
 	else
 	{
@@ -2009,13 +2064,33 @@ bool FPSPlayer::get_mov_scale(VECTOR4D & vres, t3dKeyStatePtr ks)
 		VECTOR4D_InitXYZ(&vres, 0, 0, 0);
 	}
 
+	return bres;
+}
+
+bool FPSPlayer::get_jmp_scale(VECTOR4D & vres, t3dKeyStatePtr ks)
+{
+	static int jump_state = 0;
+
 	if(ks->is_key_down(DIK_SPACE))
 	{
-		vres.y = 10;
-		return true;
+		if(0 == jump_state)
+		{
+			jump_state = 1;
+
+			VECTOR4D_InitXYZ(&vres, 0, 1, 0);
+			return true;
+		}
+	}
+	else
+	{
+		if(1 == jump_state)
+		{
+			jump_state = 0;
+		}
 	}
 
-	return bres;
+	VECTOR4D_InitXYZ(&vres, 0, 0, 0);
+	return false;
 }
 
 bool FPSPlayer::get_rot_scale(VECTOR4D & vres, t3dMouseStatePtr ms)

@@ -1013,6 +1013,8 @@ public:
 protected:
 	bool get_mov_scale(VECTOR4D & vres, t3dKeyStatePtr ks);
 
+	bool get_jmp_scale(VECTOR4D & vres, t3dKeyStatePtr ks);
+
 	bool get_rot_scale(VECTOR4D & vres, t3dMouseStatePtr ms);
 
 protected:
