@@ -342,7 +342,8 @@
 				y_end = y2;
 			}
 
-			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, sc.rx) > prc->fmax_clip_x + 1) // *** // !!! Note, the sc.rx may be not init with x3, because y0 -> y1 doesnt draw
 			{
 				__draw_func_clipped(sc, y_beg, y_end, prc);
 			}
@@ -632,7 +633,8 @@
 				y_end = y2;
 			}
 
-			if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv2->x, sc.lx) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // *** // !!! Note, the sc.rx may be not init with x3, because y0 -> y1 doesnt draw
 			{
 				__draw_func_clipped(sc, y_beg, y_end, prc);
 			}

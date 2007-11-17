@@ -4155,7 +4155,8 @@ T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTE
 				y_end = y2;
 			}
 
-			if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(x3, pv2->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(x3, pv2->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(sc.rx, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan16(sc, y_beg, y_end, prc);
 			}
@@ -4230,7 +4231,8 @@ T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTE
 				y_end = y2;
 			}
 
-			if(MIN(x3, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(x3, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(sc.lx, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan16(sc, y_beg, y_end, prc);
 			}
@@ -4325,7 +4327,8 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 				y_end = y2;
 			}
 
-			if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(x3, pv2->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(x3, pv2->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(sc.rx, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan32(sc, y_beg, y_end, prc);
 			}
@@ -4400,7 +4403,8 @@ T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTE
 				y_end = y2;
 			}
 
-			if(MIN(x3, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(x3, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(sc.lx, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan32(sc, y_beg, y_end, prc);
 			}
@@ -4681,7 +4685,8 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCO
 				y_end = y2;
 			}
 
-			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, sc.rx) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
 			}
@@ -4855,7 +4860,8 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCO
 				y_end = y2;
 			}
 
-			if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv2->x, sc.lx) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
 			}
@@ -5048,7 +5054,8 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 				y_end = y2;
 			}
 
-			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, sc.rx) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
 			}
@@ -5222,7 +5229,8 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCO
 				y_end = y2;
 			}
 
-			if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
+			//if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
+			if(MIN(pv2->x, sc.lx) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // *** // !!!
 			{
 				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
 			}

@@ -43,12 +43,6 @@
 
 #ifdef _DEBUG
 		{
-			if(y == 510)
-			{
-				int j = 10;
-				j++;
-			}
-
 			int itmp;
 			assert((itmp = lu >> FIXP16_SHIFT) >= 0 && (itmp = lu >> FIXP16_SHIFT) <= prc->t_width - 1);
 			assert((itmp = ru >> FIXP16_SHIFT) >= 0 && (itmp = ru >> FIXP16_SHIFT) <= prc->t_width - 1);
@@ -179,6 +173,13 @@
 #endif
 
 			dx = s_end - s_beg;
+#ifdef _DEBUG
+			if(dx > 0)
+			{
+				assert(s_beg >= prc->fmin_clip_x && s_beg <= prc->fmax_clip_x + 1);
+				assert(s_end >= prc->fmin_clip_x && s_end <= prc->fmax_clip_x + 1);
+			}
+#endif
 
 			while(dx-- > 0)
 			{

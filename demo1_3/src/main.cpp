@@ -153,6 +153,45 @@ protected:
 		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(64, 64, 64))));
 		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(220, 220, 220), l_pos)));
 
+		//{
+		//	RENDERCONTEXTV1 rc;
+		//	INIT_ZERO(rc);
+
+		//	SURFACEV1 surf = m_back->lock();
+
+		//	//memcpy(&rc._SURFACE, m_cam->m_camera.psurf, sizeof(rc._SURFACE));
+		//	//memcpy(&rc._ZBUFFER, m_cam->m_camera.pzbuf, sizeof(rc._ZBUFFER));
+		//	memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
+		//	memcpy(&rc._ZBUFFER, &m_zbuf->m_zbuffer, sizeof(rc._ZBUFFER));
+		//	//memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+
+		//	rc.fmin_clip_x = m_cam->m_camera.viewport.x;
+		//	rc.fmin_clip_y = m_cam->m_camera.viewport.y;
+		//	rc.fmax_clip_x = m_cam->m_camera.viewport.x + m_cam->m_camera.viewport.width - 1;
+		//	rc.fmax_clip_y = m_cam->m_camera.viewport.y + m_cam->m_camera.viewport.height - 1;
+
+		//	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+		//	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+		//	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+		//	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
+		//	VERTEXV1T v0, v1, v2;
+		//	//VECTOR4D_InitXYZ(&v0._4D, 3,	150, 100);
+		//	//VECTOR4D_InitXYZ(&v1._4D, 100,	150, 100);
+		//	//VECTOR4D_InitXYZ(&v2._4D, 100,	151, 100);
+		//	VECTOR4D_InitXYZ(&v0._4D, -2.9382737, 349.10370, 44.831829);
+		//	VECTOR4D_InitXYZ(&v1._4D, 15.556519, 349.39020, 45.805763);
+		//	VECTOR4D_InitXYZ(&v2._4D, 230.29062, 353.74454, 44.230614);
+
+		//	v0.c_diff = Create_RGBI(255, 0, 0);
+		//	v1.c_diff = Create_RGBI(255, 0, 0);
+		//	v2.c_diff = Create_RGBI(255, 0, 0);
+
+		//	Draw_Clipped_Triangle_Gouraud_ZBufferRW32(&rc, &v0, &v1, &v2);
+
+		//	m_back->unlock();
+		//}
+
 		render.draw(m_obj.get());
 
 		m_back->text_out(str_printf("%.1f fps", m_fps->get_FPS()), 10, 10);
