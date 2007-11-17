@@ -50,10 +50,10 @@ protected:
 	virtual LRESULT OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 public:
-	HWND get_hwnd(void);
+	HWND get_HWND(void);
 
 protected:
-	void set_hwnd(HWND hwnd);	// only be used by MyMessageArray
+	void set_HWND(HWND hwnd);	// only be used by MyMessageArray
 
 	void Register(void);		// only be used by MyMessageArray
 

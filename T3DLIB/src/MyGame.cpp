@@ -45,7 +45,7 @@ std::string T3DLIB_API str_printf(char * format, ...)
 t3dClipper::t3dClipper(t3dDDraw * ddraw, MyWindowBasePtr wnd)
 {
 	INIT_ZERO(m_clipper);
-	if(!Create_Windowed_DDClipper(&ddraw->m_ddraw, &m_clipper, wnd->get_hwnd()))
+	if(!Create_Windowed_DDClipper(&ddraw->m_ddraw, &m_clipper, wnd->get_HWND()))
 		throw MyException("create window clipper failed");
 }
 
@@ -352,7 +352,7 @@ t3dDDraw::~t3dDDraw()
 
 void t3dDDraw::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_ddraw.lpddraw->SetCooperativeLevel(wnd->get_hwnd(), type)))
+	if(FAILED(gresult = m_ddraw.lpddraw->SetCooperativeLevel(wnd->get_HWND(), type)))
 	{
 		Set_Last_Error(Get_DDraw_Error(gbuffer, gresult), __FILE__, __LINE__);
 		throw MyException("set cooperative level failed");
@@ -462,7 +462,7 @@ t3dMouse::~t3dMouse()
 void t3dMouse::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
 	if(FAILED(gresult = m_dimouse.lpdimouse->SetCooperativeLevel(
-			wnd->get_hwnd(), type)))
+			wnd->get_HWND(), type)))
 	{
 		Get_DInput_Error(gbuffer, gresult);
 		throw MyException("set dimouse cooperative level failed");
@@ -530,7 +530,7 @@ t3dKey::~t3dKey()
 void t3dKey::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
 	if(FAILED(gresult = m_dikey.lpdikey->SetCooperativeLevel(
-			wnd->get_hwnd(), type)))
+			wnd->get_HWND(), type)))
 	{
 		Get_DInput_Error(gbuffer, gresult);
 		throw MyException("set dikey cooperative level failed");
@@ -633,7 +633,7 @@ void t3dWav::set_volumn(const long volumn)
 t3dMidiPerf::t3dMidiPerf(t3dDSound * dsound, MyWindowBasePtr wnd)
 {
 	INIT_ZERO(m_dmperf);
-	if(!Create_DMPerformance(&dsound->m_dsound, &m_dmperf, wnd->get_hwnd()))
+	if(!Create_DMPerformance(&dsound->m_dsound, &m_dmperf, wnd->get_HWND()))
 		throw MyException("create dmperf failed");
 }
 
@@ -721,7 +721,7 @@ t3dDSound::~t3dDSound()
 
 void t3dDSound::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_dsound.lpdsound->SetCooperativeLevel(wnd->get_hwnd(), type)))
+	if(FAILED(gresult = m_dsound.lpdsound->SetCooperativeLevel(wnd->get_HWND(), type)))
 	{
 		Get_DSound_Error(gbuffer, gresult);
 		throw MyException("set dsound cooperative level failed");
@@ -1966,11 +1966,15 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 	// update header position
 	VECTOR4D_InitXYZ(&m_posHead, m_pos.x, m_pos.y + PLAYER_HEAD_STATURE, m_pos.z);
 
+	const REAL ROT_SPEED_LIMIT = (REAL)0.2;
+
 	// update player rotation
 	VECTOR4D rotSpeed;
 	if(get_rot_scale(rotSpeed, ms))
 	{
+		VECTOR3D_Mul(&rotSpeed._3D, ROT_SPEED_LIMIT);
 		VECTOR3D_Add(&m_rot._3D, &rotSpeed._3D);
+
 		//m_rot.y = fmod(m_rot.y, DEG_TO_RAD(360));
 		m_rot.x = min(DEG_TO_RAD( 90), m_rot.x);
 		m_rot.x = max(DEG_TO_RAD(-90), m_rot.x);
@@ -2096,7 +2100,7 @@ bool FPSPlayer::get_jmp_scale(VECTOR4D & vres, t3dKeyStatePtr ks)
 bool FPSPlayer::get_rot_scale(VECTOR4D & vres, t3dMouseStatePtr ms)
 {
 	VECTOR4D_InitXYZ(&vres,
-			DEG_TO_RAD(ms->get_Y()) * (REAL)0.1, DEG_TO_RAD(ms->get_X()) * (REAL)0.1, 0 /*DEG_TO_RAD(ms->get_Z()) * (REAL)0.1*/);
+			DEG_TO_RAD(ms->get_Y()), DEG_TO_RAD(ms->get_X()), 0 /*DEG_TO_RAD(ms->get_Z())*/);
 
 	return true;
 }

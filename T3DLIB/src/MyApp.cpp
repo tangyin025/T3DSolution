@@ -43,12 +43,12 @@ LRESULT MyWindowBase::OnProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 	return ::DefWindowProc(hwnd, message, wparam, lparam);
 }
 
-HWND MyWindowBase::get_hwnd(void)
+HWND MyWindowBase::get_HWND(void)
 {
 	return m_hwnd;
 }
 
-void MyWindowBase::set_hwnd(HWND hwnd)
+void MyWindowBase::set_HWND(HWND hwnd)
 {
 	m_hwnd = hwnd;
 }
@@ -199,11 +199,11 @@ MyWindowBasePtr MyMessageArray::addWindow(MyWindowBasePtr wnd)
 	assert(g_wndHook != NULL);
 	g_wndHook = MyWindowBasePtr((MyWindowBase *)NULL);
 
-	assert(m_activeWnd.end() == m_activeWnd.find(wnd->get_hwnd()));
-	assert(m_singleWnd.end() != m_singleWnd.find(wnd->get_hwnd()));
+	assert(m_activeWnd.end() == m_activeWnd.find(wnd->get_HWND()));
+	assert(m_singleWnd.end() != m_singleWnd.find(wnd->get_HWND()));
 
-	m_activeWnd[wnd->get_hwnd()] = wnd;
-	m_singleWnd.erase(wnd->get_hwnd());
+	m_activeWnd[wnd->get_HWND()] = wnd;
+	m_singleWnd.erase(wnd->get_HWND());
 	return wnd;
 }
 
@@ -212,8 +212,8 @@ LRESULT MyMessageArray::OnCreate(HWND hwnd, UINT message, WPARAM wparam, LPARAM 
 	assert(g_wndHook != NULL);
 	assert(m_singleWnd.end() == m_singleWnd.find(hwnd));
 
-	assert(NULL == g_wndHook->get_hwnd());
-	g_wndHook->set_hwnd(hwnd);
+	assert(NULL == g_wndHook->get_HWND());
+	g_wndHook->set_HWND(hwnd);
 
 	m_singleWnd[hwnd] = g_wndHook;
 	return g_wndHook->OnProc(hwnd, message, wparam, lparam);

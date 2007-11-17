@@ -95,7 +95,7 @@ protected:
 
 		if(k_state->is_key_down(DIK_ESCAPE))
 		{
-			::PostMessage(m_wnd->get_hwnd(), WM_CLOSE, 0, 0);
+			::PostMessage(m_wnd->get_HWND(), WM_CLOSE, 0, 0);
 			return;
 		}
 
