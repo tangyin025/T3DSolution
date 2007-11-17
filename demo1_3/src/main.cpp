@@ -8,7 +8,6 @@
 
 #include "t3dPrecompiledHeader.h"
 #include "MyGame.h"
-#include "vector"
 
 // ////////////////////////////////////////////////////////////////////////////////////
 // CLASSES
@@ -36,19 +35,47 @@ protected:
 		RECT rect = {m_back->m_ddsurface.rect.left + 10, m_back->m_ddsurface.rect.top + 10, m_back->m_ddsurface.rect.right - 10, m_back->m_ddsurface.rect.bottom - 10};
 		m_cam = t3dCameraEulerPtr(new t3dCameraEuler(rect));
 		m_cam->set_fov(DEG_TO_RAD(60));
+		m_cam->set_min_clipZ(9);
 
-		m_obj = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
-		m_obj->load("room.ms3d.txt", "pCube1");
+		//m_obj = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
+		//m_obj->load("room.ms3d.txt", "pCube1");
+		m_obj = t3dObjectPtr(new t3dObjectGouraud);
+		m_obj->load("scene.ms3d.txt", "polySurface1");
 
 		for(size_t i = 0; i < m_obj->m_object.ver_list.length; i++)
 		{
 			VECTOR3D_Mul(&m_obj->m_object.ver_list.elems[i]._3D, 5.0f);
-			m_obj->m_object.ver_list.elems[i].x *= 2;
-			m_obj->m_object.ver_list.elems[i].z *= 2;
+			m_obj->m_object.ver_list.elems[i].x *= 1;
+			m_obj->m_object.ver_list.elems[i].z *= 1;
 			m_obj->m_object.ver_list.elems[i].y += -10;
 		}
 
 		m_player.add_scene(m_obj);
+
+		/*
+		m_attrMovResisSpeed			= 30;
+		m_attrMovSpeedAccel			= 2 * m_attrMovResisSpeed;
+		m_attrMovSpeedLimit			= 50;
+		m_attrJmpSpeedAccel			= 200;
+		m_attrGravitySpeedAccel		= -9;
+		m_attrGravitySpeedLimit		= -100;
+		m_attrPlayerSphereRadius	= 4;
+		m_attrPlayerSlideLimit		= 1;
+		m_attrPlayerHeadStature		= 10;
+		m_attrRotSpeedLimit			= (REAL)0.2;
+		*/
+
+		m_player.m_attrMovResisSpeed = 20;
+		m_player.m_attrMovSpeedAccel = 40;
+		m_player.m_attrMovSpeedLimit = 90;
+		m_player.m_attrJmpSpeedAccel = 300;
+		m_player.m_attrGravitySpeedAccel = -40;
+		m_player.m_attrGravitySpeedLimit = -200;
+		m_player.m_attrPlayerSphereRadius = 10;
+		m_player.m_attrPlayerHeadStature = 18;
+		m_player.m_attrPlayerInitPos.y += 5;
+
+		m_player.reset();
 
 		rect = m_wnd->GetClientRect();
 		rect.left += MyWindow::GetRectWidth(rect) / 2;
@@ -121,8 +148,10 @@ protected:
 		render.set_surface(m_back);
 		render.set_zbuffer(m_zbuf);
 
-		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(92, 92, 92))));
-		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(255, 255, 255), emplyVector)));
+		static VECTOR4D l_pos = {30, 30, 30, 1};
+
+		render.add_light("light1", t3dLightPtr(new t3dLightAmbient(Create_RGBI(64, 64, 64))));
+		render.add_light("light2", t3dLightPtr(new t3dLightPoint(Create_RGBI(220, 220, 220), l_pos)));
 
 		render.draw(m_obj.get());
 

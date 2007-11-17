@@ -833,12 +833,12 @@ class T3DLIB_API t3dObjectGouraud : public t3dObject
 protected:
 	virtual void draw_SELF(t3dRender * render);
 };
-//
-//class T3DLIB_API t3dObjectGouraudPerspectiveLP : public t3dObjectGouraud
-//{
-//protected:
-//	virtual void draw_SELF(t3dRender * render);
-//};
+
+class T3DLIB_API t3dObjectGouraudPerspectiveLP : public t3dObjectGouraud
+{
+protected:
+	virtual void draw_SELF(t3dRender * render);
+};
 
 // ============================================================================
 // MyConfigBase
@@ -991,6 +991,21 @@ protected:
 
 class T3DLIB_API FPSPlayer
 {
+public:
+	VECTOR4D m_attrPlayerInitPos;
+	VECTOR4D m_attrPlayerInitRot;
+	REAL m_attrMovResisSpeed;
+	REAL m_attrMovSpeedAccel;
+	REAL m_attrMovSpeedLimit;
+	REAL m_attrJmpSpeedAccel;
+	REAL m_attrGravitySpeedAccel;
+	REAL m_attrGravitySpeedLimit;
+	REAL m_attrPlayerSphereRadius;
+	REAL m_attrPlayerSlideLimit;
+	REAL m_attrPlayerHeadStature;
+	REAL m_attrRotSpeedLimit;
+
+protected:
 	typedef enum
 	{
 		player_state_walk,

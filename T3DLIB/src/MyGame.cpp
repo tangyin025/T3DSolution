@@ -1557,13 +1557,44 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		render->m_surf->unlock();
 	}
 }
-//
-//void t3dObjectGouraudPerspectiveLP::draw_SELF(t3dRender * render)
-//{
-//	assert(false);
-//
-//	UNREFERENCED_PARAMETER(render);
-//}
+
+void t3dObjectGouraudPerspectiveLP::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	if(NULL != m_material->m_material.texture.pbuffer)
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, m_material);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			throw MyException("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW(&m_object, &render->m_cam->m_camera, &m_material->m_material);
+		}
+		render->m_surf->unlock();
+	}
+	else
+	{
+		t3dObjectGouraud::draw_SELF(render);
+	}
+}
 
 // ============================================================================
 // MyConfigBase
@@ -1801,6 +1832,19 @@ void MyGame::OnFrame(void)
 
 FPSPlayer::FPSPlayer()
 {
+	VECTOR4D_InitXYZ(&m_attrPlayerInitPos, 0, 0, 0);
+	VECTOR4D_InitXYZ(&m_attrPlayerInitRot, 0, 0, 0);
+	m_attrMovResisSpeed			= 30;
+	m_attrMovSpeedAccel			= 2 * m_attrMovResisSpeed;
+	m_attrMovSpeedLimit			= 50;
+	m_attrJmpSpeedAccel			= 200;
+	m_attrGravitySpeedAccel		= -9;
+	m_attrGravitySpeedLimit		= -100;
+	m_attrPlayerSphereRadius	= 4;
+	m_attrPlayerSlideLimit		= 1;
+	m_attrPlayerHeadStature		= 10;
+	m_attrRotSpeedLimit			= (REAL)0.2;
+
 	reset();
 }
 
@@ -1815,9 +1859,9 @@ void FPSPlayer::add_scene(t3dObjectPtr scene)
 
 void FPSPlayer::reset(void)
 {
-	VECTOR4D_InitXYZ(&m_pos, 0, 0, 0);
-	VECTOR4D_InitXYZ(&m_posHead, 0, 0, 0);
-	VECTOR4D_InitXYZ(&m_rot, 0, 0, 0);
+	VECTOR4D_Copy(&m_pos, &m_attrPlayerInitPos);
+	VECTOR4D_InitXYZ(&m_posHead, m_pos.x, m_pos.y + m_attrPlayerHeadStature, m_pos.z);
+	VECTOR4D_Copy(&m_rot, &m_attrPlayerInitRot);
 	VECTOR4D_InitXYZ(&m_movSpeed, 0, 0, 0);
 	VECTOR4D_InitXYZ(&m_rotSpeed, 0, 0, 0);
 	m_lastState = player_state_hang;
@@ -1825,10 +1869,10 @@ void FPSPlayer::reset(void)
 
 void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 {
-	const REAL MOV_RESIS_SPEED = fps->get_TPF_SAFE() * 30;
-	const REAL MOV_SPEED_ACCEL = MOV_RESIS_SPEED * 2;
-	const REAL MOV_SPEED_LIMIT = fps->get_TPF_SAFE() * 50;
-	const REAL JMP_SPEED_ACCEL = fps->get_TPF_SAFE() * 200;
+	const REAL MOV_RESIS_SPEED = m_attrMovResisSpeed * fps->get_TPF_SAFE();
+	const REAL MOV_SPEED_ACCEL = m_attrMovSpeedAccel * fps->get_TPF_SAFE();
+	const REAL MOV_SPEED_LIMIT = m_attrMovSpeedLimit * fps->get_TPF_SAFE();
+	const REAL JMP_SPEED_ACCEL = m_attrJmpSpeedAccel * fps->get_TPF_SAFE();
 
 	// change move speed
 	if(player_state_walk == m_lastState)
@@ -1888,8 +1932,8 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 		}
 	}
 
-	const REAL GRAVITY_SPEED_ACCEL = fps->get_TPF_SAFE() * -9;
-	const REAL GRAVITY_SPEED_LIMIT = fps->get_TPF_SAFE() * -100;
+	const REAL GRAVITY_SPEED_ACCEL = m_attrGravitySpeedAccel * fps->get_TPF_SAFE();
+	const REAL GRAVITY_SPEED_LIMIT = m_attrGravitySpeedLimit * fps->get_TPF_SAFE();
 
 	// change gravity speed
 	m_movSpeed.y = max(GRAVITY_SPEED_LIMIT, m_movSpeed.y + GRAVITY_SPEED_ACCEL);
@@ -1898,7 +1942,7 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 	VECTOR4D pos_dest;
 	VECTOR3D_Add(&pos_dest._3D, &m_pos._3D, &m_movSpeed._3D);
 
-	const REAL PLAYER_SPHERE_RADIUS = 4;
+	const REAL PLAYER_SPHERE_RADIUS = m_attrPlayerSphereRadius;
 
 	// collision test
 	bool bcollisioned = false;
@@ -1929,7 +1973,7 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 		m_lastState = player_state_walk;
 	}
 
-	const REAL PLAYER_SLIDE_LIMIT = fps->get_TPF_SAFE() * 1;
+	const REAL PLAYER_SLIDE_LIMIT = m_attrPlayerSlideLimit * fps->get_TPF_SAFE();
 
 	// update player position
 	if(bcollisioned)
@@ -1961,12 +2005,12 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 		m_pos.y = 50;
 	}
 
-	const REAL PLAYER_HEAD_STATURE = 10;
+	const REAL PLAYER_HEAD_STATURE = m_attrPlayerHeadStature;
 
 	// update header position
 	VECTOR4D_InitXYZ(&m_posHead, m_pos.x, m_pos.y + PLAYER_HEAD_STATURE, m_pos.z);
 
-	const REAL ROT_SPEED_LIMIT = (REAL)0.2;
+	const REAL ROT_SPEED_LIMIT = m_attrRotSpeedLimit;
 
 	// update player rotation
 	VECTOR4D rotSpeed;
