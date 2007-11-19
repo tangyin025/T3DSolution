@@ -1127,16 +1127,16 @@ static inline bool is_inside_triangle(const VECTOR4D & v0,
 	// Note: acos(-1.0000001) == -1.#IND000
 
 	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
-					VECTOR3D_Sub(&dir1._3D, &v0._3D, &vint._3D),
-					VECTOR3D_Sub(&dir2._3D, &v1._3D, &vint._3D))));
+					VECTOR3D_Sub(&dir1, &v0, &vint),
+					VECTOR3D_Sub(&dir2, &v1, &vint))));
 
 	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
-					VECTOR3D_Sub(&dir1._3D, &v1._3D, &vint._3D),
-					VECTOR3D_Sub(&dir2._3D, &v2._3D, &vint._3D))));
+					VECTOR3D_Sub(&dir1, &v1, &vint),
+					VECTOR3D_Sub(&dir2, &v2, &vint))));
 
 	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
-					VECTOR3D_Sub(&dir1._3D, &v2._3D, &vint._3D),
-					VECTOR3D_Sub(&dir2._3D, &v0._3D, &vint._3D))));
+					VECTOR3D_Sub(&dir1, &v2, &vint),
+					VECTOR3D_Sub(&dir2, &v0, &vint))));
 
 	// DEG_TO_RAD(360)	== 6.2831855
 	// DEG_TO_RAD(1)	== 0.017453294
@@ -1167,17 +1167,17 @@ static inline int TRIANGLE_Inside_Test(VECTOR4D & vres,
 
 	VECTOR4D dir1, dir2;
 	VECTOR4D p_nor;
-	VECTOR3D_Cross(&p_nor._3D,
-					VECTOR3D_Sub(&dir1._3D, &v1._3D, &v0._3D),
-					VECTOR3D_Sub(&dir2._3D, &v2._3D, &v0._3D));
+	VECTOR3D_Cross(&p_nor,
+					VECTOR3D_Sub(&dir1, &v1, &v0),
+					VECTOR3D_Sub(&dir2, &v2, &v0));
 
 	VECTOR4D l_dir;
-	VECTOR3D_Mul(&l_dir._3D, &p_nor._3D, -1);
+	VECTOR3D_Mul(&l_dir, &p_nor, -1);
 
 	REAL t = line_intersection(&l_dir, &sphere_center, &p_nor, &v0);
 
 	VECTOR4D l_inc;
-	REAL distance = VECTOR3D_Length(VECTOR3D_Mul(&l_inc._3D, &l_dir._3D, t));
+	REAL distance = VECTOR3D_Length(VECTOR3D_Mul(&l_inc, &l_dir, t));
 
 	/*
 	 * if t < 0, then the sphere center was at this planes back, in some case, fix this velocity
@@ -1187,7 +1187,7 @@ static inline int TRIANGLE_Inside_Test(VECTOR4D & vres,
 	 */
 	if(t > 0 && distance < sphere_radius)
 	{
-		VECTOR3D_Add(&vres._3D, &sphere_center._3D, &l_inc._3D);
+		VECTOR3D_Add(&vres, &sphere_center, &l_inc);
 
 		if(is_inside_triangle(v0, v1, v2, vres))
 		{
@@ -1213,10 +1213,10 @@ static inline bool get_near_intersection(VECTOR4D & vres,
 	VECTOR4D dir1, dir2;
 
 	REAL len1 = VECTOR3D_Dot(
-					VECTOR3D_Sub(&dir1._3D, &sphere_center._3D, &v0._3D),
-					VECTOR3D_Sub(&dir2._3D, &v1._3D, &v0._3D));
+					VECTOR3D_Sub(&dir1, &sphere_center, &v0),
+					VECTOR3D_Sub(&dir2, &v1, &v0));
 
-	REAL len2 = VECTOR3D_Length(&dir2._3D);
+	REAL len2 = VECTOR3D_Length(&dir2);
 
 	len1 /= len2;
 
@@ -1232,8 +1232,7 @@ static inline bool get_near_intersection(VECTOR4D & vres,
 	}
 	else
 	{
-		VECTOR3D_Add(&vres._3D, &v0._3D, VECTOR3D_Mul(&dir2._3D, len1 / len2));
-		vres.w = 1;
+		VECTOR3D_Add(&vres, &v0, VECTOR3D_Mul(&dir2, len1 / len2));
 	}
 
 	return true;
@@ -1256,17 +1255,17 @@ static inline bool TRIANGLE_Edge_Test(VECTOR4D & vres,
 	VECTOR4D vdir;
 	if(get_near_intersection(res_s[0], v0, v1, sphere_center))
 	{
-		len_s[0] = VECTOR3D_Length(VECTOR3D_Sub(&vdir._3D, &res_s[0]._3D, &sphere_center._3D));
+		len_s[0] = VECTOR3D_Length(VECTOR3D_Sub(&vdir, &res_s[0], &sphere_center));
 	}
 
 	if(get_near_intersection(res_s[1], v1, v2, sphere_center))
 	{
-		len_s[1] = VECTOR3D_Length(VECTOR3D_Sub(&vdir._3D, &res_s[1]._3D, &sphere_center._3D));
+		len_s[1] = VECTOR3D_Length(VECTOR3D_Sub(&vdir, &res_s[1], &sphere_center));
 	}
 
 	if(get_near_intersection(res_s[2], v2, v0, sphere_center))
 	{
-		len_s[2] = VECTOR3D_Length(VECTOR3D_Sub(&vdir._3D, &res_s[2]._3D, &sphere_center._3D));
+		len_s[2] = VECTOR3D_Length(VECTOR3D_Sub(&vdir, &res_s[2], &sphere_center));
 	}
 
 	size_t i;
@@ -1324,8 +1323,8 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 			 * vres = vint + (vres - vint) * radius / |vres - vint|
 			 */
 			VECTOR4D vtmp;
-			VECTOR3D_Sub(&vtmp._3D, &vres._3D, &vint._3D);
-			VECTOR3D_Add(&vres._3D, &vint._3D, VECTOR3D_Mul(&vtmp._3D, sphere_radius / VECTOR3D_Length(&vtmp._3D)));
+			VECTOR3D_Sub(&vtmp, &vres, &vint);
+			VECTOR3D_Add(&vres, &vint, VECTOR3D_Mul(&vtmp, sphere_radius / VECTOR3D_Length(&vtmp)));
 
 			bres = true;
 		}
@@ -1349,8 +1348,8 @@ bool t3dObject::collision_test(VECTOR4D & vres, const VECTOR4D & sphere_center, 
 			 * vres = vint + (vres - vint) * radius / |vres - vint|
 			 */
 			VECTOR4D vtmp;
-			VECTOR3D_Sub(&vtmp._3D, &vres._3D, &vint._3D);
-			VECTOR3D_Add(&vres._3D, &vint._3D, VECTOR3D_Mul(&vtmp._3D, sphere_radius / VECTOR3D_Length(&vtmp._3D)));
+			VECTOR3D_Sub(&vtmp, &vres, &vint);
+			VECTOR3D_Add(&vres, &vint, VECTOR3D_Mul(&vtmp, sphere_radius / VECTOR3D_Length(&vtmp)));
 
 			bres = true;
 		}
@@ -1872,7 +1871,6 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 	const REAL MOV_RESIS_SPEED = m_attrMovResisSpeed * fps->get_TPF_SAFE();
 	const REAL MOV_SPEED_ACCEL = m_attrMovSpeedAccel * fps->get_TPF_SAFE();
 	const REAL MOV_SPEED_LIMIT = m_attrMovSpeedLimit * fps->get_TPF_SAFE();
-	const REAL JMP_SPEED_ACCEL = m_attrJmpSpeedAccel * fps->get_TPF_SAFE();
 
 	// change move speed
 	if(player_state_walk == m_lastState)
@@ -1882,19 +1880,31 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 		if(get_mov_scale(movAccel, ks))
 		{
 			// add accel to mov speed
-			//VECTOR3D_Mul(&movAccel._3D, MOV_SPEED_ACCEL);
+			//VECTOR3D_Mul(&movAccel, MOV_SPEED_ACCEL);
 
 			movAccel.x *= MOV_SPEED_ACCEL;
 			movAccel.z *= MOV_SPEED_ACCEL;
-			VECTOR3D_Add(&m_movSpeed._3D, &movAccel._3D);
+			VECTOR3D_Add(&m_movSpeed, &movAccel);
 		}
 
 		// get jump speed
 		VECTOR4D jmpAccel;
 		if(get_jmp_scale(jmpAccel, ks))
 		{
+			/*
+			 * Note: if the time in frame have long (such as low fps), it means
+			 * the jump accel continued long time, and then it will jump more higher
+			 * than it in high fps, this was not custom wanted, so change the jump
+			 * time to fixed only .033 second (such as 1 frame in 30 fps's effect)
+			 */
+
+			//const REAL JMP_SPEED_ACCEL = m_attrJmpSpeedAccel * fps->get_TPF_SAFE();
+			const REAL JMP_SPEED_ACCEL = m_attrJmpSpeedAccel * (REAL)0.033;
+
+			//jmpAccel.y *= JMP_SPEED_ACCEL;
 			jmpAccel.y *= JMP_SPEED_ACCEL;
-			VECTOR3D_Add(&m_movSpeed._3D, &jmpAccel._3D);
+
+			VECTOR3D_Add(&m_movSpeed, &jmpAccel);
 		}
 
 		// add resistance
@@ -1940,7 +1950,7 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 
 	// get new position
 	VECTOR4D pos_dest;
-	VECTOR3D_Add(&pos_dest._3D, &m_pos._3D, &m_movSpeed._3D);
+	VECTOR3D_Add(&pos_dest, &m_pos, &m_movSpeed);
 
 	const REAL PLAYER_SPHERE_RADIUS = m_attrPlayerSphereRadius;
 
@@ -1979,10 +1989,10 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 	if(bcollisioned)
 	{
 		// Note ! do not add result's speed to move speed
-		VECTOR3D_Sub(&m_movSpeed._3D, &pos_result._3D, &m_pos._3D);
+		VECTOR3D_Sub(&m_movSpeed, &pos_result, &m_pos);
 
 		// do not forget update speed, or else some value will be large forever
-		//VECTOR3D_Sub(&m_movSpeed._3D, &pos_dest._3D, &m_pos._3D);
+		//VECTOR3D_Sub(&m_movSpeed, &pos_dest, &m_pos);
 
 		// ignore very small speed to avoid slide
 		if(abs(pos_result.x - m_pos.x) <= PLAYER_SLIDE_LIMIT
@@ -2016,8 +2026,8 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 	VECTOR4D rotSpeed;
 	if(get_rot_scale(rotSpeed, ms))
 	{
-		VECTOR3D_Mul(&rotSpeed._3D, ROT_SPEED_LIMIT);
-		VECTOR3D_Add(&m_rot._3D, &rotSpeed._3D);
+		VECTOR3D_Mul(&rotSpeed, ROT_SPEED_LIMIT);
+		VECTOR3D_Add(&m_rot, &rotSpeed);
 
 		//m_rot.y = fmod(m_rot.y, DEG_TO_RAD(360));
 		m_rot.x = min(DEG_TO_RAD( 90), m_rot.x);

@@ -1332,13 +1332,13 @@ T3DLIB_API MATRIX4X4 * Build_Camera4D_Mat_UVN(MATRIX4X4 * pmres, CAM4DV1 * pcam,
 {
 	MATRIX4X4 mt_inv, mt_uvn;
 
-	VECTOR3D_Sub(&pcam->n._3D, &pcam->vtag._3D, &pcam->vpos._3D);
+	VECTOR3D_Sub(&pcam->n, &pcam->vtag, &pcam->vpos);
 	VECTOR4D_InitXYZ(&pcam->v, 0.0f, 1.0f, 0.0f);
-	VECTOR3D_Cross(&pcam->u._3D, &pcam->v._3D, &pcam->n._3D);
-	VECTOR3D_Cross(&pcam->v._3D, &pcam->n._3D, &pcam->u._3D);
-	VECTOR3D_Normalize(&pcam->u._3D);
-	VECTOR3D_Normalize(&pcam->v._3D);
-	VECTOR3D_Normalize(&pcam->n._3D);
+	VECTOR3D_Cross(&pcam->u, &pcam->v, &pcam->n);
+	VECTOR3D_Cross(&pcam->v, &pcam->n, &pcam->u);
+	VECTOR3D_Normalize(&pcam->u);
+	VECTOR3D_Normalize(&pcam->v);
+	VECTOR3D_Normalize(&pcam->n);
 
 	pcam->u.w = 1;
 	pcam->v.w = 1;
@@ -1833,7 +1833,7 @@ T3DLIB_API void Model_To_World_Object4D_Without_Normal(OBJECT4DV1 * pobj,
 		case TRANSFORM_MODE_TRANS_ONLY:
 			for(i = 0; i < (int)pobj->ver_list_t.length; i++)
 			{
-				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
+				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._4D, vpos_ptr);
 			}
 			break;
 
@@ -1842,7 +1842,7 @@ T3DLIB_API void Model_To_World_Object4D_Without_Normal(OBJECT4DV1 * pobj,
 			for(i = 0; i < (int)pobj->ver_list.length; i++)
 			{
 				memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
-				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
+				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._4D, vpos_ptr);
 			}
 			break;
 
@@ -1892,7 +1892,7 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 		case TRANSFORM_MODE_TRANS_ONLY:
 			for(i = 0; i < (int)pobj->ver_list_t.length; i++)
 			{
-				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
+				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._4D, vpos_ptr);
 			}
 			break;
 
@@ -1901,7 +1901,7 @@ T3DLIB_API void Model_To_World_Object4D(OBJECT4DV1 * pobj,
 			for(i = 0; i < (int)pobj->ver_list.length; i++)
 			{
 				memcpy(&pobj->ver_list_t.elems[i], &pobj->ver_list.elems[i], sizeof(*pobj->ver_list.elems));
-				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._3D, &vpos_ptr->_3D);
+				VECTOR3D_Add(&pobj->ver_list_t.elems[i]._4D, vpos_ptr);
 			}
 
 			pobj->nor_list_t.length = pobj->nor_list.length;
@@ -1937,17 +1937,17 @@ T3DLIB_API void Remove_Object4D_Backface_At_World(OBJECT4DV1 * pobj, CAM4DV1 * p
 		if(IS_VALID_TRIANGLE(pobj->tri_list.elems[i].state))
 		{
 			VECTOR4D v0, v1, v3, v4;
-			VECTOR3D_Cross(&v3._3D,
-							VECTOR3D_Sub(&v0._3D,
-											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._3D,
-											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._3D),
-							VECTOR3D_Sub(&v1._3D,
-											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._3D,
-											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._3D));
-			VECTOR3D_Sub(&v4._3D,
-							&pcam->vpos._3D, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._3D);
+			VECTOR3D_Cross(&v3,
+							VECTOR3D_Sub(&v0,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._4D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._4D),
+							VECTOR3D_Sub(&v1,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._4D,
+											&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._4D));
+			VECTOR3D_Sub(&v4,
+							&pcam->vpos, &pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._4D);
 
-			if(VECTOR3D_Dot(&v3._3D, &v4._3D) <= 0)
+			if(VECTOR3D_Dot(&v3, &v4) <= 0)
 			{
 				pobj->tri_list.elems[i].state = TRI_STATE_BACKFACE;
 			}
@@ -3238,7 +3238,7 @@ static inline unsigned int Light_VertexT_By_Ambient16(VERTEXV1T * pver, VECTOR4D
 
 static inline unsigned int Light_VertexT_By_Direct16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
-	REAL dot = VECTOR3D_Dot(&pnor->_3D, &plight->vdir._3D);
+	REAL dot = VECTOR3D_Dot(pnor, &plight->vdir);
 
 	if(dot < 0)
 	{
@@ -3254,8 +3254,8 @@ static inline unsigned int Light_VertexT_By_Direct16(VERTEXV1T * pver, VECTOR4D 
 static inline unsigned int Light_VertexT_By_Point16(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	VECTOR4D dir;
-	REAL dot = VECTOR3D_Dot(&pnor->_3D, VECTOR3D_Sub(&dir._3D, &pver->_3D, &plight->vpos._3D));
-	REAL len = VECTOR3D_Length(&dir._3D);
+	REAL dot = VECTOR3D_Dot(pnor, VECTOR3D_Sub(&dir, &pver->_4D, &plight->vpos));
+	REAL len = VECTOR3D_Length(&dir);
 
 	if(dot < 0 && len > 0)
 	{
@@ -3285,7 +3285,7 @@ static inline unsigned int Light_VertexT_By_Ambient32(VERTEXV1T * pver, VECTOR4D
 
 static inline unsigned int Light_VertexT_By_Direct32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
-	REAL dot = VECTOR3D_Dot(&pnor->_3D, &plight->vdir._3D);
+	REAL dot = VECTOR3D_Dot(pnor, &plight->vdir);
 
 	if(dot < 0)
 	{
@@ -3301,8 +3301,8 @@ static inline unsigned int Light_VertexT_By_Direct32(VERTEXV1T * pver, VECTOR4D 
 static inline unsigned int Light_VertexT_By_Point32(VERTEXV1T * pver, VECTOR4D * pnor, LIGHT4DV1 * plight, MATERIALV1 * pmaterial)
 {
 	VECTOR4D dir;
-	REAL dot = VECTOR3D_Dot(&pnor->_3D, VECTOR3D_Sub(&dir._3D, &pver->_3D, &plight->vpos._3D));
-	REAL len = VECTOR3D_Length(&dir._3D);
+	REAL dot = VECTOR3D_Dot(pnor, VECTOR3D_Sub(&dir, &pver->_4D, &plight->vpos));
+	REAL len = VECTOR3D_Length(&dir);
 
 	if(dot < 0 && len > 0)
 	{

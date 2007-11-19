@@ -519,7 +519,7 @@ static bool Inser_Nor_And_Nor_Bone_Index(NOR_ARRAYV1 * pnor_list, SIZE_T_ARRAYV1
 	size_t i;
 	for(i = 0; i < pnor_list->length; i++)
 	{
-		if(VECTOR3D_Equal(&pnor_list->elems[i]._3D, &pnor->_3D))
+		if(VECTOR3D_Equal(&pnor_list->elems[i], pnor))
 		{
 			if(-1 == pnor_bone_index->elems[i])
 			{

@@ -44,7 +44,7 @@ protected:
 
 		for(size_t i = 0; i < m_obj->m_object.ver_list.length; i++)
 		{
-			VECTOR3D_Mul(&m_obj->m_object.ver_list.elems[i]._3D, 5.0f);
+			VECTOR3D_Mul(&m_obj->m_object.ver_list.elems[i]._4D, 5.0f);
 			m_obj->m_object.ver_list.elems[i].x *= 1;
 			m_obj->m_object.ver_list.elems[i].z *= 1;
 			m_obj->m_object.ver_list.elems[i].y += -10;

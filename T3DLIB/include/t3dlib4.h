@@ -391,14 +391,14 @@ inline REAL VECTOR2D_Length(const VECTOR2D * pv0)
 	return sqrt(pv0->x * pv0->x + pv0->y * pv0->y);
 }
 
-inline VECTOR2D * VECTOR2D_Normalize(VECTOR2D * pres, const VECTOR2D * pv0)
+inline VECTOR2D * VECTOR2D_Normalize(VECTOR2D * pvres, const VECTOR2D * pv0)
 {
 	assert(!IS_ZERO_FLOAT(VECTOR2D_Length(pv0)));
 
 	REAL len_inv = 1.0f / sqrt(pv0->x * pv0->x + pv0->y * pv0->y);
-	pres->x = pv0->x * len_inv;
-	pres->y = pv0->y * len_inv;
-	return pres;
+	pvres->x = pv0->x * len_inv;
+	pvres->y = pv0->y * len_inv;
+	return pvres;
 }
 
 inline VECTOR2D * VECTOR2D_Normalize(VECTOR2D * pv0)
@@ -623,15 +623,15 @@ inline REAL VECTOR3D_Length(const VECTOR3D * pv0)
 	return sqrt(pv0->x * pv0->x + pv0->y * pv0->y + pv0->z * pv0->z);
 }
 
-inline VECTOR3D * VECTOR3D_Normalize(VECTOR3D * pres, const VECTOR3D * pv0)
+inline VECTOR3D * VECTOR3D_Normalize(VECTOR3D * pvres, const VECTOR3D * pv0)
 {
 	assert(!IS_ZERO_FLOAT(VECTOR3D_Length(pv0)));
 
 	REAL len_inv = 1.0f / sqrt(pv0->x * pv0->x + pv0->y * pv0->y + pv0->z * pv0->z);
-	pres->x = pv0->x * len_inv;
-	pres->y = pv0->y * len_inv;
-	pres->z = pv0->z * len_inv;
-	return pres;
+	pvres->x = pv0->x * len_inv;
+	pvres->y = pv0->y * len_inv;
+	pvres->z = pv0->z * len_inv;
+	return pvres;
 }
 
 inline VECTOR3D * VECTOR3D_Normalize(VECTOR3D * pv0)
@@ -1889,20 +1889,179 @@ inline bool VECTOR3D_Equal(VECTOR3D * pv0, VECTOR3D * pv1)
 		&& pv0->z == pv1->z;
 }
 
+// ////////////////////////////////////////////////////////////////////////////////////
+// VECTOR4D -> VECTOR3D operator support
+
+inline VECTOR4D * VECTOR3D_Add(VECTOR4D * pvres, const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Add(&pvres->_3D, &pv0->_3D, &pv1->_3D);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Add(VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Add(&pv0->_3D, &pv1->_3D);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Add(VECTOR4D * pvres, const VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Add(&pvres->_3D, &pv0->_3D, scale);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Add(VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Add(&pv0->_3D, scale);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Sub(VECTOR4D * pvres, const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Sub(&pvres->_3D, &pv0->_3D, &pv1->_3D);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Sub(VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Sub(&pv0->_3D, &pv1->_3D);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Sub(VECTOR4D * pvres, const VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Sub(&pvres->_3D, &pv0->_3D, scale);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Sub(VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Sub(&pv0->_3D, scale);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Mul(VECTOR4D * pvres, const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Mul(&pvres->_3D, &pv0->_3D, &pv1->_3D);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Mul(VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Mul(&pv0->_3D, &pv1->_3D);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Mul(VECTOR4D * pvres, const VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Mul(&pvres->_3D, &pv0->_3D, scale);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Mul(VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Mul(&pv0->_3D, scale);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Div(VECTOR4D * pvres, const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Div(&pvres->_3D, &pv0->_3D, &pv1->_3D);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Div(VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Div(&pv0->_3D, &pv1->_3D);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline VECTOR4D * VECTOR3D_Div(VECTOR4D * pvres, const VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Div(&pvres->_3D, &pv0->_3D, scale);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Div(VECTOR4D * pv0, const REAL scale)
+{
+	VECTOR3D_Div(&pv0->_3D, scale);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline REAL VECTOR3D_Dot(const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	return VECTOR3D_Dot(&pv0->_3D, &pv1->_3D);
+}
+
+inline VECTOR4D * VECTOR3D_Cross(VECTOR4D * pvres, const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	VECTOR3D_Cross(&pvres->_3D, &pv0->_3D, &pv1->_3D);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline REAL VECTOR3D_Length(const VECTOR4D * pv0)
+{
+	return VECTOR3D_Length(&pv0->_3D);
+}
+
+inline VECTOR4D * VECTOR3D_Normalize(VECTOR4D * pvres, const VECTOR4D * pv0)
+{
+	VECTOR3D_Normalize(&pvres->_3D, &pv0->_3D);
+	pvres->w = 1;
+	return pvres;
+}
+
+inline VECTOR4D * VECTOR3D_Normalize(VECTOR4D * pv0)
+{
+	VECTOR3D_Normalize(&pv0->_3D);
+	pv0->w = 1;
+	return pv0;
+}
+
+inline REAL VECTOR3D_CosTheta(const VECTOR4D * pv0, const VECTOR4D * pv1)
+{
+	return VECTOR3D_CosTheta(&pv0->_3D, &pv1->_3D);
+}
+
+inline bool VECTOR3D_Equal(VECTOR4D * pv0, VECTOR4D * pv1)
+{
+	return pv0->x == pv1->x
+		&& pv0->y == pv1->y
+		&& pv0->z == pv1->z;
+}
+
+// ////////////////////////////////////////////////////////////////////////////////////
+// collision test support
+
 inline REAL line_intersection(const VECTOR4D * l_dir, const VECTOR4D * l_pos, const VECTOR4D * p_nor, const VECTOR4D * p_pos)
 {
-	assert(0 != VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D));
+	assert(0 != VECTOR3D_Dot(l_dir, p_nor));
 
-	//return (VECTOR3D_Dot(&p_nor->_3D, &p_pos->_3D)
-	//				- VECTOR3D_Dot(&p_nor->_3D, &l_pos->_3D))
-	//							/ VECTOR3D_Dot(&l_dir->_3D, &p_nor->_3D);
+	return (VECTOR3D_Dot(p_nor, p_pos) - VECTOR3D_Dot(p_nor, l_pos)) / VECTOR3D_Dot(l_dir, p_nor);
 
-	REAL a = p_nor->x;
-	REAL b = p_nor->y;
-	REAL c = p_nor->z;
-	REAL d = - p_nor->x * p_pos->x - p_nor->y * p_pos->y - p_nor->z * p_pos->z;
-	REAL t = -(a * l_pos->x + b * l_pos->y + c * l_pos->z + d) / (a * l_dir->x + b * l_dir->y + c * l_dir->z);
-	return t;
+	//REAL a = p_nor->x;
+	//REAL b = p_nor->y;
+	//REAL c = p_nor->z;
+	//REAL d = - p_nor->x * p_pos->x - p_nor->y * p_pos->y - p_nor->z * p_pos->z;
+	//REAL t = -(a * l_pos->x + b * l_pos->y + c * l_pos->z + d) / (a * l_dir->x + b * l_dir->y + c * l_dir->z);
+	//return t;
 }
 
 #endif // __T3DLIB4_H__
