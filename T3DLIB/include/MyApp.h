@@ -15,6 +15,22 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
+/*
+ * Note : use /MD[d] for server and client to use dll std::string
+ */
+
+//T3DLIB_TEMPLATE class T3DLIB_API std::basic_string<char>;
+
+#if !defined _MT || !defined _DLL
+#error need for export std::string must use /MD[d]
+#endif
+
+// ============================================================================
+// str_printf
+// ============================================================================
+
+std::string T3DLIB_API str_printf(char * format, ...);
+
 // ============================================================================
 // MyException
 // ============================================================================

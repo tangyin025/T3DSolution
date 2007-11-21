@@ -16,29 +16,6 @@ std::map<std::string, t3dMaterialPtr> g_materialMap;
 // ////////////////////////////////////////////////////////////////////////////
 
 // ============================================================================
-// str_printf
-// ============================================================================
-
-#include <stdarg.h>
-#include <stdio.h>
-
-std::string T3DLIB_API str_printf(char * format, ...)
-{
-	va_list arg_list;
-	va_start(arg_list, format);
-	char buffer[MAX_BUFFER_SIZE];
-	int res = vsprintf(buffer, format, arg_list);
-	va_end(arg_list);
-
-	if(res < 0)
-	{
-		throw MyException("format string failed");
-	}
-
-	return std::string(buffer);
-}
-
-// ============================================================================
 // t3dClipper
 // ============================================================================
 
@@ -1092,10 +1069,26 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 }
 
 /*
- * return:
- * make the special cos theta invalid, such as [-1, 1]
+ * get the line to a plane's intersection
  */
-static inline REAL make_cos_theta_invalid(REAL theta)
+static inline REAL line_intersection(const VECTOR4D * l_dir, const VECTOR4D * l_pos, const VECTOR4D * p_nor, const VECTOR4D * p_pos)
+{
+	assert(0 != VECTOR3D_Dot(l_dir, p_nor));
+
+	return (VECTOR3D_Dot(p_nor, p_pos) - VECTOR3D_Dot(p_nor, l_pos)) / VECTOR3D_Dot(l_dir, p_nor);
+
+	//REAL a = p_nor->x;
+	//REAL b = p_nor->y;
+	//REAL c = p_nor->z;
+	//REAL d = - p_nor->x * p_pos->x - p_nor->y * p_pos->y - p_nor->z * p_pos->z;
+	//REAL t = -(a * l_pos->x + b * l_pos->y + c * l_pos->z + d) / (a * l_dir->x + b * l_dir->y + c * l_dir->z);
+	//return t;
+}
+
+/*
+ * valid value to [-1, 1]
+ */
+static inline REAL valid_cos_theta(REAL theta)
 {
 	if(theta > 1)
 	{
@@ -1126,15 +1119,15 @@ static inline bool is_inside_triangle(const VECTOR4D & v0,
 
 	// Note: acos(-1.0000001) == -1.#IND000
 
-	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
+	angle += acos(valid_cos_theta(VECTOR3D_CosTheta(
 					VECTOR3D_Sub(&dir1, &v0, &vint),
 					VECTOR3D_Sub(&dir2, &v1, &vint))));
 
-	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
+	angle += acos(valid_cos_theta(VECTOR3D_CosTheta(
 					VECTOR3D_Sub(&dir1, &v1, &vint),
 					VECTOR3D_Sub(&dir2, &v2, &vint))));
 
-	angle += acos(make_cos_theta_invalid(VECTOR3D_CosTheta(
+	angle += acos(valid_cos_theta(VECTOR3D_CosTheta(
 					VECTOR3D_Sub(&dir1, &v2, &vint),
 					VECTOR3D_Sub(&dir2, &v0, &vint))));
 

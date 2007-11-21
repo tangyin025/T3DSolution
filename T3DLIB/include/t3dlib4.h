@@ -2047,21 +2047,4 @@ inline bool VECTOR3D_Equal(VECTOR4D * pv0, VECTOR4D * pv1)
 		&& pv0->z == pv1->z;
 }
 
-// ////////////////////////////////////////////////////////////////////////////////////
-// collision test support
-
-inline REAL line_intersection(const VECTOR4D * l_dir, const VECTOR4D * l_pos, const VECTOR4D * p_nor, const VECTOR4D * p_pos)
-{
-	assert(0 != VECTOR3D_Dot(l_dir, p_nor));
-
-	return (VECTOR3D_Dot(p_nor, p_pos) - VECTOR3D_Dot(p_nor, l_pos)) / VECTOR3D_Dot(l_dir, p_nor);
-
-	//REAL a = p_nor->x;
-	//REAL b = p_nor->y;
-	//REAL c = p_nor->z;
-	//REAL d = - p_nor->x * p_pos->x - p_nor->y * p_pos->y - p_nor->z * p_pos->z;
-	//REAL t = -(a * l_pos->x + b * l_pos->y + c * l_pos->z + d) / (a * l_dir->x + b * l_dir->y + c * l_dir->z);
-	//return t;
-}
-
 #endif // __T3DLIB4_H__

@@ -6,6 +6,35 @@
 #include "MyApp.h"
 
 // ============================================================================
+// str_printf
+// ============================================================================
+
+#include <stdarg.h>
+#include <stdio.h>
+
+std::string T3DLIB_API str_printf(char * format, ...)
+{
+	va_list arg_list;
+	va_start(arg_list, format);
+	char buffer[MAX_BUFFER_SIZE];
+
+#if _MSC_VER >= 1400
+	int res = vsprintf_s(buffer, MAX_BUFFER_SIZE, format, arg_list);
+#else
+	int res = vsprintf(buffer, format, arg_list);
+#endif
+
+	va_end(arg_list);
+
+	if(res < 0)
+	{
+		throw MyException("format string failed");
+	}
+
+	return std::string(buffer);
+}
+
+// ============================================================================
 // MyException
 // ============================================================================
 
