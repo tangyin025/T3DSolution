@@ -1826,6 +1826,7 @@ FPSPlayer::FPSPlayer()
 {
 	VECTOR4D_InitXYZ(&m_attrPlayerInitPos, 0, 0, 0);
 	VECTOR4D_InitXYZ(&m_attrPlayerInitRot, 0, 0, 0);
+
 	m_attrMovResisSpeed			= 30;
 	m_attrMovSpeedAccel			= 2 * m_attrMovResisSpeed;
 	m_attrMovSpeedLimit			= 50;
@@ -1913,7 +1914,7 @@ void FPSPlayer::update(t3dKeyStatePtr ks, t3dMouseStatePtr ms, t3dFPSPtr fps)
 				}
 				else
 				{
-					VECTOR2D_Mul(&movSpeed2D, 1 - MOV_RESIS_SPEED / curr_mov_speed);
+					VECTOR2D_Mul(&movSpeed2D, (curr_mov_speed - MOV_RESIS_SPEED) / curr_mov_speed);
 				}
 			}
 			m_movSpeed.x = movSpeed2D.x;

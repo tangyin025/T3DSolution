@@ -988,6 +988,7 @@ class T3DLIB_API FPSPlayer
 public:
 	VECTOR4D m_attrPlayerInitPos;
 	VECTOR4D m_attrPlayerInitRot;
+
 	REAL m_attrMovResisSpeed;
 	REAL m_attrMovSpeedAccel;
 	REAL m_attrMovSpeedLimit;
