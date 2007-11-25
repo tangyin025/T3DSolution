@@ -37,20 +37,31 @@ protected:
 		m_cam->set_fov(DEG_TO_RAD(60));
 		m_cam->set_min_clipZ(9);
 
-		//m_obj = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
-		//m_obj->load("room.ms3d.txt", "pCube1");
-		m_obj = t3dObjectPtr(new t3dObjectGouraud);
-		m_obj->load("scene.ms3d.txt", "polySurface1");
+		//m_scene = t3dObjectPtr(new t3dObjectFlatPerspectiveLP);
+		//m_scene->load("room.ms3d.txt", "pCube1");
+		m_scene = t3dObjectPtr(new t3dObjectGouraud);
+		m_scene->load("scene.ms3d.txt", "polySurface1");
 
-		for(size_t i = 0; i < m_obj->m_object.ver_list.length; i++)
+		for(size_t i = 0; i < m_scene->m_object.ver_list.length; i++)
 		{
-			VECTOR3D_Mul(&m_obj->m_object.ver_list.elems[i]._4D, 5.0f);
-			m_obj->m_object.ver_list.elems[i].x *= 1;
-			m_obj->m_object.ver_list.elems[i].z *= 1;
-			m_obj->m_object.ver_list.elems[i].y += -10;
+			VECTOR3D_Mul(&m_scene->m_object.ver_list.elems[i]._4D, 5.0f);
+			m_scene->m_object.ver_list.elems[i].x *= 1;
+			m_scene->m_object.ver_list.elems[i].z *= 1;
+			m_scene->m_object.ver_list.elems[i].y += -10;
 		}
 
-		m_player.add_scene(m_obj);
+		m_hand = t3dObjectPtr(new t3dObjectGouraud);
+		m_hand->load("hand.ms3d.txt", "polySurface4");
+
+		for(size_t i = 0; i < m_hand->m_object.ver_list.length; i++)
+		{
+			VECTOR3D_Mul(&m_hand->m_object.ver_list.elems[i]._4D, 0.6f);
+			m_hand->m_object.ver_list.elems[i].x += 0;
+			m_hand->m_object.ver_list.elems[i].y += -1;
+			m_hand->m_object.ver_list.elems[i].z += 0;
+		}
+
+		m_player.add_scene(m_scene);
 
 		/*
 		m_attrMovResisSpeed			= 30;
@@ -98,14 +109,14 @@ protected:
 			memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
 
 			VERTEXV1T v0, v1;
-			VECTOR4D_InitXYZW(	&v0._4D,
+			VECTOR4D_InitXYZ(	&v0._4D,
 								m_cam->m_camera.viewport.x - 1,
 								m_cam->m_camera.viewport.y - 1,
-								0, 0);
-			VECTOR4D_InitXYZW(	&v1._4D,
+								0);
+			VECTOR4D_InitXYZ(	&v1._4D,
 								m_cam->m_camera.viewport.x + m_cam->m_camera.viewport.width,
 								m_cam->m_camera.viewport.y + m_cam->m_camera.viewport.height,
-								0, 0);
+								0);
 
 			v0.c_diff = Create_RGBI(255, 255, 255);
 			v1.c_diff = Create_RGBI(255, 255, 255);
@@ -128,8 +139,8 @@ protected:
 
 		static VECTOR4D emplyVector = {0, 0, 0, 1};
 
-		m_obj->reset();
-		m_obj->to_WORLD(emplyVector, emplyVector);
+		m_scene->reset();
+		m_scene->to_WORLD(emplyVector, emplyVector);
 
 		if(k_state->is_key_down(DIK_R))
 		{
@@ -142,6 +153,9 @@ protected:
 		m_cam->set_position(m_player.m_posHead);
 		m_cam->set_rotation(m_player.m_rot);
 		m_cam->update();
+
+		m_hand->reset();
+		m_hand->to_WORLD(m_player.m_posHead, m_player.m_rot);
 
 		t3dRender render;
 		render.set_camera(m_cam);
@@ -192,7 +206,43 @@ protected:
 		//	m_back->unlock();
 		//}
 
-		render.draw(m_obj.get());
+		render.draw(m_scene.get());
+
+		render.draw(m_hand.get());
+
+		{
+			// draw the cross hander
+			SURFACEV1 surf = m_back->lock();
+			RENDERCONTEXTV1 rc;
+			memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
+
+			REAL cen_x = (m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 2 + m_back->m_ddsurface.rect.left;
+			REAL cen_y = (m_back->m_ddsurface.rect.bottom - m_back->m_ddsurface.rect.top) / 2 + m_back->m_ddsurface.rect.top;
+			REAL dis_a = (m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 80;
+			REAL dis_b = (m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 60;
+
+			VERTEXV1T v0, v1;
+			v0.c_diff = Create_RGBI(0, 255, 0);
+			v1.c_diff = Create_RGBI(0, 255, 0);
+
+			VECTOR4D_InitXYZ(	&v0._4D, cen_x, cen_y - dis_a - dis_b, 0);
+			VECTOR4D_InitXYZ(	&v1._4D, cen_x, cen_y - dis_a, 0);
+			Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+
+			VECTOR4D_InitXYZ(	&v0._4D, cen_x, cen_y + dis_a, 0);
+			VECTOR4D_InitXYZ(	&v1._4D, cen_x, cen_y + dis_a + dis_b, 0);
+			Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+
+			VECTOR4D_InitXYZ(	&v0._4D, cen_x - dis_a - dis_b, cen_y, 0);
+			VECTOR4D_InitXYZ(	&v1._4D, cen_x - dis_a, cen_y, 0);
+			Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+
+			VECTOR4D_InitXYZ(	&v0._4D, cen_x + dis_a, cen_y, 0);
+			VECTOR4D_InitXYZ(	&v1._4D, cen_x + dis_a + dis_b, cen_y, 0);
+			Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+
+			m_back->unlock();
+		}
 
 		m_back->text_out(str_printf("%.1f fps", m_fps->get_FPS()), 10, 10);
 
@@ -205,9 +255,10 @@ protected:
 
 protected:
 	t3dCameraEulerPtr m_cam;
-	t3dObjectPtr m_obj;
+	t3dObjectPtr m_scene;
 
 	FPSPlayer m_player;
+	t3dObjectPtr m_hand;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////
