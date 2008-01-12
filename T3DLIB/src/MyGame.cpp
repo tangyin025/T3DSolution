@@ -414,20 +414,9 @@ t3dMouse::t3dMouse(t3dDInput * input)
 {
 	INIT_ZERO(m_dimouse);
 
-	LPDIRECTINPUTDEVICE8A lpdimouse;
-	if(FAILED(gresult = input->m_dinput.lpdinput->CreateDevice(GUID_SysMouse, &lpdimouse, NULL)))
-	{
-		Get_DInput_Error(gbuffer, gresult);
+	if(!Create_DIMouse(&input->m_dinput, &m_dimouse))
 		throw MyException("create dimouse failed");
-	}
 
-	if(FAILED(gresult = lpdimouse->SetDataFormat(&c_dfDIMouse)))
-	{
-		Get_DInput_Error(gbuffer, gresult);
-		throw MyException("set dimouse data format failed");
-	}
-
-	m_dimouse.lpdimouse = lpdimouse;
 	m_state = t3dMouseStatePtr(new t3dMouseState);
 }
 
@@ -438,18 +427,8 @@ t3dMouse::~t3dMouse()
 
 void t3dMouse::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_dimouse.lpdimouse->SetCooperativeLevel(
-			wnd->get_HWND(), type)))
-	{
-		Get_DInput_Error(gbuffer, gresult);
+	if(!Set_DIMouse_Cooperative_Level(&m_dimouse, wnd->get_HWND(), type))
 		throw MyException("set dimouse cooperative level failed");
-	}
-
-	if(FAILED(gresult = m_dimouse.lpdimouse->Acquire()))
-	{
-		Get_DInput_Error(gbuffer, gresult);
-		throw MyException("acquire dimouse failed");
-	}
 }
 
 t3dMouseStatePtr t3dMouse::get_state(void)
@@ -482,20 +461,9 @@ t3dKey::t3dKey(t3dDInput * input)
 {
 	INIT_ZERO(m_dikey);
 
-	LPDIRECTINPUTDEVICE8A lpdikey;
-	if(FAILED(gresult = input->m_dinput.lpdinput->CreateDevice(GUID_SysKeyboard, &lpdikey, NULL)))
-	{
-		Get_DInput_Error(gbuffer, gresult);
+	if(!Create_DIKey(&input->m_dinput, &m_dikey))
 		throw MyException("create dikey failed");
-	}
 
-	if(FAILED(gresult = lpdikey->SetDataFormat(&c_dfDIKeyboard)))
-	{
-		Get_DInput_Error(gbuffer, gresult);
-		throw MyException("set dikey data format failed");
-	}
-
-	m_dikey.lpdikey = lpdikey;
 	m_state = t3dKeyStatePtr(new t3dKeyState);
 }
 
@@ -506,18 +474,8 @@ t3dKey::~t3dKey()
 
 void t3dKey::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_dikey.lpdikey->SetCooperativeLevel(
-			wnd->get_HWND(), type)))
-	{
-		Get_DInput_Error(gbuffer, gresult);
+	if(!Set_DIKey_Cooperative_Level(&m_dikey, wnd->get_HWND(), type))
 		throw MyException("set dikey cooperative level failed");
-	}
-
-	if(FAILED(gresult = m_dikey.lpdikey->Acquire()))
-	{
-		Get_DInput_Error(gbuffer, gresult);
-		throw MyException("acquire dikey failed");
-	}
 }
 
 t3dKeyStatePtr t3dKey::get_state(void)
@@ -681,14 +639,8 @@ void t3dMidi::stop(void)
 t3dDSound::t3dDSound()
 {
 	INIT_ZERO(m_dsound);
-	LPDIRECTSOUND8 lpds = NULL;
-	if(FAILED(gresult = DirectSoundCreate8(NULL, &lpds, NULL)))
-	{
-		Get_DSound_Error(gbuffer, gresult);
+	if(!Create_DSound(&m_dsound))
 		throw MyException("create dsound failed");
-	}
-
-	m_dsound.lpdsound = lpds;
 }
 
 t3dDSound::~t3dDSound()
@@ -698,11 +650,8 @@ t3dDSound::~t3dDSound()
 
 void t3dDSound::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
-	if(FAILED(gresult = m_dsound.lpdsound->SetCooperativeLevel(wnd->get_HWND(), type)))
-	{
-		Get_DSound_Error(gbuffer, gresult);
+	if(!Set_DSound_Cooperative_Level(&m_dsound, wnd->get_HWND(), type))
 		throw MyException("set dsound cooperative level failed");
-	}
 }
 
 t3dWavPtr t3dDSound::create_wav(void)

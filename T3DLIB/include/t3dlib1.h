@@ -87,9 +87,9 @@ T3DLIB_API void Destroy_DDSurface(DDSURFACEV1 * pddsurface);
 
 T3DLIB_API bool Attach_DDSurface_DDClipper(DDSURFACEV1 * pddsurface, const DDCLIPPERV1 * pddclipper);
 
-T3DLIB_API bool Set_Fullscreen_Cooperative_Level(DDRAWV1 * pddraw, const HWND hwnd);
+T3DLIB_API bool Set_DDraw_Cooperative_Level_Fullscreen(DDRAWV1 * pddraw, const HWND hwnd);
 
-T3DLIB_API bool Set_Normal_Cooperative_Level(DDRAWV1 * pddraw);
+T3DLIB_API bool Set_DDraw_Cooperative_Level_Normal(DDRAWV1 * pddraw);
 
 T3DLIB_API bool Set_Display_Model(DDRAWV1 * pddraw, const int width, const int height, const int bpp);
 

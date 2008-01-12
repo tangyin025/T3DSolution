@@ -561,7 +561,7 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API bool Set_Fullscreen_Cooperative_Level(DDRAWV1 * pddraw, const HWND hwnd)
+T3DLIB_API bool Set_DDraw_Cooperative_Level_Fullscreen(DDRAWV1 * pddraw, const HWND hwnd)
 {
 	if(FAILED(gresult = pddraw->lpddraw->SetCooperativeLevel(hwnd, DDSCL_ALLOWMODEX
 			| DDSCL_ALLOWREBOOT | DDSCL_EXCLUSIVE
@@ -573,7 +573,7 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API bool Set_Normal_Cooperative_Level(DDRAWV1 * pddraw)
+T3DLIB_API bool Set_DDraw_Cooperative_Level_Normal(DDRAWV1 * pddraw)
 {
 	if(FAILED(gresult = pddraw->lpddraw->SetCooperativeLevel(NULL, DDSCL_NORMAL)))
 		ON_ERROR_GOTO(GET_DDRAW_ERROR(gresult));

@@ -66,17 +66,21 @@ T3DLIB_API char * Get_DInput_Error(char * pbuffer, const HRESULT hresult);
 
 T3DLIB_API bool Create_DInput(DINPUTV1 * pdinput, HINSTANCE hinstance);
 
-T3DLIB_API bool Create_DIMouse(DINPUTV1 * pdinput, DIMOUSEV1 * pdimouse, const HWND hwnd);
+T3DLIB_API bool Create_DIMouse(DINPUTV1 * pdinput, DIMOUSEV1 * pdimouse);
 
-T3DLIB_API bool Create_DIKey(DINPUTV1 * pdinput, DIKEYV1 * pdikey, const HWND hwnd);
+T3DLIB_API bool Set_DIMouse_Cooperative_Level(DIMOUSEV1 * pdimouse, const HWND hwnd, DWORD level = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+
+T3DLIB_API bool Create_DIKey(DINPUTV1 * pdinput, DIKEYV1 * pdikey);
+
+T3DLIB_API bool Set_DIKey_Cooperative_Level(DIKEYV1 * pdikey, const HWND hwnd, DWORD level = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
 
 T3DLIB_API bool DIEnum_Joysticks(DINPUTV1 * pdinput, LPDIENUMDEVICESCALLBACKA pfunc, LPVOID pdata);
 
 T3DLIB_API bool Create_DIJoy(	DINPUTV1 * pdinput, DIJOYV1 * pdijoy, const HWND hwnd, const DIJOYINFONODEV1 * pnode,
-								const int min_x = -256,
-								const int max_x =  256,
-								const int min_y = -256,
-								const int max_y =  256, const int dead_zone = 10);
+								const int min_x = -255,
+								const int max_x =  255,
+								const int min_y = -255,
+								const int max_y =  255, const int dead_zone = 10);
 
 T3DLIB_API void Destroy_DInput(DINPUTV1 * pdinput);
 

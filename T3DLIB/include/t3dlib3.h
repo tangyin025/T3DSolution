@@ -44,7 +44,9 @@ typedef struct T3DLIB_API DSBUFFERV1_TYP
 
 T3DLIB_API char * Get_DSound_Error(char * pbuffer, const HRESULT hresult);
 
-T3DLIB_API bool Create_DSound(DSOUNDV1 * pdsound, const HWND hwnd);
+T3DLIB_API bool Create_DSound(DSOUNDV1 * pdsound);
+
+T3DLIB_API bool Set_DSound_Cooperative_Level(DSOUNDV1 * pdsound, const HWND hwnd, DWORD level = DSSCL_NORMAL);
 
 T3DLIB_API bool Create_Wav_From_File(WAVV1 * pwav, const char * fname);
 

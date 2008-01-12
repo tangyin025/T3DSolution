@@ -83,13 +83,10 @@ T3DLIB_API char * Get_DSound_Error(char * pbuffer, const HRESULT hresult)
 	return strcpy(pbuffer, pmsg);
 }
 
-T3DLIB_API bool Create_DSound(DSOUNDV1 * pdsound, const HWND hwnd)
+T3DLIB_API bool Create_DSound(DSOUNDV1 * pdsound)
 {
 	LPDIRECTSOUND8 lpds = NULL;
 	if(FAILED(gresult = DirectSoundCreate8(NULL, &lpds, NULL)))
-		ON_ERROR_GOTO(GET_DSOUND_ERROR(gresult));
-
-	if(FAILED(gresult = lpds->SetCooperativeLevel(hwnd, DSSCL_NORMAL)))
 		ON_ERROR_GOTO(GET_DSOUND_ERROR(gresult));
 
 	pdsound->lpdsound = lpds;
@@ -97,6 +94,16 @@ T3DLIB_API bool Create_DSound(DSOUNDV1 * pdsound, const HWND hwnd)
 
 ON_ERROR:
 	SAFE_RELEASE(lpds);
+	return false;
+}
+
+T3DLIB_API bool Set_DSound_Cooperative_Level(DSOUNDV1 * pdsound, const HWND hwnd, DWORD level /*= DSSCL_NORMAL*/)
+{
+	if(FAILED(gresult = pdsound->lpdsound->SetCooperativeLevel(hwnd, level)))
+		ON_ERROR_GOTO(GET_DSOUND_ERROR(gresult));
+	return true;
+
+ON_ERROR:
 	return false;
 }
 

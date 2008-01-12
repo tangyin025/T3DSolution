@@ -138,22 +138,12 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API bool Create_DIMouse(DINPUTV1 * pdinput, DIMOUSEV1 * pdimouse, const HWND hwnd)
+T3DLIB_API bool Create_DIMouse(DINPUTV1 * pdinput, DIMOUSEV1 * pdimouse)
 {
 	assert(pdimouse->lpdimouse == NULL);
 
 	LPDIRECTINPUTDEVICE8A lpdimouse;
 	if(FAILED(gresult = pdinput->lpdinput->CreateDevice(GUID_SysMouse, &lpdimouse, NULL)))
-		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
-
-	if(FAILED(gresult = lpdimouse->SetDataFormat(&c_dfDIMouse)))
-		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
-
-	if(FAILED(gresult = lpdimouse->SetCooperativeLevel(
-			hwnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
-		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
-
-	if(FAILED(gresult = lpdimouse->Acquire()))
 		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
 
 	pdimouse->lpdimouse = lpdimouse;
@@ -164,7 +154,25 @@ ON_ERROR:
 	return false;
 }
 
-T3DLIB_API bool Create_DIKey(DINPUTV1 * pdinput, DIKEYV1 * pdikey, const HWND hwnd)
+T3DLIB_API bool Set_DIMouse_Cooperative_Level(DIMOUSEV1 * pdimouse, const HWND hwnd, DWORD level /*= DISCL_NONEXCLUSIVE | DISCL_BACKGROUND*/)
+{
+	if(FAILED(gresult = pdimouse->lpdimouse->SetCooperativeLevel(
+			hwnd, level)))
+		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
+
+	if(FAILED(gresult = pdimouse->lpdimouse->SetDataFormat(&c_dfDIMouse)))
+		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
+
+	if(FAILED(gresult = pdimouse->lpdimouse->Acquire()))
+		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
+
+	return true;
+
+ON_ERROR:
+	return false;
+}
+
+T3DLIB_API bool Create_DIKey(DINPUTV1 * pdinput, DIKEYV1 * pdikey)
 {
 	assert(pdikey->lpdikey == NULL);
 
@@ -172,21 +180,29 @@ T3DLIB_API bool Create_DIKey(DINPUTV1 * pdinput, DIKEYV1 * pdikey, const HWND hw
 	if(FAILED(gresult = pdinput->lpdinput->CreateDevice(GUID_SysKeyboard, &lpdikey, NULL)))
 		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
 
-	if(FAILED(gresult = lpdikey->SetDataFormat(&c_dfDIKeyboard)))
-		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
-
-	if(FAILED(gresult = lpdikey->SetCooperativeLevel(
-			hwnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
-		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
-
-	if(FAILED(gresult = lpdikey->Acquire()))
-		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
-
 	pdikey->lpdikey = lpdikey;
 	return true;
 
 ON_ERROR:
 	SAFE_RELEASE(lpdikey);
+	return false;
+}
+
+T3DLIB_API bool Set_DIKey_Cooperative_Level(DIKEYV1 * pdikey, const HWND hwnd, DWORD level /*= DISCL_NONEXCLUSIVE | DISCL_BACKGROUND*/)
+{
+	if(FAILED(gresult = pdikey->lpdikey->SetCooperativeLevel(
+			hwnd, level)))
+		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
+
+	if(FAILED(gresult = pdikey->lpdikey->SetDataFormat(&c_dfDIKeyboard)))
+		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
+
+	if(FAILED(gresult = pdikey->lpdikey->Acquire()))
+		ON_ERROR_GOTO(GET_DINPUT_ERROR(gresult));
+
+	return true;
+
+ON_ERROR:
 	return false;
 }
 
@@ -202,10 +218,10 @@ ON_ERROR:
 }
 
 T3DLIB_API bool Create_DIJoy(	DINPUTV1 * pdinput, DIJOYV1 * pdijoy, const HWND hwnd, const DIJOYINFONODEV1 * pnode,
-								const int min_x /*= -256*/,
-								const int max_x /*=  256*/,
-								const int min_y /*= -256*/,
-								const int max_y /*=  256*/, const int dead_zone /*= 10*/)
+								const int min_x /*= -255*/,
+								const int max_x /*=  255*/,
+								const int min_y /*= -255*/,
+								const int max_y /*=  255*/, const int dead_zone /*= 10*/)
 {
 	LPDIRECTINPUTDEVICE8A lpdijoy = NULL;
 	if(FAILED(gresult = pdinput->lpdinput->CreateDevice(pnode->instance_guid, &lpdijoy, NULL)))

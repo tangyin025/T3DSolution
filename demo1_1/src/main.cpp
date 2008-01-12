@@ -387,7 +387,7 @@ bool Game_Init(void)
 		if(0 == SetWindowPos(wnd_handle, HWND_TOP, wx, wy, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW))
 			ON_ERROR_RETURN("set window position failed");
 
-		if(!Set_Normal_Cooperative_Level(&ddraw))
+		if(!Set_DDraw_Cooperative_Level_Normal(&ddraw))
 			ON_ERROR_RETURN("set cooperative level failed");
 
 		if(!Create_Windowed_DDSurface(&ddraw, &ddsprimary))
@@ -423,7 +423,7 @@ bool Game_Init(void)
 		if(0 == SetWindowPos(wnd_handle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW))
 			ON_ERROR_RETURN("set window position failed");
 
-		if(!Set_Fullscreen_Cooperative_Level(&ddraw, wnd_handle))
+		if(!Set_DDraw_Cooperative_Level_Fullscreen(&ddraw, wnd_handle))
 			ON_ERROR_RETURN("set cooperative level failed");
 
 		if(!Set_Display_Model(&ddraw,
@@ -459,14 +459,23 @@ bool Game_Init(void)
 	if(!Create_DInput(&dinput, GetModuleHandle(NULL)))
 		ON_ERROR_RETURN("create direct input failed");
 
-	if(!Create_DIMouse(&dinput, &dimouse, wnd_handle))
+	if(!Create_DIMouse(&dinput, &dimouse))
 		ON_ERROR_RETURN("create mouse input failed");
 
-	if(!Create_DIKey(&dinput, &dikey, wnd_handle))
+	if(!Set_DIMouse_Cooperative_Level(&dimouse, wnd_handle))
+		ON_ERROR_RETURN("set mouse cooperative failed");
+
+	if(!Create_DIKey(&dinput, &dikey))
 		ON_ERROR_RETURN("create keyboard input failed");
 
-	if(!Create_DSound(&dsound, wnd_handle))
+	if(!Set_DIKey_Cooperative_Level(&dikey, wnd_handle))
+		ON_ERROR_RETURN("set keyboard cooperative failed");
+
+	if(!Create_DSound(&dsound))
 		ON_ERROR_RETURN("create direct sound failed");
+
+	if(!Set_DSound_Cooperative_Level(&dsound, wnd_handle))
+		ON_ERROR_RETURN("set dsound cooperative failed");
 
 	if(!Create_DMPerformance(&dsound, &dmperf, wnd_handle))
 		ON_ERROR_RETURN("create direct music perf failed");
