@@ -1,0 +1,199 @@
+#!/usr/bin/perl -w
+use strict;
+
+# #############################################################################
+#
+# STEP:
+# 1) find all .vcproj | .sln, but without .71.vcporj | .71.sln
+# 2) copy it to .71.vcproj | .71.sln and .80.vcproj | .80.sln
+#    but, specially, for .71.sln and .80.sln, it should replace the string ".vcproj" int these
+#    test to ".71.vcport" (for .71.sln) | ".80.vcproj" (for .80.vcproj)
+# 3) remove all orignal script files
+# 4) open .70.sln with VC2003 and open .80.sln with VC2005, the wizard will convert it
+#
+# #############################################################################
+
+sub _ASSERT ($$@)
+{
+	my $path = shift @_;
+	my $line = shift @_;
+	
+	foreach my $expr (@_)
+	{
+		if(! $expr )
+		{
+			die "$path ($line) : assert failured! \n";
+		}
+	}
+}
+
+sub _XXvcproj_to_71vcproj ($)
+{
+	my $path = $_[0];
+_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.vcproj$/ && ! ($path =~ m/^.+\.71\.vcproj$/) ));
+	open(SRC, $path) || die "cannot open $path: $!";
+	$path =~ s/^(.+)\.vcproj$/$1.71.vcproj/;
+	open(DST, ">" . $path) || die "cannot open $path: $!";
+	print DST <SRC>;
+	close(DST);
+	close(SRC);
+	return $path;
+}
+
+sub _71vcproj_to_80vcproj ($)
+{
+	my $path = $_[0];
+_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.71\.vcproj$/ && ! ($path =~ m/^.+\.80\.vcproj$/) ));
+	open(SRC, $path) || die "cannot open $path: $!";
+	$path =~ s/^(.+)\.71\.vcproj$/$1.80.vcproj/;
+	open(DST, ">" . $path) || die "cannot open $path: $!";
+	print DST <SRC>;
+	close(DST);
+	close(SRC);
+	return $path;
+}
+
+sub _XXsln_to_71sln ($)
+{
+	my $path = $_[0];
+_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.sln$/ && ! ($path =~ m/^.+\.71\.sln$/) ));
+	open(SRC, $path) || die "cannot open $path: $!";
+	$path =~ s/^(.+)\.sln$/$1.71.sln/;
+	open(DST, ">" . $path) || die "cannot open $path: $!";
+	while(my $line = <SRC>)
+	{
+		$line =~ s/\.vcproj/.71.vcproj/;
+		print DST $line;
+	}
+	close(DST);
+	close(SRC);
+	return $path;
+}
+
+sub _71sln_to_80sln ($)
+{
+	my $path = $_[0];
+_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.71\.sln$/ && ! ($path =~ m/^.+\.80\.sln$/) ));
+	open(SRC, $path) || die "cannot open $path: $!";
+	$path =~ s/^(.+)\.71\.sln$/$1.80.sln/;
+	open(DST, ">" . $path) || die "cannot open $path: $!";
+	while(my $line = <SRC>)
+	{
+		$line =~ s/\.71\.vcproj/.80.vcproj/;
+		print DST $line;
+	}
+	close(DST);
+	close(SRC);
+	return $path;
+}
+
+sub convert_file ($)
+{
+	my $path = $_[0];
+	if(! (-d $path) )
+	{
+		if($path =~ m/.+\.vcproj$/)
+		{
+			if(! ($path =~ m/.+\.80\.vcproj$/) )
+			{
+				if(! ($path =~ m/.+\.71\.vcproj$/) )
+				{
+					$path = _XXvcproj_to_71vcproj($path);
+				}
+				
+				$path = _71vcproj_to_80vcproj($path);
+			}
+
+			print STDOUT "+ $path \n";
+		}
+		elsif($path =~ m/.+\.sln$/)
+		{
+			if(! ($path =~ m/.+\.80\.sln$/) )
+			{
+				if(! ($path =~ m/.+\.71\.sln$/) )
+				{
+					$path = _XXsln_to_71sln($path);
+				}
+				
+				$path = _71sln_to_80sln($path);
+			}
+
+			print STDOUT "+ $path \n";
+		}
+	}
+}
+
+sub delete_old_file ($)
+{
+	my $path = $_[0];
+	if(! (-d $path) )
+	{
+		if(
+			$path =~ m/.+\.80\.ncb$/ ||
+			$path =~ m/.+\.80\.suo$/ ||
+			$path =~ m/.+\.80\.sln$/ ||
+			$path =~ m/.+\.80\.vcproj$/ ||
+			$path =~ m/.+\.80\.vcproj\..+$/ ||
+			$path =~ m/UpgradeLog\d*\.XML$/i
+			)
+		{
+			if(unlink $path)
+			{
+				print STDOUT "- $path \n";
+			}
+			else
+			{
+				print STDOUT "failed delete $path: $! \n";
+			}
+		}
+	}
+	else
+	{
+		if(
+			$path =~ m/.+_UpgradeReport_Files/i
+			)
+		{
+			unlink glob "$path/*";
+			
+			if( rmdir $path )
+			{
+				print STDOUT "- $path \n";
+			}
+			else
+			{
+				print STDOUT "failed delete $path: $! \n";
+			}
+		}
+	}
+}
+
+sub iterate_dir ($$)
+{
+	my $dir = $_[0];
+	my $sub = $_[1];
+
+	opendir(DIR, $dir) || die "cannot open $dir: $!";
+	my @cons = readdir DIR;
+	closedir(DIR);
+	
+	foreach my $elem (@cons)
+	{
+		if(!($elem =~ m/^\..*/))
+		{
+			my $path = $dir . "/" . $elem;
+
+			if(-d $path)
+			{
+				&iterate_dir($path, $sub);
+			}
+
+			&$sub($path);
+		}
+	}
+}
+
+iterate_dir(".", \&delete_old_file);
+
+iterate_dir(".", \&convert_file);
+
+print STDOUT "VCConversion succeed \n";
