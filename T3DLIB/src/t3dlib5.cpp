@@ -27,13 +27,6 @@ static void Draw_Scan16(SCANCONTEXT & sc, const int y_beg, const int y_end, cons
 		unsigned char * ps = prc->s_pbuffer + (s_beg << _16BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
 		int dx = s_end - s_beg;
 
-		//while(dx-- > 0)
-		//{
-		//	*(unsigned short *)ps = (unsigned short)sc.lc.x;
-
-		//	ps += _16BIT_BYTES;
-		//}
-
 		if(dx > 0)
 		{
 			Mem_Set_Word(ps, (unsigned short)sc.lc.x, dx);
@@ -54,13 +47,6 @@ static void Draw_Scan32(SCANCONTEXT & sc, const int y_beg, const int y_end, cons
 		unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
 		int dx = s_end - s_beg;
 
-		//while(dx-- > 0)
-		//{
-		//	*(unsigned int *)ps = sc.lc.x;
-
-		//	ps += _32BIT_BYTES;
-		//}
-
 		if(dx > 0)
 		{
 			Mem_Set_Quad(ps, sc.lc.x, dx);
@@ -75,14 +61,14 @@ static void Draw_Scan_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y
 {
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -90,7 +76,7 @@ static void Draw_Scan_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, con
 #define __draw_UV
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -98,7 +84,7 @@ static void Draw_Scan_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, con
 #define __draw_UV
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -107,7 +93,7 @@ static void Draw_Scan_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const 
 #define __draw_UV_PerspectiveLP
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -116,7 +102,7 @@ static void Draw_Scan_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const 
 #define __draw_UV_PerspectiveLP
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Gouraud_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -124,7 +110,7 @@ static void Draw_Scan_Gouraud_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, con
 #define __draw_GR
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Gouraud_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -132,171 +118,25 @@ static void Draw_Scan_Gouraud_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, con
 #define __draw_GR
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	int y;
-	for(y = y_beg; y < y_end; y++)
-	{
-		int s_beg = (int)sc.lx;
-		int s_end = (int)sc.rx;
-		unsigned char * ps = prc->s_pbuffer + (s_beg << _16BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-		int dx = s_end - s_beg;
-
-		FIXP16 u_beg = sc.lu;
-		FIXP16 v_beg = sc.lv;
-		FIXP16 du, dv;
-
-		VECTOR4DI c_beg = sc.lc;
-		VECTOR4DI dc;
-
-		FIXP28 z_beg = sc.lz;
-		unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
-		FIXP28 dz;
-
-		if(dx > 0)
-		{
-			du = (sc.ru - sc.lu) / dx;
-			dv = (sc.rv - sc.lv) / dx;
-
-			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
-			dc.x = (sc.rc.x - sc.lc.x) / dx;
-			dc.y = (sc.rc.y - sc.lc.y) / dx;
-			dc.z = (sc.rc.z - sc.lc.z) / dx;
-
-			dz = (sc.rz - sc.lz) / dx;
-
-			while(dx-- > 0)
-			{
-				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-				{
-					*(unsigned short *)ps = _RGB16BIT(
-							COLOR_MUL_16R(c_beg.x >> FIXP16_SHIFT, _16BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_16G(c_beg.y >> FIXP16_SHIFT, _16BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_16B(c_beg.z >> FIXP16_SHIFT, _16BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-
-					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
-				}
-
-				ps += _16BIT_BYTES;
-
-				u_beg += du;
-				v_beg += dv;
-
-				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
-				c_beg.x += dc.x;
-				c_beg.y += dc.y;
-				c_beg.z += dc.z;
-
-				z_beg += dz;
-				pz += _ZBUFF_BYTES;
-			}
-		}
-
-		sc.lx += sc.lx_inc;
-		sc.rx += sc.rx_inc;
-
-		sc.lu += sc.lu_inc;
-		sc.lv += sc.lv_inc;
-		sc.ru += sc.ru_inc;
-		sc.rv += sc.rv_inc;
-
-		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		sc.lc.x += sc.lc_inc.x;
-		sc.lc.y += sc.lc_inc.y;
-		sc.lc.z += sc.lc_inc.z;
-		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
-		sc.rc.x += sc.rc_inc.x;
-		sc.rc.y += sc.rc_inc.y;
-		sc.rc.z += sc.rc_inc.z;
-
-		sc.lz += sc.lz_inc;
-		sc.rz += sc.rz_inc;
-	}
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	int y;
-	for(y = y_beg; y < y_end; y++)
-	{
-		int s_beg = (int)sc.lx;
-		int s_end = (int)sc.rx;
-		unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-		int dx = s_end - s_beg;
-
-		FIXP16 u_beg = sc.lu;
-		FIXP16 v_beg = sc.lv;
-		FIXP16 du, dv;
-
-		VECTOR4DI c_beg = sc.lc;
-		VECTOR4DI dc;
-
-		FIXP28 z_beg = sc.lz;
-		unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
-		FIXP28 dz;
-
-		if(dx > 0)
-		{
-			du = (sc.ru - sc.lu) / dx;
-			dv = (sc.rv - sc.lv) / dx;
-
-			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
-			dc.x = (sc.rc.x - sc.lc.x) / dx;
-			dc.y = (sc.rc.y - sc.lc.y) / dx;
-			dc.z = (sc.rc.z - sc.lc.z) / dx;
-
-			dz = (sc.rz - sc.lz) / dx;
-
-			while(dx-- > 0)
-			{
-				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-				{
-					*(unsigned int *)ps = _RGB32BIT(
-							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-
-					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
-				}
-
-				ps += _32BIT_BYTES;
-
-				u_beg += du;
-				v_beg += dv;
-
-				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
-				c_beg.x += dc.x;
-				c_beg.y += dc.y;
-				c_beg.z += dc.z;
-
-				z_beg += dz;
-				pz += _ZBUFF_BYTES;
-			}
-		}
-
-		sc.lx += sc.lx_inc;
-		sc.rx += sc.rx_inc;
-
-		sc.lu += sc.lu_inc;
-		sc.lv += sc.lv_inc;
-		sc.ru += sc.ru_inc;
-		sc.rv += sc.rv_inc;
-
-		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		sc.lc.x += sc.lc_inc.x;
-		sc.lc.y += sc.lc_inc.y;
-		sc.lc.z += sc.lc_inc.z;
-		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
-		sc.rc.x += sc.rc_inc.x;
-		sc.rc.y += sc.rc_inc.y;
-		sc.rc.z += sc.rc_inc.z;
-
-		sc.lz += sc.lz_inc;
-		sc.rz += sc.rz_inc;
-	}
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -306,7 +146,7 @@ static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc
 #define __draw_GR
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -316,7 +156,7 @@ static void Draw_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc
 #define __draw_GR
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -328,13 +168,6 @@ static void Draw_Clipped_Scan16(SCANCONTEXT & sc, const int y_beg, const int y_e
 		int s_end = (int)MIN(sc.rx, prc->fmax_clip_x + 1);
 		unsigned char * ps = prc->s_pbuffer + (s_beg << _16BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
 		int dx = s_end - s_beg;
-
-		//while(dx-- > 0)
-		//{
-		//	*(unsigned short *)ps = (unsigned short)sc.lc.x;
-
-		//	ps += _16BIT_BYTES;
-		//}
 
 		if(dx > 0)
 		{
@@ -356,13 +189,6 @@ static void Draw_Clipped_Scan32(SCANCONTEXT & sc, const int y_beg, const int y_e
 		unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
 		int dx = s_end - s_beg;
 
-		//while(dx-- > 0)
-		//{
-		//	*(unsigned int *)ps = sc.lc.x;
-
-		//	ps += _32BIT_BYTES;
-		//}
-
 		if(dx > 0)
 		{
 			Mem_Set_Quad(ps, sc.lc.x, dx);
@@ -378,7 +204,7 @@ static void Draw_Clipped_Scan_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, con
 #define __draw_ZB
 #define __draw_16
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -386,7 +212,7 @@ static void Draw_Clipped_Scan_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, con
 #define __draw_ZB
 #define __draw_32
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -395,7 +221,7 @@ static void Draw_Clipped_Scan_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_
 #define __draw_ZB
 #define __draw_16
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -404,7 +230,7 @@ static void Draw_Clipped_Scan_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_
 #define __draw_ZB
 #define __draw_32
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -414,7 +240,7 @@ static void Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc
 #define __draw_ZB
 #define __draw_16
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -424,7 +250,7 @@ static void Draw_Clipped_Scan_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc
 #define __draw_ZB
 #define __draw_32
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Gouraud_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -433,7 +259,7 @@ static void Draw_Clipped_Scan_Gouraud_ZBufferRW16(SCANCONTEXT & sc, const int y_
 #define __draw_ZB
 #define __draw_16
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Gouraud_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -442,233 +268,27 @@ static void Draw_Clipped_Scan_Gouraud_ZBufferRW32(SCANCONTEXT & sc, const int y_
 #define __draw_ZB
 #define __draw_32
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	int y;
-	for(y = y_beg; y < y_end; y++)
-	{
-		int s_beg, s_end;
-		//int dx = (int)(floor(sc.rx) - floor(sc.lx));
-		int dx = (int)sc.rx - (int)sc.lx;
-
-		FIXP16 u_beg, v_beg;
-		FIXP16 du, dv;
-
-		VECTOR4DI c_beg;
-		VECTOR4DI dc;
-
-		FIXP28 z_beg;
-		FIXP28 dz;
-
-		if(dx > 0)
-		{
-			du = (sc.ru - sc.lu) / dx;
-			dv = (sc.rv - sc.lv) / dx;
-
-			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
-			dc.x = (sc.rc.x - sc.lc.x) / dx;
-			dc.y = (sc.rc.y - sc.lc.y) / dx;
-			dc.z = (sc.rc.z - sc.lc.z) / dx;
-
-			dz = (sc.rz - sc.lz) / dx;
-
-			if(sc.lx < prc->fmin_clip_x)
-			{
-				s_beg = (int)prc->fmin_clip_x;
-
-				u_beg = sc.lu + ((int)prc->fmin_clip_x - (int)sc.lx) * du;
-				v_beg = sc.lv + ((int)prc->fmin_clip_x - (int)sc.lx) * dv;
-
-				//VECTOR4DI vtmp;
-				//VECTOR3DI_Add(&c_beg._3D, &sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &dc._3D, (int)(prc->fmin_clip_x - sc.lx)));
-				c_beg.x = sc.lc.x + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.x;
-				c_beg.y = sc.lc.y + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.y;
-				c_beg.z = sc.lc.z + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.z;
-
-				z_beg = sc.lz + (int)(prc->fmin_clip_x - sc.lx) * dz;
-			}
-			else
-			{
-				s_beg = (int)sc.lx;
-
-				u_beg = sc.lu;
-				v_beg = sc.lv;
-
-				c_beg = sc.lc;
-
-				z_beg = sc.lz;
-			}
-			s_end = (int)MIN(sc.rx, prc->fmax_clip_x + 1);
-
-			unsigned char * ps = prc->s_pbuffer + (s_beg << _16BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-
-			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
-
-			dx = s_end - s_beg;
-
-			while(dx-- > 0)
-			{
-				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-				{
-					*(unsigned short *)ps = _RGB16BIT(
-							COLOR_MUL_16R(c_beg.x >> FIXP16_SHIFT, _16BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_16G(c_beg.y >> FIXP16_SHIFT, _16BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_16B(c_beg.z >> FIXP16_SHIFT, _16BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _16BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-
-					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
-				}
-
-				ps += _16BIT_BYTES;
-
-				u_beg += du;
-				v_beg += dv;
-
-				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
-				c_beg.x += dc.x;
-				c_beg.y += dc.y;
-				c_beg.z += dc.z;
-
-				z_beg += dz;
-				pz += _ZBUFF_BYTES;
-			}
-		}
-
-		sc.lx += sc.lx_inc;
-		sc.rx += sc.rx_inc;
-
-		sc.lu += sc.lu_inc;
-		sc.lv += sc.lv_inc;
-		sc.ru += sc.ru_inc;
-		sc.rv += sc.rv_inc;
-
-		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		sc.lc.x += sc.lc_inc.x;
-		sc.lc.y += sc.lc_inc.y;
-		sc.lc.z += sc.lc_inc.z;
-		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
-		sc.rc.x += sc.rc_inc.x;
-		sc.rc.y += sc.rc_inc.y;
-		sc.rc.z += sc.rc_inc.z;
-
-		sc.lz += sc.lz_inc;
-		sc.rz += sc.rz_inc;
-	}
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_16
+#define __draw_CLIP
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
 {
-	int y;
-	for(y = y_beg; y < y_end; y++)
-	{
-		int s_beg, s_end;
-		//int dx = (int)(floor(sc.rx) - floor(sc.lx));
-		int dx = (int)sc.rx - (int)sc.lx;
-
-		FIXP16 u_beg, v_beg;
-		FIXP16 du, dv;
-
-		VECTOR4DI c_beg;
-		VECTOR4DI dc;
-
-		FIXP28 z_beg;
-		FIXP28 dz;
-
-		if(dx > 0)
-		{
-			du = (sc.ru - sc.lu) / dx;
-			dv = (sc.rv - sc.lv) / dx;
-
-			//VECTOR3DI_Div(VECTOR3DI_Sub(&dc._3D, &sc.rc._3D, &sc.lc._3D), dx);
-			dc.x = (sc.rc.x - sc.lc.x) / dx;
-			dc.y = (sc.rc.y - sc.lc.y) / dx;
-			dc.z = (sc.rc.z - sc.lc.z) / dx;
-
-			dz = (sc.rz - sc.lz) / dx;
-
-			if(sc.lx < prc->fmin_clip_x)
-			{
-				s_beg = (int)prc->fmin_clip_x;
-
-				u_beg = sc.lu + ((int)prc->fmin_clip_x - (int)sc.lx) * du;
-				v_beg = sc.lv + ((int)prc->fmin_clip_x - (int)sc.lx) * dv;
-
-				//VECTOR4DI vtmp;
-				//VECTOR3DI_Add(&c_beg._3D, &sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &dc._3D, (int)(prc->fmin_clip_x - sc.lx)));
-				c_beg.x = sc.lc.x + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.x;
-				c_beg.y = sc.lc.y + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.y;
-				c_beg.z = sc.lc.z + ((int)prc->fmin_clip_x - (int)sc.lx) * dc.z;
-
-				z_beg = sc.lz + (int)(prc->fmin_clip_x - sc.lx) * dz;
-			}
-			else
-			{
-				s_beg = (int)sc.lx;
-
-				u_beg = sc.lu;
-				v_beg = sc.lv;
-
-				c_beg = sc.lc;
-
-				z_beg = sc.lz;
-			}
-			s_end = (int)MIN(sc.rx, prc->fmax_clip_x + 1);
-
-			unsigned char * ps = prc->s_pbuffer + (s_beg << _32BIT_BYTES_SHIFT) + (y << prc->s_pitch_shift);
-
-			unsigned char * pz = prc->z_pbuffer + (s_beg << _ZBUFF_BYTES_SHIFT) + (y << prc->z_pitch_shift);
-
-			dx = s_end - s_beg;
-
-			while(dx-- > 0)
-			{
-				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
-				{
-					*(unsigned int *)ps = _RGB32BIT(
-							COLOR_MUL_32R(c_beg.x >> FIXP16_SHIFT, _32BIT_GETR(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_32G(c_beg.y >> FIXP16_SHIFT, _32BIT_GETG(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))),
-							COLOR_MUL_32B(c_beg.z >> FIXP16_SHIFT, _32BIT_GETB(*(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))));
-
-					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
-				}
-
-				ps += _32BIT_BYTES;
-
-				u_beg += du;
-				v_beg += dv;
-
-				//VECTOR3DI_Add(&c_beg._3D, &dc._3D);
-				c_beg.x += dc.x;
-				c_beg.y += dc.y;
-				c_beg.z += dc.z;
-
-				z_beg += dz;
-				pz += _ZBUFF_BYTES;
-			}
-		}
-
-		sc.lx += sc.lx_inc;
-		sc.rx += sc.rx_inc;
-
-		sc.lu += sc.lu_inc;
-		sc.lv += sc.lv_inc;
-		sc.ru += sc.ru_inc;
-		sc.rv += sc.rv_inc;
-
-		//VECTOR3DI_Add(&sc.lc._3D, &sc.lc_inc._3D);
-		sc.lc.x += sc.lc_inc.x;
-		sc.lc.y += sc.lc_inc.y;
-		sc.lc.z += sc.lc_inc.z;
-		//VECTOR3DI_Add(&sc.rc._3D, &sc.rc_inc._3D);
-		sc.rc.x += sc.rc_inc.x;
-		sc.rc.y += sc.rc_inc.y;
-		sc.rc.z += sc.rc_inc.z;
-
-		sc.lz += sc.lz_inc;
-		sc.rz += sc.rz_inc;
-	}
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_32
+#define __draw_CLIP
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -679,7 +299,7 @@ static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW16(SCANCONT
 #define __draw_ZB
 #define __draw_16
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -690,7 +310,7 @@ static void Draw_Clipped_Scan_Gouraud_Texture_PerspectiveLP_ZBufferRW32(SCANCONT
 #define __draw_ZB
 #define __draw_32
 #define __draw_CLIP
-#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 _CTOR_IMPLEMENT(RENDERCONTEXTV1_TYP);
@@ -725,16 +345,17 @@ T3DLIB_API void (* Draw_Clipped_Rectangle_Texture_ZBufferW)(const RENDERCONTEXTV
 T3DLIB_API void (* Draw_Clipped_Rectangle_ZBufferR_SrcAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1) = NULL;
 T3DLIB_API void (* Draw_Clipped_Rectangle_ZbufferR_TextureAlpha)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1) = NULL;
 T3DLIB_API void (* Draw_Triangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
-T3DLIB_API void (* Draw_Triangle_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
+T3DLIB_API void (* Draw_Triangle_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_Texture_PerspectiveLP_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
-T3DLIB_API void (* Draw_Triangle_Gouraud_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
+T3DLIB_API void (* Draw_Triangle_Gouraud_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
 T3DLIB_API void (* Draw_Triangle_Gouraud_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
+T3DLIB_API void (* Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
-T3DLIB_API void (* Draw_Clipped_Triangle_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
+T3DLIB_API void (* Draw_Clipped_Triangle_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
-T3DLIB_API void (* Draw_Clipped_Triangle_Gouraud_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
+T3DLIB_API void (* Draw_Clipped_Triangle_Gouraud_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 T3DLIB_API void (* Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW)(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2) = NULL;
 
@@ -777,6 +398,7 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Triangle_Texture_PerspectiveLP_ZBufferRW	= Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Triangle_Gouraud_ZBufferRW					= Draw_Triangle_Gouraud_ZBufferRW16;
 		Draw_Triangle_Gouraud_Texture_ZBufferRW			= Draw_Triangle_Gouraud_Texture_ZBufferRW16;
+		Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW	= Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Clipped_Triangle							= Draw_Clipped_Triangle16;
 		Draw_Clipped_Triangle_ZBufferRW					= Draw_Clipped_Triangle_ZBufferRW16;
 		Draw_Clipped_Triangle_Texture_ZBufferRW			= Draw_Clipped_Triangle_Texture_ZBufferRW16;
@@ -821,6 +443,7 @@ T3DLIB_API bool Init_T3dlib5(int bpp)
 		Draw_Triangle_Texture_PerspectiveLP_ZBufferRW	= Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Triangle_Gouraud_ZBufferRW					= Draw_Triangle_Gouraud_ZBufferRW32;
 		Draw_Triangle_Gouraud_Texture_ZBufferRW			= Draw_Triangle_Gouraud_Texture_ZBufferRW32;
+		Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW	= Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Clipped_Triangle							= Draw_Clipped_Triangle32;
 		Draw_Clipped_Triangle_ZBufferRW					= Draw_Clipped_Triangle_ZBufferRW32;
 		Draw_Clipped_Triangle_Texture_ZBufferRW			= Draw_Clipped_Triangle_Texture_ZBufferRW32;
@@ -3490,114 +3113,32 @@ T3DLIB_API void Draw_Clipped_Rectangle_ZbufferR_TextureAlpha32(const RENDERCONTE
 
 T3DLIB_API void Draw_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
-	const VERTEXV1 * ptmp;
-	SCANCONTEXT sc;
-	sc.lc.x = pv0->c_diff;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-		sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-
-		Draw_Scan16(sc, y0, y1, prc);
-
-		sc.lx = pv1->x;
-		sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-		Draw_Scan16(sc, y1, y2, prc);
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-		sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-
-		Draw_Scan16(sc, y0, y1, prc);
-
-		sc.rx = pv1->x;
-		sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-		Draw_Scan16(sc, y1, y2, prc);
-	}
+#define __draw_func Draw_Scan16
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
-	const VERTEXV1 * ptmp;
-	SCANCONTEXT sc;
-	sc.lc.x = pv0->c_diff;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-		sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-
-		Draw_Scan32(sc, y0, y1, prc);
-
-		sc.lx = pv1->x;
-		sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-		Draw_Scan32(sc, y1, y2, prc);
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-		sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-
-		Draw_Scan32(sc, y0, y1, prc);
-
-		sc.rx = pv1->x;
-		sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-		Draw_Scan32(sc, y1, y2, prc);
-	}
+#define __draw_func Draw_Scan32
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Triangle_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Triangle_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_ZBufferRW16
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Triangle_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Triangle_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_ZBufferRW32
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -3606,7 +3147,7 @@ T3DLIB_API void Draw_Triangle_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, c
 #define __draw_UV
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -3615,7 +3156,7 @@ T3DLIB_API void Draw_Triangle_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, c
 #define __draw_UV
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -3625,7 +3166,7 @@ T3DLIB_API void Draw_Triangle_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONT
 #define __draw_UV_PerspectiveLP
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -3635,419 +3176,45 @@ T3DLIB_API void Draw_Triangle_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONT
 #define __draw_UV_PerspectiveLP
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_Gouraud_ZBufferRW16
 #define __draw_GR
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_Gouraud_ZBufferRW32
 #define __draw_GR
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
 {
-	const VERTEXV1T * ptmp;
-	SCANCONTEXT sc;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y1 > y0)
-		{
-			sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-
-			sc.lu_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.lv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_16BIT_GETR(pv1->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv1->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv1->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		if(y2 > y0)
-		{
-			sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-
-			sc.ru_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.rv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y0, y1, prc);
-
-		sc.lx = pv1->x;
-
-		sc.lu = pv1->u;
-		sc.lv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_16BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-			sc.lu_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.lv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y1, y2, prc);
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y2 > y0)
-		{
-			sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-
-			sc.lu_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.lv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		if(y1 > y0)
-		{
-			sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-
-			sc.ru_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.rv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_16BIT_GETR(pv1->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv1->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv1->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y0, y1, prc);
-
-		sc.rx = pv1->x;
-
-		sc.ru = pv1->u;
-		sc.rv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_16BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.rz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-			sc.ru_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.rv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y1, y2, prc);
-	}
+#define __draw_func Draw_Scan_Gouraud_Texture_ZBufferRW16
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
 {
-	const VERTEXV1T * ptmp;
-	SCANCONTEXT sc;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y1 > y0)
-		{
-			sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-
-			sc.lu_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.lv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		if(y2 > y0)
-		{
-			sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-
-			sc.ru_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.rv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y0, y1, prc);
-
-		sc.lx = pv1->x;
-
-		sc.lu = pv1->u;
-		sc.lv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-			sc.lu_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.lv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y1, y2, prc);
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y2 > y0)
-		{
-			sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0);
-
-			sc.lu_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.lv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		if(y1 > y0)
-		{
-			sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0);
-
-			sc.ru_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.rv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y0, y1, prc);
-
-		sc.rx = pv1->x;
-
-		sc.ru = pv1->u;
-		sc.rv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.rz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1);
-
-			sc.ru_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.rv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y1, y2, prc);
-	}
+#define __draw_func Draw_Scan_Gouraud_Texture_ZBufferRW32
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -4058,7 +3225,7 @@ T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RE
 #define __draw_GR
 #define __draw_ZB
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -4069,371 +3236,45 @@ T3DLIB_API void Draw_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RE
 #define __draw_GR
 #define __draw_ZB
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
-	const VERTEXV1 * ptmp;
-	SCANCONTEXT sc;
-	sc.lc.x = pv0->c_diff;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-		sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc;
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, pv1->x) < prc->fmin_clip_x || MAX(pv0->x, x3) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan16(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.lx = pv1->x; // ***
-		sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y1) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(x3, pv2->x) > prc->fmax_clip_x + 1) // ***
-			if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(sc.rx, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan16(sc, y_beg, y_end, prc);
-			}
-		}
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-		sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc;
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, x3) < prc->fmin_clip_x || MAX(pv0->x, pv1->x) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan16(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.rx = pv1->x; // ***
-		sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y1) * sc.rx_inc; // ***
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(x3, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // ***
-			if(MIN(sc.lx, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan16(sc, y_beg, y_end, prc);
-			}
-		}
-	}
+#define __draw_func Draw_Scan16
+#define __draw_func_clipped Draw_Clipped_Scan16
+#define __draw_CLIP
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
-	const VERTEXV1 * ptmp;
-	SCANCONTEXT sc;
-	sc.lc.x = pv0->c_diff;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-		sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc;
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, pv1->x) < prc->fmin_clip_x || MAX(pv0->x, x3) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan32(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.lx = pv1->x; // ***
-		sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y1) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(x3, pv2->x) > prc->fmax_clip_x + 1) // ***
-			if(MIN(pv1->x, pv2->x) < prc->fmin_clip_x || MAX(sc.rx, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan32(sc, y_beg, y_end, prc);
-			}
-		}
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-		sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc;
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, x3) < prc->fmin_clip_x || MAX(pv0->x, pv1->x) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan32(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.rx = pv1->x; // ***
-		sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y1) * sc.rx_inc; // ***
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(x3, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // ***
-			if(MIN(sc.lx, pv2->x) < prc->fmin_clip_x || MAX(pv1->x, pv2->x) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan32(sc, y_beg, y_end, prc);
-			}
-		}
-	}
+#define __draw_func Draw_Scan32
+#define __draw_func_clipped Draw_Clipped_Scan32
+#define __draw_CLIP
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Clipped_Triangle_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Clipped_Triangle_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_ZBufferRW16
 #define __draw_func_clipped Draw_Clipped_Scan_ZBufferRW16
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Clipped_Triangle_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Clipped_Triangle_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_ZBufferRW32
 #define __draw_func_clipped Draw_Clipped_Scan_ZBufferRW32
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -4444,7 +3285,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Texture_ZBufferRW16(const RENDERCONTEXTV1 
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -4455,7 +3296,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Texture_ZBufferRW32(const RENDERCONTEXTV1 
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -4467,7 +3308,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW16(const RE
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -4479,10 +3320,10 @@ T3DLIB_API void Draw_Clipped_Triangle_Texture_PerspectiveLP_ZBufferRW32(const RE
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh" // 4701
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_Gouraud_ZBufferRW16
 #define __draw_func_clipped Draw_Clipped_Scan_Gouraud_ZBufferRW16
@@ -4490,10 +3331,10 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW16(const RENDERCONTEXTV1 
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_16
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
-T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
+T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1 * pv0, const VERTEXV1 * pv1, const VERTEXV1 * pv2)
 {
 #define __draw_func Draw_Scan_Gouraud_ZBufferRW32
 #define __draw_func_clipped Draw_Clipped_Scan_Gouraud_ZBufferRW32
@@ -4501,745 +3342,31 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_ZBufferRW32(const RENDERCONTEXTV1 
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
 {
-	const VERTEXV1T * ptmp;
-	SCANCONTEXT sc;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y1 > y0)
-		{
-			sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-
-			sc.lu_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.lv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_16BIT_GETR(pv1->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv1->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv1->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		if(y2 > y0)
-		{
-			sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-
-			sc.ru_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.rv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y0) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y0) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y0) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y0) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, pv1->x) < prc->fmin_clip_x || MAX(pv0->x, x3) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.lx = pv1->x; // ***
-
-		sc.lu = pv1->u;
-		sc.lv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_16BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-			sc.lu_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.lv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y1) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y1) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y0) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y1) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y0) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y1));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y1) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
-			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, sc.rx) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-		}
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_16BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y2 > y0)
-		{
-			sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-
-			sc.lu_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.lv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		if(y1 > y0)
-		{
-			sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-
-			sc.ru_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.rv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_16BIT_GETR(pv1->c_diff) - _16BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv1->c_diff) - _16BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv1->c_diff) - _16BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y0) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y0) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y0) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y0) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, x3) < prc->fmin_clip_x || MAX(pv0->x, pv1->x) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.rx = pv1->x; // ***
-
-		sc.ru = pv1->u;
-		sc.rv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_16BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_16BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.rz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-			sc.ru_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.rv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_16BIT_GETR(pv2->c_diff) - _16BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETG(pv2->c_diff) - _16BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_16BIT_GETB(pv2->c_diff) - _16BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y1) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y0) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y1) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y0) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y1) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y1));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y1) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
-			if(MIN(pv2->x, sc.lx) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW16(sc, y_beg, y_end, prc);
-			}
-		}
-	}
+#define __draw_func Draw_Scan_Gouraud_Texture_ZBufferRW16
+#define __draw_func_clipped Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW16
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_CLIP
+#define __draw_16
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
 {
-	const VERTEXV1T * ptmp;
-	SCANCONTEXT sc;
-
-	if(pv0->y > pv1->y)
-		SWAP(pv0, pv1, ptmp);
-	if(pv0->y > pv2->y)
-		SWAP(pv0, pv2, ptmp);
-	if(pv1->y > pv2->y)
-		SWAP(pv1, pv2, ptmp);
-
-	REAL x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
-	int y0 = (int)pv0->y;
-	int y1 = (int)pv1->y;
-	int y2 = (int)pv2->y;
-
-	if(pv1->x < x3)
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y1 > y0)
-		{
-			sc.lx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-
-			sc.lu_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.lv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		if(y2 > y0)
-		{
-			sc.rx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-
-			sc.ru_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.rv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y0) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y0) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y0) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y0) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, pv1->x) < prc->fmin_clip_x || MAX(pv0->x, x3) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.lx = pv1->x; // ***
-
-		sc.lu = pv1->u;
-		sc.lv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.lx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-			sc.lu_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.lv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y1) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y1) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y0) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y1) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y0) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y1));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y1) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, x3) > prc->fmax_clip_x + 1) // ***
-			if(MIN(pv2->x, pv1->x) < prc->fmin_clip_x || MAX(pv2->x, sc.rx) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-		}
-	}
-	else
-	{
-		sc.lx = pv0->x;
-		sc.rx = pv0->x;
-		sc.lx_inc, sc.rx_inc;
-
-		sc.lu = pv0->u;
-		sc.lv = pv0->v;
-		sc.ru = pv0->u;
-		sc.rv = pv0->v;
-		sc.lu_inc, sc.lv_inc;
-		sc.ru_inc, sc.rv_inc;
-
-		sc.lc, sc.lc_inc;
-		sc.rc, sc.rc_inc;
-		VECTOR4DI_InitXYZW( &sc.lc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_32BIT_GETR(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv0->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv0->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.lz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.rz = (FIXP28)(1 / pv0->z * FIXP28_MAG);
-		sc.lz_inc, sc.rz_inc;
-
-		if(y2 > y0)
-		{
-			sc.lx_inc = (pv2->x - pv0->x) / (float)(y2 - y0); // ***
-
-			sc.lu_inc = (pv2->u - pv0->u) / (y2 - y0);
-			sc.lv_inc = (pv2->v - pv0->v) / (y2 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.lc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y0);
-
-			sc.lz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y2 - y0);
-		}
-
-		if(y1 > y0)
-		{
-			sc.rx_inc = (pv1->x - pv0->x) / (float)(y1 - y0); // ***
-
-			sc.ru_inc = (pv1->u - pv0->u) / (y1 - y0);
-			sc.rv_inc = (pv1->v - pv0->v) / (y1 - y0);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_32BIT_GETR(pv1->c_diff) - _32BIT_GETR(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv1->c_diff) - _32BIT_GETG(pv0->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv1->c_diff) - _32BIT_GETB(pv0->c_diff)) << FIXP16_SHIFT), 0))._3D, y1 - y0);
-
-			sc.rz_inc = ((FIXP28)(1 / pv1->z * FIXP28_MAG) - (FIXP28)(1 / pv0->z * FIXP28_MAG)) / (y1 - y0);
-		}
-
-		int y_beg, y_end;
-		if(y1 > prc->fmin_clip_y)
-		{
-			if(y0 < prc->fmin_clip_y)
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y0) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y0) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y0) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y0) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y0) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y0));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y0) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y0;
-			}
-
-			if(y1 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y1;
-			}
-
-			if(MIN(pv0->x, x3) < prc->fmin_clip_x || MAX(pv0->x, pv1->x) > prc->fmax_clip_x + 1) // ***
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-		}
-
-		sc.rx = pv1->x; // ***
-
-		sc.ru = pv1->u;
-		sc.rv = pv1->v;
-
-		VECTOR4DI_InitXYZW( &sc.rc,
-						_32BIT_GETR(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETG(pv1->c_diff) << FIXP16_SHIFT,
-						_32BIT_GETB(pv1->c_diff) << FIXP16_SHIFT, 0);
-
-		sc.rz = (FIXP28)(1 / pv1->z * FIXP28_MAG);
-
-		if(y2 > y1)
-		{
-			sc.rx_inc = (pv2->x - pv1->x) / (float)(y2 - y1); // ***
-
-			sc.ru_inc = (pv2->u - pv1->u) / (y2 - y1);
-			sc.rv_inc = (pv2->v - pv1->v) / (y2 - y1);
-
-			VECTOR3DI_Div( &(*VECTOR4DI_InitXYZW( &sc.rc_inc,
-							((_32BIT_GETR(pv2->c_diff) - _32BIT_GETR(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETG(pv2->c_diff) - _32BIT_GETG(pv1->c_diff)) << FIXP16_SHIFT),
-							((_32BIT_GETB(pv2->c_diff) - _32BIT_GETB(pv1->c_diff)) << FIXP16_SHIFT), 0))._3D, y2 - y1);
-
-			sc.rz_inc = ((FIXP28)(1 / pv2->z * FIXP28_MAG) - (FIXP28)(1 / pv1->z * FIXP28_MAG)) / (y2 - y1);
-		}
-
-		if(y2 > prc->fmin_clip_y)
-		{
-			if(y1 <= prc->fmin_clip_y) // !!! <=
-			{
-				y_beg = (int)prc->fmin_clip_y;
-				sc.lx = sc.lx + (prc->fmin_clip_y - y0) * sc.lx_inc; // ***
-				sc.rx = sc.rx + (prc->fmin_clip_y - y1) * sc.rx_inc; // ***
-
-				sc.lu = sc.lu + ((int)prc->fmin_clip_y - y0) * sc.lu_inc;
-				sc.ru = sc.ru + ((int)prc->fmin_clip_y - y1) * sc.ru_inc;
-				sc.lv = sc.lv + ((int)prc->fmin_clip_y - y0) * sc.lv_inc;
-				sc.rv = sc.rv + ((int)prc->fmin_clip_y - y1) * sc.rv_inc;
-
-				VECTOR4DI vtmp;
-				VECTOR3DI_Add(&sc.lc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.lc_inc._3D, (int)prc->fmin_clip_y - y0));
-				VECTOR3DI_Add(&sc.rc._3D, VECTOR3DI_Mul(&vtmp._3D, &sc.rc_inc._3D, (int)prc->fmin_clip_y - y1));
-
-				sc.lz = sc.lz + ((int)prc->fmin_clip_y - y0) * sc.lz_inc;
-				sc.rz = sc.rz + ((int)prc->fmin_clip_y - y1) * sc.rz_inc;
-			}
-			else
-			{
-				y_beg = y1;
-			}
-
-			if(y2 > prc->fmax_clip_y + 1)
-			{
-				y_end = (int)prc->fmax_clip_y + 1;
-			}
-			else
-			{
-				y_end = y2;
-			}
-
-			//if(MIN(pv2->x, x3) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // ***
-			if(MIN(pv2->x, sc.lx) < prc->fmin_clip_x || MAX(pv2->x, pv1->x) > prc->fmax_clip_x + 1) // *** // !!!
-			{
-				Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-			else
-			{
-				Draw_Scan_Gouraud_Texture_ZBufferRW32(sc, y_beg, y_end, prc);
-			}
-		}
-	}
+#define __draw_func Draw_Scan_Gouraud_Texture_ZBufferRW32
+#define __draw_func_clipped Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32
+#define __draw_UV
+#define __draw_GR
+#define __draw_ZB
+#define __draw_CLIP
+#define __draw_32
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -5252,7 +3379,7 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW16(
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }
 
 T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(const RENDERCONTEXTV1 * prc, const VERTEXV1T * pv0, const VERTEXV1T * pv1, const VERTEXV1T * pv2)
@@ -5265,5 +3392,5 @@ T3DLIB_API void Draw_Clipped_Triangle_Gouraud_Texture_PerspectiveLP_ZBufferRW32(
 #define __draw_ZB
 #define __draw_CLIP
 #define __draw_32
-#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hh"
+#include "t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp"
 }

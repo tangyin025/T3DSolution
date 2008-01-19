@@ -2497,9 +2497,9 @@ T3DLIB_API void Draw_Object4D_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Triangle_ZBufferRW16(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
@@ -2509,9 +2509,9 @@ T3DLIB_API void Draw_Object4D_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Clipped_Triangle_ZBufferRW16(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		default:
@@ -2561,9 +2561,9 @@ T3DLIB_API void Draw_Object4D_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Triangle_ZBufferRW32(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
@@ -2573,9 +2573,9 @@ T3DLIB_API void Draw_Object4D_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Clipped_Triangle_ZBufferRW32(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		default:
@@ -2881,9 +2881,9 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * p
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Triangle_Gouraud_ZBufferRW16(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
@@ -2893,9 +2893,9 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * p
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Clipped_Triangle_Gouraud_ZBufferRW16(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		default:
@@ -2945,9 +2945,9 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * p
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Triangle_Gouraud_ZBufferRW32(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		case TRI_STATE_CLIPPED:
@@ -2957,9 +2957,9 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * p
 			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
 
 			Draw_Clipped_Triangle_Gouraud_ZBufferRW32(&rc,
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
-							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i]._VERTEXV1,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]._VERTEXV1);
 			break;
 
 		default:
