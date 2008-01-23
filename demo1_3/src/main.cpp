@@ -50,7 +50,8 @@ protected:
 			m_scene->m_object.ver_list.elems[i].y += -10;
 		}
 
-		m_hand = t3dObjectPtr(new t3dObjectGouraud);
+		m_hand = t3dObjectPtr(new t3dObjectGouraudPerspectiveLP);
+		//m_hand = t3dObjectPtr(new t3dObjectGouraudSrcKey(Create_RGBI(0, 0, 0)));
 		m_hand->load("hand.ms3d.txt", "polySurface4");
 
 		for(size_t i = 0; i < m_hand->m_object.ver_list.length; i++)
@@ -95,6 +96,22 @@ protected:
 		rect.bottom = rect.top;
 		::ClipCursor(&rect);
 		::ShowCursor(FALSE);
+
+		BITMAPV1 btmp;
+		INIT_ZERO(btmp);
+		INIT_ZERO(image);
+		if(!Create_Bitmap_From_File(&btmp, "jack.bmp"))
+			MY_EXCEPT("create btmp failed");
+
+		if(!Create_Image(&image,
+				btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+			MY_EXCEPT("create image failed");
+
+		if(!Load_Image_From_Bitmap32(&image, &btmp, 0, 0,
+				btmp.bitmapinfoheader.biWidth, btmp.bitmapinfoheader.biHeight))
+			MY_EXCEPT("load image failed");
+
+		Destroy_Bitmap(&btmp);
 	}
 
 	void do_DRAW(void)
@@ -216,30 +233,53 @@ protected:
 			RENDERCONTEXTV1 rc;
 			memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
 
-			REAL cen_x = (m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 2 + m_back->m_ddsurface.rect.left;
-			REAL cen_y = (m_back->m_ddsurface.rect.bottom - m_back->m_ddsurface.rect.top) / 2 + m_back->m_ddsurface.rect.top;
-			REAL dis_a = (m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 80;
-			REAL dis_b = (m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 60;
+			REAL cen_x = REAL((m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 2 + m_back->m_ddsurface.rect.left);
+			REAL cen_y = REAL((m_back->m_ddsurface.rect.bottom - m_back->m_ddsurface.rect.top) / 2 + m_back->m_ddsurface.rect.top);
+			REAL dis_a = REAL((m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 80);
+			REAL dis_b = REAL((m_back->m_ddsurface.rect.right - m_back->m_ddsurface.rect.left) / 60);
+			{
+				VERTEXV1T v0, v1;
+				v0.c_diff = Create_RGBI(0, 255, 0);
+				v1.c_diff = Create_RGBI(0, 255, 0);
 
-			VERTEXV1T v0, v1;
-			v0.c_diff = Create_RGBI(0, 255, 0);
-			v1.c_diff = Create_RGBI(0, 255, 0);
+				VECTOR4D_InitXYZ(	&v0._4D, cen_x, cen_y - dis_a - dis_b, 0);
+				VECTOR4D_InitXYZ(	&v1._4D, cen_x, cen_y - dis_a, 0);
+				Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
 
-			VECTOR4D_InitXYZ(	&v0._4D, cen_x, cen_y - dis_a - dis_b, 0);
-			VECTOR4D_InitXYZ(	&v1._4D, cen_x, cen_y - dis_a, 0);
-			Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+				VECTOR4D_InitXYZ(	&v0._4D, cen_x, cen_y + dis_a, 0);
+				VECTOR4D_InitXYZ(	&v1._4D, cen_x, cen_y + dis_a + dis_b, 0);
+				Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
 
-			VECTOR4D_InitXYZ(	&v0._4D, cen_x, cen_y + dis_a, 0);
-			VECTOR4D_InitXYZ(	&v1._4D, cen_x, cen_y + dis_a + dis_b, 0);
-			Draw_VLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+				VECTOR4D_InitXYZ(	&v0._4D, cen_x - dis_a - dis_b, cen_y, 0);
+				VECTOR4D_InitXYZ(	&v1._4D, cen_x - dis_a, cen_y, 0);
+				Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
 
-			VECTOR4D_InitXYZ(	&v0._4D, cen_x - dis_a - dis_b, cen_y, 0);
-			VECTOR4D_InitXYZ(	&v1._4D, cen_x - dis_a, cen_y, 0);
-			Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+				VECTOR4D_InitXYZ(	&v0._4D, cen_x + dis_a, cen_y, 0);
+				VECTOR4D_InitXYZ(	&v1._4D, cen_x + dis_a + dis_b, cen_y, 0);
+				Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+			}
 
-			VECTOR4D_InitXYZ(	&v0._4D, cen_x + dis_a, cen_y, 0);
-			VECTOR4D_InitXYZ(	&v1._4D, cen_x + dis_a + dis_b, cen_y, 0);
-			Draw_HLine(&rc, &v0._VERTEXV1, &v1._VERTEXV1);
+			//rc.fmin_clip_x = m_cam->m_camera.viewport.x;
+			//rc.fmin_clip_y = m_cam->m_camera.viewport.y;
+			//rc.fmax_clip_x = m_cam->m_camera.viewport.x + m_cam->m_camera.viewport.width - 1;
+			//rc.fmax_clip_y = m_cam->m_camera.viewport.y + m_cam->m_camera.viewport.height - 1;
+
+			////memcpy(&rc._SURFACE, &surf, sizeof(rc._SURFACE));
+			//memcpy(&rc._ZBUFFER, &m_zbuf->m_zbuffer._SURFACE, sizeof(rc._ZBUFFER));
+			//memcpy(&rc._TEXTURE, &image._SURFACE, sizeof(rc._TEXTURE));
+			//VERTEXV1T v0, v1, v2;
+			//VECTOR4D_InitXYZ(&v0._4D, 20, 20, 100);
+			//VECTOR4D_InitXYZ(&v1._4D, 500, 20, 100);
+			//VECTOR4D_InitXYZ(&v2._4D, 500, 500, 100);
+			//v0.u = 0;
+			//v0.v = 0;
+			//v1.u = 0;
+			//v1.v = image.height << FIXP16_SHIFT;
+			//v2.u = image.width << FIXP16_SHIFT;
+			//v2.v = image.height << FIXP16_SHIFT;
+
+			//rc.c_src_key = Create_RGBI(0, 0, 0);
+			//Draw_Triangle_Texture_SrcKey_ZBufferRW(&rc, &v0, &v1, &v2);
 
 			m_back->unlock();
 		}
@@ -253,12 +293,19 @@ protected:
 		//Sleep(30);
 	}
 
+	void do_SHUTDOWN(void)
+	{
+		Destroy_Image(&image);
+	}
+
 protected:
 	t3dCameraEulerPtr m_cam;
 	t3dObjectPtr m_scene;
 
 	FPSPlayer m_player;
 	t3dObjectPtr m_hand;
+
+	IMAGEV1 image;
 };
 
 // ////////////////////////////////////////////////////////////////////////////////////
@@ -277,9 +324,9 @@ int APIENTRY WinMain(HINSTANCE	hInstance,
 		DemoGame app("demo1_3");
 		app.run();
 	}
-	catch(std::exception & e)
+	catch(MyException & e)
 	{
-		::MessageBoxA(NULL, e.what(), "Exception!", MB_OK);
+		::MessageBoxA(NULL, e.getFullDesc().c_str(), "Exception", MB_OK);
 	}
 
 	return 0;

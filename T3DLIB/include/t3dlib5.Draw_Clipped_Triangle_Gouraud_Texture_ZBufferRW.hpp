@@ -7,18 +7,16 @@
 #error must define one between __draw_16 and __draw_32
 #endif
 
-#if (defined __draw_UV_PerspectiveLP) && (!defined __draw_UV)
-#error __draw_UV_PerspectiveLP must be used with __draw_UV
+#if (  defined __draw_UV_PerspectiveLP && !defined __draw_UV )
+#error __draw_UV_PerspectiveLP must be defined with __draw_UV
 #endif
 
-#ifndef __draw_func
-#error must define __draw_func
+#if ( !defined __draw_func )
+#error __draw_func must be defined
 #endif
 
-#ifndef __draw_func_clipped
-#ifdef __draw_CLIP
-#error must define __draw_func_clipped at Gouraud mode
-#endif
+#if (  defined __draw_CLIP && !defined __draw_func_clipped )
+#error __draw_func_clipped must be defined with __draw_CLIP
 #endif
 
 #pragma warning(disable : 4701)
@@ -58,16 +56,16 @@
 	FIXP22 v1 = (FIXP22)(((float)pv1->v / pv1->z) * (FIXP22_MAG / FIXP16_MAG));
 	FIXP22 v2 = (FIXP22)(((float)pv2->v / pv2->z) * (FIXP22_MAG / FIXP16_MAG));
 
-	#ifdef _DEBUG
-	{
-		//assert(u0 >= 0 && u0 < FIXP22_MAG);
-		//assert(u1 >= 0 && u1 < FIXP22_MAG);
-		//assert(u2 >= 0 && u2 < FIXP22_MAG);
-		//assert(v0 >= 0 && v0 < FIXP22_MAG);
-		//assert(v1 >= 0 && v1 < FIXP22_MAG);
-		//assert(v2 >= 0 && v2 < FIXP22_MAG);
-	}
-	#endif
+	//#ifdef _DEBUG
+	//{
+	//	assert(u0 >= 0 && u0 < FIXP22_MAG);
+	//	assert(u1 >= 0 && u1 < FIXP22_MAG);
+	//	assert(u2 >= 0 && u2 < FIXP22_MAG);
+	//	assert(v0 >= 0 && v0 < FIXP22_MAG);
+	//	assert(v1 >= 0 && v1 < FIXP22_MAG);
+	//	assert(v2 >= 0 && v2 < FIXP22_MAG);
+	//}
+	//#endif
 #endif
 
 	if(pv1->x < x3)

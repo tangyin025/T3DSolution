@@ -23,14 +23,14 @@ t3dClipper::t3dClipper(t3dDDraw * ddraw, MyWindowBasePtr wnd)
 {
 	INIT_ZERO(m_clipper);
 	if(!Create_Windowed_DDClipper(&ddraw->m_ddraw, &m_clipper, wnd->get_HWND()))
-		throw MyException("create window clipper failed");
+		MY_EXCEPT("create window clipper failed");
 }
 
 t3dClipper::t3dClipper(t3dDDraw * ddraw, RECT rect)
 {
 	INIT_ZERO(m_clipper);
 	if(!Create_Memoried_DDClipper(&ddraw->m_ddraw, &m_clipper, &rect, 1))
-		throw MyException("create memory clipper failed");
+		MY_EXCEPT("create memory clipper failed");
 }
 
 t3dClipper::~t3dClipper()
@@ -56,7 +56,7 @@ t3dSurface::~t3dSurface()
 void t3dSurface::set_clipper(t3dClipperPtr clipper)
 {
 	if(!Attach_DDSurface_DDClipper(&m_ddsurface, &clipper->m_clipper))
-		throw MyException("attach clipper failed");
+		MY_EXCEPT("attach clipper failed");
 	m_clipper = clipper;
 }
 
@@ -69,32 +69,32 @@ SURFACEV1 t3dSurface::lock(void)
 {
 	SURFACEV1 surf;
 	if(!Lock_DDSurface(&m_ddsurface, &surf))
-		throw MyException("lock surface failed");
+		MY_EXCEPT("lock surface failed");
 	return surf;
 }
 
 void t3dSurface::unlock(void)
 {
 	if(!Unlock_DDSurface(&m_ddsurface))
-		throw MyException("unlock surface failed");
+		MY_EXCEPT("unlock surface failed");
 }
 
 void t3dSurface::fill(RECT rect, unsigned int color)
 {
 	if(!Fill_DDSurface(&m_ddsurface, &rect, color))
-		throw MyException("fill surface failed");
+		MY_EXCEPT("fill surface failed");
 }
 
 void t3dSurface::blit(RECT rect, t3dSurfacePtr other, RECT other_rect)
 {
 	if(!Blit_DDSurface(&m_ddsurface, &rect, &other->m_ddsurface, &other_rect))
-		throw MyException("block transfer failed");
+		MY_EXCEPT("block transfer failed");
 }
 
 void t3dSurface::text_out(std::string text, int x, int y)
 {
 	if(!Begin_Text_DC(&m_ddsurface, &m_tdc))
-		throw MyException("begin text out failed");
+		MY_EXCEPT("begin text out failed");
 
 	Set_Text_BKColor(&m_tdc, RGB(255, 255, 255));
 	Set_Text_BKMode(&m_tdc, TEXT_BKMODE_OPAQUE);
@@ -108,7 +108,7 @@ void t3dSurface::text_out(std::string text, int x, int y)
 void t3dSurface::text_out(std::string text, int x, int y, COLORREF color)
 {
 	if(!Begin_Text_DC(&m_ddsurface, &m_tdc))
-		throw MyException("begin text out failed");
+		MY_EXCEPT("begin text out failed");
 
 	Set_Text_BKMode(&m_tdc, TEXT_BKMODE_TRANSPARENT);
 	Set_Text_Color(&m_tdc, color);
@@ -121,19 +121,19 @@ void t3dSurface::text_out(std::string text, int x, int y, COLORREF color)
 t3dSurfaceScreen::t3dSurfaceScreen(t3dDDraw * ddraw)
 {
 	if(!Create_Windowed_DDSurface(&ddraw->m_ddraw, &m_ddsurface))
-		throw MyException("create screen surface failed");
+		MY_EXCEPT("create screen surface failed");
 }
 
 t3dSurfaceMemory::t3dSurfaceMemory(t3dDDraw * ddraw, int width, int height)
 {
 	if(!Create_Memoried_DDSurface(&ddraw->m_ddraw, &m_ddsurface, width, height))
-		throw MyException("create memory surface failed");
+		MY_EXCEPT("create memory surface failed");
 }
 
 t3dSurfaceVideos::t3dSurfaceVideos(t3dDDraw *ddraw, int width, int height)
 {
 	if(!Create_Videoied_DDSurface(&ddraw->m_ddraw, &m_ddsurface, width, height))
-		throw MyException("create video's surface failed");
+		MY_EXCEPT("create video's surface failed");
 }
 
 // ============================================================================
@@ -144,7 +144,7 @@ t3dZbuffer::t3dZbuffer(int width, int height)
 {
 	INIT_ZERO(m_zbuffer);
 	if(!Create_ZBuffer(&m_zbuffer, width, height))
-		throw MyException("create zbuffer failed");
+		MY_EXCEPT("create zbuffer failed");
 }
 
 t3dZbuffer::~t3dZbuffer()
@@ -319,7 +319,7 @@ t3dDDraw::t3dDDraw()
 {
 	INIT_ZERO(*this);
 	if(!Create_DDraw(&m_ddraw))
-		throw MyException("create ddraw failed");
+		MY_EXCEPT("create ddraw failed");
 }
 
 t3dDDraw::~t3dDDraw()
@@ -332,14 +332,14 @@ void t3dDDraw::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 	if(FAILED(gresult = m_ddraw.lpddraw->SetCooperativeLevel(wnd->get_HWND(), type)))
 	{
 		Set_Last_Error(Get_DDraw_Error(gbuffer, gresult), __FILE__, __LINE__);
-		throw MyException("set cooperative level failed");
+		MY_EXCEPT("set cooperative level failed");
 	}
 }
 
 void t3dDDraw::set_display_mode(int width, int height, int bpp)
 {
 	if(!Set_Display_Model(&m_ddraw, width, height, bpp))
-		throw MyException("set display mode failed");
+		MY_EXCEPT("set display mode failed");
 }
 
 t3dSurfacePtr t3dDDraw::create_screen_surface(void)
@@ -415,7 +415,7 @@ t3dMouse::t3dMouse(t3dDInput * input)
 	INIT_ZERO(m_dimouse);
 
 	if(!Create_DIMouse(&input->m_dinput, &m_dimouse))
-		throw MyException("create dimouse failed");
+		MY_EXCEPT("create dimouse failed");
 
 	m_state = t3dMouseStatePtr(new t3dMouseState);
 }
@@ -428,13 +428,13 @@ t3dMouse::~t3dMouse()
 void t3dMouse::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
 	if(!Set_DIMouse_Cooperative_Level(&m_dimouse, wnd->get_HWND(), type))
-		throw MyException("set dimouse cooperative level failed");
+		MY_EXCEPT("set dimouse cooperative level failed");
 }
 
 t3dMouseStatePtr t3dMouse::get_state(void)
 {
 	if(!Read_DIMouse_State(&m_dimouse, &m_state->m_dimousestate))
-		throw MyException("read dimouse state failed");
+		MY_EXCEPT("read dimouse state failed");
 
 	return m_state;
 }
@@ -462,7 +462,7 @@ t3dKey::t3dKey(t3dDInput * input)
 	INIT_ZERO(m_dikey);
 
 	if(!Create_DIKey(&input->m_dinput, &m_dikey))
-		throw MyException("create dikey failed");
+		MY_EXCEPT("create dikey failed");
 
 	m_state = t3dKeyStatePtr(new t3dKeyState);
 }
@@ -475,13 +475,13 @@ t3dKey::~t3dKey()
 void t3dKey::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
 	if(!Set_DIKey_Cooperative_Level(&m_dikey, wnd->get_HWND(), type))
-		throw MyException("set dikey cooperative level failed");
+		MY_EXCEPT("set dikey cooperative level failed");
 }
 
 t3dKeyStatePtr t3dKey::get_state(void)
 {
 	if(!Read_DIKey_State(&m_dikey, &m_state->m_dikeystate))
-		throw MyException("read dikey state failed");
+		MY_EXCEPT("read dikey state failed");
 
 	return m_state;
 }
@@ -494,7 +494,7 @@ t3dDInput::t3dDInput()
 {
 	INIT_ZERO(m_dinput);
 	if(!Create_DInput(&m_dinput, ::GetModuleHandle(NULL)))
-		throw MyException("create dinput failed");
+		MY_EXCEPT("create dinput failed");
 }
 
 t3dDInput::~t3dDInput()
@@ -532,12 +532,12 @@ void t3dWav::load(const std::string f_name)
 	WAVV1 wav;
 	INIT_ZERO(wav);
 	if(!Create_Wav_From_File(&wav, f_name.c_str()))
-		throw MyException("load wav failed");
+		MY_EXCEPT("load wav failed");
 
 	if(!Create_DSBuffer_From_Wav(&m_pds->m_dsound, &m_dsbuffer, &wav))
 	{
 		Destroy_Wav(&wav);
-		throw MyException("create dsbuffer failed");
+		MY_EXCEPT("create dsbuffer failed");
 	}
 
 	Destroy_Wav(&wav);
@@ -546,19 +546,19 @@ void t3dWav::load(const std::string f_name)
 void t3dWav::play(void)
 {
 	if(!Play_DSBuffer(&m_dsbuffer))
-		throw MyException("play dsbuffer failed");
+		MY_EXCEPT("play dsbuffer failed");
 }
 
 void t3dWav::stop(void)
 {
 	if(!Stop_DSBuffer(&m_dsbuffer))
-		throw MyException("stop dsbuffer failed");
+		MY_EXCEPT("stop dsbuffer failed");
 }
 
 void t3dWav::set_volumn(const long volumn)
 {
 	if(!Set_DSBuffer_Volume(&m_dsbuffer, volumn))
-		throw MyException("set dsbuffer volumn failed");
+		MY_EXCEPT("set dsbuffer volumn failed");
 }
 
 // ============================================================================
@@ -569,7 +569,7 @@ t3dMidiPerf::t3dMidiPerf(t3dDSound * dsound, MyWindowBasePtr wnd)
 {
 	INIT_ZERO(m_dmperf);
 	if(!Create_DMPerformance(&dsound->m_dsound, &m_dmperf, wnd->get_HWND()))
-		throw MyException("create dmperf failed");
+		MY_EXCEPT("create dmperf failed");
 }
 
 t3dMidiPerf::~t3dMidiPerf()
@@ -581,7 +581,7 @@ t3dMidiLoader::t3dMidiLoader()
 {
 	INIT_ZERO(m_dmloader);
 	if(!Create_DMLoader(&m_dmloader))
-		throw MyException("create dmloader failed");
+		MY_EXCEPT("create dmloader failed");
 }
 
 t3dMidiLoader::~t3dMidiLoader()
@@ -617,19 +617,19 @@ void t3dMidi::load(const std::string f_name)
 {
 	if(!Create_DMSegment_From_Midi_File(
 			&m_loader->m_dmloader, &m_dmsegment, f_name.c_str(), &m_perf->m_dmperf))
-		throw MyException("load midi segment failed");
+		MY_EXCEPT("load midi segment failed");
 }
 
 void t3dMidi::play(void)
 {
 	if(!Play_DMSegment(&m_perf->m_dmperf, &m_dmsegment))
-		throw MyException("play midi segment failed");
+		MY_EXCEPT("play midi segment failed");
 }
 
 void t3dMidi::stop(void)
 {
 	if(!Stop_DMSegment(&m_perf->m_dmperf, &m_dmsegment))
-		throw MyException("stop midi segment failed");
+		MY_EXCEPT("stop midi segment failed");
 }
 
 // ============================================================================
@@ -640,7 +640,7 @@ t3dDSound::t3dDSound()
 {
 	INIT_ZERO(m_dsound);
 	if(!Create_DSound(&m_dsound))
-		throw MyException("create dsound failed");
+		MY_EXCEPT("create dsound failed");
 }
 
 t3dDSound::~t3dDSound()
@@ -651,7 +651,7 @@ t3dDSound::~t3dDSound()
 void t3dDSound::set_coop_level(coop_level_type type, MyWindowBasePtr wnd)
 {
 	if(!Set_DSound_Cooperative_Level(&m_dsound, wnd->get_HWND(), type))
-		throw MyException("set dsound cooperative level failed");
+		MY_EXCEPT("set dsound cooperative level failed");
 }
 
 t3dWavPtr t3dDSound::create_wav(void)
@@ -671,16 +671,16 @@ t3dMidiPtr t3dDSound::create_midi(MyWindowBasePtr wnd)
 void T3DLIB_API t3d_INIT( const int BPP )
 {
 	if(!Init_T3dlib1(BPP))
-		throw MyException("initial t3dlib1 failed");
+		MY_EXCEPT("initial t3dlib1 failed");
 
 	if(!Init_T3dlib4(BPP))
-		throw MyException("initial t3dlib4 failed");
+		MY_EXCEPT("initial t3dlib4 failed");
 
 	if(!Init_T3dlib5(BPP))
-		throw MyException("initial t3dlib5 failed");
+		MY_EXCEPT("initial t3dlib5 failed");
 
 	if(!Init_T3dlib6(BPP))
-		throw MyException("initial t3dlib6 failed");
+		MY_EXCEPT("initial t3dlib6 failed");
 
 	t3dMaterialPtr mat = t3dMaterialPtr(new t3dMaterial);
 	mat->m_material.c_ambi = Create_RGBI(255, 255, 255);
@@ -801,18 +801,18 @@ void t3dMaterial::load(msModel & model, const std::string material_name /*= ""*/
 	if(!material_name.empty())
 	{
 		if(!Create_Material_From_MsModel_By_Name(&m_material, &model, material_name.c_str()))
-			throw MyException(std::string("cannot read material " + material_name));
+			MY_EXCEPT(std::string("cannot read material " + material_name));
 	}
 	else
 	{
 		if(0 >= model.nNumMaterials)
-			throw MyException(std::string("no material in this model"));
+			MY_EXCEPT(std::string("no material in this model"));
 
 		//if(!Create_Material_From_MsMaterial(&m_material, &model.pMaterials[0]))
-		//	throw MyException(std::string("read first material failed"));
+		//	MY_EXCEPT(std::string("read first material failed"));
 
 		if(!Create_Material_From_MsModel_By_Name(&m_material, &model, model.pMaterials[0].szName))
-			throw MyException(std::string("read first material failed"));
+			MY_EXCEPT(std::string("read first material failed"));
 	}
 }
 
@@ -947,17 +947,17 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 	 * then if throw an exception, the std::~basic_string of 'file_name' will throw an
 	 * unknown exception. for example, please trans file_name = "1234567890123456" ...
 	 */
-	//throw MyException("Hehehe");
+	//MY_EXCEPT("Hehehe");
 
 	if(!Create_MsModel_From_File(&model, file_name.c_str()))
-		throw MyException("cannot read file");
+		MY_EXCEPT("cannot read file");
 
 	if(!mesh_name.empty())
 	{
 		if(!Create_Object4D_From_MsModel_By_Name(&m_object, &model, mesh_name.c_str()))
 		{
 			Destroy_MsModel(&model);
-			throw MyException(std::string("cannot read mesh " + mesh_name));
+			MY_EXCEPT(std::string("cannot read mesh " + mesh_name));
 		}
 	}
 	else
@@ -965,11 +965,11 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 		if(0 >= model.nNumMeshes)
 		{
 			Destroy_MsModel(&model);
-			throw MyException(std::string("no mesh in this file " + file_name));
+			MY_EXCEPT(std::string("no mesh in this file " + file_name));
 		}
 
 		//if(!Create_Object4D_From_MsMesh(&m_object, &model.pMeshes[0]))
-		//	throw MyException(std::string("read first mesh from " + file_name + " failed"));
+		//	MY_EXCEPT(std::string("read first mesh from " + file_name + " failed"));
 
 		//if(0 <= model.pMeshes[0].nMaterialIndex && model.nNumMaterials > model.pMeshes[0].nMaterialIndex)
 		//	strcpy(m_object.material_name, model.pMaterials[model.pMeshes[0].nMaterialIndex].szName);
@@ -977,7 +977,7 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 		if(!Create_Object4D_From_MsModel_By_Name(&m_object, &model, model.pMeshes[0].szName))
 		{
 			Destroy_MsModel(&model);
-			throw MyException(std::string("read first mesh from " + file_name + " failed"));
+			MY_EXCEPT(std::string("read first mesh from " + file_name + " failed"));
 		}
 	}
 
@@ -991,7 +991,7 @@ void t3dObject::load(const std::string file_name, const std::string mesh_name /*
 			{
 				material->load(model, m_object.material_name);
 			}
-			catch(std::exception & e)
+			catch(MyException & e)
 			{
 				Destroy_MsModel(&model);
 				throw e;
@@ -1323,7 +1323,7 @@ void t3dObjectWire::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1357,7 +1357,7 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1384,7 +1384,7 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1397,6 +1397,44 @@ void t3dObjectFlat::draw_SELF(t3dRender * render)
 			Draw_Object4D_ZBufferRW(&m_object, &render->m_cam->m_camera);
 		}
 		render->m_surf->unlock();
+	}
+}
+
+void t3dObjectFlatSrcKey::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	if(NULL != m_material->m_material.texture.pbuffer)
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		//std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		//for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		//{
+		//	l_iter->second->light(this, m_material);
+		//}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			MY_EXCEPT("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Texture_SrcKey_ZBufferRW(&m_object, &render->m_cam->m_camera, &m_material->m_material, m_src_color_key);
+		}
+		render->m_surf->unlock();
+	}
+	else
+	{
+		t3dObjectFlat::draw_SELF(render);
 	}
 }
 
@@ -1418,7 +1456,7 @@ void t3dObjectFlatPerspectiveLP::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1456,7 +1494,7 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1483,7 +1521,7 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1496,6 +1534,44 @@ void t3dObjectGouraud::draw_SELF(t3dRender * render)
 			Draw_Object4D_Gouraud_ZBufferRW(&m_object, &render->m_cam->m_camera);
 		}
 		render->m_surf->unlock();
+	}
+}
+
+void t3dObjectGouraudSrcKey::draw_SELF(t3dRender * render)
+{
+	assert(NULL != Clip_Object4D);
+	assert(NULL != Clip_Object4D_Gouraud_Texture);
+
+	if(NULL != m_material->m_material.texture.pbuffer)
+	{
+		Remove_Object4D_Backface_At_World(&m_object, &render->m_cam->m_camera);
+
+		std::map<std::string, t3dLightPtr>::const_iterator l_iter;
+		for(l_iter = render->m_lightMap.begin(); l_iter != render->m_lightMap.end(); l_iter++)
+		{
+			l_iter->second->light(this, m_material);
+		}
+
+		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
+
+		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
+			MY_EXCEPT("clip object failed");
+
+		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
+
+		Perspective_To_Screen_Object4D(&m_object, &render->m_cam->m_camera);
+
+		SURFACEV1 surf = render->m_surf->lock();
+		render->m_cam->m_camera.psurf = &surf;
+		render->m_cam->m_camera.pzbuf = &render->m_zbuf->m_zbuffer;
+		{
+			Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW(&m_object, &render->m_cam->m_camera, &m_material->m_material, m_src_color_key);
+		}
+		render->m_surf->unlock();
+	}
+	else
+	{
+		t3dObjectGouraud::draw_SELF(render);
 	}
 }
 
@@ -1517,7 +1593,7 @@ void t3dObjectGouraudPerspectiveLP::draw_SELF(t3dRender * render)
 		World_To_Camera_Object4D(&m_object, &render->m_cam->m_camera);
 
 		if(!Clip_Object4D_Gouraud_Texture(&m_object, &render->m_cam->m_camera))
-			throw MyException("clip object failed");
+			MY_EXCEPT("clip object failed");
 
 		Camera_To_Perspective_Object4D(&m_object, &render->m_cam->m_camera);
 
@@ -1638,7 +1714,7 @@ int MyGameBase::run(void)
 	if(FAILED(gresult = m_ddraw->m_ddraw.lpddraw->GetDisplayMode(&ddsd)))
 	{
 		Set_Last_Error(Get_DDraw_Error(gbuffer, gresult), __FILE__, __LINE__);
-		throw MyException("get display mode failed");
+		MY_EXCEPT("get display mode failed");
 	}
 
 	if(16 != ddsd.ddpfPixelFormat.dwRGBBitCount && 32 != ddsd.ddpfPixelFormat.dwRGBBitCount)
@@ -1647,14 +1723,17 @@ int MyGameBase::run(void)
 		{
 			m_ddraw->m_ddraw.lpddraw->RestoreDisplayMode();
 		}
-		throw MyException("unsupported screen bpp");
+		MY_EXCEPT("unsupported screen bpp");
 	}
 
 	t3d_INIT(ddsd.ddpfPixelFormat.dwRGBBitCount);
 	init();
 
 	m_wnd->ShowWindow();
-	return MyApplication::run();
+	int ret = MyApplication::run();
+
+	shutdown();
+	return ret;
 }
 
 void MyGameBase::OnIdle(void)
@@ -1671,7 +1750,7 @@ MyConfig::MyConfig(std::string app_name)
 {
 	char buffer[MAX_BUFFER_SIZE];
 	if(0 == GetCurrentDirectoryA(MAX_BUFFER_SIZE, buffer))
-		throw MyException("get config file dir failed");
+		MY_EXCEPT("get config file dir failed");
 
 	std::string f_path(buffer);
 	f_path += "\\config.ini";
@@ -1765,6 +1844,11 @@ void MyGame::OnFrame(void)
 	do_DRAW();
 
 	m_prim->blit(m_wnd->GetClientRect(), m_back, m_back->m_ddsurface.rect);
+}
+
+void MyGame::shutdown(void)
+{
+	do_SHUTDOWN();
 }
 
 // ============================================================================

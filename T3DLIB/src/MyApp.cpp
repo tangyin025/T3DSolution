@@ -3,6 +3,7 @@
  */
 
 #include "t3dPrecompiledHeader.h"
+#include "t3dlib1.h"
 #include "MyApp.h"
 
 // ============================================================================
@@ -12,26 +13,31 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+static const size_t def_size = 512;
+static const size_t inc_size = 512;
+
 std::string T3DLIB_API str_printf(char * format, ...)
 {
-	va_list arg_list;
-	va_start(arg_list, format);
-	char buffer[MAX_BUFFER_SIZE];
+	assert(inc_size <= def_size);
+	size_t new_size = def_size - inc_size;
+	size_t ret_size = def_size;
+	char * buffer = NULL;
 
-#if _MSC_VER >= 1400
-	int res = vsprintf_s(buffer, MAX_BUFFER_SIZE, format, arg_list);
-#else
-	int res = vsprintf(buffer, format, arg_list);
-#endif
-
-	va_end(arg_list);
-
-	if(res < 0)
+	while(ret_size >= new_size)
 	{
-		throw MyException("format string failed");
+		new_size += inc_size;
+		if(NULL == (buffer = (char *)realloc(buffer, new_size * sizeof(char))))
+			MY_EXCEPT("realloc memory failed");
+
+		va_list args;
+		va_start(args, format);
+		ret_size = _vsnprintf(buffer, new_size, format, args);
+		va_end(args);
 	}
 
-	return std::string(buffer);
+	std::string s(buffer);
+	free(buffer);
+	return s;
 }
 
 // ============================================================================
@@ -39,7 +45,12 @@ std::string T3DLIB_API str_printf(char * format, ...)
 // ============================================================================
 
 MyException::MyException(const std::string info)
-	: m_info(info)
+	: m_info(info), m_file("unknown file"), m_line(-1)
+{
+}
+
+MyException::MyException(const std::string info, const std::string file, int line)
+	: m_info(info), m_file(file), m_line(line)
 {
 }
 
@@ -47,9 +58,22 @@ MyException::~MyException()
 {
 }
 
-const char * MyException::what(void) const throw()
+const std::string MyException::what(void) const throw()
 {
-	return m_info.c_str();
+	return m_info;
+}
+
+const std::string MyException::getFullDesc(void) const throw()
+{
+	char msg[MAX_BUFFER_SIZE];
+	char file[MAX_BUFFER_SIZE];
+	int line;
+	Get_Last_Error(msg, file, &line);
+	return str_printf(
+		"%s (%d): \n%s \n"
+		"-------------------------------------------------- \n"
+		"%s (%d): \n%s \n",
+		m_file.c_str(), m_line, m_info.c_str(), file, line, msg);
 }
 
 // ============================================================================
@@ -98,7 +122,7 @@ void MyWindowBase::Register(void)
 
 		if(NULL == ::RegisterClassEx(&tmp))
 		{
-			throw MyException("cannot register window class");
+			MY_EXCEPT("cannot register window class");
 		}
 	}
 }
@@ -112,7 +136,7 @@ void MyWindowBase::Create(void)
 		::CreateWindowEx(0, class_name.c_str(), window_name.c_str(), WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, ::GetModuleHandle(NULL), NULL)))
 	{
-		throw MyException("create window failed");
+		MY_EXCEPT("create window failed");
 	}
 
 	assert(hwnd == m_hwnd);
@@ -123,7 +147,7 @@ void MyWindowBase::Destroy(void)
 	assert(NULL != m_hwnd);
 
 	if(!::DestroyWindow(m_hwnd))
-		throw MyException("destroy window failed");
+		MY_EXCEPT("destroy window failed");
 }
 
 // ============================================================================

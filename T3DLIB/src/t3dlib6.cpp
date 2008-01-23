@@ -1026,9 +1026,11 @@ T3DLIB_API void (* Draw_Object4D_Wire_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pc
 T3DLIB_API void (* Draw_Object4D)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
 T3DLIB_API void (* Draw_Object4D_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
 T3DLIB_API void (* Draw_Object4D_Texture_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial) = NULL;
+T3DLIB_API void (* Draw_Object4D_Texture_SrcKey_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial, unsigned int src_color_key) = NULL;
 T3DLIB_API void (* Draw_Object4D_Texture_PerspectiveLP_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial) = NULL;
 T3DLIB_API void (* Draw_Object4D_Gouraud_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam) = NULL;
 T3DLIB_API void (* Draw_Object4D_Gouraud_Texture_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial) = NULL;
+T3DLIB_API void (* Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial, unsigned int src_color_key) = NULL;
 T3DLIB_API void (* Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW)(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial) = NULL;
 T3DLIB_API void (* Light_Object4D)(OBJECT4DV1 * pobj, LIGHT4DV1 * plight, MATERIALV1 * pmaterial) = NULL;
 
@@ -1045,9 +1047,11 @@ T3DLIB_API bool Init_T3dlib6(int bpp)
 		Draw_Object4D									= Draw_Object4D16;
 		Draw_Object4D_ZBufferRW							= Draw_Object4D_ZBufferRW16;
 		Draw_Object4D_Texture_ZBufferRW					= Draw_Object4D_Texture_ZBufferRW16;
+		Draw_Object4D_Texture_SrcKey_ZBufferRW			= Draw_Object4D_Texture_SrcKey_ZBufferRW16;
 		Draw_Object4D_Texture_PerspectiveLP_ZBufferRW	= Draw_Object4D_Texture_PerspectiveLP_ZBufferRW16;
 		Draw_Object4D_Gouraud_ZBufferRW					= Draw_Object4D_Gouraud_ZBufferRW16;
 		Draw_Object4D_Gouraud_Texture_ZBufferRW			= Draw_Object4D_Gouraud_Texture_ZBufferRW16;
+		Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW	= Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW16;
 		Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW	= Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW16;
 		Light_Object4D									= Light_Object4D16;
 		break;
@@ -1061,9 +1065,11 @@ T3DLIB_API bool Init_T3dlib6(int bpp)
 		Draw_Object4D									= Draw_Object4D32;
 		Draw_Object4D_ZBufferRW							= Draw_Object4D_ZBufferRW32;
 		Draw_Object4D_Texture_ZBufferRW					= Draw_Object4D_Texture_ZBufferRW32;
+		Draw_Object4D_Texture_SrcKey_ZBufferRW			= Draw_Object4D_Texture_SrcKey_ZBufferRW32;
 		Draw_Object4D_Texture_PerspectiveLP_ZBufferRW	= Draw_Object4D_Texture_PerspectiveLP_ZBufferRW32;
 		Draw_Object4D_Gouraud_ZBufferRW					= Draw_Object4D_Gouraud_ZBufferRW32;
 		Draw_Object4D_Gouraud_Texture_ZBufferRW			= Draw_Object4D_Gouraud_Texture_ZBufferRW32;
+		Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW	= Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW32;
 		Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW	= Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW32;
 		Light_Object4D									= Light_Object4D32;
 		break;
@@ -2232,7 +2238,8 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	//memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2293,7 +2300,8 @@ T3DLIB_API void Draw_Object4D_Wire_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	//memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2466,8 +2474,8 @@ T3DLIB_API void Draw_Object4D_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	//memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	//memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2530,8 +2538,8 @@ T3DLIB_API void Draw_Object4D_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam)
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	//memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	//memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2594,8 +2602,8 @@ T3DLIB_API void Draw_Object4D_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * p
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2658,8 +2666,8 @@ T3DLIB_API void Draw_Object4D_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * p
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2712,6 +2720,138 @@ T3DLIB_API void Draw_Object4D_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * p
 	}
 }
 
+T3DLIB_API void Draw_Object4D_Texture_SrcKey_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial, unsigned int src_color_key)
+{
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _16BIT_BYTES_SHIFT);
+
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
+
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
+	rc.c_src_key = src_color_key;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Triangle_Texture_SrcKey_ZBufferRW16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Clipped_Triangle_Texture_SrcKey_ZBufferRW16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+T3DLIB_API void Draw_Object4D_Texture_SrcKey_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial, unsigned int src_color_key)
+{
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _32BIT_BYTES_SHIFT);
+
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
+
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
+	rc.c_src_key = src_color_key;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Triangle_Texture_SrcKey_ZBufferRW32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Clipped_Triangle_Texture_SrcKey_ZBufferRW32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 T3DLIB_API void Draw_Object4D_Texture_PerspectiveLP_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial)
 {
 	assert(pcam->psurf != NULL);
@@ -2722,8 +2862,8 @@ T3DLIB_API void Draw_Object4D_Texture_PerspectiveLP_ZBufferRW16(OBJECT4DV1 * pob
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2786,8 +2926,8 @@ T3DLIB_API void Draw_Object4D_Texture_PerspectiveLP_ZBufferRW32(OBJECT4DV1 * pob
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2850,8 +2990,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * p
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	//memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	//memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2914,8 +3054,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * p
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	//memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	//memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -2978,8 +3118,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW16(OBJECT4DV1 * pobj, CAM
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -3042,8 +3182,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -3096,6 +3236,138 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_ZBufferRW32(OBJECT4DV1 * pobj, CAM
 	}
 }
 
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial, unsigned int src_color_key)
+{
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _16BIT_BYTES_SHIFT);
+
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
+
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
+	rc.c_src_key = src_color_key;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Triangle_Gouraud_Texture_SrcKey_ZBufferRW16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Clipped_Triangle_Gouraud_Texture_SrcKey_ZBufferRW16(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+T3DLIB_API void Draw_Object4D_Gouraud_Texture_SrcKey_ZBufferRW32(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial, unsigned int src_color_key)
+{
+	assert(pcam->psurf != NULL);
+	assert(pcam->pzbuf != NULL);
+	assert(pcam->psurf->color_shift == _32BIT_BYTES_SHIFT);
+
+	RENDERCONTEXTV1 rc;
+	INIT_ZERO(rc);
+
+	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
+
+	rc.fmin_clip_x = pcam->viewport.x;
+	rc.fmin_clip_y = pcam->viewport.y;
+	rc.fmax_clip_x = pcam->viewport.x + pcam->viewport.width - 1;
+	rc.fmax_clip_y = pcam->viewport.y + pcam->viewport.height - 1;
+
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._SURFACE.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._SURFACE.height);
+	assert(rc.fmin_clip_x >= 0 && rc.fmax_clip_x < rc._ZBUFFER.width);
+	assert(rc.fmin_clip_y >= 0 && rc.fmax_clip_y < rc._ZBUFFER.height);
+
+	rc.c_src_key = src_color_key;
+
+	int i;
+	for(i = 0; i < (int)pobj->tri_list.length; i++)
+	{
+		switch(pobj->tri_list.elems[i].state)
+		{
+		case TRI_STATE_ACTIVE:
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].y < rc.fmax_clip_y + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x >= rc.fmin_clip_x && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].x < rc.fmax_clip_x + 1);
+			assert(pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y >= rc.fmin_clip_y && pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].y < rc.fmax_clip_y + 1);
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Triangle_Gouraud_Texture_SrcKey_ZBufferRW32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		case TRI_STATE_CLIPPED:
+
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i].c_diff = pobj->tri_list.elems[i].c_diff0;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i].c_diff = pobj->tri_list.elems[i].c_diff1;
+			pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i].c_diff = pobj->tri_list.elems[i].c_diff2;
+
+			Draw_Clipped_Triangle_Gouraud_Texture_SrcKey_ZBufferRW32(&rc,
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v0_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v1_i],
+							&pobj->ver_list_t.elems[pobj->tri_list.elems[i].v2_i]);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW16(OBJECT4DV1 * pobj, CAM4DV1 * pcam, MATERIALV1 * pmaterial)
 {
 	assert(pcam->psurf != NULL);
@@ -3106,8 +3378,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW16(OBJECT4D
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;
@@ -3170,8 +3442,8 @@ T3DLIB_API void Draw_Object4D_Gouraud_Texture_PerspectiveLP_ZBufferRW32(OBJECT4D
 	INIT_ZERO(rc);
 
 	memcpy(&rc._SURFACE, pcam->psurf, sizeof(rc._SURFACE));
-	memcpy(&rc._ZBUFFER, pcam->pzbuf, sizeof(rc._ZBUFFER));
-	memcpy(&rc._TEXTURE, &pmaterial->texture, sizeof(rc._TEXTURE));
+	memcpy(&rc._ZBUFFER, &pcam->pzbuf->_SURFACE, sizeof(rc._ZBUFFER));
+	memcpy(&rc._TEXTURE, &pmaterial->texture._SURFACE, sizeof(rc._TEXTURE));
 
 	rc.fmin_clip_x = pcam->viewport.x;
 	rc.fmin_clip_y = pcam->viewport.y;

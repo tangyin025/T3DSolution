@@ -200,10 +200,10 @@
 				RelativePath="..\include\t3dlib4.h">
 			</File>
 			<File
-				RelativePath="..\src\t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp">
+				RelativePath="..\include\t3dlib5.Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW.hpp">
 			</File>
 			<File
-				RelativePath="..\src\t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp">
+				RelativePath="..\include\t3dlib5.Draw_Clipped_Triangle_Gouraud_Texture_ZBufferRW.hpp">
 			</File>
 			<File
 				RelativePath="..\include\t3dlib5.h">

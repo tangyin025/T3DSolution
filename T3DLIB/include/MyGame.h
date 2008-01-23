@@ -551,7 +551,7 @@ public:
 
 		elems = new ELEM_T[max_size];
 		if(NULL == elems)
-			throw MyException("construct circular queue failed");
+			MY_EXCEPT("construct circular queue failed");
 	}
 
 	virtual ~CircularQueue()
@@ -816,6 +816,20 @@ protected:
 	virtual void draw_SELF(t3dRender * render);
 };
 
+class T3DLIB_API t3dObjectFlatSrcKey : public t3dObjectFlat
+{
+public:
+	t3dObjectFlatSrcKey(unsigned int src_color_key)
+		: m_src_color_key(src_color_key)
+	{
+	}
+
+protected:
+	virtual void draw_SELF(t3dRender * render);
+
+	unsigned int m_src_color_key;
+};
+
 class T3DLIB_API t3dObjectFlatPerspectiveLP : public t3dObjectFlat
 {
 protected:
@@ -826,6 +840,20 @@ class T3DLIB_API t3dObjectGouraud : public t3dObject
 {
 protected:
 	virtual void draw_SELF(t3dRender * render);
+};
+
+class T3DLIB_API t3dObjectGouraudSrcKey : public t3dObjectGouraud
+{
+public:
+	t3dObjectGouraudSrcKey(unsigned int src_color_key)
+		: m_src_color_key(src_color_key)
+	{
+	}
+
+protected:
+	virtual void draw_SELF(t3dRender * render);
+
+	unsigned int m_src_color_key;
 };
 
 class T3DLIB_API t3dObjectGouraudPerspectiveLP : public t3dObjectGouraud
@@ -952,6 +980,10 @@ protected:
 		m_back->text_out(str_printf("%.1f fps", m_fps->get_FPS()), 10, 10);
 	}
 
+	virtual void do_SHUTDOWN(void)
+	{
+	}
+
 public:
 	MyGame(std::string appName = "My_Game");
 
@@ -964,6 +996,8 @@ private:
 	void init(void);
 
 	void OnFrame(void);
+
+	void shutdown(void);
 
 protected:
 	std::string		m_appName;

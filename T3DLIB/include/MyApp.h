@@ -35,19 +35,27 @@ std::string T3DLIB_API str_printf(char * format, ...);
 // MyException
 // ============================================================================
 
-class T3DLIB_API MyException : public std::exception
+class T3DLIB_API MyException /*: public std::exception*/
 {
 public:
 	MyException(const std::string info);
 
+	MyException(const std::string info, const std::string file, int line);
+
 	virtual ~MyException();
 
 public:
-	virtual const char * what(void) const throw();
+	virtual const std::string what(void) const throw();
+
+	virtual const std::string getFullDesc(void) const throw();
 
 protected:
 	std::string m_info;
+	std::string m_file;
+	int m_line;
 };
+
+#define MY_EXCEPT(x)	throw(MyException(x, __FILE__, __LINE__))
 
 // ============================================================================
 // MyWindowBase
@@ -180,21 +188,21 @@ public:
 		assert(NULL != m_hwnd);
 		::ShowWindow(m_hwnd, nShow);
 		if(!::UpdateWindow(m_hwnd))
-			throw MyException("update window failed");
+			MY_EXCEPT("update window failed");
 	}
 
 	std::string GetWindowText(void)
 	{
 		char buffer[MAX_BUFFER_SIZE];
 		if(!::GetWindowText(m_hwnd, buffer, MAX_BUFFER_SIZE))
-			throw MyException("get window text failed");
+			MY_EXCEPT("get window text failed");
 		return std::string(buffer);
 	}
 
 	void SetWindowText(const std::string text)
 	{
 		if(!::SetWindowText(m_hwnd, text.c_str()))
-			throw MyException("set window text failed");
+			MY_EXCEPT("set window text failed");
 	}
 
 	DWORD GetWindowStyle(void)
@@ -207,10 +215,10 @@ public:
 	{
 		assert(NULL != m_hwnd);
 		if(0 == ::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)style))
-			throw MyException("set window style failed");
+			MY_EXCEPT("set window style failed");
 		if(0 == ::SetWindowPos(m_hwnd, 0, 0, 0, 0, 0,
 				SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
-			throw MyException("set window position failed");
+			MY_EXCEPT("set window position failed");
 	}
 
 	DWORD GetWindowExstyle(void)
@@ -223,10 +231,10 @@ public:
 	{
 		assert(NULL != m_hwnd);
 		if(0 == ::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)exstyle))
-			throw MyException("set window extension style failed");
+			MY_EXCEPT("set window extension style failed");
 		if(0 == ::SetWindowPos(m_hwnd, 0, 0, 0, 0, 0,
 				SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
-			throw MyException("set window position failed");
+			MY_EXCEPT("set window position failed");
 	}
 
 	RECT GetWindowRect(void)
@@ -234,7 +242,7 @@ public:
 		assert(NULL != m_hwnd);
 		RECT rect;
 		if(!::GetWindowRect(m_hwnd, &rect))
-			throw MyException("get window rect failed");
+			MY_EXCEPT("get window rect failed");
 		return rect;
 	}
 
@@ -243,7 +251,7 @@ public:
 		assert(NULL != m_hwnd);
 		if(!::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top,
 				GetRectWidth(rect), GetRectHeight(rect), 0))
-			throw MyException("set window position failed");
+			MY_EXCEPT("set window position failed");
 	}
 
 	RECT GetClientRectOriginal(void)
@@ -251,7 +259,7 @@ public:
 		assert(NULL != m_hwnd);
 		RECT rect;
 		if(!::GetClientRect(m_hwnd, &rect))
-			throw MyException("get client rect failed");
+			MY_EXCEPT("get client rect failed");
 		return rect;
 	}
 
@@ -262,10 +270,10 @@ public:
 		RECT radj = rect;
 		if(!::AdjustWindowRectEx(&radj,
 				GetWindowStyle(), ::GetMenu(m_hwnd) != NULL, GetWindowExstyle()))
-			throw MyException("adjust window rect failed");
+			MY_EXCEPT("adjust window rect failed");
 		RECT rwnd = GetWindowRect();
 		if(!::OffsetRect(&rect, rwnd.left - radj.left, rwnd.top - radj.top))
-			throw MyException("offset client rect failed");
+			MY_EXCEPT("offset client rect failed");
 		return rect;
 	}
 
@@ -274,7 +282,7 @@ public:
 		assert(NULL != m_hwnd);
 		if(!::AdjustWindowRectEx(&rect,
 				GetWindowStyle(), ::GetMenu(m_hwnd) != NULL, GetWindowExstyle()))
-			throw MyException("adjust window rect failed");
+			MY_EXCEPT("adjust window rect failed");
 		SetWindowRect(rect);
 	}
 
@@ -283,13 +291,13 @@ public:
 		assert(NULL != m_hwnd);
 		RECT desktop_rect;
 		if(!::GetWindowRect(::GetDesktopWindow(), &desktop_rect))
-			throw MyException("get desktop window rect failed");
+			MY_EXCEPT("get desktop window rect failed");
 		RECT window_rect = GetWindowRect();
 		if(!::SetWindowPos(m_hwnd, HWND_TOP,
 				(GetRectWidth(desktop_rect) - GetRectWidth(window_rect)) / 2,
 				(GetRectHeight(desktop_rect) - GetRectHeight(window_rect)) / 2,
 				0, 0, SWP_NOSIZE))
-			throw MyException("center window failed");
+			MY_EXCEPT("center window failed");
 	}
 };
 

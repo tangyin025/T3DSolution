@@ -7,8 +7,12 @@
 #error must define one between __draw_16 and __draw_32
 #endif
 
-#if (defined __draw_UV_PerspectiveLP) && (!defined __draw_UV)
-#error __draw_UV_PerspectiveLP must be used with __draw_UV
+#if (  defined __draw_UV_PerspectiveLP && !defined __draw_UV )
+#error __draw_UV_PerspectiveLP must be defined with __draw_UV
+#endif
+
+#if (  defined __draw_SRC_KEY && !defined __draw_UV )
+#error __draw_SRC_KEY must be defined with __draw_UV
 #endif
 
 //static void Draw_Clipped_Scan_Gouraud_Texture_ZBufferRW32(SCANCONTEXT & sc, const int y_beg, const int y_end, const RENDERCONTEXTV1 * prc)
@@ -22,8 +26,6 @@
 
 #ifdef __draw_UV
 	#ifdef __draw_UV_PerspectiveLP
-		//FIXP16 lu = ((sc.lu << (FIXP28_SHIFT - FIXP22_SHIFT)) / (sc.lz >> (FIXP28_SHIFT - FIXP22_SHIFT))) << (FIXP16_SHIFT - ((FIXP22_SHIFT + (FIXP28_SHIFT - FIXP22_SHIFT)) - (FIXP28_SHIFT - (FIXP28_SHIFT - FIXP22_SHIFT)))); // no body can understand !!!
-
 		/*
 		 * Note: this UV PerspectiveLP algorithm have an overflow bug, because of the sc.lu is FIXP22
 		 * type when UV PerspectiveLP mode, so sc.lu << 6 will restrict the orignal uv must between
@@ -31,17 +33,24 @@
 		 * lead the lu to be -127, bug use float mode will not case any bug, except slow performance
 		 */
 
+		//FIXP16 lu = ((sc.lu << (FIXP28_SHIFT - FIXP22_SHIFT)) / (sc.lz >> (FIXP28_SHIFT - FIXP22_SHIFT))) << (FIXP16_SHIFT - ((FIXP22_SHIFT + (FIXP28_SHIFT - FIXP22_SHIFT)) - (FIXP28_SHIFT - (FIXP28_SHIFT - FIXP22_SHIFT)))); // no body can understand !!!
+
 		//int lu = ((sc.lu << 6) / (sc.lz >> 6)) << 10;
 		//int ru = ((sc.ru << 6) / (sc.rz >> 6)) << 10;
 		//int lv = ((sc.lv << 6) / (sc.lz >> 6)) << 10;
 		//int rv = ((sc.rv << 6) / (sc.rz >> 6)) << 10;
 
-		int lu = ((sc.lu << 0) / (sc.lz >> 12)) << 10;
-		int ru = ((sc.ru << 0) / (sc.rz >> 12)) << 10;
-		int lv = ((sc.lv << 0) / (sc.lz >> 12)) << 10;
-		int rv = ((sc.rv << 0) / (sc.rz >> 12)) << 10;
+		//int lu = ((sc.lu << 0) / (sc.lz >> 12)) << 10;
+		//int ru = ((sc.ru << 0) / (sc.rz >> 12)) << 10;
+		//int lv = ((sc.lv << 0) / (sc.lz >> 12)) << 10;
+		//int rv = ((sc.rv << 0) / (sc.rz >> 12)) << 10;
 
-#ifdef _DEBUG
+		int lu = ((sc.lu << 0) / (sc.lz >> (FIXP28_SHIFT - FIXP16_SHIFT))) << (FIXP16_SHIFT - (FIXP22_SHIFT - FIXP16_SHIFT));
+		int ru = ((sc.ru << 0) / (sc.rz >> (FIXP28_SHIFT - FIXP16_SHIFT))) << (FIXP16_SHIFT - (FIXP22_SHIFT - FIXP16_SHIFT));
+		int lv = ((sc.lv << 0) / (sc.lz >> (FIXP28_SHIFT - FIXP16_SHIFT))) << (FIXP16_SHIFT - (FIXP22_SHIFT - FIXP16_SHIFT));
+		int rv = ((sc.rv << 0) / (sc.rz >> (FIXP28_SHIFT - FIXP16_SHIFT))) << (FIXP16_SHIFT - (FIXP22_SHIFT - FIXP16_SHIFT));
+
+		#ifdef _DEBUG
 		{
 			int itmp;
 			assert((itmp = lu >> FIXP16_SHIFT) >= 0 && (itmp = lu >> FIXP16_SHIFT) <= prc->t_width - 1);
@@ -49,7 +58,7 @@
 			assert((itmp = lv >> FIXP16_SHIFT) >= 0 && (itmp = lv >> FIXP16_SHIFT) <= prc->t_height - 1);
 			assert((itmp = rv >> FIXP16_SHIFT) >= 0 && (itmp = rv >> FIXP16_SHIFT) <= prc->t_height - 1);
 		}
-#endif
+		#endif
 	#endif
 
 		FIXP16 u_beg, v_beg;
@@ -187,6 +196,10 @@
 				if(z_beg >= _ZBUFF_TO_FIXP28(*(_ZBUFF *)pz))
 #endif
 				{
+#ifdef __draw_SRC_KEY
+				if(prc->c_src_key != *(unsigned int *)(prc->t_pbuffer + (u_beg >> FIXP16_SHIFT << _32BIT_BYTES_SHIFT) + (v_beg >> FIXP16_SHIFT << prc->t_pitch_shift)))
+#endif
+				{
 #ifdef __draw_UV
 	#ifdef __draw_GR
 		#ifdef __draw_16
@@ -238,7 +251,9 @@
 #ifdef __draw_ZB
 					*(_ZBUFF *)pz = _FIXP28_TO_ZBUFF(z_beg);
 #endif
-				}
+				} // end of srckey
+
+				} // end of zbuffer
 
 #ifdef __draw_16
 				ps += _16BIT_BYTES;
@@ -296,6 +311,7 @@
 #undef __draw_UV
 #undef __draw_UV_PerspectiveLP
 #undef __draw_GR
+#undef __draw_SRC_KEY
 #undef __draw_ZB
 #undef __draw_CLIP
 #undef __draw_16
