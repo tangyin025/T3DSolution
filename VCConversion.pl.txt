@@ -4,12 +4,11 @@ use strict;
 # #############################################################################
 #
 # STEP:
-# 1) find all .vcproj | .sln, but without .71.vcporj | .71.sln
-# 2) copy it to .71.vcproj | .71.sln and .80.vcproj | .80.sln
-#    but, specially, for .71.sln and .80.sln, it should replace the string ".vcproj" int these
-#    test to ".71.vcport" (for .71.sln) | ".80.vcproj" (for .80.vcproj)
-# 3) remove all orignal script files
-# 4) open .70.sln with VC2003 and open .80.sln with VC2005, the wizard will convert it
+# 1) remove all _vc8.vcporj and _vc8.sln
+# 2) find all .vcproj and .sln, but not _vc8.vcporj and _vc8.sln
+# 3) copy it to .vcproj and .sln to _vc8.vcporj and _vc8.sln
+#    but, specially, for .sln, it should replace the string ".vcproj" to "_vc8.vcproj"
+# 4) open *_vc8.sln with with VC2005, the convert wizard will appear
 #
 # #############################################################################
 
@@ -27,63 +26,37 @@ sub _ASSERT ($$@)
 	}
 }
 
-sub _XXvcproj_to_71vcproj ($)
-{
-	my $path = $_[0];
-_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.vcproj$/ && ! ($path =~ m/^.+\.71\.vcproj$/) ));
-	open(SRC, $path) || die "cannot open $path: $!";
-	$path =~ s/^(.+)\.vcproj$/$1.71.vcproj/;
-	open(DST, ">" . $path) || die "cannot open $path: $!";
-	print DST <SRC>;
-	close(DST);
-	close(SRC);
-	return $path;
-}
-
 sub _71vcproj_to_80vcproj ($)
 {
 	my $path = $_[0];
-_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.71\.vcproj$/ && ! ($path =~ m/^.+\.80\.vcproj$/) ));
+_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.vcproj$/ && ! ($path =~ m/^.+_vc8\.vcproj$/) ));
 	open(SRC, $path) || die "cannot open $path: $!";
-	$path =~ s/^(.+)\.71\.vcproj$/$1.80.vcproj/;
+	$path =~ s/^(.+)\.vcproj$/$1_vc8.vcproj/;
 	open(DST, ">" . $path) || die "cannot open $path: $!";
 	print DST <SRC>;
 	close(DST);
 	close(SRC);
-	return $path;
-}
 
-sub _XXsln_to_71sln ($)
-{
-	my $path = $_[0];
-_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.sln$/ && ! ($path =~ m/^.+\.71\.sln$/) ));
-	open(SRC, $path) || die "cannot open $path: $!";
-	$path =~ s/^(.+)\.sln$/$1.71.sln/;
-	open(DST, ">" . $path) || die "cannot open $path: $!";
-	while(my $line = <SRC>)
-	{
-		$line =~ s/\.vcproj/.71.vcproj/;
-		print DST $line;
-	}
-	close(DST);
-	close(SRC);
+	print STDOUT "+ $path \n";
 	return $path;
 }
 
 sub _71sln_to_80sln ($)
 {
 	my $path = $_[0];
-_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.71\.sln$/ && ! ($path =~ m/^.+\.80\.sln$/) ));
+_ASSERT(__FILE__, __LINE__, ( $path =~ m/.+\.sln$/ && ! ($path =~ m/^.+_vc8\.sln$/) ));
 	open(SRC, $path) || die "cannot open $path: $!";
-	$path =~ s/^(.+)\.71\.sln$/$1.80.sln/;
+	$path =~ s/^(.+)\.sln$/$1_vc8.sln/;
 	open(DST, ">" . $path) || die "cannot open $path: $!";
 	while(my $line = <SRC>)
 	{
-		$line =~ s/\.71\.vcproj/.80.vcproj/;
+		$line =~ s/\.vcproj/_vc8.vcproj/;
 		print DST $line;
 	}
 	close(DST);
 	close(SRC);
+
+	print STDOUT "+ $path \n";
 	return $path;
 }
 
@@ -94,31 +67,17 @@ sub convert_file ($)
 	{
 		if($path =~ m/.+\.vcproj$/)
 		{
-			if(! ($path =~ m/.+\.80\.vcproj$/) )
+			if(! ($path =~ m/.+_vc8\.vcproj$/) )
 			{
-				if(! ($path =~ m/.+\.71\.vcproj$/) )
-				{
-					$path = _XXvcproj_to_71vcproj($path);
-				}
-				
 				$path = _71vcproj_to_80vcproj($path);
 			}
-
-			print STDOUT "+ $path \n";
 		}
 		elsif($path =~ m/.+\.sln$/)
 		{
-			if(! ($path =~ m/.+\.80\.sln$/) )
+			if(! ($path =~ m/.+_vc8\.sln$/) )
 			{
-				if(! ($path =~ m/.+\.71\.sln$/) )
-				{
-					$path = _XXsln_to_71sln($path);
-				}
-				
 				$path = _71sln_to_80sln($path);
 			}
-
-			print STDOUT "+ $path \n";
 		}
 	}
 }
@@ -129,11 +88,11 @@ sub delete_old_file ($)
 	if(! (-d $path) )
 	{
 		if(
-			$path =~ m/.+\.80\.ncb$/ ||
-			$path =~ m/.+\.80\.suo$/ ||
-			$path =~ m/.+\.80\.sln$/ ||
-			$path =~ m/.+\.80\.vcproj$/ ||
-			$path =~ m/.+\.80\.vcproj\..+$/ ||
+			$path =~ m/.+_vc8\.ncb$/ ||
+			$path =~ m/.+_vc8\.suo$/ ||
+			$path =~ m/.+_vc8\.sln$/ ||
+			$path =~ m/.+_vc8\.vcproj$/ ||
+			$path =~ m/.+_vc8\.vcproj\..+$/ ||
 			$path =~ m/UpgradeLog\d*\.XML$/i
 			)
 		{
