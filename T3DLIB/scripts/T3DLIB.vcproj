@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)../include&quot;"
+				AdditionalIncludeDirectories="&quot;$(boost_1_34_1)&quot;;&quot;$(ProjectDir)../include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;T3DLIB_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)../include&quot;"
+				AdditionalIncludeDirectories="&quot;$(boost_1_34_1)&quot;;&quot;$(ProjectDir)../include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;T3DLIB_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="3"
