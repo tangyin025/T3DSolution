@@ -1,9 +1,7 @@
 
 #include "stdafx.h"
 #include "t3dlib1.h"
-
 #include <cassert>
-#include <crtdbg.h>
 #include <boost/shared_array.hpp>
 
 #pragma comment(lib, "DDraw.lib")
@@ -139,26 +137,20 @@ namespace t3d
 		return std::basic_string<charT>(_T("unknown ddraw error result"));
 	}
 
-	t3d::DDException::DDException(const std::basic_string<charT> & file, int line, HRESULT hres)
-		: t3d::Exception(file, line)
+	DDException::DDException(const std::basic_string<charT> & file, int line, HRESULT hres)
+		: Exception(file, line)
 		, m_hres(hres)
 	{
 	}
 
-	std::basic_string<charT> t3d::DDException::what(void) const throw()
+	std::basic_string<charT> DDException::what(void) const throw()
 	{
 		return GetResultStr(m_hres);
 	}
 
-#define T3D_DDEXCEPT(hres) { throw t3d::DDException( _T(__FILE__), __LINE__, (hres) ); }
+#define T3D_DDEXCEPT(hres) { throw DDException( _T(__FILE__), __LINE__, (hres) ); }
 
 #define FAILED_DDEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DDEXCEPT(hres) }
-
-#ifdef DEBUG
-#define SUCCEEDED_VERIFY(expr) assert( SUCCEEDED( expr ) )
-#else
-#define SUCCEEDED_VERIFY(expr) expr
-#endif
 
 	DDClipper::DDClipper(const DDraw * ddraw)
 	{
