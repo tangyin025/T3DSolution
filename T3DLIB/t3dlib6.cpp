@@ -1,0 +1,7116 @@
+
+#include "stdafx.h"
+#include "t3dlib6.h"
+
+namespace t3d
+{
+#define CLIP_MASK_V0	0x01
+#define CLIP_MASK_V1	0x02
+#define CLIP_MASK_V2	0x04
+
+	const VertexList & VertexListContext::getVertexList(void) const
+	{
+		return m_vertexList;
+	}
+
+	VertexList & VertexListContext::getVertexList(void)
+	{
+		return m_vertexList;
+	}
+
+	void VertexListContext::pushVertex(real x, real y, real z)
+	{
+		pushVertex(vec3Build(x, y, z));
+	}
+
+	void VertexListContext::pushVertex(real x, real y, real z, const Mat4<real> & mmat)
+	{
+		pushVertex(vec3Build(x, y, z), mmat);
+	}
+
+	void VertexListContext::pushVertex(VertexList::const_reference vertex)
+	{
+		getVertexList().push_back(vertex);
+	}
+
+	void VertexListContext::pushVertex(VertexList::const_reference vertex, const Mat4<real> & mmat)
+	{
+		getVertexList().push_back(vertex * mmat);
+	}
+
+	void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end)
+	{
+		getVertexList().insert(getVertexListEnd(), begin, end);
+	}
+
+	void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat)
+	{
+		assert(std::distance(begin, end) >= 0);
+
+		const VertexList::size_type previous_size = getVertexListSize();
+		const VertexList::difference_type inserted_size = previous_size + std::distance(begin, end);
+
+		resizeVertexList(inserted_size);
+		for(VertexList::difference_type i = previous_size; i < inserted_size; i++)
+		{
+			vertexAt(i) = *(begin + i) * mmat;
+		}
+	}
+
+	void VertexListContext::clearVertexList(void)
+	{
+		getVertexList().clear();
+	}
+
+	void VertexListContext::resizeVertexList(VertexList::size_type size)
+	{
+		getVertexList().resize(size);
+	}
+
+	VertexList::size_type VertexListContext::getVertexListSize(void) const
+	{
+		return getVertexList().size();
+	}
+
+	VertexList::reference VertexListContext::vertexAt(VertexList::size_type i)
+	{
+		assert(i < getVertexListSize());
+
+		return getVertexList()[i];
+	}
+
+	VertexList::const_reference VertexListContext::vertexAt(VertexList::size_type i) const
+	{
+		assert(i < getVertexListSize());
+
+		return getVertexList()[i];
+	}
+
+	VertexList::iterator VertexListContext::getVertexListBegin()
+	{
+		return getVertexList().begin();
+	}
+
+	VertexList::const_iterator VertexListContext::getVertexListBegin() const
+	{
+		return getVertexList().begin();
+	}
+
+	VertexList::iterator VertexListContext::getVertexListEnd()
+	{
+		return getVertexList().end();
+	}
+
+	VertexList::const_iterator VertexListContext::getVertexListEnd() const
+	{
+		return getVertexList().end();
+	}
+
+	const VertexIndexList & VertexIndexListContext::getVertexIndexList(void) const
+	{
+		return m_vertexIndexList;
+	}
+
+	VertexIndexList & VertexIndexListContext::getVertexIndexList(void)
+	{
+		return m_vertexIndexList;
+	}
+
+	void VertexIndexListContext::pushVertexIndex(VertexIndexList::const_reference index)
+	{
+		getVertexIndexList().push_back(index);
+	}
+
+	void VertexIndexListContext::pushVertexIndexList(VertexIndexList::const_iterator begin, VertexIndexList::const_iterator end)
+	{
+		getVertexIndexList().insert(getVertexIndexListEnd(), begin, end);
+	}
+
+	void VertexIndexListContext::clearVertexIndexList(void)
+	{
+		getVertexIndexList().clear();
+	}
+
+	void VertexIndexListContext::resizeVertexIndexList(VertexIndexList::size_type size)
+	{
+		getVertexIndexList().resize(size);
+	}
+
+	VertexIndexList::size_type VertexIndexListContext::getVertexIndexListSize(void) const
+	{
+		return getVertexIndexList().size();
+	}
+
+	VertexIndexList::reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i)
+	{
+		assert(i < getVertexIndexListSize());
+
+		return getVertexIndexList()[i];
+	}
+
+	VertexIndexList::const_reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i) const
+	{
+		assert(i < getVertexIndexListSize());
+
+		return getVertexIndexList()[i];
+	}
+
+	VertexIndexList::iterator VertexIndexListContext::getVertexIndexListBegin()
+	{
+		return getVertexIndexList().begin();
+	}
+
+	VertexIndexList::const_iterator VertexIndexListContext::getVertexIndexListBegin() const
+	{
+		return getVertexIndexList().begin();
+	}
+
+	VertexIndexList::iterator VertexIndexListContext::getVertexIndexListEnd()
+	{
+		return getVertexIndexList().end();
+	}
+
+	VertexIndexList::const_iterator VertexIndexListContext::getVertexIndexListEnd() const
+	{
+		return getVertexIndexList().end();
+	}
+
+	const NormalList & NormalListContext::getNormalList(void) const
+	{
+		return m_normalList;
+	}
+
+	NormalList & NormalListContext::getNormalList(void)
+	{
+		return m_normalList;
+	}
+
+	void NormalListContext::pushNormal(real x, real y, real z)
+	{
+		pushNormal(vec3Build(x, y, z));
+	}
+
+	void NormalListContext::pushNormal(real x, real y, real z, const Mat4<real> & mmat)
+	{
+		pushNormal(vec3Build(x, y, z), mmat);
+	}
+
+	void NormalListContext::pushNormal(NormalList::const_reference normal)
+	{
+		getNormalList().push_back(normal);
+	}
+
+	void NormalListContext::pushNormal(NormalList::const_reference normal, const Mat4<real> & mmat)
+	{
+		getNormalList().push_back(normal * mmat);
+	}
+
+	void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end)
+	{
+		getNormalList().insert(getNormalListEnd(), begin, end);
+	}
+
+	void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat)
+	{
+		assert(std::distance(begin, end) >= 0);
+
+		const NormalList::size_type previous_size = getNormalListSize();
+		const NormalList::difference_type inserted_size = previous_size + std::distance(begin, end);
+
+		resizeNormalList(inserted_size);
+		for(NormalList::difference_type i = previous_size; i < inserted_size; i++)
+		{
+			normalAt(i) = *(begin + i) * mmat;
+		}
+	}
+
+	void NormalListContext::clearNormalList(void)
+	{
+		getNormalList().clear();
+	}
+
+	void NormalListContext::resizeNormalList(NormalList::size_type size)
+	{
+		getNormalList().resize(size);
+	}
+
+	NormalList::size_type NormalListContext::getNormalListSize(void) const
+	{
+		return getNormalList().size();
+	}
+
+	NormalList::reference NormalListContext::normalAt(NormalList::size_type i)
+	{
+		assert(i < getNormalListSize());
+
+		return getNormalList()[i];
+	}
+
+	NormalList::const_reference NormalListContext::normalAt(NormalList::size_type i) const
+	{
+		assert(i < getNormalListSize());
+
+		return getNormalList()[i];
+	}
+
+	NormalList::iterator NormalListContext::getNormalListBegin()
+	{
+		return getNormalList().begin();
+	}
+
+	NormalList::const_iterator NormalListContext::getNormalListBegin() const
+	{
+		return getNormalList().begin();
+	}
+
+	NormalList::iterator NormalListContext::getNormalListEnd()
+	{
+		return getNormalList().end();
+	}
+
+	NormalList::const_iterator NormalListContext::getNormalListEnd() const
+	{
+		return getNormalList().end();
+	}
+
+	const UVList & UVListContext::getUVList(void) const
+	{
+		return m_uvList;
+	}
+
+	UVList & UVListContext::getUVList(void)
+	{
+		return m_uvList;
+	}
+
+	void UVListContext::pushUV(real u, real v)
+	{
+		pushUV(Vec2<real>(u, v));
+	}
+
+	void UVListContext::pushUV(UVList::const_reference uv)
+	{
+		getUVList().push_back(uv);
+	}
+
+	void UVListContext::pushUVList(UVList::const_iterator begin, UVList::const_iterator end)
+	{
+		getUVList().insert(getUVListEnd(), begin, end);
+	}
+
+	void UVListContext::clearUVList(void)
+	{
+		getUVList().clear();
+	}
+
+	void UVListContext::resizeUVList(UVList::size_type size)
+	{
+		getUVList().resize(size);
+	}
+
+	UVList::size_type UVListContext::getUVListSize(void) const
+	{
+		return getUVList().size();
+	}
+
+	UVList::reference UVListContext::uvAt(UVList::size_type i)
+	{
+		assert(i < getUVListSize());
+
+		return getUVList()[i];
+	}
+
+	UVList::const_reference UVListContext::uvAt(UVList::size_type i) const
+	{
+		assert(i < getUVListSize());
+
+		return getUVList()[i];
+	}
+
+	UVList::iterator UVListContext::getUVListBegin()
+	{
+		return getUVList().begin();
+	}
+
+	UVList::const_iterator UVListContext::getUVListBegin() const
+	{
+		return getUVList().begin();
+	}
+
+	UVList::iterator UVListContext::getUVListEnd()
+	{
+		return getUVList().end();
+	}
+
+	UVList::const_iterator UVListContext::getUVListEnd() const
+	{
+		return getUVList().end();
+	}
+
+	const ColorList & ColorListContext::getColorList(void) const
+	{
+		return m_colorList;
+	}
+
+	ColorList & ColorListContext::getColorList(void)
+	{
+		return m_colorList;
+	}
+
+	void ColorListContext::pushColor(real r, real g, real b, real a)
+	{
+		pushColor(Vec4<real>(r, g, b, a));
+	}
+
+	void ColorListContext::pushColor(ColorList::const_reference color)
+	{
+		m_colorList.push_back(color);
+	}
+
+	void ColorListContext::pushColorList(ColorList::const_iterator begin, ColorList::const_iterator end)
+	{
+		m_colorList.insert(getColorListEnd(), begin, end);
+	}
+
+	void ColorListContext::clearColorList(void)
+	{
+		m_colorList.clear();
+	}
+
+	void ColorListContext::resizeColorList(ColorList::size_type size)
+	{
+		m_colorList.resize(size);
+	}
+
+	void ColorListContext::resizeColorList(ColorList::size_type size, ColorList::const_reference color)
+	{
+		m_colorList.resize(size, color);
+	}
+
+	ColorList::size_type ColorListContext::getColorListSize(void) const
+	{
+		return m_colorList.size();
+	}
+
+	ColorList::reference ColorListContext::colorAt(ColorList::size_type i)
+	{
+		assert(i < getColorListSize());
+
+		return m_colorList[i];
+	}
+
+	ColorList::const_reference ColorListContext::colorAt(ColorList::size_type i) const
+	{
+		assert(i < getColorListSize());
+
+		return m_colorList[i];
+	}
+
+	ColorList::iterator ColorListContext::getColorListBegin()
+	{
+		return m_colorList.begin();
+	}
+
+	ColorList::const_iterator ColorListContext::getColorListBegin() const
+	{
+		return m_colorList.begin();
+	}
+
+	ColorList::iterator ColorListContext::getColorListEnd()
+	{
+		return m_colorList.end();
+	}
+
+	ColorList::const_iterator ColorListContext::getColorListEnd() const
+	{
+		return m_colorList.end();
+	}
+
+	void SurfaceContext::setSurfaceBuffer(void * pbuffer)
+	{
+		m_surfaceBuffer = pbuffer;
+	}
+
+	void SurfaceContext::setSurfaceBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	{
+		setSurfaceBuffer(pbuffer);
+		setSurfacePitch(pitch);
+		setSurfaceWidth(width);
+		setSurfaceHeight(height);
+	}
+
+	void * SurfaceContext::getSurfaceBuffer(void) const
+	{
+		return m_surfaceBuffer;
+	}
+
+	void SurfaceContext::setSurfacePitch(DWORD pitch)
+	{
+		m_surfacePitch = pitch;
+	}
+
+	DWORD SurfaceContext::getSurfacePitch(void) const
+	{
+		return m_surfacePitch;
+	}
+
+	void SurfaceContext::setSurfaceWidth(DWORD width)
+	{
+		m_surfaceWidth = width;
+	}
+
+	DWORD SurfaceContext::getSurfaceWidth(void) const
+	{
+		return m_surfaceWidth;
+	}
+
+	void SurfaceContext::setSurfaceHeight(DWORD height)
+	{
+		m_surfaceHeight = height;
+	}
+
+	DWORD SurfaceContext::getSurfaceHeight(void) const
+	{
+		return m_surfaceHeight;
+	}
+
+	SurfaceRef<uint16> SurfaceContext::getSurfaceRef16(void) const
+	{
+		return SurfaceRef<uint16>(static_cast<uint16*>(m_surfaceBuffer), m_surfacePitch);
+	}
+
+	SurfaceRef<uint32> SurfaceContext::getSurfaceRef32(void) const
+	{
+		return SurfaceRef<uint32>(static_cast<uint32*>(m_surfaceBuffer), m_surfacePitch);
+	}
+
+	void ZBufferContext::setZBufferBuffer(void * pbuffer)
+	{
+		m_zbufferBuffer = pbuffer;
+	}
+
+	void ZBufferContext::setZBufferBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	{
+		setZBufferBuffer(pbuffer);
+		setZBufferPitch(pitch);
+		setZBufferWidth(width);
+		setZBufferHeight(height);
+	}
+
+	void * ZBufferContext::getZBufferBuffer(void) const
+	{
+		return m_zbufferBuffer;
+	}
+
+	void ZBufferContext::setZBufferPitch(DWORD pitch)
+	{
+		m_zbufferPitch = pitch;
+	}
+
+	DWORD ZBufferContext::getZBufferPitch(void) const
+	{
+		return m_zbufferPitch;
+	}
+
+	void ZBufferContext::setZBufferWidth(DWORD width)
+	{
+		m_zbufferWidth = width;
+	}
+
+	DWORD ZBufferContext::getZBufferWidth(void) const
+	{
+		return m_zbufferWidth;
+	}
+
+	void ZBufferContext::setZBufferHeight(DWORD height)
+	{
+		m_zbufferHeight = height;
+	}
+
+	DWORD ZBufferContext::getZBufferHeight(void) const
+	{
+		return m_zbufferHeight;
+	}
+
+	SurfaceRef<fixp28> ZBufferContext::getZBufferRef28(void) const
+	{
+		return SurfaceRef<fixp28>(static_cast<fixp28*>(m_zbufferBuffer), m_zbufferPitch);
+	}
+
+	void TextureContext::setTextureBuffer(void * pbuffer)
+	{
+		m_textureBuffer = pbuffer;
+	}
+
+	void TextureContext::setTextureBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	{
+		setTextureBuffer(pbuffer);
+		setTexturePitch(pitch);
+		setTextureWidth(width);
+		setTextureHeight(height);
+	}
+
+	void * TextureContext::getTextureBuffer(void) const
+	{
+		return m_textureBuffer;
+	}
+
+	void TextureContext::setTexturePitch(DWORD pitch)
+	{
+		m_texturePitch = pitch;
+	}
+
+	DWORD TextureContext::getTexturePitch(void) const
+	{
+		return m_texturePitch;
+	}
+
+	void TextureContext::setTextureWidth(DWORD width)
+	{
+		m_textureWidth = width;
+	}
+
+	DWORD TextureContext::getTextureWidth(void) const
+	{
+		return m_textureWidth;
+	}
+
+	void TextureContext::setTextureHeight(DWORD height)
+	{
+		m_textureHeight = height;
+	}
+
+	DWORD TextureContext::getTextureHeight(void) const
+	{
+		return m_textureHeight;
+	}
+
+	SurfaceRef<uint16> TextureContext::getTextureRef16(void) const
+	{
+		return SurfaceRef<uint16>(static_cast<uint16*>(m_textureBuffer), m_texturePitch);
+	}
+
+	SurfaceRef<uint32> TextureContext::getTextureRef32(void) const
+	{
+		return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
+	}
+
+	//TextureContext::TextureContext(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	//	: m_textureBuffer(pbuffer)
+	//	, m_texturePitch(pitch)
+	//	, m_textureWidth(width)
+	//	, m_textureHeight(height)
+	//{
+	//}
+
+	//const TextureContextList & TextureListContext::getTextureList(void) const
+	//{
+	//	return m_textureList;
+	//}
+
+	//TextureContextList & TextureListContext::getTextureList(void)
+	//{
+	//	return m_textureList;
+	//}
+
+	//void TextureListContext::pushTexture(TextureContextList::const_reference texture)
+	//{
+	//	m_textureList.push_back(texture);
+	//}
+
+	//void TextureListContext::pushTextureList(TextureContextList::const_iterator begin, TextureContextList::const_iterator end)
+	//{
+	//	m_textureList.insert(getTextureListEnd(), begin, end);
+	//}
+
+	//void TextureListContext::clearTextureList(void)
+	//{
+	//	m_textureList.clear();
+	//}
+
+	////void TextureListContext::resizeTextureList(TextureContextList::size_type size)
+	////{
+	////	m_textureList.resize(size);
+	////}
+
+	//void TextureListContext::resizeTextureList(TextureContextList::size_type size, TextureContextList::const_reference texture)
+	//{
+	//	m_textureList.resize(size, texture);
+	//}
+
+	//TextureContextList::size_type TextureListContext::getTextureListSize(void) const
+	//{
+	//	return m_textureList.size();
+	//}
+
+	//TextureContextList::reference TextureListContext::textureAt(TextureContextList::size_type i)
+	//{
+	//	assert(i < getTextureListSize());
+
+	//	return m_textureList[i];
+	//}
+
+	//TextureContextList::const_reference TextureListContext::textureAt(TextureContextList::size_type i) const
+	//{
+	//	assert(i < getTextureListSize());
+
+	//	return m_textureList[i];
+	//}
+
+	//TextureContextList::iterator TextureListContext::getTextureListBegin()
+	//{
+	//	return m_textureList.begin();
+	//}
+
+	//TextureContextList::const_iterator TextureListContext::getTextureListBegin() const
+	//{
+	//	return m_textureList.begin();
+	//}
+
+	//TextureContextList::iterator TextureListContext::getTextureListEnd()
+	//{
+	//	return m_textureList.end();
+	//}
+
+	//TextureContextList::const_iterator TextureListContext::getTextureListEnd() const
+	//{
+	//	return m_textureList.end();
+	//}
+
+	//const TextureIndexList & TextureIndexListContext::getTextureIndexList(void) const
+	//{
+	//	return m_textureIndexList;
+	//}
+
+	//TextureIndexList & TextureIndexListContext::getTextureIndexList(void)
+	//{
+	//	return m_textureIndexList;
+	//}
+
+	//void TextureIndexListContext::pushTextureIndex(TextureIndexList::const_reference index)
+	//{
+	//	m_textureIndexList.push_back(index);
+	//}
+
+	//void TextureIndexListContext::pushTextureIndexList(TextureIndexList::const_iterator begin, TextureIndexList::const_iterator end)
+	//{
+	//	m_textureIndexList.insert(getTextureIndexListEnd(), begin, end);
+	//}
+
+	//void TextureIndexListContext::clearTextureIndexList(void)
+	//{
+	//	m_textureIndexList.clear();
+	//}
+
+	//void TextureIndexListContext::resizeTextureIndexList(TextureIndexList::size_type size)
+	//{
+	//	m_textureIndexList.resize(size);
+	//}
+
+	//TextureIndexList::size_type TextureIndexListContext::getTextureIndexListSize(void) const
+	//{
+	//	return m_textureIndexList.size();
+	//}
+
+	//TextureIndexList::reference TextureIndexListContext::textureIndexAt(TextureIndexList::size_type i)
+	//{
+	//	assert(i < getTextureIndexListSize());
+
+	//	return m_textureIndexList[i];
+	//}
+
+	//TextureIndexList::const_reference TextureIndexListContext::textureIndexAt(TextureIndexList::size_type i) const
+	//{
+	//	assert(i < getTextureIndexListSize());
+
+	//	return m_textureIndexList[i];
+	//}
+
+	//TextureIndexList::iterator TextureIndexListContext::getTextureIndexListBegin()
+	//{
+	//	return m_textureIndexList.begin();
+	//}
+
+	//TextureIndexList::const_iterator TextureIndexListContext::getTextureIndexListBegin() const
+	//{
+	//	return m_textureIndexList.begin();
+	//}
+
+	//TextureIndexList::iterator TextureIndexListContext::getTextureIndexListEnd()
+	//{
+	//	return m_textureIndexList.end();
+	//}
+
+	//TextureIndexList::const_iterator TextureIndexListContext::getTextureIndexListEnd() const
+	//{
+	//	return m_textureIndexList.end();
+	//}
+
+	void ClipperContext::setClipperRect(const RECT & clipper)
+	{
+		m_clipper = clipper;
+	}
+
+	const RECT & ClipperContext::getClipperRect(void) const
+	{
+		return m_clipper;
+	}
+
+	void MaterialContext::setMaterial(const MATERIAL & material)
+	{
+		m_material = material;
+	}
+
+	const MATERIAL & MaterialContext::getMaterial(void) const
+	{
+		return m_material;
+	}
+
+	void MaterialContext::setAmbient(const Vec4<real> & ambient)
+	{
+		m_material.ambient = ambient;
+	}
+
+	void MaterialContext::setDiffuse(const Vec4<real> & diffuse)
+	{
+		m_material.diffuse = diffuse;
+	}
+
+	void MaterialContext::setSpecular(const Vec4<real> & specular)
+	{
+		m_material.specular = specular;
+	}
+
+	void MaterialContext::setEmissive(const Vec4<real> & emissive)
+	{
+		m_material.emissive = emissive;
+	}
+
+	LIGHT LightListContext::buildLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
+	{
+		assert(rgbaIsValid(ambient, real(0), real(1)));
+
+		LIGHT light;
+		light.type = LT_AMBIENT;
+		light.state = state;
+		light.ambient = ambient;
+		return light;
+	}
+
+	LIGHT LightListContext::buildLightDirectional(const Vec4<real> & diffuse, const Vec4<real> & dir, LIGHT_STATE state /*= LS_ON*/)
+	{
+		assert(rgbaIsValid(diffuse, real(0), real(1)));
+
+		LIGHT light;
+		light.type = LT_DIRECTIONAL;
+		light.state = state;
+		light.dir = dir;
+		light.diffuse = diffuse;
+		return light;
+	}
+
+	LIGHT LightListContext::buildLightPoint(const Vec4<real> & diffuse, const Vec4<real> & pos, real kc /*= 1.0f*/, real kl /*= 0.001f*/, real kq /*= 0.00001f*/, LIGHT_STATE state /*= LS_ON*/)
+	{
+		assert(rgbaIsValid(diffuse, real(0), real(1)));
+
+		LIGHT light;
+		light.type = LT_POINT;
+		light.state = state;
+		light.pos = pos;
+		light.diffuse = diffuse;
+		light.kc = kc;
+		light.kl = kl;
+		light.kq = kq;
+		return light;
+	}
+
+	Vec4<real> LightListContext::lightVertexAmbient(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
+	{
+		assert(LT_AMBIENT == light.type);
+		assert(LS_ON == light.state);
+
+		// I(d)ambient = I0ambient * Clambient
+
+		return light.ambient * material.ambient;
+		UNREFERENCED_PARAMETER(vertex);
+		UNREFERENCED_PARAMETER(normal);
+	}
+
+	Vec4<real> LightListContext::lightVertexDirectional(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
+	{
+		assert(LT_DIRECTIONAL == light.type);
+		assert(LS_ON == light.state);
+
+		// I(d)dir = I0dir * Cldir (n . l)
+
+		real dot = vec3Dot(light.dir, normal);
+
+		if(dot < 0)
+		{
+			return light.diffuse * material.diffuse * -dot;
+		}
+
+		return Vec4<real>(0, 0, 0, 0);
+		UNREFERENCED_PARAMETER(vertex);
+	}
+
+	Vec4<real> LightListContext::lightVertexPoint(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
+	{
+		assert(LT_POINT == light.type);
+		assert(LS_ON == light.state);
+
+		//               I0point * Clpoint
+		// I(d)point = --------------------- (n . l)
+		//             kc + kl * d + kq * d2
+
+		Vec4<real> dir = vec3Sub(vertex, light.pos);
+		real dot = vec3Dot(normal, dir);
+		real len = vec3Length(dir);
+
+		if(dot < 0)
+		{
+			return light.diffuse * material.diffuse * -dot / (len * (light.kc + light.kl * len + light.kq * len * len));
+		}
+
+		return Vec4<real>(0, 0, 0, 0);
+	}
+
+	const LightList & LightListContext::getLightList(void) const
+	{
+		return m_lightList;
+	}
+
+	LightList & LightListContext::getLightList(void)
+	{
+		return m_lightList;
+	}
+
+	size_t LightListContext::pushLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
+	{
+		m_lightList.push_back(buildLightAmbient(ambient, state));
+
+		return getLightListSize() - 1;
+	};
+
+	size_t LightListContext::pushLightDirectional(const Vec4<real> & diffuse, const Vec4<real> dir, LIGHT_STATE state /*= LS_ON*/)
+	{
+		m_lightList.push_back(buildLightDirectional(diffuse, dir, state));
+
+		return getLightListSize() - 1;
+	};
+
+	size_t LightListContext::pushLightPoint(const Vec4<real> & diffuse, const Vec4<real> pos, real kc /*= 1.0f*/, real kl /*= 0.001f*/, real kq /*= 0.00001f*/, LIGHT_STATE state /*= LS_ON*/)
+	{
+		m_lightList.push_back(buildLightPoint(diffuse, pos, kc, kl, kq, state));
+
+		return getLightListSize() - 1;
+	};
+
+	void LightListContext::clearLightList(void)
+	{
+		m_lightList.clear();
+	}
+
+	void LightListContext::resizeLightList(LightList::size_type size)
+	{
+		m_lightList.resize(size);
+	}
+
+	LightList::size_type LightListContext::getLightListSize(void) const
+	{
+		return m_lightList.size();
+	}
+
+	LightList::reference LightListContext::lightAt(LightList::size_type i)
+	{
+		assert(i < getLightListSize());
+
+		return m_lightList[i];
+	}
+
+	LightList::const_reference LightListContext::lightAt(LightList::size_type i) const
+	{
+		assert(i < getLightListSize());
+
+		return m_lightList[i];
+	}
+
+	LightList::iterator LightListContext::getLightListBegin()
+	{
+		return m_lightList.begin();
+	}
+
+	LightList::const_iterator LightListContext::getLightListBegin() const
+	{
+		return m_lightList.begin();
+	}
+
+	LightList::iterator LightListContext::getLightListEnd()
+	{
+		return m_lightList.end();
+	}
+
+	LightList::const_iterator LightListContext::getLightListEnd() const
+	{
+		return m_lightList.end();
+	}
+
+	Mat4<real> CameraContext::buildCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
+	{
+		switch(rot_seq)
+		{
+		case RS_XYZ:
+			return mat3RotXYZ(rot) * mat3Mov(pos);
+		case RS_XZY:
+			return mat3RotXZY(rot) * mat3Mov(pos);
+		case RS_YXZ:
+			return mat3RotYXZ(rot) * mat3Mov(pos);
+		case RS_YZX:
+			return mat3RotYZX(rot) * mat3Mov(pos);
+		case RS_ZXY:
+			return mat3RotZXY(rot) * mat3Mov(pos);
+		case RS_ZYX:
+			return mat3RotZYX(rot) * mat3Mov(pos);
+		default:
+			assert(false); return Mat4<real>();
+		};
+	}
+
+	Mat4<real> CameraContext::buildInverseCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
+	{
+		switch(rot_seq)
+		{
+		case RS_XYZ:
+			return mat3InverseMov(pos) * mat3InverseRotXYZ(rot);
+		case RS_XZY:
+			return mat3InverseMov(pos) * mat3InverseRotXZY(rot);
+		case RS_YXZ:
+			return mat3InverseMov(pos) * mat3InverseRotYXZ(rot);
+		case RS_YZX:
+			return mat3InverseMov(pos) * mat3InverseRotYZX(rot);
+		case RS_ZXY:
+			return mat3InverseMov(pos) * mat3InverseRotZXY(rot);
+		case RS_ZYX:
+			return mat3InverseMov(pos) * mat3InverseRotZYX(rot);
+		default:
+			assert(false); return Mat4<real>();
+		};
+	}
+
+	Mat4<real> CameraContext::buildInverseCameraTransformUVN(const Vec4<real> & pos, const Vec4<real> & target, const Vec4<real> & up)
+	{
+		return mat3InverseMov(pos) * mat3LookAt(pos, target, up);
+	}
+
+	Mat4<real> CameraContext::buildInverseCameraTransformQuat(const Vec4<real> & pos, const Quat<real> & ori)
+	{
+		return mat3InverseMov(pos) * buildInverseRotationMatrixFromQuatLH(ori);
+	}
+
+	Vec2<real> CameraContext::buildCameraProjectionFOVWidth(real fov, DWORD width, DWORD height)
+	{
+		//             width / 2                    height / 2
+		// proj.x = --------------, proj.y = -----------------------
+		//           tan(fov / 2)             tan(fov / 2) / aspect
+
+		real aspect = (real)width / (real)height;
+		real scale = 1 / tan(fov / 2);
+		return Vec2<real>(scale, scale * aspect);
+	}
+
+	Vec2<real> CameraContext::buildCameraProjectionFOVHeight(real fov, DWORD width, DWORD height)
+	{
+		//                 width / 2                    height / 2
+		// proj.x = -----------------------, proj.y = --------------
+		//           tan(fov / 2) * aspect             tan(fov / 2)
+
+		real aspect = (real)width / (real)height;
+		real scale = 1 / tan(fov / 2);
+		return Vec2<real>(scale / aspect, scale);
+	}
+
+	Vec2<real> CameraContext::buildCameraProjectionFOVAuto(real fov, DWORD width, DWORD height)
+	{
+		if(width > height)
+			return buildCameraProjectionFOVWidth(fov, width, height);
+		else
+			return buildCameraProjectionFOVHeight(fov, width, height);
+	}
+
+	real CameraContext::calculateCameraHalfFovX(const Vec2<real> & proj)
+	{
+		return atan(1 / proj.x);
+	}
+
+	real CameraContext::calculateCameraHalfFovY(const Vec2<real> & proj)
+	{
+		return atan(1 / proj.y);
+	}
+
+	real CameraContext::calculateCameraMaxHalfFov(const Vec2<real> & proj)
+	{
+		return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
+	}
+
+	Vec4<real> CameraContext::calculateCameraDirection(const Mat4<real> & mcam)
+	{
+		return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
+	}
+
+	//void CameraContext::setCameraPosition(const Vec4<real> & vpos)
+	//{
+	//	m_camera.vpos = vpos;
+	//}
+
+	//const Vec4<real> & CameraContext::getCameraPosition(void) const
+	//{
+	//	return m_camera.vpos;
+	//}
+
+	void CameraContext::setCameraMatrix(const Mat4<real> & mcam)
+	{
+		m_camera.mcam = mcam;
+	}
+
+	const Mat4<real> & CameraContext::getCameraMatrix(void) const
+	{
+		return m_camera.mcam;
+	}
+
+	void CameraContext::setCameraProjection(const Vec2<real> & proj)
+	{
+		m_camera.proj = proj;
+	}
+
+	const Vec2<real> & CameraContext::getCameraProjection(void) const
+	{
+		return m_camera.proj;
+	}
+
+	void CameraContext::setCameraNearZ(real nz)
+	{
+		m_camera.nz = nz;
+	}
+
+	real CameraContext::getCameraNearZ(void) const
+	{
+		return m_camera.nz;
+	}
+
+	void CameraContext::setCameraFarZ(real fz)
+	{
+		m_camera.fz = fz;
+	}
+
+	real CameraContext::getCameraFarZ(void) const
+	{
+		return m_camera.fz;
+	}
+
+	void CameraContext::setViewport(const RECT & viewport)
+	{
+		m_camera.viewport = viewport;
+	}
+
+	const RECT & CameraContext::getViewport(void) const
+	{
+		return m_camera.viewport;
+	}
+
+	//const CAMERA & CameraContext::getCamera(void) const
+	//{
+	//	return m_camera;
+	//}
+
+	Vec4<real> CameraContext::getCameraPosition(void) const
+	{
+		return mat3GetRow3(getCameraMatrix().inverse());
+	}
+
+	bool TriangleStateListContext::isTriVisible(TRI_STATE state)
+	{
+		return state == TS_ACTIVE || state == TS_CLIPPED; //|| state == TS_LARGE_CLIPPED;
+	}
+
+	const TriStateList & TriangleStateListContext::getTriStateList(void) const
+	{
+		return m_triStateList;
+	}
+
+	TriStateList & TriangleStateListContext::getTriStateList(void)
+	{
+		return m_triStateList;
+	}
+
+	void TriangleStateListContext::pushTriState(TRI_STATE state)
+	{
+		m_triStateList.push_back(state);
+	}
+
+	void TriangleStateListContext::pushTriStateList(TriStateList::const_iterator begin, TriStateList::const_iterator end)
+	{
+		m_triStateList.insert(getTriStateListEnd(), begin, end);
+	}
+
+	void TriangleStateListContext::clearTriStateList(void)
+	{
+		m_triStateList.clear();
+	}
+
+	void TriangleStateListContext::resizeTriStateList(TriStateList::size_type size)
+	{
+		m_triStateList.resize(size);
+	}
+
+	void TriangleStateListContext::resizeTriStateList(TriStateList::size_type size, TriStateList::const_reference state)
+	{
+		m_triStateList.resize(size, state);
+	}
+
+	TriStateList::size_type TriangleStateListContext::getTriStateListSize(void) const
+	{
+		return m_triStateList.size();
+	}
+
+	TriStateList::reference TriangleStateListContext::triStateAt(TriStateList::size_type i)
+	{
+		assert(i < getTriStateListSize());
+
+		return m_triStateList[i];
+	}
+
+	TriStateList::const_reference TriangleStateListContext::triStateAt(TriStateList::size_type i) const
+	{
+		assert(i < getTriStateListSize());
+
+		return m_triStateList[i];
+	}
+
+	TriStateList::iterator TriangleStateListContext::getTriStateListBegin()
+	{
+		return m_triStateList.begin();
+	}
+
+	TriStateList::const_iterator TriangleStateListContext::getTriStateListBegin() const
+	{
+		return m_triStateList.begin();
+	}
+
+	TriStateList::iterator TriangleStateListContext::getTriStateListEnd()
+	{
+		return m_triStateList.end();
+	}
+
+	TriStateList::const_iterator TriangleStateListContext::getTriStateListEnd() const
+	{
+		return m_triStateList.end();
+	}
+
+	TRI_STATE RenderLineListZBufferRW::zClipLineAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t v0_i = index * 2 + 0;
+		const size_t v1_i = index * 2 + 1;
+
+		if(vertexAt(v0_i).z < getCameraNearZ())
+		{
+			if(vertexAt(v1_i).z < getCameraNearZ())
+			{
+				return TS_CULLED;
+			}
+			else
+			{
+				resizeVertexList(getVertexListSize() + 2);
+				const Vec4<real> & v0 = vertexAt(v0_i);
+				const Vec4<real> & v1 = vertexAt(v1_i);
+
+				Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+				Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+				new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+				new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+				new_v0.z = getCameraNearZ();
+
+				new_v1 = v1;
+
+				pushTriState(TS_ACTIVE);
+			}
+		}
+		else
+		{
+			if(vertexAt(v1_i).z < getCameraNearZ())
+			{
+				resizeVertexList(getVertexListSize() + 2);
+				const Vec4<real> & v0 = vertexAt(v0_i);
+				const Vec4<real> & v1 = vertexAt(v1_i);
+
+				Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+				Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+				new_v0 = v0;
+
+				new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+				new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+				new_v1.z = getCameraNearZ();
+
+				pushTriState(TS_ACTIVE);
+			}
+			else
+			{
+				return TS_ACTIVE;
+			}
+		}
+		return TS_CULLED;
+	}
+
+	TRI_STATE RenderLineListZBufferRW::sClipLineAtScreen(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+
+		const size_t ti = index * 2;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+
+		if(std::min(v0.x, v1.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(std::min(v0.y, v1.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(std::max(v0.x, v1.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(std::max(v0.y, v1.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(std::min(v0.x, v1.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(std::min(v0.y, v1.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(std::max(v0.x, v1.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(std::max(v0.y, v1.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderLineListZBufferRW::reset(void)
+	{
+		clearTriStateList();
+		resizeTriStateList(getVertexListSize() / 2, TS_ACTIVE);
+
+		resizeVertexList(getTriStateListSize() * 2);
+	}
+
+	void RenderLineListZBufferRW::worldToCamera(void)
+	{
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			*v_iter *= getCameraMatrix();
+		}
+	}
+
+	void RenderLineListZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 2);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			TRI_STATE state = zClipLineAtCamera(i); triStateAt(i) = state; // ***
+		}
+	}
+
+	void RenderLineListZBufferRW::cameraToScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 2);
+
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 2;
+				Vec4<real> & v0 = vertexAt(vi + 0);
+				Vec4<real> & v1 = vertexAt(vi + 1);
+
+				//       x * ( width / 2 ) * ctan( fov / 2 )
+				// x' = -------------------------------------
+				//                       z
+
+				v0.x = getViewport().left + v0.x * getCameraProjection().x / v0.z * halfWidth + halfWidth;
+				v1.x = getViewport().left + v1.x * getCameraProjection().x / v1.z * halfWidth + halfWidth;
+
+				//       y * ( height / 2 ) * ctan( fov / 2 )
+				// y' = -------------------------------------
+				//                       z
+
+				v0.y = getViewport().top + halfHeight - v0.y * getCameraProjection().y / v0.z * halfHeight;
+				v1.y = getViewport().top + halfHeight - v1.y * getCameraProjection().y / v1.z * halfHeight;
+			}
+		}
+	}
+
+	void RenderLineListZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 2);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipLineAtScreen(i);
+			}
+		}
+	}
+
+	void RenderLineListZBufferRW::drawLineList16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderLineListZBufferRW::drawLineList32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 2);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 2;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawLineZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedLineZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	TRI_STATE RenderLineIndexListZBufferRW::zClipLineAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t v0_i = vertexIndexAt(index * 2 + 0);
+		const size_t v1_i = vertexIndexAt(index * 2 + 1);
+
+		if(vertexAt(v0_i).z < getCameraNearZ())
+		{
+			if(vertexAt(v1_i).z < getCameraNearZ())
+			{
+				return TS_CULLED;
+			}
+			else
+			{
+				resizeVertexList(getVertexListSize() + 1);
+				const Vec4<real> & v0 = vertexAt(v0_i);
+				const Vec4<real> & v1 = vertexAt(v1_i);
+
+				Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 1);
+
+				new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+				new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+				new_v0.z = getCameraNearZ();
+
+				pushVertexIndex(getVertexListSize() - 1);
+				pushVertexIndex(v1_i);
+
+				pushTriState(TS_ACTIVE);
+			}
+		}
+		else
+		{
+			if(vertexAt(v1_i).z < getCameraNearZ())
+			{
+				resizeVertexList(getVertexListSize() + 1);
+				const Vec4<real> & v0 = vertexAt(v0_i);
+				const Vec4<real> & v1 = vertexAt(v1_i);
+
+				Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+				new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+				new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+				new_v1.z = getCameraNearZ();
+
+				pushVertexIndex(v0_i);
+				pushVertexIndex(getVertexListSize() - 1);
+
+				pushTriState(TS_ACTIVE);
+			}
+			else
+			{
+				return TS_ACTIVE;
+			}
+		}
+		return TS_CULLED;
+	}
+
+	TRI_STATE RenderLineIndexListZBufferRW::sClipLineAtScreen(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+
+		const size_t ti = index * 2;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+
+		if(std::min(v0.x, v1.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(std::min(v0.y, v1.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(std::max(v0.x, v1.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(std::max(v0.y, v1.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(std::min(v0.x, v1.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(std::min(v0.y, v1.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(std::max(v0.x, v1.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(std::max(v0.y, v1.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderLineIndexListZBufferRW::reset(void)
+	{
+		clearTriStateList();
+		resizeTriStateList(getVertexIndexListSize() / 2, TS_ACTIVE);
+
+		resizeVertexIndexList(getTriStateListSize() * 2);
+	}
+
+	void RenderLineIndexListZBufferRW::worldToCamera(void)
+	{
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			*v_iter *= getCameraMatrix();
+		}
+	}
+
+	void RenderLineIndexListZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			TRI_STATE state = zClipLineAtCamera(i); triStateAt(i) = state; // ***
+		}
+	}
+
+	void RenderLineIndexListZBufferRW::cameraToScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			//       x * ( width / 2 ) * ctan( fov / 2 )
+			// x' = -------------------------------------
+			//                       z
+
+			v_iter->x = getViewport().left + v_iter->x * getCameraProjection().x / v_iter->z * halfWidth + halfWidth;
+
+			//       y * ( height / 2 ) * ctan( fov / 2 )
+			// y' = -------------------------------------
+			//                       z
+
+			v_iter->y = getViewport().top + halfHeight - v_iter->y * getCameraProjection().y / v_iter->z * halfHeight;
+		}
+	}
+
+	void RenderLineIndexListZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipLineAtScreen(i);
+			}
+		}
+	}
+
+	void RenderLineIndexListZBufferRW::drawLineIndexList16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderLineIndexListZBufferRW::drawLineIndexList32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 2;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawLineZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					vertexAt(vertexIndexAt(vi + 0)),
+					vertexAt(vertexIndexAt(vi + 1)),
+					rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedLineZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					vertexAt(vertexIndexAt(vi + 0)),
+					vertexAt(vertexIndexAt(vi + 1)),
+					rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 3);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 3);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 3);
+		//Vec2<real> & new_t1 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & new_t2 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 3);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 3);
+		//Vec4<real> & new_c1 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & new_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		//new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		//new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		//new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		//new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		//new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		new_v2 = v2;
+		//new_t2 = t2;
+		//new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleListWireZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 6);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 6);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 5);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 4);
+
+		Vec4<real> & dbl_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & dbl_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 6);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 6);
+		//Vec2<real> & new_t1 = uvAt(getUVListSize() - 5);
+		//Vec2<real> & new_t2 = uvAt(getUVListSize() - 4);
+
+		//Vec2<real> & dbl_t0 = uvAt(getUVListSize() - 3);
+		//Vec2<real> & dbl_t1 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 6);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 6);
+		//Vec4<real> & new_c1 = colorAt(getColorListSize() - 5);
+		//Vec4<real> & new_c2 = colorAt(getColorListSize() - 4);
+
+		//Vec4<real> & dbl_c0 = colorAt(getColorListSize() - 3);
+		//Vec4<real> & dbl_c1 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		new_v1 = v1;
+		//new_t1 = t1;
+		//new_c1 = c1;
+
+		new_v2 = v2;
+		//new_t2 = t2;
+		//new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v0 = new_v0;
+		//dbl_t0 = new_t0;
+		//dbl_c0 = new_c0;
+
+		dbl_v1 = v2;
+		//dbl_t1 = t2;
+		//dbl_c1 = c2;
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		//dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleListWireZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleListWireZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleListWireZBufferRW::reset(void)
+	{
+		//assert(getVertexListSize() == getNormalListSize());
+		//assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexList(getTriStateListSize() * 3);
+		//resizeNormalList(getTriStateListSize() * 3);
+		//resizeUVList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleListWireZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vi + 0);
+			const Vec4<real> & v1 = vertexAt(vi + 1);
+			const Vec4<real> & v2 = vertexAt(vi + 2);
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::worldToCamera(void)
+	{
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				vertexAt(vi + 0) *= getCameraMatrix();
+				vertexAt(vi + 1) *= getCameraMatrix();
+				vertexAt(vi + 2) *= getCameraMatrix();
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::cameraToScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				Vec4<real> & v0 = vertexAt(vi + 0);
+				Vec4<real> & v1 = vertexAt(vi + 1);
+				Vec4<real> & v2 = vertexAt(vi + 2);
+
+				//       x * ( width / 2 ) * ctan( fov / 2 )
+				// x' = -------------------------------------
+				//                       z
+
+				v0.x = getViewport().left + v0.x * getCameraProjection().x / v0.z * halfWidth + halfWidth;
+				v1.x = getViewport().left + v1.x * getCameraProjection().x / v1.z * halfWidth + halfWidth;
+				v2.x = getViewport().left + v2.x * getCameraProjection().x / v2.z * halfWidth + halfWidth;
+
+				//       y * ( height / 2 ) * ctan( fov / 2 )
+				// y' = -------------------------------------
+				//                       z
+
+				v0.y = getViewport().top + halfHeight - v0.y * getCameraProjection().y / v0.z * halfHeight;
+				v1.y = getViewport().top + halfHeight - v1.y * getCameraProjection().y / v1.z * halfHeight;
+				v2.y = getViewport().top + halfHeight - v2.y * getCameraProjection().y / v2.z * halfHeight;
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::drawTriangleList16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderTriangleListWireZBufferRW::drawTriangleList32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = i * 3 + 0;
+			const size_t v1_i = i * 3 + 1;
+			const size_t v2_i = i * 3 + 2;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = i * 3 + 0;
+			const size_t v1_i = i * 3 + 1;
+			const size_t v2_i = i * 3 + 2;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				//drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				//drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 2);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & new_t1 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 2);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & new_c1 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		//new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		//new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		//new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		//new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		//new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(getVertexListSize() - 1);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 2);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 2);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v1_i);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		//dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v2_i);
+		pushVertexIndex(getVertexListSize() - 1);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleIndexListWireZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleIndexListWireZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::reset(void)
+	{
+		//assert(getVertexListSize() == getNormalListSize());
+		//assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexIndexList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
+			const Vec4<real> & v1 = vertexAt(vertexIndexAt(vi + 1));
+			const Vec4<real> & v2 = vertexAt(vertexIndexAt(vi + 2));
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::worldToCamera(void)
+	{
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			*v_iter *= getCameraMatrix();
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::cameraToScreen(void)
+	{
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			//       x * ( width / 2 ) * ctan( fov / 2 )
+			// x' = -------------------------------------
+			//                       z
+
+			v_iter->x = getViewport().left + v_iter->x * getCameraProjection().x / v_iter->z * halfWidth + halfWidth;
+
+			//       y * ( height / 2 ) * ctan( fov / 2 )
+			// y' = -------------------------------------
+			//                       z
+
+			v_iter->y = getViewport().top + halfHeight - v_iter->y * getCameraProjection().y / v_iter->z * halfHeight;
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				//drawLineZBufferRW32(getSurfaceRef32(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), rgbaSaturate(color * 255, real(255)));
+				drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				//drawClippedLineZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v2_i), vertexAt(v0_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListSolidZBufferRW::drawTriangleList16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderTriangleListSolidZBufferRW::drawTriangleList32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = i * 3 + 0;
+			const size_t v1_i = i * 3 + 1;
+			const size_t v2_i = i * 3 + 2;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleSolidZBufferRW32(
+					getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleSolidZBufferRW32(
+					getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList16(const Vec4<real> & color)
+	{
+		assert(false);
+
+		UNREFERENCED_PARAMETER(color);
+	}
+
+	void RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList32(const Vec4<real> & color)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleSolidZBufferRW32(
+					getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleSolidZBufferRW32(
+					getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 3);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 3);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 3);
+		//Vec2<real> & new_t1 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & new_t2 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 3);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 3);
+		Vec4<real> & new_c1 = colorAt(getColorListSize() - 2);
+		Vec4<real> & new_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		//new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		//new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		new_v2 = v2;
+		//new_t2 = t2;
+		new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleListGouraudZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 6);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 6);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 5);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 4);
+
+		Vec4<real> & dbl_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & dbl_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 6);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 6);
+		//Vec2<real> & new_t1 = uvAt(getUVListSize() - 5);
+		//Vec2<real> & new_t2 = uvAt(getUVListSize() - 4);
+
+		//Vec2<real> & dbl_t0 = uvAt(getUVListSize() - 3);
+		//Vec2<real> & dbl_t1 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 6);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 6);
+		Vec4<real> & new_c1 = colorAt(getColorListSize() - 5);
+		Vec4<real> & new_c2 = colorAt(getColorListSize() - 4);
+
+		Vec4<real> & dbl_c0 = colorAt(getColorListSize() - 3);
+		Vec4<real> & dbl_c1 = colorAt(getColorListSize() - 2);
+		Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		new_v1 = v1;
+		//new_t1 = t1;
+		new_c1 = c1;
+
+		new_v2 = v2;
+		//new_t2 = t2;
+		new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v0 = new_v0;
+		//dbl_t0 = new_t0;
+		dbl_c0 = new_c0;
+
+		dbl_v1 = v2;
+		//dbl_t1 = t2;
+		dbl_c1 = c2;
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		//dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleListGouraudZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleListGouraudZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleListGouraudZBufferRW::reset(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+		//assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexList(getTriStateListSize() * 3);
+		resizeNormalList(getTriStateListSize() * 3);
+		//resizeUVList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleListGouraudZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vi + 0);
+			const Vec4<real> & v1 = vertexAt(vi + 1);
+			const Vec4<real> & v2 = vertexAt(vi + 2);
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::lightAtWorld(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+
+		clearColorList();
+		resizeColorList(getTriStateListSize() * 3, Vec4<real>(0, 0, 0, 0));
+
+		LightList::const_iterator l_iter = getLightListBegin();
+		for(; l_iter != getLightListEnd(); l_iter++)
+		{
+			switch(l_iter->type)
+			{
+			case LT_AMBIENT:
+				for(size_t i = 0; i < getTriStateListSize(); i++)
+				{
+					if(isTriVisible(triStateAt(i)))
+					{
+						const size_t vi = i * 3;
+						colorAt(vi + 0) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(vi + 0), normalAt(vi + 0));
+						colorAt(vi + 1) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(vi + 1), normalAt(vi + 1));
+						colorAt(vi + 2) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(vi + 2), normalAt(vi + 2));
+					}
+				}
+				break;
+
+			case LT_DIRECTIONAL:
+				for(size_t i = 0; i < getTriStateListSize(); i++)
+				{
+					if(isTriVisible(triStateAt(i)))
+					{
+						const size_t vi = i * 3;
+						colorAt(vi + 0) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(vi + 0), normalAt(vi + 0));
+						colorAt(vi + 1) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(vi + 1), normalAt(vi + 1));
+						colorAt(vi + 2) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(vi + 2), normalAt(vi + 2));
+					}
+				}
+				break;
+
+			case LT_POINT:
+				for(size_t i = 0; i < getTriStateListSize(); i++)
+				{
+					if(isTriVisible(triStateAt(i)))
+					{
+						const size_t vi = i * 3;
+						colorAt(vi + 0) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(vi + 0), normalAt(vi + 0));
+						colorAt(vi + 1) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(vi + 1), normalAt(vi + 1));
+						colorAt(vi + 2) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(vi + 2), normalAt(vi + 2));
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::worldToCamera(void)
+	{
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				vertexAt(vi + 0) *= getCameraMatrix();
+				vertexAt(vi + 1) *= getCameraMatrix();
+				vertexAt(vi + 2) *= getCameraMatrix();
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::cameraToScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				Vec4<real> & v0 = vertexAt(vi + 0);
+				Vec4<real> & v1 = vertexAt(vi + 1);
+				Vec4<real> & v2 = vertexAt(vi + 2);
+
+				//       x * ( width / 2 ) * ctan( fov / 2 )
+				// x' = -------------------------------------
+				//                       z
+
+				v0.x = getViewport().left + v0.x * getCameraProjection().x / v0.z * halfWidth + halfWidth;
+				v1.x = getViewport().left + v1.x * getCameraProjection().x / v1.z * halfWidth + halfWidth;
+				v2.x = getViewport().left + v2.x * getCameraProjection().x / v2.z * halfWidth + halfWidth;
+
+				//       y * ( height / 2 ) * ctan( fov / 2 )
+				// y' = -------------------------------------
+				//                       z
+
+				v0.y = getViewport().top + halfHeight - v0.y * getCameraProjection().y / v0.z * halfHeight;
+				v1.y = getViewport().top + halfHeight - v1.y * getCameraProjection().y / v1.z * halfHeight;
+				v2.y = getViewport().top + halfHeight - v2.y * getCameraProjection().y / v2.z * halfHeight;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudZBufferRW::drawTriangleList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListGouraudZBufferRW::drawTriangleList32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleGouraudZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					//getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 2) * 255, real(255)));
+					//uvAt(vi + 0) * texture_expend,
+					//uvAt(vi + 1) * texture_expend,
+					//uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleGouraudZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					//getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 2) * 255, real(255)));
+					//uvAt(vi + 0) * texture_expend,
+					//uvAt(vi + 1) * texture_expend,
+					//uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 2);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & new_t1 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 2);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		Vec4<real> & new_c1 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		//new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		//new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(getVertexListSize() - 1);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		//assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		//resizeUVList(getUVListSize() + 2);
+		//const Vec2<real> & t0 = uvAt(v0_i);
+		//const Vec2<real> & t1 = uvAt(v1_i);
+		//const Vec2<real> & t2 = uvAt(v2_i);
+
+		//Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		//Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 2);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		//new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		//new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v1_i);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		//dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		//dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v2_i);
+		pushVertexIndex(getVertexListSize() - 1);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleIndexListGouraudZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleIndexListGouraudZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::reset(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+		//assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexIndexList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
+			const Vec4<real> & v1 = vertexAt(vertexIndexAt(vi + 1));
+			const Vec4<real> & v2 = vertexAt(vertexIndexAt(vi + 2));
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::lightAtWorld(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+
+		clearColorList();
+		resizeColorList(getVertexListSize(), Vec4<real>(0, 0, 0, 0));
+
+		LightList::const_iterator l_iter = getLightListBegin();
+		for(; l_iter != getLightListEnd(); l_iter++)
+		{
+			switch(l_iter->type)
+			{
+			case LT_AMBIENT:
+				for(size_t i = 0; i < getVertexListSize(); i++)
+				{
+					colorAt(i) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(i), normalAt(i));
+				}
+				break;
+
+			case LT_DIRECTIONAL:
+				for(size_t i = 0; i < getVertexListSize(); i++)
+				{
+					colorAt(i) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(i), normalAt(i));
+				}
+				break;
+
+			case LT_POINT:
+				for(size_t i = 0; i < getVertexListSize(); i++)
+				{
+					colorAt(i) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(i), normalAt(i));
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::worldToCamera(void)
+	{
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			*v_iter *= getCameraMatrix();
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::cameraToScreen(void)
+	{
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			//       x * ( width / 2 ) * ctan( fov / 2 )
+			// x' = -------------------------------------
+			//                       z
+
+			v_iter->x = getViewport().left + v_iter->x * getCameraProjection().x / v_iter->z * halfWidth + halfWidth;
+
+			//       y * ( height / 2 ) * ctan( fov / 2 )
+			// y' = -------------------------------------
+			//                       z
+
+			v_iter->y = getViewport().top + halfHeight - v_iter->y * getCameraProjection().y / v_iter->z * halfHeight;
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		//assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleGouraudZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					//getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v2_i) * 255, real(255)));
+					//uvAt(v0_i) * texture_expend,
+					//uvAt(v1_i) * texture_expend,
+					//uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleGouraudZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					//getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v2_i) * 255, real(255)));
+					//uvAt(v0_i) * texture_expend,
+					//uvAt(v1_i) * texture_expend,
+					//uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 3);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 3);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 3);
+		Vec2<real> & new_t1 = uvAt(getUVListSize() - 2);
+		Vec2<real> & new_t2 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 3);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 3);
+		//Vec4<real> & new_c1 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & new_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		//new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		//new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		//new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		new_v2 = v2;
+		new_t2 = t2;
+		//new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleListTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 6);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 6);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 5);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 4);
+
+		Vec4<real> & dbl_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & dbl_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 6);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 6);
+		Vec2<real> & new_t1 = uvAt(getUVListSize() - 5);
+		Vec2<real> & new_t2 = uvAt(getUVListSize() - 4);
+
+		Vec2<real> & dbl_t0 = uvAt(getUVListSize() - 3);
+		Vec2<real> & dbl_t1 = uvAt(getUVListSize() - 2);
+		Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 6);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 6);
+		//Vec4<real> & new_c1 = colorAt(getColorListSize() - 5);
+		//Vec4<real> & new_c2 = colorAt(getColorListSize() - 4);
+
+		//Vec4<real> & dbl_c0 = colorAt(getColorListSize() - 3);
+		//Vec4<real> & dbl_c1 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		new_v1 = v1;
+		new_t1 = t1;
+		//new_c1 = c1;
+
+		new_v2 = v2;
+		new_t2 = t2;
+		//new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v0 = new_v0;
+		dbl_t0 = new_t0;
+		//dbl_c0 = new_c0;
+
+		dbl_v1 = v2;
+		dbl_t1 = t2;
+		//dbl_c1 = c2;
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleListTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleListTextureZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleListTextureZBufferRW::reset(void)
+	{
+		//assert(getVertexListSize() == getNormalListSize());
+		assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexList(getTriStateListSize() * 3);
+		//resizeNormalList(getTriStateListSize() * 3);
+		resizeUVList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vi + 0);
+			const Vec4<real> & v1 = vertexAt(vi + 1);
+			const Vec4<real> & v2 = vertexAt(vi + 2);
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::worldToCamera(void)
+	{
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				vertexAt(vi + 0) *= getCameraMatrix();
+				vertexAt(vi + 1) *= getCameraMatrix();
+				vertexAt(vi + 2) *= getCameraMatrix();
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::cameraToScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				Vec4<real> & v0 = vertexAt(vi + 0);
+				Vec4<real> & v1 = vertexAt(vi + 1);
+				Vec4<real> & v2 = vertexAt(vi + 2);
+
+				//       x * ( width / 2 ) * ctan( fov / 2 )
+				// x' = -------------------------------------
+				//                       z
+
+				v0.x = getViewport().left + v0.x * getCameraProjection().x / v0.z * halfWidth + halfWidth;
+				v1.x = getViewport().left + v1.x * getCameraProjection().x / v1.z * halfWidth + halfWidth;
+				v2.x = getViewport().left + v2.x * getCameraProjection().x / v2.z * halfWidth + halfWidth;
+
+				//       y * ( height / 2 ) * ctan( fov / 2 )
+				// y' = -------------------------------------
+				//                       z
+
+				v0.y = getViewport().top + halfHeight - v0.y * getCameraProjection().y / v0.z * halfHeight;
+				v1.y = getViewport().top + halfHeight - v1.y * getCameraProjection().y / v1.z * halfHeight;
+				v2.y = getViewport().top + halfHeight - v2.y * getCameraProjection().y / v2.z * halfHeight;
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTextureZBufferW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTextureZBufferW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListTextureZBufferRW::drawTriangleList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListTextureZBufferRW::drawTriangleList32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTextureZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTextureZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 2);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		Vec2<real> & new_t1 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 2);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & new_c1 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		//new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		//new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		//new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(getVertexListSize() - 1);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 2);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		//resizeColorList(getColorListSize() + 2);
+		//const Vec4<real> & c0 = colorAt(v0_i);
+		//const Vec4<real> & c1 = colorAt(v1_i);
+		//const Vec4<real> & c2 = colorAt(v2_i);
+
+		//Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		//Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		//new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		//new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		//new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v1_i);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		//dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		//dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		//dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v2_i);
+		pushVertexIndex(getVertexListSize() - 1);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleIndexListTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleIndexListTextureZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::reset(void)
+	{
+		//assert(getVertexListSize() == getNormalListSize());
+		assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexIndexList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
+			const Vec4<real> & v1 = vertexAt(vertexIndexAt(vi + 1));
+			const Vec4<real> & v2 = vertexAt(vertexIndexAt(vi + 2));
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::worldToCamera(void)
+	{
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			*v_iter *= getCameraMatrix();
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::cameraToScreen(void)
+	{
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			//       x * ( width / 2 ) * ctan( fov / 2 )
+			// x' = -------------------------------------
+			//                       z
+
+			v_iter->x = getViewport().left + v_iter->x * getCameraProjection().x / v_iter->z * halfWidth + halfWidth;
+
+			//       y * ( height / 2 ) * ctan( fov / 2 )
+			// y' = -------------------------------------
+			//                       z
+
+			v_iter->y = getViewport().top + halfHeight - v_iter->y * getCameraProjection().y / v_iter->z * halfHeight;
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTextureZBufferW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTextureZBufferW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTextureZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTextureZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTexturePerspectiveLPZBufferW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTexturePerspectiveLPZBufferW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					//rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					//rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 3);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 3);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 3);
+		Vec2<real> & new_t1 = uvAt(getUVListSize() - 2);
+		Vec2<real> & new_t2 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 3);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 3);
+		Vec4<real> & new_c1 = colorAt(getColorListSize() - 2);
+		Vec4<real> & new_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		new_v2 = v2;
+		new_t2 = t2;
+		new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = index * 3 + 0;
+			v1_i = index * 3 + 1;
+			v2_i = index * 3 + 2;
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = index * 3 + 1;
+			v1_i = index * 3 + 2;
+			v2_i = index * 3 + 0;
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = index * 3 + 2;
+			v1_i = index * 3 + 0;
+			v2_i = index * 3 + 1;
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 6);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 6);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 5);
+		Vec4<real> & new_v2 = vertexAt(getVertexListSize() - 4);
+
+		Vec4<real> & dbl_v0 = vertexAt(getVertexListSize() - 3);
+		Vec4<real> & dbl_v1 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 6);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 6);
+		Vec2<real> & new_t1 = uvAt(getUVListSize() - 5);
+		Vec2<real> & new_t2 = uvAt(getUVListSize() - 4);
+
+		Vec2<real> & dbl_t0 = uvAt(getUVListSize() - 3);
+		Vec2<real> & dbl_t1 = uvAt(getUVListSize() - 2);
+		Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 6);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 6);
+		Vec4<real> & new_c1 = colorAt(getColorListSize() - 5);
+		Vec4<real> & new_c2 = colorAt(getColorListSize() - 4);
+
+		Vec4<real> & dbl_c0 = colorAt(getColorListSize() - 3);
+		Vec4<real> & dbl_c1 = colorAt(getColorListSize() - 2);
+		Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		new_v1 = v1;
+		new_t1 = t1;
+		new_c1 = c1;
+
+		new_v2 = v2;
+		new_t2 = t2;
+		new_c2 = c2;
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v0 = new_v0;
+		dbl_t0 = new_t0;
+		dbl_c0 = new_c0;
+
+		dbl_v1 = v2;
+		dbl_t1 = t2;
+		dbl_c1 = c2;
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleListGouraudTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleListGouraudTextureZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(ti + 0);
+		const Vec4<real> & v1 = vertexAt(ti + 1);
+		const Vec4<real> & v2 = vertexAt(ti + 2);
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::reset(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+		assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexList(getTriStateListSize() * 3);
+		resizeNormalList(getTriStateListSize() * 3);
+		resizeUVList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vi + 0);
+			const Vec4<real> & v1 = vertexAt(vi + 1);
+			const Vec4<real> & v2 = vertexAt(vi + 2);
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::lightAtWorld(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+
+		clearColorList();
+		resizeColorList(getTriStateListSize() * 3, Vec4<real>(0, 0, 0, 0));
+
+		LightList::const_iterator l_iter = getLightListBegin();
+		for(; l_iter != getLightListEnd(); l_iter++)
+		{
+			switch(l_iter->type)
+			{
+			case LT_AMBIENT:
+				for(size_t i = 0; i < getTriStateListSize(); i++)
+				{
+					if(isTriVisible(triStateAt(i)))
+					{
+						const size_t vi = i * 3;
+						colorAt(vi + 0) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(vi + 0), normalAt(vi + 0));
+						colorAt(vi + 1) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(vi + 1), normalAt(vi + 1));
+						colorAt(vi + 2) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(vi + 2), normalAt(vi + 2));
+					}
+				}
+				break;
+
+			case LT_DIRECTIONAL:
+				for(size_t i = 0; i < getTriStateListSize(); i++)
+				{
+					if(isTriVisible(triStateAt(i)))
+					{
+						const size_t vi = i * 3;
+						colorAt(vi + 0) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(vi + 0), normalAt(vi + 0));
+						colorAt(vi + 1) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(vi + 1), normalAt(vi + 1));
+						colorAt(vi + 2) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(vi + 2), normalAt(vi + 2));
+					}
+				}
+				break;
+
+			case LT_POINT:
+				for(size_t i = 0; i < getTriStateListSize(); i++)
+				{
+					if(isTriVisible(triStateAt(i)))
+					{
+						const size_t vi = i * 3;
+						colorAt(vi + 0) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(vi + 0), normalAt(vi + 0));
+						colorAt(vi + 1) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(vi + 1), normalAt(vi + 1));
+						colorAt(vi + 2) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(vi + 2), normalAt(vi + 2));
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::worldToCamera(void)
+	{
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				vertexAt(vi + 0) *= getCameraMatrix();
+				vertexAt(vi + 1) *= getCameraMatrix();
+				vertexAt(vi + 2) *= getCameraMatrix();
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::cameraToScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				const size_t vi = i * 3;
+				Vec4<real> & v0 = vertexAt(vi + 0);
+				Vec4<real> & v1 = vertexAt(vi + 1);
+				Vec4<real> & v2 = vertexAt(vi + 2);
+
+				//       x * ( width / 2 ) * ctan( fov / 2 )
+				// x' = -------------------------------------
+				//                       z
+
+				v0.x = getViewport().left + v0.x * getCameraProjection().x / v0.z * halfWidth + halfWidth;
+				v1.x = getViewport().left + v1.x * getCameraProjection().x / v1.z * halfWidth + halfWidth;
+				v2.x = getViewport().left + v2.x * getCameraProjection().x / v2.z * halfWidth + halfWidth;
+
+				//       y * ( height / 2 ) * ctan( fov / 2 )
+				// y' = -------------------------------------
+				//                       z
+
+				v0.y = getViewport().top + halfHeight - v0.y * getCameraProjection().y / v0.z * halfHeight;
+				v1.y = getViewport().top + halfHeight - v1.y * getCameraProjection().y / v1.z * halfHeight;
+				v2.y = getViewport().top + halfHeight - v2.y * getCameraProjection().y / v2.z * halfHeight;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::drawTriangleList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListGouraudTextureZBufferRW::drawTriangleList32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleGouraudTextureZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleGouraudTextureZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & new_v1 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 2);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		Vec2<real> & new_t1 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 2);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		Vec4<real> & new_c1 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*		2
+		* -------------
+		*	1       0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		new_v1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.x, v2.x);
+		new_v1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, v1.y, v2.y);
+		new_v1.z = getCameraNearZ();
+
+		new_t1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.x, t2.x);
+		new_t1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, t1.y, t2.y);
+
+		new_c1.x = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.x, c2.x);
+		new_c1.y = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.y, c2.y);
+		new_c1.z = LINE2D_INTERSECT(getCameraNearZ(), v1.z, v2.z, c1.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(getVertexListSize() - 1);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
+	{
+		assert(getTriStateListSize() * 3 == getVertexIndexListSize());
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		size_t v0_i, v1_i, v2_i;
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0:
+			v0_i = vertexIndexAt(index * 3 + 0);
+			v1_i = vertexIndexAt(index * 3 + 1);
+			v2_i = vertexIndexAt(index * 3 + 2);
+			break;
+
+		case CLIP_MASK_V1:
+			v0_i = vertexIndexAt(index * 3 + 1);
+			v1_i = vertexIndexAt(index * 3 + 2);
+			v2_i = vertexIndexAt(index * 3 + 0);
+			break;
+
+		case CLIP_MASK_V2:
+			v0_i = vertexIndexAt(index * 3 + 2);
+			v1_i = vertexIndexAt(index * 3 + 0);
+			v2_i = vertexIndexAt(index * 3 + 1);
+			break;
+
+		default:
+			assert(false);
+			return;
+		}
+
+		resizeVertexList(getVertexListSize() + 2);
+		const Vec4<real> & v0 = vertexAt(v0_i);
+		const Vec4<real> & v1 = vertexAt(v1_i);
+		const Vec4<real> & v2 = vertexAt(v2_i);
+
+		Vec4<real> & new_v0 = vertexAt(getVertexListSize() - 2);
+		Vec4<real> & dbl_v2 = vertexAt(getVertexListSize() - 1);
+
+		resizeUVList(getUVListSize() + 2);
+		const Vec2<real> & t0 = uvAt(v0_i);
+		const Vec2<real> & t1 = uvAt(v1_i);
+		const Vec2<real> & t2 = uvAt(v2_i);
+
+		Vec2<real> & new_t0 = uvAt(getUVListSize() - 2);
+		Vec2<real> & dbl_t2 = uvAt(getUVListSize() - 1);
+
+		resizeColorList(getColorListSize() + 2);
+		const Vec4<real> & c0 = colorAt(v0_i);
+		const Vec4<real> & c1 = colorAt(v1_i);
+		const Vec4<real> & c2 = colorAt(v2_i);
+
+		Vec4<real> & new_c0 = colorAt(getColorListSize() - 2);
+		Vec4<real> & dbl_c2 = colorAt(getColorListSize() - 1);
+
+		/**********************************************************************
+		*	1       2
+		* -------------
+		*		0
+		**********************************************************************/
+
+		new_v0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.x, v1.x);
+		new_v0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, v0.y, v1.y);
+		new_v0.z = getCameraNearZ();
+
+		new_t0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.x, t1.x);
+		new_t0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, t0.y, t1.y);
+
+		new_c0.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.x, c1.x);
+		new_c0.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.y, c1.y);
+		new_c0.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v1.z, c0.z, c1.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v1_i);
+		pushVertexIndex(v2_i);
+
+		pushTriState(TS_ACTIVE);
+
+		dbl_v2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.x, v2.x);
+		dbl_v2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, v0.y, v2.y);
+		dbl_v2.z = getCameraNearZ();
+
+		dbl_t2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.x, t2.x);
+		dbl_t2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, t0.y, t2.y);
+
+		dbl_c2.x = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.x, c2.x);
+		dbl_c2.y = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.y, c2.y);
+		dbl_c2.z = LINE2D_INTERSECT(getCameraNearZ(), v0.z, v2.z, c0.z, c2.z);
+
+		pushVertexIndex(getVertexListSize() - 2);
+		pushVertexIndex(v2_i);
+		pushVertexIndex(getVertexListSize() - 1);
+
+		pushTriState(TS_ACTIVE);
+	}
+
+	TRI_STATE RenderTriangleIndexListGouraudTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
+	{
+		assert(index < getTriStateListSize());
+		assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		DWORD clip_mask_nz = 0;
+		DWORD clip_mask_fz = 0;
+
+		if(v0.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V0;
+		else if(v0.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V0;
+
+		if(v1.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V1;
+		else if(v1.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V1;
+
+		if(v2.z < getCameraNearZ())
+			clip_mask_nz |= CLIP_MASK_V2;
+		else if(v2.z > getCameraFarZ())
+			clip_mask_fz |= CLIP_MASK_V2;
+
+		switch(clip_mask_fz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+		}
+
+		switch(clip_mask_nz)
+		{
+		case CLIP_MASK_V0 | CLIP_MASK_V1 | CLIP_MASK_V2:
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1 | CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZDouble(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V0:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V1:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+
+		case CLIP_MASK_V2:
+			zClipTriangleAtCameraNearZSingle(index, clip_mask_nz);
+			return TS_CULLED;
+		}
+
+		return TS_ACTIVE;
+	}
+
+	TRI_STATE RenderTriangleIndexListGouraudTextureZBufferRW::sClipTriangleAtScreen(const size_t index)
+	{
+		const size_t ti = index * 3;
+		const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
+		const Vec4<real> & v1 = vertexAt(vertexIndexAt(ti + 1));
+		const Vec4<real> & v2 = vertexAt(vertexIndexAt(ti + 2));
+
+		if(min(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CULLED;
+
+		if(min(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CULLED;
+
+		if(max(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CULLED;
+
+		if(max(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CULLED;
+
+		if(min(v0.x, v1.x, v2.x) < getViewport().left)
+			return TS_CLIPPED;
+
+		if(min(v0.y, v1.y, v2.y) < getViewport().top)
+			return TS_CLIPPED;
+
+		if(max(v0.x, v1.x, v2.x) >= getViewport().right)
+			return TS_CLIPPED;
+
+		if(max(v0.y, v1.y, v2.y) >= getViewport().bottom)
+			return TS_CLIPPED;
+
+		return TS_ACTIVE;
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::reset(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+		assert(getVertexListSize() == getUVListSize());
+
+		clearTriStateList();
+		resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
+
+		resizeVertexIndexList(getTriStateListSize() * 3);
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::removeBackfaceAtWorld(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			assert(TS_ACTIVE == triStateAt(i));
+
+			const size_t vi = i * 3;
+			const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
+			const Vec4<real> & v1 = vertexAt(vertexIndexAt(vi + 1));
+			const Vec4<real> & v2 = vertexAt(vertexIndexAt(vi + 2));
+
+			if(vec3Dot(
+				vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(getCameraPosition(), v0)) <= 0)
+			{
+				triStateAt(i) = TS_BACKFACE;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::lightAtWorld(void)
+	{
+		assert(getVertexListSize() == getNormalListSize());
+
+		clearColorList();
+		resizeColorList(getVertexListSize(), Vec4<real>(0, 0, 0, 0));
+
+		LightList::const_iterator l_iter = getLightListBegin();
+		for(; l_iter != getLightListEnd(); l_iter++)
+		{
+			switch(l_iter->type)
+			{
+			case LT_AMBIENT:
+				for(size_t i = 0; i < getVertexListSize(); i++)
+				{
+					colorAt(i) += lightVertexAmbient(*l_iter, getMaterial(), vertexAt(i), normalAt(i));
+				}
+				break;
+
+			case LT_DIRECTIONAL:
+				for(size_t i = 0; i < getVertexListSize(); i++)
+				{
+					colorAt(i) += lightVertexDirectional(*l_iter, getMaterial(), vertexAt(i), normalAt(i));
+				}
+				break;
+
+			case LT_POINT:
+				for(size_t i = 0; i < getVertexListSize(); i++)
+				{
+					colorAt(i) += lightVertexPoint(*l_iter, getMaterial(), vertexAt(i), normalAt(i));
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::worldToCamera(void)
+	{
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			*v_iter *= getCameraMatrix();
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::zClipAtCamera(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		const size_t orig_size = getTriStateListSize();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				TRI_STATE state = zClipTriangleAtCamera(i); triStateAt(i) = state; // ***
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::cameraToScreen(void)
+	{
+		const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
+		const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
+
+		VertexList::iterator v_iter = getVertexListBegin();
+		for(; v_iter != getVertexListEnd(); v_iter++)
+		{
+			//       x * ( width / 2 ) * ctan( fov / 2 )
+			// x' = -------------------------------------
+			//                       z
+
+			v_iter->x = getViewport().left + v_iter->x * getCameraProjection().x / v_iter->z * halfWidth + halfWidth;
+
+			//       y * ( height / 2 ) * ctan( fov / 2 )
+			// y' = -------------------------------------
+			//                       z
+
+			v_iter->y = getViewport().top + halfHeight - v_iter->y * getCameraProjection().y / v_iter->z * halfHeight;
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::sClipAtScreen(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			if(isTriVisible(triStateAt(i)))
+			{
+				triStateAt(i) = sClipTriangleAtScreen(i);
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleGouraudTextureZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleGouraudTextureZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTexturePerspectiveLPZBufferW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTexturePerspectiveLPZBufferW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		//assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					//rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					//rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList32(void)
+	{
+		assert(getTriStateListSize() == getVertexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t vi = i * 3;
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleGouraudTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(vi + 0),
+					vertexAt(vi + 1),
+					vertexAt(vi + 2),
+					rgbaSaturate(colorAt(vi + 0) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 1) * 255, real(255)),
+					rgbaSaturate(colorAt(vi + 2) * 255, real(255)),
+					uvAt(vi + 0) * texture_expend,
+					uvAt(vi + 1) * texture_expend,
+					uvAt(vi + 2) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	void RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList16(void)
+	{
+		assert(false);
+	}
+
+	void RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList32(void)
+	{
+		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+		assert(getVertexListSize() == getUVListSize());
+		assert(getVertexListSize() == getColorListSize());
+
+		const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
+
+		for(size_t i = 0; i < getTriStateListSize(); i++)
+		{
+			const size_t v0_i = vertexIndexAt(i * 3 + 0);
+			const size_t v1_i = vertexIndexAt(i * 3 + 1);
+			const size_t v2_i = vertexIndexAt(i * 3 + 2);
+
+			switch(triStateAt(i))
+			{
+			case TS_ACTIVE:
+				drawTriangleGouraudTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			case TS_CLIPPED:
+				drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW32(
+					getSurfaceRef32(),
+					getClipperRect(),
+					getZBufferRef28(),
+					getTextureRef32(),
+					vertexAt(v0_i),
+					vertexAt(v1_i),
+					vertexAt(v2_i),
+					rgbaSaturate(colorAt(v0_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v1_i) * 255, real(255)),
+					rgbaSaturate(colorAt(v2_i) * 255, real(255)),
+					uvAt(v0_i) * texture_expend,
+					uvAt(v1_i) * texture_expend,
+					uvAt(v2_i) * texture_expend);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	RenderContext::RenderContext(void)
+	{
+	}
+
+	RenderContext::~RenderContext(void)
+	{
+	}
+
+	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)
+	{
+		RenderLineListZBufferRW::reset();
+		RenderLineListZBufferRW::worldToCamera();
+		RenderLineListZBufferRW::zClipAtCamera();
+		RenderLineListZBufferRW::cameraToScreen();
+		RenderLineListZBufferRW::sClipAtScreen();
+		RenderLineListZBufferRW::drawLineList16(color);
+	}
+
+	void RenderContext16::drawLineIndexListZBufferRW(const Vec4<real> & color)
+	{
+		RenderLineIndexListZBufferRW::reset();
+		RenderLineIndexListZBufferRW::worldToCamera();
+		RenderLineIndexListZBufferRW::zClipAtCamera();
+		RenderLineIndexListZBufferRW::cameraToScreen();
+		RenderLineIndexListZBufferRW::sClipAtScreen();
+		RenderLineIndexListZBufferRW::drawLineIndexList16(color);
+	}
+
+	void RenderContext16::drawTriangleListWireZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleList16(color);
+	}
+
+	void RenderContext16::drawTriangleIndexListWireZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList16(color);
+	}
+
+	void RenderContext16::drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird16(color);
+	}
+
+	void RenderContext16::drawTriangleIndexListWireZBufferRWWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird16(color);
+	}
+
+	void RenderContext16::drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		//RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleList16(color);
+	}
+
+	void RenderContext16::drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		//RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList16(color);
+	}
+
+	void RenderContext16::drawTriangleListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		//RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird16(color);
+	}
+
+	void RenderContext16::drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		//RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird16(color);
+	}
+
+	void RenderContext16::drawTriangleListSolidZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleListSolidZBufferRW::reset();
+		RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListSolidZBufferRW::worldToCamera();
+		RenderTriangleListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleListSolidZBufferRW::cameraToScreen();
+		RenderTriangleListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleListSolidZBufferRW::drawTriangleList16(color);
+	}
+
+	void RenderContext16::drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListSolidZBufferRW::reset();
+		RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
+		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
+		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList16(color);
+	}
+
+	void RenderContext16::drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleListSolidZBufferRW::reset();
+		//RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListSolidZBufferRW::worldToCamera();
+		RenderTriangleListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleListSolidZBufferRW::cameraToScreen();
+		RenderTriangleListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleListSolidZBufferRW::drawTriangleList16(color);
+	}
+
+	void RenderContext16::drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListSolidZBufferRW::reset();
+		//RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
+		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
+		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList16(color);
+	}
+
+	void RenderContext16::drawTriangleListGouraudZBufferRW(void)
+	{
+		RenderTriangleListGouraudZBufferRW::reset();
+		RenderTriangleListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudZBufferRW::worldToCamera();
+		RenderTriangleListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudZBufferRW(void)
+	{
+		RenderTriangleIndexListGouraudZBufferRW::reset();
+		RenderTriangleIndexListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListGouraudZBufferRWWithBackface(void)
+	{
+		RenderTriangleListGouraudZBufferRW::reset();
+		//RenderTriangleListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudZBufferRW::worldToCamera();
+		RenderTriangleListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListGouraudZBufferRW::reset();
+		//RenderTriangleIndexListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferW(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferW(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferWWithBackface(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		//RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferWWithBackface(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		//RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferW(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferW(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW16();
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferRW(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferRW(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		//RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		//RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListGouraudTextureZBufferRW(void)
+	{
+		RenderTriangleListGouraudTextureZBufferRW::reset();
+		RenderTriangleListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTextureZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTextureZBufferRW(void)
+	{
+		RenderTriangleIndexListGouraudTextureZBufferRW::reset();
+		RenderTriangleIndexListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListGouraudTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleListGouraudTextureZBufferRW::reset();
+		//RenderTriangleListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTextureZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListGouraudTextureZBufferRW::reset();
+		//RenderTriangleIndexListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext16::drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList16();
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext32::drawLineListZBufferRW(const Vec4<real> & color)
+	{
+		RenderLineListZBufferRW::reset();
+		RenderLineListZBufferRW::worldToCamera();
+		RenderLineListZBufferRW::zClipAtCamera();
+		RenderLineListZBufferRW::cameraToScreen();
+		RenderLineListZBufferRW::sClipAtScreen();
+		RenderLineListZBufferRW::drawLineList32(color);
+	}
+
+	void RenderContext32::drawLineIndexListZBufferRW(const Vec4<real> & color)
+	{
+		RenderLineIndexListZBufferRW::reset();
+		RenderLineIndexListZBufferRW::worldToCamera();
+		RenderLineIndexListZBufferRW::zClipAtCamera();
+		RenderLineIndexListZBufferRW::cameraToScreen();
+		RenderLineIndexListZBufferRW::sClipAtScreen();
+		RenderLineIndexListZBufferRW::drawLineIndexList32(color);
+	}
+
+	void RenderContext32::drawTriangleListWireZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleList32(color);
+	}
+
+	void RenderContext32::drawTriangleIndexListWireZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList32(color);
+	}
+
+	void RenderContext32::drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird32(color);
+	}
+
+	void RenderContext32::drawTriangleIndexListWireZBufferRWWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird32(color);
+	}
+
+	void RenderContext32::drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		//RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleList32(color);
+	}
+
+	void RenderContext32::drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		//RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList32(color);
+	}
+
+	void RenderContext32::drawTriangleListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleListWireZBufferRW::reset();
+		//RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListWireZBufferRW::worldToCamera();
+		RenderTriangleListWireZBufferRW::zClipAtCamera();
+		RenderTriangleListWireZBufferRW::cameraToScreen();
+		RenderTriangleListWireZBufferRW::sClipAtScreen();
+		RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird32(color);
+	}
+
+	void RenderContext32::drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListWireZBufferRW::reset();
+		//RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird32(color);
+	}
+
+	void RenderContext32::drawTriangleListSolidZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleListSolidZBufferRW::reset();
+		RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListSolidZBufferRW::worldToCamera();
+		RenderTriangleListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleListSolidZBufferRW::cameraToScreen();
+		RenderTriangleListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleListSolidZBufferRW::drawTriangleList32(color);
+	}
+
+	void RenderContext32::drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListSolidZBufferRW::reset();
+		RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
+		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
+		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList32(color);
+	}
+
+	void RenderContext32::drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleListSolidZBufferRW::reset();
+		//RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListSolidZBufferRW::worldToCamera();
+		RenderTriangleListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleListSolidZBufferRW::cameraToScreen();
+		RenderTriangleListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleListSolidZBufferRW::drawTriangleList32(color);
+	}
+
+	void RenderContext32::drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		RenderTriangleIndexListSolidZBufferRW::reset();
+		//RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
+		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
+		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList32(color);
+	}
+
+	void RenderContext32::drawTriangleListGouraudZBufferRW(void)
+	{
+		RenderTriangleListGouraudZBufferRW::reset();
+		RenderTriangleListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudZBufferRW::worldToCamera();
+		RenderTriangleListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudZBufferRW(void)
+	{
+		RenderTriangleIndexListGouraudZBufferRW::reset();
+		RenderTriangleIndexListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListGouraudZBufferRWWithBackface(void)
+	{
+		RenderTriangleListGouraudZBufferRW::reset();
+		//RenderTriangleListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudZBufferRW::worldToCamera();
+		RenderTriangleListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListGouraudZBufferRW::reset();
+		//RenderTriangleIndexListGouraudZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferW(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferW(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferWWithBackface(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		//RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferWWithBackface(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		//RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferW(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferW(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW32();
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferRW(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferRW(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleListTextureZBufferRW::reset();
+		//RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTextureZBufferRW::lightAtWorld();
+		RenderTriangleListTextureZBufferRW::worldToCamera();
+		RenderTriangleListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListTextureZBufferRW::cameraToScreen();
+		RenderTriangleListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListTextureZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListTextureZBufferRW::reset();
+		//RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListGouraudTextureZBufferRW(void)
+	{
+		RenderTriangleListGouraudTextureZBufferRW::reset();
+		RenderTriangleListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTextureZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTextureZBufferRW(void)
+	{
+		RenderTriangleIndexListGouraudTextureZBufferRW::reset();
+		RenderTriangleIndexListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListGouraudTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleListGouraudTextureZBufferRW::reset();
+		//RenderTriangleListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTextureZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTextureZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListGouraudTextureZBufferRW::reset();
+		//RenderTriangleIndexListGouraudTextureZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTextureZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTextureZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::reset();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList32();
+	}
+
+	void RenderContext32::drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList32();
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::reset();
+		//RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::lightAtWorld();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::worldToCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList32();
+	}
+}
