@@ -4,537 +4,313 @@
 
 #include <cassert>
 #include <crtdbg.h>
-#include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
 
 #pragma comment(lib, "DDraw.lib")
 #pragma comment(lib, "dxguid.lib")
 
-#ifdef MYGAME_EXPORTS
-BOOL APIENTRY DllMain(HANDLE	hModule,
-					  DWORD		ul_reason_for_call,
-					  LPVOID	lpReserved)
-{
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-		break;
-
-	case DLL_THREAD_ATTACH:
-		break;
-
-	case DLL_THREAD_DETACH:
-		break;
-
-	case DLL_PROCESS_DETACH:
-		//_CrtDumpMemoryLeaks(); // dont use like this, because some glabol obj havent been destroyed yet !!!
-		break;
-	}
-
-	return TRUE;
-	hModule;
-	lpReserved;
-}
-#endif
-
 namespace t3d
 {
-	std::basic_string<charT> DDraw::getResultStr(HRESULT hres)
+#define CASE_RETURN_STRING(branch) case branch: return std::basic_string<charT>(_T( #branch ));
+
+	std::basic_string<charT> DDException::GetResultStr(HRESULT hres)
 	{
-		const charT * pstr;
 		switch(hres)
 		{
-		case DD_OK:
-			pstr = _T("DD_OK"); break;
-		case DDERR_ALREADYINITIALIZED:
-			pstr = _T("DDERR_ALREADYINITIALIZED"); break;
-		case DDERR_BLTFASTCANTCLIP:
-			pstr = _T("DDERR_BLTFASTCANTCLIP"); break;
-		case DDERR_CANNOTATTACHSURFACE:
-			pstr = _T("DDERR_CANNOTATTACHSURFACE"); break;
-		case DDERR_CANNOTDETACHSURFACE:
-			pstr = _T("DDERR_CANNOTDETACHSURFACE"); break;
-		case DDERR_CANTCREATEDC:
-			pstr = _T("DDERR_CANTCREATEDC"); break;
-		case DDERR_CANTDUPLICATE:
-			pstr = _T("DDERR_CANTDUPLICATE"); break;
-		case DDERR_CANTLOCKSURFACE:
-			pstr = _T("DDERR_CANTLOCKSURFACE"); break;
-		case DDERR_CANTPAGELOCK:
-			pstr = _T("DDERR_CANTPAGELOCK"); break;
-		case DDERR_CANTPAGEUNLOCK:
-			pstr = _T("DDERR_CANTPAGEUNLOCK"); break;
-		case DDERR_CLIPPERISUSINGHWND:
-			pstr = _T("DDERR_CLIPPERISUSINGHWND"); break;
-		case DDERR_COLORKEYNOTSET:
-			pstr = _T("DDERR_COLORKEYNOTSET"); break;
-		case DDERR_CURRENTLYNOTAVAIL:
-			pstr = _T("DDERR_CURRENTLYNOTAVAIL"); break;
-		case DDERR_DDSCAPSCOMPLEXREQUIRED:
-			pstr = _T("DDERR_DDSCAPSCOMPLEXREQUIRED"); break;
-		case DDERR_DCALREADYCREATED:
-			pstr = _T("DDERR_DCALREADYCREATED"); break;
-		case DDERR_DEVICEDOESNTOWNSURFACE:
-			pstr = _T("DDERR_DEVICEDOESNTOWNSURFACE"); break;
-		case DDERR_DIRECTDRAWALREADYCREATED:
-			pstr = _T("DDERR_DIRECTDRAWALREADYCREATED"); break;
-		case DDERR_EXCEPTION:
-			pstr = _T("DDERR_EXCEPTION"); break;
-		case DDERR_EXCLUSIVEMODEALREADYSET:
-			pstr = _T("DDERR_EXCLUSIVEMODEALREADYSET"); break;
-		case DDERR_EXPIRED:
-			pstr = _T("DDERR_EXPIRED"); break;
-		case DDERR_GENERIC:
-			pstr = _T("DDERR_GENERIC"); break;
-		case DDERR_HEIGHTALIGN:
-			pstr = _T("DDERR_HEIGHTALIGN"); break;
-		case DDERR_HWNDALREADYSET:
-			pstr = _T("DDERR_HWNDALREADYSET"); break;
-		case DDERR_HWNDSUBCLASSED:
-			pstr = _T("DDERR_HWNDSUBCLASSED"); break;
-		case DDERR_IMPLICITLYCREATED:
-			pstr = _T("DDERR_IMPLICITLYCREATED"); break;
-		case DDERR_INCOMPATIBLEPRIMARY:
-			pstr = _T("DDERR_INCOMPATIBLEPRIMARY"); break;
-		case DDERR_INVALIDCAPS:
-			pstr = _T("DDERR_INVALIDCAPS"); break;
-		case DDERR_INVALIDCLIPLIST:
-			pstr = _T("DDERR_INVALIDCLIPLIST"); break;
-		case DDERR_INVALIDDIRECTDRAWGUID:
-			pstr = _T("DDERR_INVALIDDIRECTDRAWGUID"); break;
-		case DDERR_INVALIDMODE:
-			pstr = _T("DDERR_INVALIDMODE"); break;
-		case DDERR_INVALIDOBJECT:
-			pstr = _T("DDERR_INVALIDOBJECT"); break;
-		case DDERR_INVALIDPARAMS:
-			pstr = _T("DDERR_INVALIDPARAMS"); break;
-		case DDERR_INVALIDPIXELFORMAT:
-			pstr = _T("DDERR_INVALIDPIXELFORMAT"); break;
-		case DDERR_INVALIDPOSITION:
-			pstr = _T("DDERR_INVALIDPOSITION"); break;
-		case DDERR_INVALIDRECT:
-			pstr = _T("DDERR_INVALIDRECT"); break;
-		case DDERR_INVALIDSTREAM:
-			pstr = _T("DDERR_INVALIDSTREAM"); break;
-		case DDERR_INVALIDSURFACETYPE:
-			pstr = _T("DDERR_INVALIDSURFACETYPE"); break;
-		case DDERR_LOCKEDSURFACES:
-			pstr = _T("DDERR_LOCKEDSURFACES"); break;
-		case DDERR_MOREDATA:
-			pstr = _T("DDERR_MOREDATA"); break;
-		case DDERR_NEWMODE:
-			pstr = _T("DDERR_NEWMODE"); break;
-		case DDERR_NO3D:
-			pstr = _T("DDERR_NO3D"); break;
-		case DDERR_NOALPHAHW:
-			pstr = _T("DDERR_NOALPHAHW"); break;
-		case DDERR_NOBLTHW:
-			pstr = _T("DDERR_NOBLTHW"); break;
-		case DDERR_NOCLIPLIST:
-			pstr = _T("DDERR_NOCLIPLIST"); break;
-		case DDERR_NOCLIPPERATTACHED:
-			pstr = _T("DDERR_NOCLIPPERATTACHED"); break;
-		case DDERR_NOCOLORCONVHW:
-			pstr = _T("DDERR_NOCOLORCONVHW"); break;
-		case DDERR_NOCOLORKEY:
-			pstr = _T("DDERR_NOCOLORKEY"); break;
-		case DDERR_NOCOLORKEYHW:
-			pstr = _T("DDERR_NOCOLORKEYHW"); break;
-		case DDERR_NOCOOPERATIVELEVELSET:
-			pstr = _T("DDERR_NOCOOPERATIVELEVELSET"); break;
-		case DDERR_NODC:
-			pstr = _T("DDERR_NODC"); break;
-		case DDERR_NODDROPSHW:
-			pstr = _T("DDERR_NODDROPSHW"); break;
-		case DDERR_NODIRECTDRAWHW:
-			pstr = _T("DDERR_NODIRECTDRAWHW"); break;
-		case DDERR_NODIRECTDRAWSUPPORT:
-			pstr = _T("DDERR_NODIRECTDRAWSUPPORT"); break;
-		case DDERR_NODRIVERSUPPORT:
-			pstr = _T("DDERR_NODRIVERSUPPORT"); break;
-		case DDERR_NOEMULATION:
-			pstr = _T("DDERR_NOEMULATION"); break;
-		case DDERR_NOEXCLUSIVEMODE:
-			pstr = _T("DDERR_NOEXCLUSIVEMODE"); break;
-		case DDERR_NOFLIPHW:
-			pstr = _T("DDERR_NOFLIPHW"); break;
-		case DDERR_NOFOCUSWINDOW:
-			pstr = _T("DDERR_NOFOCUSWINDOW"); break;
-		case DDERR_NOGDI:
-			pstr = _T("DDERR_NOGDI"); break;
-		case DDERR_NOHWND:
-			pstr = _T("DDERR_NOHWND"); break;
-		case DDERR_NOMIPMAPHW:
-			pstr = _T("DDERR_NOMIPMAPHW"); break;
-		case DDERR_NOMIRRORHW:
-			pstr = _T("DDERR_NOMIRRORHW"); break;
-		case DDERR_NOMONITORINFORMATION:
-			pstr = _T("DDERR_NOMONITORINFORMATION"); break;
-		case DDERR_NONONLOCALVIDMEM:
-			pstr = _T("DDERR_NONONLOCALVIDMEM"); break;
-		case DDERR_NOOPTIMIZEHW:
-			pstr = _T("DDERR_NOOPTIMIZEHW"); break;
-		case DDERR_NOOVERLAYDEST:
-			pstr = _T("DDERR_NOOVERLAYDEST"); break;
-		case DDERR_NOOVERLAYHW:
-			pstr = _T("DDERR_NOOVERLAYHW"); break;
-		case DDERR_NOPALETTEATTACHED:
-			pstr = _T("DDERR_NOPALETTEATTACHED"); break;
-		case DDERR_NOPALETTEHW:
-			pstr = _T("DDERR_NOPALETTEHW"); break;
-		case DDERR_NORASTEROPHW:
-			pstr = _T("DDERR_NORASTEROPHW"); break;
-		case DDERR_NOROTATIONHW:
-			pstr = _T("DDERR_NOROTATIONHW"); break;
-		case DDERR_NOSTEREOHARDWARE:
-			pstr = _T("DDERR_NOSTEREOHARDWARE"); break;
-		case DDERR_NOSTRETCHHW:
-			pstr = _T("DDERR_NOSTRETCHHW"); break;
-		case DDERR_NOSURFACELEFT:
-			pstr = _T("DDERR_NOSURFACELEFT"); break;
-		case DDERR_NOT4BITCOLOR:
-			pstr = _T("DDERR_NOT4BITCOLOR"); break;
-		case DDERR_NOT4BITCOLORINDEX:
-			pstr = _T("DDERR_NOT4BITCOLORINDEX"); break;
-		case DDERR_NOT8BITCOLOR:
-			pstr = _T("DDERR_NOT8BITCOLOR"); break;
-		case DDERR_NOTAOVERLAYSURFACE:
-			pstr = _T("DDERR_NOTAOVERLAYSURFACE"); break;
-		case DDERR_NOTEXTUREHW:
-			pstr = _T("DDERR_NOTEXTUREHW"); break;
-		case DDERR_NOTFLIPPABLE:
-			pstr = _T("DDERR_NOTFLIPPABLE"); break;
-		case DDERR_NOTFOUND:
-			pstr = _T("DDERR_NOTFOUND"); break;
-		case DDERR_NOTINITIALIZED:
-			pstr = _T("DDERR_NOTINITIALIZED"); break;
-		case DDERR_NOTLOADED:
-			pstr = _T("DDERR_NOTLOADED"); break;
-		case DDERR_NOTLOCKED:
-			pstr = _T("DDERR_NOTLOCKED"); break;
-		case DDERR_NOTPAGELOCKED:
-			pstr = _T("DDERR_NOTPAGELOCKED"); break;
-		case DDERR_NOTPALETTIZED:
-			pstr = _T("DDERR_NOTPALETTIZED"); break;
-		case DDERR_NOVSYNCHW:
-			pstr = _T("DDERR_NOVSYNCHW"); break;
-		case DDERR_NOZBUFFERHW:
-			pstr = _T("DDERR_NOZBUFFERHW"); break;
-		case DDERR_NOZOVERLAYHW:
-			pstr = _T("DDERR_NOZOVERLAYHW"); break;
-		case DDERR_OUTOFCAPS:
-			pstr = _T("DDERR_OUTOFCAPS"); break;
-		case DDERR_OUTOFMEMORY:
-			pstr = _T("DDERR_OUTOFMEMORY"); break;
-		case DDERR_OUTOFVIDEOMEMORY:
-			pstr = _T("DDERR_OUTOFVIDEOMEMORY"); break;
-		case DDERR_OVERLAPPINGRECTS:
-			pstr = _T("DDERR_OVERLAPPINGRECTS"); break;
-		case DDERR_OVERLAYCANTCLIP:
-			pstr = _T("DDERR_OVERLAYCANTCLIP"); break;
-		case DDERR_OVERLAYCOLORKEYONLYONEACTIVE:
-			pstr = _T("DDERR_OVERLAYCOLORKEYONLYONEACTIVE"); break;
-		case DDERR_OVERLAYNOTVISIBLE:
-			pstr = _T("DDERR_OVERLAYNOTVISIBLE"); break;
-		case DDERR_PALETTEBUSY:
-			pstr = _T("DDERR_PALETTEBUSY"); break;
-		case DDERR_PRIMARYSURFACEALREADYEXISTS:
-			pstr = _T("DDERR_PRIMARYSURFACEALREADYEXISTS"); break;
-		case DDERR_REGIONTOOSMALL:
-			pstr = _T("DDERR_REGIONTOOSMALL"); break;
-		case DDERR_SURFACEALREADYATTACHED:
-			pstr = _T("DDERR_SURFACEALREADYATTACHED"); break;
-		case DDERR_SURFACEALREADYDEPENDENT:
-			pstr = _T("DDERR_SURFACEALREADYDEPENDENT"); break;
-		case DDERR_SURFACEBUSY:
-			pstr = _T("DDERR_SURFACEBUSY"); break;
-		case DDERR_SURFACEISOBSCURED:
-			pstr = _T("DDERR_SURFACEISOBSCURED"); break;
-		case DDERR_SURFACELOST:
-			pstr = _T("DDERR_SURFACELOST"); break;
-		case DDERR_SURFACENOTATTACHED:
-			pstr = _T("DDERR_SURFACENOTATTACHED"); break;
-		case DDERR_TESTFINISHED:
-			pstr = _T("DDERR_TESTFINISHED"); break;
-		case DDERR_TOOBIGHEIGHT:
-			pstr = _T("DDERR_TOOBIGHEIGHT"); break;
-		case DDERR_TOOBIGSIZE:
-			pstr = _T("DDERR_TOOBIGSIZE"); break;
-		case DDERR_TOOBIGWIDTH:
-			pstr = _T("DDERR_TOOBIGWIDTH"); break;
-		case DDERR_UNSUPPORTED:
-			pstr = _T("DDERR_UNSUPPORTED"); break;
-		case DDERR_UNSUPPORTEDFORMAT:
-			pstr = _T("DDERR_UNSUPPORTEDFORMAT"); break;
-		case DDERR_UNSUPPORTEDMASK:
-			pstr = _T("DDERR_UNSUPPORTEDMASK"); break;
-		case DDERR_UNSUPPORTEDMODE:
-			pstr = _T("DDERR_UNSUPPORTEDMODE"); break;
-		case DDERR_VERTICALBLANKINPROGRESS:
-			pstr = _T("DDERR_VERTICALBLANKINPROGRESS"); break;
-		case DDERR_VIDEONOTACTIVE:
-			pstr = _T("DDERR_VIDEONOTACTIVE"); break;
-		case DDERR_WASSTILLDRAWING:
-			pstr = _T("DDERR_WASSTILLDRAWING"); break;
-		case DDERR_WRONGMODE:
-			pstr = _T("DDERR_WRONGMODE"); break;
-		case DDERR_XALIGN:
-			pstr = _T("DDERR_XALIGN"); break;
-		default:
-			pstr = _T("unknown ddraw error result"); break;
+		CASE_RETURN_STRING(DD_OK)
+		CASE_RETURN_STRING(DDERR_ALREADYINITIALIZED)
+		CASE_RETURN_STRING(DDERR_BLTFASTCANTCLIP)
+		CASE_RETURN_STRING(DDERR_CANNOTATTACHSURFACE)
+		CASE_RETURN_STRING(DDERR_CANNOTDETACHSURFACE)
+		CASE_RETURN_STRING(DDERR_CANTCREATEDC)
+		CASE_RETURN_STRING(DDERR_CANTDUPLICATE)
+		CASE_RETURN_STRING(DDERR_CANTLOCKSURFACE)
+		CASE_RETURN_STRING(DDERR_CANTPAGELOCK)
+		CASE_RETURN_STRING(DDERR_CANTPAGEUNLOCK)
+		CASE_RETURN_STRING(DDERR_CLIPPERISUSINGHWND)
+		CASE_RETURN_STRING(DDERR_COLORKEYNOTSET)
+		CASE_RETURN_STRING(DDERR_CURRENTLYNOTAVAIL)
+		CASE_RETURN_STRING(DDERR_DDSCAPSCOMPLEXREQUIRED)
+		CASE_RETURN_STRING(DDERR_DCALREADYCREATED)
+		CASE_RETURN_STRING(DDERR_DEVICEDOESNTOWNSURFACE)
+		CASE_RETURN_STRING(DDERR_DIRECTDRAWALREADYCREATED)
+		CASE_RETURN_STRING(DDERR_EXCEPTION)
+		CASE_RETURN_STRING(DDERR_EXCLUSIVEMODEALREADYSET)
+		CASE_RETURN_STRING(DDERR_EXPIRED)
+		CASE_RETURN_STRING(DDERR_GENERIC)
+		CASE_RETURN_STRING(DDERR_HEIGHTALIGN)
+		CASE_RETURN_STRING(DDERR_HWNDALREADYSET)
+		CASE_RETURN_STRING(DDERR_HWNDSUBCLASSED)
+		CASE_RETURN_STRING(DDERR_IMPLICITLYCREATED)
+		CASE_RETURN_STRING(DDERR_INCOMPATIBLEPRIMARY)
+		CASE_RETURN_STRING(DDERR_INVALIDCAPS)
+		CASE_RETURN_STRING(DDERR_INVALIDCLIPLIST)
+		CASE_RETURN_STRING(DDERR_INVALIDDIRECTDRAWGUID)
+		CASE_RETURN_STRING(DDERR_INVALIDMODE)
+		CASE_RETURN_STRING(DDERR_INVALIDOBJECT)
+		CASE_RETURN_STRING(DDERR_INVALIDPARAMS)
+		CASE_RETURN_STRING(DDERR_INVALIDPIXELFORMAT)
+		CASE_RETURN_STRING(DDERR_INVALIDPOSITION)
+		CASE_RETURN_STRING(DDERR_INVALIDRECT)
+		CASE_RETURN_STRING(DDERR_INVALIDSTREAM)
+		CASE_RETURN_STRING(DDERR_INVALIDSURFACETYPE)
+		CASE_RETURN_STRING(DDERR_LOCKEDSURFACES)
+		CASE_RETURN_STRING(DDERR_MOREDATA)
+		CASE_RETURN_STRING(DDERR_NEWMODE)
+		CASE_RETURN_STRING(DDERR_NO3D)
+		CASE_RETURN_STRING(DDERR_NOALPHAHW)
+		CASE_RETURN_STRING(DDERR_NOBLTHW)
+		CASE_RETURN_STRING(DDERR_NOCLIPLIST)
+		CASE_RETURN_STRING(DDERR_NOCLIPPERATTACHED)
+		CASE_RETURN_STRING(DDERR_NOCOLORCONVHW)
+		CASE_RETURN_STRING(DDERR_NOCOLORKEY)
+		CASE_RETURN_STRING(DDERR_NOCOLORKEYHW)
+		CASE_RETURN_STRING(DDERR_NOCOOPERATIVELEVELSET)
+		CASE_RETURN_STRING(DDERR_NODC)
+		CASE_RETURN_STRING(DDERR_NODDROPSHW)
+		CASE_RETURN_STRING(DDERR_NODIRECTDRAWHW)
+		CASE_RETURN_STRING(DDERR_NODIRECTDRAWSUPPORT)
+		CASE_RETURN_STRING(DDERR_NODRIVERSUPPORT)
+		CASE_RETURN_STRING(DDERR_NOEMULATION)
+		CASE_RETURN_STRING(DDERR_NOEXCLUSIVEMODE)
+		CASE_RETURN_STRING(DDERR_NOFLIPHW)
+		CASE_RETURN_STRING(DDERR_NOFOCUSWINDOW)
+		CASE_RETURN_STRING(DDERR_NOGDI)
+		CASE_RETURN_STRING(DDERR_NOHWND)
+		CASE_RETURN_STRING(DDERR_NOMIPMAPHW)
+		CASE_RETURN_STRING(DDERR_NOMIRRORHW)
+		CASE_RETURN_STRING(DDERR_NOMONITORINFORMATION)
+		CASE_RETURN_STRING(DDERR_NONONLOCALVIDMEM)
+		CASE_RETURN_STRING(DDERR_NOOPTIMIZEHW)
+		CASE_RETURN_STRING(DDERR_NOOVERLAYDEST)
+		CASE_RETURN_STRING(DDERR_NOOVERLAYHW)
+		CASE_RETURN_STRING(DDERR_NOPALETTEATTACHED)
+		CASE_RETURN_STRING(DDERR_NOPALETTEHW)
+		CASE_RETURN_STRING(DDERR_NORASTEROPHW)
+		CASE_RETURN_STRING(DDERR_NOROTATIONHW)
+		CASE_RETURN_STRING(DDERR_NOSTEREOHARDWARE)
+		CASE_RETURN_STRING(DDERR_NOSTRETCHHW)
+		CASE_RETURN_STRING(DDERR_NOSURFACELEFT)
+		CASE_RETURN_STRING(DDERR_NOT4BITCOLOR)
+		CASE_RETURN_STRING(DDERR_NOT4BITCOLORINDEX)
+		CASE_RETURN_STRING(DDERR_NOT8BITCOLOR)
+		CASE_RETURN_STRING(DDERR_NOTAOVERLAYSURFACE)
+		CASE_RETURN_STRING(DDERR_NOTEXTUREHW)
+		CASE_RETURN_STRING(DDERR_NOTFLIPPABLE)
+		CASE_RETURN_STRING(DDERR_NOTFOUND)
+		CASE_RETURN_STRING(DDERR_NOTINITIALIZED)
+		CASE_RETURN_STRING(DDERR_NOTLOADED)
+		CASE_RETURN_STRING(DDERR_NOTLOCKED)
+		CASE_RETURN_STRING(DDERR_NOTPAGELOCKED)
+		CASE_RETURN_STRING(DDERR_NOTPALETTIZED)
+		CASE_RETURN_STRING(DDERR_NOVSYNCHW)
+		CASE_RETURN_STRING(DDERR_NOZBUFFERHW)
+		CASE_RETURN_STRING(DDERR_NOZOVERLAYHW)
+		CASE_RETURN_STRING(DDERR_OUTOFCAPS)
+		CASE_RETURN_STRING(DDERR_OUTOFMEMORY)
+		CASE_RETURN_STRING(DDERR_OUTOFVIDEOMEMORY)
+		CASE_RETURN_STRING(DDERR_OVERLAPPINGRECTS)
+		CASE_RETURN_STRING(DDERR_OVERLAYCANTCLIP)
+		CASE_RETURN_STRING(DDERR_OVERLAYCOLORKEYONLYONEACTIVE)
+		CASE_RETURN_STRING(DDERR_OVERLAYNOTVISIBLE)
+		CASE_RETURN_STRING(DDERR_PALETTEBUSY)
+		CASE_RETURN_STRING(DDERR_PRIMARYSURFACEALREADYEXISTS)
+		CASE_RETURN_STRING(DDERR_REGIONTOOSMALL)
+		CASE_RETURN_STRING(DDERR_SURFACEALREADYATTACHED)
+		CASE_RETURN_STRING(DDERR_SURFACEALREADYDEPENDENT)
+		CASE_RETURN_STRING(DDERR_SURFACEBUSY)
+		CASE_RETURN_STRING(DDERR_SURFACEISOBSCURED)
+		CASE_RETURN_STRING(DDERR_SURFACELOST)
+		CASE_RETURN_STRING(DDERR_SURFACENOTATTACHED)
+		CASE_RETURN_STRING(DDERR_TESTFINISHED)
+		CASE_RETURN_STRING(DDERR_TOOBIGHEIGHT)
+		CASE_RETURN_STRING(DDERR_TOOBIGSIZE)
+		CASE_RETURN_STRING(DDERR_TOOBIGWIDTH)
+		CASE_RETURN_STRING(DDERR_UNSUPPORTED)
+		CASE_RETURN_STRING(DDERR_UNSUPPORTEDFORMAT)
+		CASE_RETURN_STRING(DDERR_UNSUPPORTEDMASK)
+		CASE_RETURN_STRING(DDERR_UNSUPPORTEDMODE)
+		CASE_RETURN_STRING(DDERR_VERTICALBLANKINPROGRESS)
+		CASE_RETURN_STRING(DDERR_VIDEONOTACTIVE)
+		CASE_RETURN_STRING(DDERR_WASSTILLDRAWING)
+		CASE_RETURN_STRING(DDERR_WRONGMODE)
+		CASE_RETURN_STRING(DDERR_XALIGN)
 		}
-		return std::basic_string<charT>(pstr);
+		return std::basic_string<charT>(_T("unknown ddraw error result"));
 	}
 
-	t3d::DDraw::Exception::Exception(const std::basic_string<charT> & file, int line, HRESULT hres)
+	t3d::DDException::DDException(const std::basic_string<charT> & file, int line, HRESULT hres)
 		: t3d::Exception(file, line)
 		, m_hres(hres)
 	{
 	}
 
-	std::basic_string<charT> t3d::DDraw::Exception::what(void) const throw()
+	std::basic_string<charT> t3d::DDException::what(void) const throw()
 	{
-		return getResultStr(m_hres);
+		return GetResultStr(m_hres);
 	}
 
-#define T3D_DDEXCEPT(hres) { throw t3d::DDraw::Exception(_T(__FILE__), __LINE__, (hres)); }
+#define T3D_DDEXCEPT(hres) { throw t3d::DDException( _T(__FILE__), __LINE__, (hres) ); }
 
-	DDraw::DDraw()
-		: m_lpddraw(NULL)
+#define FAILED_DDEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DDEXCEPT(hres) }
+
+#ifdef DEBUG
+#define SUCCEEDED_VERIFY(expr) assert( SUCCEEDED( expr ) )
+#else
+#define SUCCEEDED_VERIFY(expr) expr
+#endif
+
+	DDClipper::DDClipper(const DDraw * ddraw)
 	{
-		HRESULT hres;
-		if(FAILED(hres = DirectDrawCreateEx(NULL, (LPVOID *)&m_lpddraw, IID_IDirectDraw7, NULL)))
-			T3D_DDEXCEPT(hres);
+		FAILED_DDEXCEPT(ddraw->m_ddraw->CreateClipper(0, &m_ddclipper, NULL));
 	}
 
-	DDraw::~DDraw()
+	DDClipper::~DDClipper(void)
 	{
-		SAFE_RELEASE(m_lpddraw);
 	}
 
-	void DDraw::setCooperativeLevel(HWND hwnd, DWORD level)
+	void DDClipper::SetHWnd(HWND hWnd)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpddraw->SetCooperativeLevel(hwnd, level)))
-			T3D_DDEXCEPT(hres);
+		SUCCEEDED_VERIFY(m_ddclipper->SetHWnd(0, hWnd));
 	}
 
-	void DDraw::setDisplayMode(DWORD width, DWORD height, DWORD bpp, DWORD refreshRate /*= 0*/)
+	void DDClipper::SetClipList(LPRGNDATA lpClipList)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpddraw->SetDisplayMode(width, height, bpp, refreshRate, 0)))
-			T3D_DDEXCEPT(hres);
+		SUCCEEDED_VERIFY(m_ddclipper->SetClipList(lpClipList, 0));
 	}
 
-	//void DDraw::restoreDisplayMode(void)
-	//{
-	//	HRESULT hres;
-	//	if(FAILED(hres = m_lpddraw->RestoreDisplayMode()))
-	//		T3D_DDEXCEPT(hres);
-	//}
-
-	void DDraw::waitForVerticalBlank(DWORD flags /*= WF_BEGIN*/)
+	DDSurface::DDSurface(const DDraw * ddraw, DDSURFACEDESC2 & ddsd)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpddraw->WaitForVerticalBlank(flags, NULL)))
-			T3D_DDEXCEPT(hres);
+		FAILED_DDEXCEPT(ddraw->m_ddraw->CreateSurface(&ddsd, &m_ddsurface, NULL));
 	}
 
-	DDraw::Clipper * DDraw::createWindowClipper(HWND hwnd)
+	DDSurface::~DDSurface(void)
 	{
-		return new WindowClipper(this, hwnd);
 	}
 
-	DDraw::Clipper * DDraw::createMemoryClipper(const RECT rect[], size_t rect_size)
+	void DDSurface::SetClipper(LPDIRECTDRAWCLIPPER lpDDClipper)
 	{
-		return new MemoryClipper(this, rect, rect_size);
+		SUCCEEDED_VERIFY(m_ddsurface->SetClipper(lpDDClipper));
 	}
 
-	DDraw::Surface * DDraw::createWindowSurface(void)
+	void DDSurface::GetPixelFormat(LPDDPIXELFORMAT lpDDPixelFormat)
 	{
-		return new WindowSurface(this);
+		SUCCEEDED_VERIFY(m_ddsurface->GetPixelFormat(lpDDPixelFormat));
 	}
 
-	DDraw::Surface * DDraw::createMemorySurface(DWORD width, DWORD height)
+	void DDSurface::Lock(LPDDSURFACEDESC2 lpDDSurfaceDesc, LPRECT lpDestRect /*= NULL*/, DWORD dwFlags /*= DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR*/)
 	{
-		return new MemorySurface(this, width, height);
+		FAILED_DDEXCEPT(m_ddsurface->Lock(lpDestRect, lpDDSurfaceDesc, dwFlags, NULL));
 	}
 
-	DDraw::Clipper::Clipper(const DDraw * ddraw)
-		: m_lpddclipper(NULL)
+	void DDSurface::Unlock(LPRECT lpRect /*= NULL*/)
 	{
-		assert(NULL != ddraw);
-		assert(NULL != ddraw->m_lpddraw);
-
-		HRESULT hres;
-		if(FAILED(hres = ddraw->m_lpddraw->CreateClipper(0, &m_lpddclipper, NULL)))
-			T3D_DDEXCEPT(hres);
+		FAILED_DDEXCEPT(m_ddsurface->Unlock(lpRect));
 	}
 
-	DDraw::Clipper::~Clipper()
+	void DDSurface::Blt(LPRECT lpDestRect, LPDIRECTDRAWSURFACE7 lpDDSrcSurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
 	{
-		SAFE_RELEASE(m_lpddclipper);
+		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx));
 	}
 
-	DDraw::WindowClipper::WindowClipper(const DDraw * ddraw, HWND hwnd)
-		: Clipper(ddraw)
+	void DDSurface::FILL(LPRECT lpDestRect, DWORD color)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpddclipper->SetHWnd(0, hwnd)))
-			T3D_DDEXCEPT(hres);
-	}
-
-	DDraw::MemoryClipper::MemoryClipper(const DDraw * ddraw, const RECT rect[], size_t rect_size)
-		: Clipper(ddraw)
-	{
-		const size_t rgnd_size = sizeof(RGNDATAHEADER) + rect_size * sizeof(RECT);
-
-		boost::shared_ptr<RGNDATA> rgnd_ptr((LPRGNDATA)malloc(rgnd_size));
-		if(NULL == rgnd_ptr.get())
-			T3D_CUSEXCEPT(_T("malloc RGNDATA failed"));
-
-		memset(rgnd_ptr.get(), 0, rgnd_size);
-		rgnd_ptr->rdh.dwSize			= sizeof(rgnd_ptr->rdh);
-		rgnd_ptr->rdh.iType				= RDH_RECTANGLES;
-		rgnd_ptr->rdh.nCount			= (DWORD)rect_size;
-		rgnd_ptr->rdh.nRgnSize			= (DWORD)rect_size * sizeof(RECT);
-		rgnd_ptr->rdh.rcBound.left		=  6400;
-		rgnd_ptr->rdh.rcBound.top		=  6400;
-		rgnd_ptr->rdh.rcBound.right		= -6400;
-		rgnd_ptr->rdh.rcBound.bottom	= -6400;
-
-		for(size_t i = 0; i < rect_size; i++)
-		{
-			rgnd_ptr->rdh.rcBound.left		= std::min(rgnd_ptr->rdh.rcBound.left,	rect[i].left);
-			rgnd_ptr->rdh.rcBound.top		= std::min(rgnd_ptr->rdh.rcBound.top,	rect[i].top);
-			rgnd_ptr->rdh.rcBound.right		= std::max(rgnd_ptr->rdh.rcBound.right,	rect[i].right);
-			rgnd_ptr->rdh.rcBound.bottom	= std::max(rgnd_ptr->rdh.rcBound.bottom,	rect[i].bottom);
-		}
-		memcpy(rgnd_ptr->Buffer, rect, rect_size * sizeof(RECT));
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddclipper->SetClipList(rgnd_ptr.get(), 0)))
-			T3D_DDEXCEPT(hres);
-	}
-
-	DDraw::Surface::Surface(const DDraw * ddraw)
-		: m_lpddsurface(NULL)
-	{
-		assert(NULL != ddraw);
-		assert(NULL != ddraw->m_lpddraw);
-
-		ddraw;
-	}
-
-	DDraw::Surface::~Surface()
-	{
-		SAFE_RELEASE(m_lpddsurface);
-	}
-
-	void DDraw::Surface::setClipper(Clipper * clipper)
-	{
-		assert(NULL != m_lpddsurface);
-
-		assert(NULL != clipper);
-		assert(NULL != clipper->m_lpddclipper);
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->SetClipper(clipper->m_lpddclipper)))
-			T3D_DDEXCEPT(hres);
-	}
-
-	DDPIXELFORMAT DDraw::Surface::getPixelFormat(void)
-	{
-		assert(NULL != m_lpddsurface);
-
-		DDPIXELFORMAT ddpf;
-		ddpf.dwSize = sizeof(ddpf);
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->GetPixelFormat(&ddpf)))
-			T3D_DDEXCEPT(hres);
-
-		return ddpf;
-	}
-
-	DDSURFACEDESC2 DDraw::Surface::lock(const RECT * prect /*= NULL*/)
-	{
-		assert(NULL != m_lpddsurface);
-
-		DDSURFACEDESC2 ddsd;
-		ddsd.dwSize = sizeof(ddsd);
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->Lock(const_cast<RECT *>(prect), &ddsd, DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR, 0)))
-			T3D_DDEXCEPT(hres);
-
-		return ddsd;
-	}
-
-	void DDraw::Surface::unlock(const RECT * prect /*= NULL*/)
-	{
-		assert(NULL != m_lpddsurface);
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->Unlock(const_cast<RECT *>(prect))))
-			T3D_DDEXCEPT(hres);
-	}
-
-	void DDraw::Surface::blt(const RECT * dst_rect, const Surface * src_surf, const RECT * src_rect, DWORD flag /*= DDBLT_DONOTWAIT*/)
-	{
-		assert(NULL != m_lpddsurface);
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->Blt(const_cast<RECT *>(dst_rect), src_surf->m_lpddsurface, const_cast<RECT *>(src_rect), flag, NULL)))
-			T3D_DDEXCEPT(hres);
-	}
-
-	void DDraw::Surface::fill(const RECT * dst_rect, DWORD color)
-	{
-		assert(NULL != m_lpddsurface);
-
 		DDBLTFX ddbf;
 		memset(&ddbf, 0, sizeof(ddbf));
 		ddbf.dwSize = sizeof(ddbf);
 		ddbf.dwFillColor = color;
 
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->Blt(const_cast<RECT *>(dst_rect), NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf)))
-			T3D_DDEXCEPT(hres);
+		Blt(lpDestRect, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf);
 	}
 
-	HDC DDraw::Surface::getDC(void)
+	void DDSurface::Restore(void)
 	{
-		assert(NULL != m_lpddsurface);
+		FAILED_DDEXCEPT(m_ddsurface->Restore());
+	}
 
+	HDC DDSurface::GetDC(void)
+	{
 		HDC hdc;
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->GetDC(&hdc)))
-			T3D_DDEXCEPT(hres);
-
+		FAILED_DDEXCEPT(m_ddsurface->GetDC(&hdc));
 		return hdc;
 	}
 
-	void DDraw::Surface::releaseDC(HDC hdc)
+	void DDSurface::ReleaseDC(HDC hdc)
 	{
-		assert(NULL != m_lpddsurface);
-
-		HRESULT hres;
-		if(FAILED(hres = m_lpddsurface->ReleaseDC(hdc)))
-			T3D_DDEXCEPT(hres);
+		FAILED_DDEXCEPT(m_ddsurface->ReleaseDC(hdc));
 	}
 
-	//void DDraw::Surface::restore(void)
-	//{
-	//	assert(NULL != m_lpddsurface);
+	DDraw::DDraw(void)
+	{
+		FAILED_DDEXCEPT(DirectDrawCreateEx(NULL, (LPVOID *)&m_ddraw, IID_IDirectDraw7, NULL));
+	}
 
-	//	HRESULT hres;
-	//	if(FAILED(hres = m_lpddsurface->Restore()))
-	//		T3D_DDEXCEPT(hres);
-	//}
+	DDraw::~DDraw(void)
+	{
+	}
 
-	DDraw::WindowSurface::WindowSurface(const DDraw * ddraw)
-		: Surface(ddraw)
+	void DDraw::SetCooperativeLevel( HWND hWnd, DWORD dwFlags)
+	{
+		FAILED_DDEXCEPT(m_ddraw->SetCooperativeLevel(hWnd, dwFlags));
+	}
+
+	void DDraw::SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate /*= 0*/)
+	{
+		FAILED_DDEXCEPT(m_ddraw->SetDisplayMode(dwWidth, dwHeight, dwBPP, dwRefreshRate, 0));
+	}
+
+	void DDraw::RestoreDisplayMode(void)
+	{
+		FAILED_DDEXCEPT(m_ddraw->RestoreDisplayMode());
+	}
+
+	void DDraw::WaitForVerticalBlank(DWORD dwFlags /*= WF_BEGIN*/)
+	{
+		FAILED_DDEXCEPT(m_ddraw->WaitForVerticalBlank(dwFlags, NULL));
+	}
+
+	DDClipperPtr DDraw::CreateWindowClipper(HWND hWnd)
+	{
+		DDClipperPtr clipper(new DDClipper(this));
+		clipper->SetHWnd(hWnd);
+		return clipper;
+	}
+
+	DDClipperPtr DDraw::CreateMemoryClipper(LPRECT lpRect, DWORD dwCount)
+	{
+		boost::shared_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
+
+		LPRGNDATA pRgnd = (LPRGNDATA)tmpData.get();
+		if(NULL == pRgnd)
+			T3D_CUSEXCEPT(_T("malloc RGNDATA failed"));
+
+		memset(pRgnd, 0, sizeof(RGNDATAHEADER));
+
+		pRgnd->rdh.dwSize			= sizeof(pRgnd->rdh);
+		pRgnd->rdh.iType			= RDH_RECTANGLES;
+		pRgnd->rdh.nCount			= dwCount;
+		pRgnd->rdh.nRgnSize			= dwCount * sizeof(RECT);
+		pRgnd->rdh.rcBound.left		=  6400;
+		pRgnd->rdh.rcBound.top		=  6400;
+		pRgnd->rdh.rcBound.right	= -6400;
+		pRgnd->rdh.rcBound.bottom	= -6400;
+
+		for(size_t i = 0; i < dwCount; i++)
+		{
+			pRgnd->rdh.rcBound.left		= std::min(pRgnd->rdh.rcBound.left, lpRect[i].left);
+			pRgnd->rdh.rcBound.top		= std::min(pRgnd->rdh.rcBound.top, lpRect[i].top);
+			pRgnd->rdh.rcBound.right	= std::max(pRgnd->rdh.rcBound.right, lpRect[i].right);
+			pRgnd->rdh.rcBound.bottom	= std::max(pRgnd->rdh.rcBound.bottom, lpRect[i].bottom);
+		}
+
+		memcpy(pRgnd->Buffer, lpRect, sizeof(RECT) * dwCount);
+
+		DDClipperPtr clipper(new DDClipper(this));
+		clipper->SetClipList(pRgnd);
+		return clipper;
+	}
+
+	DDSurfacePtr DDraw::CreateWindowSurface(void)
 	{
 		DDSURFACEDESC2 ddsd;
 		memset(&ddsd, 0, sizeof(ddsd));
@@ -543,24 +319,21 @@ namespace t3d
 		ddsd.ddsCaps.dwCaps		= DDSCAPS_PRIMARYSURFACE;
 		ddsd.dwBackBufferCount	= 0;
 
-		HRESULT hres;
-		if(FAILED(hres = ddraw->m_lpddraw->CreateSurface(&ddsd, &m_lpddsurface, NULL)))
-			T3D_DDEXCEPT(hres);
+		DDSurfacePtr surface(new DDSurface(this, ddsd));
+		return surface;
 	}
 
-	DDraw::MemorySurface::MemorySurface(const DDraw * ddraw, DWORD width, DWORD height)
-		: Surface(ddraw)
+	DDSurfacePtr DDraw::CreateMemorySurface(DWORD dwWidth, DWORD dwHeight)
 	{
 		DDSURFACEDESC2 ddsd;
 		memset(&ddsd, 0, sizeof(ddsd));
 		ddsd.dwSize				= sizeof(ddsd);
 		ddsd.dwFlags			= DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps		= DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-		ddsd.dwWidth			= width;
-		ddsd.dwHeight			= height;
+		ddsd.dwWidth			= dwWidth;
+		ddsd.dwHeight			= dwHeight;
 
-		HRESULT hres;
-		if(FAILED(hres = ddraw->m_lpddraw->CreateSurface(&ddsd, &m_lpddsurface, NULL)))
-			T3D_DDEXCEPT(hres);
+		DDSurfacePtr surface(new DDSurface(this, ddsd));
+		return surface;
 	}
 }

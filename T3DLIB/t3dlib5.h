@@ -123,47 +123,47 @@ namespace t3d
 		}
 	};
 
-	T3DLIB_API void drawHorizonLine32(
+	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,
 		const Vec4<real> & v0,
 		int width,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawClippedHorizonLine32(
+	void drawClippedHorizonLine32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		const Vec4<real> & v0,
 		int width,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawVerticalLine32(
+	void drawVerticalLine32(
 		SurfaceRef<uint32> surface,
 		const Vec4<real> & v0,
 		int height,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawClippedVerticalLine32(
+	void drawClippedVerticalLine32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		const Vec4<real> & v0,
 		int height,
 		const Vec4<real> & color);
 
-	T3DLIB_API bool clipLineZBuffer(
+	bool clipLineZBuffer(
 		const RECT & clipper,
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		Vec4<real> & vres0,
 		Vec4<real> & vres1);
 
-	T3DLIB_API void drawLineZBufferRW32(
+	void drawLineZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawClippedLineZBufferRW32(
+	void drawClippedLineZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -171,7 +171,7 @@ namespace t3d
 		const Vec4<real> & v1,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawScanSolidZBufferRW32(
+	void drawScanSolidZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		fixp16 lx,
@@ -181,7 +181,7 @@ namespace t3d
 		fixp28 rz,
 		const Vec4<fixp16> & color);
 
-	T3DLIB_API void drawClippedScanSolidZBufferRW32(
+	void drawClippedScanSolidZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -192,7 +192,7 @@ namespace t3d
 		fixp28 rz,
 		const Vec4<fixp16> & color);
 
-	T3DLIB_API void drawScanGouraudZBufferRW32(
+	void drawScanGouraudZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		fixp16 lx,
@@ -203,7 +203,7 @@ namespace t3d
 		Vec4<fixp16> lc,
 		const Vec4<fixp16> & rc);
 
-	T3DLIB_API void drawClippedScanGouraudZBufferRW32(
+	void drawClippedScanGouraudZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -215,7 +215,7 @@ namespace t3d
 		Vec4<fixp16> lc,
 		const Vec4<fixp16> & rc);
 
-	T3DLIB_API void drawScanTextureZBufferW32(
+	void drawScanTextureZBufferW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		ConstSurfaceRef<uint32> texture,
@@ -227,32 +227,7 @@ namespace t3d
 		Vec2<fixp16> lt,
 		const Vec2<fixp16> & rt);
 
-	T3DLIB_API void drawClippedScanTextureZBufferW32(
-		SurfaceRef<uint32> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz,
-		Vec2<fixp16> lt,
-		const Vec2<fixp16> & rt);
-
-	T3DLIB_API void drawScanTextureZBufferRW32(
-		SurfaceRef<uint32> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz,
-		Vec2<fixp16> lt,
-		const Vec2<fixp16> & rt);
-
-	T3DLIB_API void drawClippedScanTextureZBufferRW32(
+	void drawClippedScanTextureZBufferW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -265,7 +240,32 @@ namespace t3d
 		Vec2<fixp16> lt,
 		const Vec2<fixp16> & rt);
 
-	T3DLIB_API void drawScanGouraudTextureZBufferRW32(
+	void drawScanTextureZBufferRW32(
+		SurfaceRef<uint32> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt);
+
+	void drawClippedScanTextureZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt);
+
+	void drawScanGouraudTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		ConstSurfaceRef<uint32> texture,
@@ -279,7 +279,7 @@ namespace t3d
 		Vec2<fixp16> lt,
 		const Vec2<fixp16> & rt);
 
-	T3DLIB_API void drawClippedScanGouraudTextureZBufferRW32(
+	void drawClippedScanGouraudTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -294,7 +294,7 @@ namespace t3d
 		Vec2<fixp16> lt,
 		const Vec2<fixp16> & rt);
 
-	T3DLIB_API void drawTriangleSolidZBufferRW32(
+	void drawTriangleSolidZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		const Vec4<real> & v0,
@@ -302,7 +302,7 @@ namespace t3d
 		const Vec4<real> & v2,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawClippedTriangleSolidZBufferRW32(
+	void drawClippedTriangleSolidZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -311,7 +311,7 @@ namespace t3d
 		const Vec4<real> & v2,
 		const Vec4<real> & color);
 
-	T3DLIB_API void drawTriangleGouraudZBufferRW32(
+	void drawTriangleGouraudZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		const Vec4<real> & v0,
@@ -321,7 +321,7 @@ namespace t3d
 		const Vec4<real> & c1,
 		const Vec4<real> & c2);
 
-	T3DLIB_API void drawClippedTriangleGouraudZBufferRW32(
+	void drawClippedTriangleGouraudZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -332,7 +332,7 @@ namespace t3d
 		const Vec4<real> & c1,
 		const Vec4<real> & c2);
 
-	T3DLIB_API void drawTriangleTextureZBufferW32(
+	void drawTriangleTextureZBufferW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		ConstSurfaceRef<uint32> texture,
@@ -343,30 +343,7 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawClippedTriangleTextureZBufferW32(
-		SurfaceRef<uint32> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	T3DLIB_API void drawTriangleTextureZBufferRW32(
-		SurfaceRef<uint32> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	T3DLIB_API void drawClippedTriangleTextureZBufferRW32(
+	void drawClippedTriangleTextureZBufferW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -378,7 +355,30 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawTriangleGouraudTextureZBufferRW32(
+	void drawTriangleTextureZBufferRW32(
+		SurfaceRef<uint32> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawClippedTriangleTextureZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawTriangleGouraudTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		ConstSurfaceRef<uint32> texture,
@@ -392,7 +392,7 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawClippedTriangleGouraudTextureZBufferRW32(
+	void drawClippedTriangleGouraudTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -407,7 +407,7 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawTriangleTexturePerspectiveLPZBufferW32(
+	void drawTriangleTexturePerspectiveLPZBufferW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		ConstSurfaceRef<uint32> texture,
@@ -418,30 +418,7 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawClippedTriangleTexturePerspectiveLPZBufferW32(
-		SurfaceRef<uint32> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	T3DLIB_API void drawTriangleTexturePerspectiveLPZBufferRW32(
-		SurfaceRef<uint32> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	T3DLIB_API void drawClippedTriangleTexturePerspectiveLPZBufferRW32(
+	void drawClippedTriangleTexturePerspectiveLPZBufferW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -453,7 +430,30 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawTriangleGouraudTexturePerspectiveLPZBufferRW32(
+	void drawTriangleTexturePerspectiveLPZBufferRW32(
+		SurfaceRef<uint32> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawTriangleGouraudTexturePerspectiveLPZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		ConstSurfaceRef<uint32> texture,
@@ -467,7 +467,7 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
-	T3DLIB_API void drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW32(
+	void drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,

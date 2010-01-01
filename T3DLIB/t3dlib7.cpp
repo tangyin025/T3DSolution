@@ -115,7 +115,7 @@ namespace t3d
 	{
 	}
 
-	T3DLIB_API Bone & incrementBone(
+	Bone & incrementBone(
 		Bone & bone,
 		const Bone & bone0,
 		const Bone & bone1)
@@ -129,7 +129,7 @@ namespace t3d
 		return bone;
 	}
 
-	T3DLIB_API Bone & intersectBone(
+	Bone & intersectBone(
 		Bone & bone,
 		const Bone & bone0,
 		const Bone & bone1,
@@ -169,7 +169,7 @@ namespace t3d
 	{
 	}
 
-	T3DLIB_API BoneNodeList & incrementBoneNodeList(
+	BoneNodeList & incrementBoneNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneNodeList & boneNodeList0,
 		const BoneNodeList & boneNodeList1,
@@ -196,7 +196,7 @@ namespace t3d
 		return boneNodeList;
 	}
 
-	T3DLIB_API BoneNodeList & intersectBoneNodeList(
+	BoneNodeList & intersectBoneNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneNodeList & boneNodeList0,
 		const BoneNodeList & boneNodeList1,
@@ -255,7 +255,7 @@ namespace t3d
 	{
 	}
 
-	T3DLIB_API Bone & intersectBoneKeyFrame(
+	Bone & intersectBoneKeyFrame(
 		Bone & bone,
 		const BoneKeyFrame & boneKeyFrame0,
 		const BoneKeyFrame & boneKeyFrame1,
@@ -270,21 +270,21 @@ namespace t3d
 			time);
 	}
 
-	T3DLIB_API real getBoneKeyFrameListMinTime(const BoneKeyFrameList & boneKeyFrameList)
+	real getBoneKeyFrameListMinTime(const BoneKeyFrameList & boneKeyFrameList)
 	{
 		assert(boneKeyFrameList.size() > 0);
 
 		return boneKeyFrameList.front().getTime();
 	}
 
-	T3DLIB_API real getBoneKeyFrameListMaxTime(const BoneKeyFrameList & boneKeyFrameList)
+	real getBoneKeyFrameListMaxTime(const BoneKeyFrameList & boneKeyFrameList)
 	{
 		assert(boneKeyFrameList.size() > 0);
 
 		return boneKeyFrameList.back().getTime();
 	}
 
-	T3DLIB_API Bone & intersectBoneKeyFrameList(
+	Bone & intersectBoneKeyFrameList(
 		Bone & bone,
 		const BoneKeyFrameList & boneKeyFrameList,
 		real time)
@@ -376,7 +376,7 @@ namespace t3d
 	{
 	}
 
-	T3DLIB_API real getBoneAnimationNodeListMinTime(
+	real getBoneAnimationNodeListMinTime(
 		const BoneAnimationNodeList & boneAnimationNodeList)
 	{
 		real minTime = REAL_MIN;
@@ -389,7 +389,7 @@ namespace t3d
 		return minTime;
 	}
 
-	T3DLIB_API real getBoneAnimationNodeListMaxTime(
+	real getBoneAnimationNodeListMaxTime(
 		const BoneAnimationNodeList & boneAnimationNodeList)
 	{
 		real maxTime = REAL_MAX;
@@ -402,7 +402,7 @@ namespace t3d
 		return maxTime;
 	}
 
-	T3DLIB_API BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
+	BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneAnimationNodeList & boneAnimationNodeList,
 		size_t bone_i,
@@ -460,7 +460,7 @@ namespace t3d
 	{
 	}
 
-	T3DLIB_API BoneTransform & updateBoneTransformFromBone(
+	BoneTransform & updateBoneTransformFromBone(
 		BoneTransform & boneTransform,
 		const Bone & bone,
 		const Mat4<real> & mrot,
@@ -475,7 +475,7 @@ namespace t3d
 		return boneTransform;
 	}
 
-	T3DLIB_API BoneTransformList & updateBoneTransformListFromBoneNodeList(
+	BoneTransformList & updateBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
 		size_t root_i,
@@ -506,7 +506,7 @@ namespace t3d
 		return boneTransformList;
 	}
 
-	T3DLIB_API BoneTransform & updateBoneInverseTransformFromBone(
+	BoneTransform & updateBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
 		const Bone & bone,
 		const Mat4<real> & mInverseRot,
@@ -521,7 +521,7 @@ namespace t3d
 		return inverseBoneTransform;
 	}
 
-	T3DLIB_API BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
 		size_t root_i,
@@ -548,7 +548,7 @@ namespace t3d
 		return inverseBoneTransformList;
 	}
 
-	T3DLIB_API BoneTransform & combineVertexBoneTransform(
+	BoneTransform & combineVertexBoneTransform(
 		BoneTransform & res,
 		const BoneTransform & lhs,
 		const BoneTransform & rhs)
@@ -557,7 +557,7 @@ namespace t3d
 		return res;
 	}
 
-	T3DLIB_API BoneTransform & combineVertexNormalBoneTransform(
+	BoneTransform & combineVertexNormalBoneTransform(
 		BoneTransform & res,
 		const BoneTransform & lhs,
 		const BoneTransform & rhs)
@@ -567,7 +567,7 @@ namespace t3d
 		return res;
 	}
 
-	T3DLIB_API BoneTransformList & combineVertexBoneTransformList(
+	BoneTransformList & combineVertexBoneTransformList(
 		BoneTransformList & res,
 		const BoneTransformList & lhs,
 		const BoneTransformList & rhs)
@@ -582,7 +582,7 @@ namespace t3d
 		return res;
 	}
 
-	T3DLIB_API BoneTransformList & combineVertexNormalBoneTransformList(
+	BoneTransformList & combineVertexNormalBoneTransformList(
 		BoneTransformList & res,
 		const BoneTransformList & lhs,
 		const BoneTransformList & rhs)
@@ -607,7 +607,7 @@ namespace t3d
 	{
 	}
 
-	T3DLIB_API Vec4<real> buildVertexFromBoneTransform(
+	Vec4<real> buildVertexFromBoneTransform(
 		const Vec4<real> & vertex,
 		const BoneTransform & boneTransform,
 		real weight)
@@ -617,7 +617,7 @@ namespace t3d
 		return vertex * boneTransform.getTransform() * weight;
 	}
 
-	T3DLIB_API Vec4<real> buildNormalFromBoneTransform(
+	Vec4<real> buildNormalFromBoneTransform(
 		const Vec4<real> & normal,
 		const BoneTransform & boneTransform,
 		real weight)
@@ -627,7 +627,7 @@ namespace t3d
 		return normal * boneTransform.getRotationTransform() * weight;
 	}
 
-	T3DLIB_API void bindVertexListFromBoneTransformList(
+	void bindVertexListFromBoneTransformList(
 		VertexList & vertexList,
 		const VertexList & origVertexList,
 		const BoneAssignmentList & boneAssignmentList,
@@ -649,7 +649,7 @@ namespace t3d
 		}
 	}
 
-	T3DLIB_API void bindVertexListNormalListFromBoneTransformList(
+	void bindVertexListNormalListFromBoneTransformList(
 		VertexList & vertexList,
 		NormalList & normalList,
 		const VertexList & origVertexList,
