@@ -3,17 +3,14 @@
 #define __T3DLIB1_H__
 
 #include "t3dcommon.h"
-
 #include <string>
-#include <climits>
-#include <windows.h>
 #include <ddraw.h>
 #include <atlbase.h>
 #include <boost/shared_ptr.hpp>
 
 namespace t3d
 {
-	class DDException : public t3d::Exception
+	class DDException : public Exception
 	{
 	public:
 		static std::basic_string<charT> GetResultStr(HRESULT hres);

@@ -7,218 +7,132 @@
 
 namespace t3d
 {
-	std::basic_string<charT> DInput::getResultStr(HRESULT hres)
+#define CASE_RETURN_STRING(branch) case branch: return std::basic_string<charT>(_T( #branch ));
+
+	std::basic_string<charT> DIException::GetResultStr(HRESULT hres)
 	{
-		const charT * pstr;
 		switch(hres)
 		{
-		case DI_BUFFEROVERFLOW:
-			pstr = _T("DI_BUFFEROVERFLOW"); break;
-		case DI_DOWNLOADSKIPPED:
-			pstr = _T("DI_DOWNLOADSKIPPED"); break;
-		case DI_EFFECTRESTARTED:
-			pstr = _T("DI_EFFECTRESTARTED"); break;
-		//case DI_NOEFFECT:
-		//	pstr = _T("DI_NOEFFECT"); break;
-		//case DI_NOTATTACHED:
-		//	pstr = _T("DI_NOTATTACHED"); break;
-		case DI_OK:
-			pstr = _T("DI_OK"); break;
-		case DI_POLLEDDEVICE:
-			pstr = _T("DI_POLLEDDEVICE"); break;
-		//case DI_PROPNOEFFECT:
-		//	pstr = _T("DI_PROPNOEFFECT"); break;
-		case DI_TRUNCATED:
-			pstr = _T("DI_TRUNCATED"); break;
-		case DI_TRUNCATEDANDRESTARTED:
-			pstr = _T("DI_TRUNCATEDANDRESTARTED"); break;
-		case DIERR_ACQUIRED:
-			pstr = _T("DIERR_ACQUIRED"); break;
-		case DIERR_ALREADYINITIALIZED:
-			pstr = _T("DIERR_ALREADYINITIALIZED"); break;
-		case DIERR_BADDRIVERVER:
-			pstr = _T("DIERR_BADDRIVERVER"); break;
-		case DIERR_BETADIRECTINPUTVERSION:
-			pstr = _T("DIERR_BETADIRECTINPUTVERSION"); break;
-		case DIERR_DEVICEFULL:
-			pstr = _T("DIERR_DEVICEFULL"); break;
-		case DIERR_DEVICENOTREG:
-			pstr = _T("DIERR_DEVICENOTREG"); break;
-		case DIERR_EFFECTPLAYING:
-			pstr = _T("DIERR_EFFECTPLAYING"); break;
-		case DIERR_HASEFFECTS:
-			pstr = _T("DIERR_HASEFFECTS"); break;
-		case DIERR_GENERIC:
-			pstr = _T("DIERR_GENERIC"); break;
-		case DIERR_HANDLEEXISTS:
-			pstr = _T("DIERR_HANDLEEXISTS"); break;
-		case DIERR_INCOMPLETEEFFECT:
-			pstr = _T("DIERR_INCOMPLETEEFFECT"); break;
-		case DIERR_INPUTLOST:
-			pstr = _T("DIERR_INPUTLOST"); break;
-		case DIERR_INVALIDPARAM:
-			pstr = _T("DIERR_INVALIDPARAM"); break;
-		case DIERR_MOREDATA:
-			pstr = _T("DIERR_MOREDATA"); break;
-		case DIERR_NOAGGREGATION:
-			pstr = _T("DIERR_NOAGGREGATION"); break;
-		case DIERR_NOINTERFACE:
-			pstr = _T("DIERR_NOINTERFACE"); break;
-		case DIERR_NOTACQUIRED:
-			pstr = _T("DIERR_NOTACQUIRED"); break;
-		case DIERR_NOTBUFFERED:
-			pstr = _T("DIERR_NOTBUFFERED"); break;
-		case DIERR_NOTDOWNLOADED:
-			pstr = _T("DIERR_NOTDOWNLOADED"); break;
-		case DIERR_NOTEXCLUSIVEACQUIRED:
-			pstr = _T("DIERR_NOTEXCLUSIVEACQUIRED"); break;
-		case DIERR_NOTFOUND:
-			pstr = _T("DIERR_NOTFOUND"); break;
-		case DIERR_NOTINITIALIZED:
-			pstr = _T("DIERR_NOTINITIALIZED"); break;
-		//case DIERR_OBJECTNOTFOUND:
-		//	pstr = _T("DIERR_OBJECTNOTFOUND"); break;
-		case DIERR_OLDDIRECTINPUTVERSION:
-			pstr = _T("DIERR_OLDDIRECTINPUTVERSION"); break;
-		//case DIERR_OTHERAPPHASPRIO:
-		//	pstr = _T("DIERR_OTHERAPPHASPRIO"); break;
-		case DIERR_OUTOFMEMORY:
-			pstr = _T("DIERR_OUTOFMEMORY"); break;
-		//case DIERR_READONLY:
-		//	pstr = _T("DIERR_READONLY"); break;
-		case DIERR_REPORTFULL:
-			pstr = _T("DIERR_REPORTFULL"); break;
-		case DIERR_UNPLUGGED:
-			pstr = _T("DIERR_UNPLUGGED"); break;
-		case DIERR_UNSUPPORTED:
-			pstr = _T("DIERR_UNSUPPORTED"); break;
-		case E_HANDLE:
-			pstr = _T("E_HANDLE"); break;
-		case E_PENDING:
-			pstr = _T("E_PENDING"); break;
-		default:
-			pstr = _T("unknown dinput result"); break;
+		CASE_RETURN_STRING(DI_BUFFEROVERFLOW)
+		CASE_RETURN_STRING(DI_DOWNLOADSKIPPED)
+		CASE_RETURN_STRING(DI_EFFECTRESTARTED)
+		//CASE_RETURN_STRING(DI_NOEFFECT)
+		//CASE_RETURN_STRING(DI_NOTATTACHED)
+		CASE_RETURN_STRING(DI_OK)
+		CASE_RETURN_STRING(DI_POLLEDDEVICE)
+		//CASE_RETURN_STRING(DI_PROPNOEFFECT)
+		CASE_RETURN_STRING(DI_TRUNCATED)
+		CASE_RETURN_STRING(DI_TRUNCATEDANDRESTARTED)
+		CASE_RETURN_STRING(DIERR_ACQUIRED)
+		CASE_RETURN_STRING(DIERR_ALREADYINITIALIZED)
+		CASE_RETURN_STRING(DIERR_BADDRIVERVER)
+		CASE_RETURN_STRING(DIERR_BETADIRECTINPUTVERSION)
+		CASE_RETURN_STRING(DIERR_DEVICEFULL)
+		CASE_RETURN_STRING(DIERR_DEVICENOTREG)
+		CASE_RETURN_STRING(DIERR_EFFECTPLAYING)
+		CASE_RETURN_STRING(DIERR_HASEFFECTS)
+		CASE_RETURN_STRING(DIERR_GENERIC)
+		CASE_RETURN_STRING(DIERR_HANDLEEXISTS)
+		CASE_RETURN_STRING(DIERR_INCOMPLETEEFFECT)
+		CASE_RETURN_STRING(DIERR_INPUTLOST)
+		CASE_RETURN_STRING(DIERR_INVALIDPARAM)
+		CASE_RETURN_STRING(DIERR_MOREDATA)
+		CASE_RETURN_STRING(DIERR_NOAGGREGATION)
+		CASE_RETURN_STRING(DIERR_NOINTERFACE)
+		CASE_RETURN_STRING(DIERR_NOTACQUIRED)
+		CASE_RETURN_STRING(DIERR_NOTBUFFERED)
+		CASE_RETURN_STRING(DIERR_NOTDOWNLOADED)
+		CASE_RETURN_STRING(DIERR_NOTEXCLUSIVEACQUIRED)
+		CASE_RETURN_STRING(DIERR_NOTFOUND)
+		CASE_RETURN_STRING(DIERR_NOTINITIALIZED)
+		//CASE_RETURN_STRING(DIERR_OBJECTNOTFOUND)
+		CASE_RETURN_STRING(DIERR_OLDDIRECTINPUTVERSION)
+		//CASE_RETURN_STRING(DIERR_OTHERAPPHASPRIO)
+		CASE_RETURN_STRING(DIERR_OUTOFMEMORY)
+		//CASE_RETURN_STRING(DIERR_READONLY)
+		CASE_RETURN_STRING(DIERR_REPORTFULL)
+		CASE_RETURN_STRING(DIERR_UNPLUGGED)
+		CASE_RETURN_STRING(DIERR_UNSUPPORTED)
+		CASE_RETURN_STRING(E_HANDLE)
+		CASE_RETURN_STRING(E_PENDING)
 		}
-
-		return std::basic_string<charT>(pstr);
+		return std::basic_string<charT>(_T("unknown dinput result"));
 	}
 
-	t3d::DInput::Exception::Exception(const std::basic_string<charT> & file, int line, HRESULT hres)
-		: t3d::Exception(file, line)
+	DIException::DIException(const std::basic_string<charT> & file, int line, HRESULT hres)
+		: Exception(file, line)
 		, m_hres(hres)
 	{
 	}
 
-	std::basic_string<charT> t3d::DInput::Exception::what(void) const throw()
+	std::basic_string<charT> DIException::what(void) const throw()
 	{
-		return getResultStr(m_hres);
+		return GetResultStr(m_hres);
 	}
 
-#define T3D_DIEXCEPT(hres) { throw t3d::DInput::Exception(_T(__FILE__), __LINE__, (hres)); }
+#define T3D_DIEXCEPT(hres) { throw DIException( _T(__FILE__), __LINE__, (hres) ); }
 
-	DInput::DInput(HINSTANCE hinst)
-		: m_lpdinput(NULL)
+#define FAILED_DIEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DIEXCEPT(hres) }
+
+	DIDevice::DIDevice(DInput * input, REFGUID rguid)
 	{
-		HRESULT hres;
-		if(FAILED(hres = ::DirectInput8Create(
-				hinst, DIRECTINPUT_HEADER_VERSION, IID_IDirectInput8, (LPVOID *)&m_lpdinput, NULL)))
-			T3D_DIEXCEPT(hres);
+		FAILED_DIEXCEPT(input->m_dinput->CreateDevice(rguid, &m_didevice, NULL));
 	}
 
-	DInput::~DInput(void)
+	DIDevice::~DIDevice(void)
 	{
-		SAFE_RELEASE(m_lpdinput);
 	}
 
-	DInput::Device::Device(DInput * input, REFGUID rguid)
+	void DIDevice::SetCooperativeLevel(HWND hwnd, DWORD dwFlags)
 	{
-		HRESULT hres;
-		if(FAILED(hres = input->m_lpdinput->CreateDevice(rguid, &m_lpdidevice, NULL)))
-			T3D_DIEXCEPT(hres);
+		FAILED_DIEXCEPT(m_didevice->SetCooperativeLevel(hwnd, dwFlags));
 	}
 
-	DInput::Device::~Device(void)
+	void DIDevice::SetDataFormat(LPCDIDATAFORMAT lpdf)
 	{
-		SAFE_RELEASE(m_lpdidevice);
+		SUCCEEDED_VERIFY(m_didevice->SetDataFormat(lpdf));
 	}
 
-	void DInput::Device::setCooperativeLevel(HWND hwnd, DWORD level)
+	void DIDevice::SetProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdidevice->SetCooperativeLevel(hwnd, level)))
-			T3D_DIEXCEPT(hres);
+		SUCCEEDED_VERIFY(m_didevice->SetProperty(rguidProp, pdiph));
 	}
 
-	void DInput::Device::setDataFormat(LPCDIDATAFORMAT lpdf)
+	void DIDevice::Acquire(void)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdidevice->SetDataFormat(lpdf)))
-			T3D_DIEXCEPT(hres);
+		FAILED_DIEXCEPT(m_didevice->Acquire());
 	}
 
-	void DInput::Device::setProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph)
+	void DIDevice::GetDeviceState(DWORD cbData, LPVOID lpvData)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdidevice->SetProperty(rguidProp, pdiph)))
-			T3D_DIEXCEPT(hres);
+		FAILED_DIEXCEPT(m_didevice->GetDeviceState(cbData, lpvData));
 	}
 
-	void DInput::Device::acquire(void)
+	DIKeyboard::DIKeyboard(DInput * input, REFGUID rguid)
+		: DIDevice(input, rguid)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdidevice->Acquire()))
-			T3D_DIEXCEPT(hres);
+		SetDataFormat(&c_dfDIKeyboard);
 	}
 
-	void DInput::Device::getDeviceState(LPVOID data, DWORD data_size)
+	DIMouse::DIMouse(DInput * input, REFGUID rguid)
+		: DIDevice(input, rguid)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdidevice->GetDeviceState(data_size, data)))
-			T3D_DIEXCEPT(hres);
+		SetDataFormat(&c_dfDIMouse);
 	}
 
-	DInput::Keyboard::Keyboard(DInput * input, const GUID & guid, HWND hwnd, DWORD level)
-		: Device(input, guid)
+	DIJoystick::DIJoystick(
+			DInput * input,
+			REFGUID rguid,
+			LONG min_x,
+			LONG max_x,
+			LONG min_y,
+			LONG max_y,
+			LONG min_z,
+			LONG max_z,
+			real dead_zone)
+			: DIDevice(input, rguid)
 	{
-		setDataFormat(&c_dfDIKeyboard);
-		setCooperativeLevel(hwnd, level);
-		acquire();
-	}
-
-	void DInput::Keyboard::update(void)
-	{
-		getDeviceState(&m_state, sizeof(m_state));
-	}
-
-	DInput::Mouse::Mouse(DInput * input, const GUID & guid, HWND hwnd, DWORD level)
-		: Device(input, guid)
-	{
-		setDataFormat(&c_dfDIMouse);
-		setCooperativeLevel(hwnd, level);
-		acquire();
-	}
-
-	void DInput::Mouse::update(void)
-	{
-		getDeviceState(&m_state, sizeof(m_state));
-	}
-
-	DInput::Joystick::Joystick(
-				DInput * input,
-				const GUID & guid,
-				HWND hwnd,
-				DWORD level,
-				LONG min_x,
-				LONG max_x,
-				LONG min_y,
-				LONG max_y,
-				LONG min_z,
-				LONG max_z,
-				real dead_zone)
-		: Device(input, guid)
-	{
-		setDataFormat(&c_dfDIJoystick);
-		setCooperativeLevel(hwnd, level);
+		SetDataFormat(&c_dfDIJoystick);
 
 		assert(min_x <= max_x && min_y <= max_y);
 
@@ -231,25 +145,25 @@ namespace t3d
 		dipr.diph.dwHow = DIPH_BYOFFSET;
 		dipr.lMin = min_x;
 		dipr.lMax = max_x;
-		setProperty(DIPROP_RANGE, &dipr.diph);
+		SetProperty(DIPROP_RANGE, &dipr.diph);
 
 		dipr.diph.dwObj = DIJOFS_Y;
 		dipr.diph.dwHow = DIPH_BYOFFSET;
 		dipr.lMin = min_y;
 		dipr.lMax = max_y;
-		setProperty(DIPROP_RANGE, &dipr.diph);
+		SetProperty(DIPROP_RANGE, &dipr.diph);
 
 		dipr.diph.dwObj = DIJOFS_Z;
 		dipr.diph.dwHow = DIPH_BYOFFSET;
 		dipr.lMin = min_z;
 		dipr.lMax = max_z;
-		setProperty(DIPROP_RANGE, &dipr.diph);
+		SetProperty(DIPROP_RANGE, &dipr.diph);
 
 		dipr.diph.dwObj = DIJOFS_RZ;
 		dipr.diph.dwHow = DIPH_BYOFFSET;
 		dipr.lMin = min_z;
 		dipr.lMax = max_z;
-		setProperty(DIPROP_RANGE, &dipr.diph);
+		SetProperty(DIPROP_RANGE, &dipr.diph);
 
 		assert(dead_zone >= 0 && dead_zone <= 100);
 
@@ -261,148 +175,97 @@ namespace t3d
 		dipd.diph.dwObj = DIJOFS_X;
 		dipd.diph.dwHow = DIPH_BYOFFSET;
 		dipd.dwData = real_to_int(dead_zone * 100);
-		setProperty(DIPROP_DEADZONE, &dipd.diph);
+		SetProperty(DIPROP_DEADZONE, &dipd.diph);
 
 		dipd.diph.dwObj = DIJOFS_Y;
 		dipd.diph.dwHow = DIPH_BYOFFSET;
 		dipd.dwData = real_to_int(dead_zone * 100);
-		setProperty(DIPROP_DEADZONE, &dipd.diph);
+		SetProperty(DIPROP_DEADZONE, &dipd.diph);
 
 		dipd.diph.dwObj = DIJOFS_Z;
 		dipd.diph.dwHow = DIPH_BYOFFSET;
 		dipd.dwData = real_to_int(dead_zone * 100);
-		setProperty(DIPROP_DEADZONE, &dipd.diph);
+		SetProperty(DIPROP_DEADZONE, &dipd.diph);
 
 		dipd.diph.dwObj = DIJOFS_RZ;
 		dipd.diph.dwHow = DIPH_BYOFFSET;
 		dipd.dwData = real_to_int(dead_zone * 100);
-		setProperty(DIPROP_DEADZONE, &dipd.diph);
-
-		acquire();
+		SetProperty(DIPROP_DEADZONE, &dipd.diph);
 	}
 
-	void DInput::Joystick::update(void)
+	DInput::DInput(HINSTANCE hinst)
 	{
-		getDeviceState(&m_state, sizeof(m_state));
+		FAILED_DIEXCEPT(DirectInput8Create(hinst, DIRECTINPUT_HEADER_VERSION, IID_IDirectInput8, (LPVOID *)&m_dinput, NULL));
 	}
 
-	DInput::EnumDevicesInterface::~EnumDevicesInterface(void)
+	DInput::~DInput(void)
 	{
 	}
 
-	DInput::Keyboard * DInput::createSysKeyboard(HWND hwnd, DWORD level /*= Device::CL_NORMAL*/)
+	void DInput::EnumDevices(DWORD dwDevType, LPDIENUMDEVICESCALLBACK lpCallback, LPVOID pvRef, DWORD dwFlags)
 	{
-		return new Keyboard(this, GUID_SysKeyboard, hwnd, level);
+		SUCCEEDED_VERIFY(m_dinput->EnumDevices(dwDevType, lpCallback, pvRef, dwFlags));
 	}
 
-	DInput::Mouse * DInput::createSysMouse(HWND hwnd, DWORD level /*= Device::CL_NORMAL*/)
-	{
-		return new Mouse(this, GUID_SysMouse, hwnd, level);
-	}
-
-	void DInput::enumDevices(DWORD dwDevType, EnumDevicesInterface * EnumDevicesObject)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdinput->EnumDevices(dwDevType, DIEnumDevicesCallback, EnumDevicesObject, DIEDFL_ATTACHEDONLY)))
-			T3D_DIEXCEPT(hres);
-	}
-
-	class FirstJoystickFinder : public DInput::EnumDevicesInterface
+	class DIJoystickFinder
 	{
 	public:
-		FirstJoystickFinder(const std::basic_string<charT> & device_name)
-			: m_joystickName(device_name)
+		std::vector<DIDEVICEINSTANCE> & m_DIDeviceInstList;
+
+	protected:
+		std::basic_string<charT> m_DeviceName;
+
+		DWORD m_MaxDeviceCount;
+
+	public:
+		DIJoystickFinder(std::vector<DIDEVICEINSTANCE> & DIDeviceInstList, const std::basic_string<charT> & DeviceName, DWORD dwMaxDeviceCount)
+			: m_DIDeviceInstList(DIDeviceInstList)
+			, m_DeviceName(DeviceName)
+			, m_MaxDeviceCount(dwMaxDeviceCount)
 		{
 		}
 
-		bool isNeededDevice(const DIDEVICEINSTANCE & device_instance)
+		BOOL FindDIJoystick(LPCDIDEVICEINSTANCE lpddi)
 		{
-			if(device_instance.dwDevType & DI8DEVTYPE_JOYSTICK)
+			if(m_DeviceName.empty() || lpddi->tszInstanceName == m_DeviceName)
 			{
-				if(m_joystickName.empty() || m_joystickName == device_instance.tszInstanceName)
-				{
-					m_instanceList.push_back(device_instance);
-
-					return true;
-				}
+				m_DIDeviceInstList.push_back(*lpddi);
 			}
 
-			return false;
+			return m_DIDeviceInstList.size() < m_MaxDeviceCount ? DIENUM_CONTINUE : DIENUM_STOP;
 		}
-
-	public:
-		std::basic_string<charT> m_joystickName;
-
-		std::vector<DIDEVICEINSTANCE> m_instanceList;
 	};
 
-	bool DInput::findFirstJoystick(DIDEVICEINSTANCE & return_instance, const std::basic_string<charT> & device_name /*= std::basic_string<charT>()*/)
+	BOOL CALLBACK DIJoystickFinderCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 	{
-		FirstJoystickFinder finder(device_name);
-
-		enumDevices(DI8DEVCLASS_GAMECTRL, &finder);
-
-		if(!finder.m_instanceList.empty())
-		{
-			return_instance = finder.m_instanceList.front();
-
-			return true;
-		}
-
-		return false;
+		return ((DIJoystickFinder *)pvRef)->FindDIJoystick(lpddi);
 	}
 
-	class JoystickListFinder : public DInput::EnumDevicesInterface
+	void DInput::FindJoystickList(std::vector<DIDEVICEINSTANCE> & DIDeviceInstList, const std::basic_string<charT> & DeviceName /*= _T("")*/, DWORD dwMaxDeviceCount /*= 1*/)
 	{
-	public:
-		JoystickListFinder(void)
-		{
-		}
-
-		bool isNeededDevice(const DIDEVICEINSTANCE & device_instance)
-		{
-			if(device_instance.dwDevType & DI8DEVTYPE_JOYSTICK)
-			{
-				m_instanceList.push_back(device_instance);
-			}
-
-			return false;
-		}
-
-	public:
-		std::vector<DIDEVICEINSTANCE> m_instanceList;
-	};
-
-	void DInput::findJoystickList(std::vector<DIDEVICEINSTANCE> & return_instance_list)
-	{
-		JoystickListFinder finder;
-
-		enumDevices(DI8DEVCLASS_GAMECTRL, &finder);
-
-		return_instance_list.insert(return_instance_list.end(), finder.m_instanceList.begin(), finder.m_instanceList.end());
+		EnumDevices(DI8DEVCLASS_GAMECTRL, DIJoystickFinderCallback, &DIJoystickFinder(DIDeviceInstList, DeviceName, dwMaxDeviceCount), DIEDFL_ATTACHEDONLY);
 	}
 
-	DInput::Joystick * DInput::createJoystick(
-			HWND hwnd,
-			const DIDEVICEINSTANCE & device_instance,
-			DWORD level /*= Device::CL_NORMAL*/,
-			LONG min_x /*= -255*/,
-			LONG max_x /*=  255*/,
-			LONG min_y /*= -255*/,
-			LONG max_y /*=  255*/,
-			LONG min_z /*= -255*/,
-			LONG max_z /*=  255*/,
-			real dead_zone /*= 10*/)
+	DIKeyboardPtr DInput::CreateSysKeyboard(void)
 	{
-		assert(device_instance.dwDevType & DI8DEVTYPE_JOYSTICK);
-
-		return new Joystick(this, device_instance.guidInstance, hwnd, level, min_x, max_x, min_y, max_y, min_z, max_z, dead_zone);
+		return DIKeyboardPtr(new DIKeyboard(this, GUID_SysKeyboard));
 	}
 
-	BOOL CALLBACK DInput::DIEnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
+	DIMousePtr DInput::CreateSysMouse(void)
 	{
-		EnumDevicesInterface * EnumDevicesObject = (EnumDevicesInterface *)pvRef;
+		return DIMousePtr(new DIMouse(this, GUID_SysMouse));
+	}
 
-		return EnumDevicesObject->isNeededDevice(*lpddi) ? DIENUM_STOP : DIENUM_CONTINUE;
+	DIJoystickPtr DInput::CreateJoystick(
+		REFGUID rguid,
+		LONG min_x /*= -255*/,
+		LONG max_x /*=  255*/,
+		LONG min_y /*= -255*/,
+		LONG max_y /*=  255*/,
+		LONG min_z /*= -255*/,
+		LONG max_z /*=  255*/,
+		real dead_zone /*= 10*/)
+	{
+		return DIJoystickPtr(new DIJoystick(this, rguid, min_x, max_x, min_y, max_y, min_z, max_z, dead_zone));
 	}
 }
