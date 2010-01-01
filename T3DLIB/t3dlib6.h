@@ -144,7 +144,7 @@ namespace t3d
 
 	//typedef std::stack<UVList> UVListStack;
 
-	class T3DLIB_API VertexListContext
+	class VertexListContext
 	{
 	private:
 		VertexList m_vertexList;
@@ -185,7 +185,7 @@ namespace t3d
 		VertexList::const_iterator getVertexListEnd() const;
 	};
 
-	class T3DLIB_API VertexIndexListContext
+	class VertexIndexListContext
 	{
 	private:
 		VertexIndexList m_vertexIndexList;
@@ -218,7 +218,7 @@ namespace t3d
 		VertexIndexList::const_iterator getVertexIndexListEnd() const;
 	};
 
-	class T3DLIB_API NormalListContext
+	class NormalListContext
 	{
 	private:
 		NormalList m_normalList;
@@ -259,7 +259,7 @@ namespace t3d
 		NormalList::const_iterator getNormalListEnd() const;
 	};
 
-	class T3DLIB_API UVListContext
+	class UVListContext
 	{
 	private:
 		UVList m_uvList;
@@ -294,7 +294,7 @@ namespace t3d
 		UVList::const_iterator getUVListEnd() const;
 	};
 
-	class T3DLIB_API ColorListContext
+	class ColorListContext
 	{
 	private:
 		ColorList m_colorList;
@@ -331,7 +331,7 @@ namespace t3d
 		ColorList::const_iterator getColorListEnd() const;
 	};
 
-	class T3DLIB_API SurfaceContext
+	class SurfaceContext
 	{
 	private:
 		void * m_surfaceBuffer;
@@ -367,7 +367,7 @@ namespace t3d
 		SurfaceRef<uint32> getSurfaceRef32(void) const;
 	};
 
-	class T3DLIB_API ZBufferContext
+	class ZBufferContext
 	{
 	private:
 		void * m_zbufferBuffer;
@@ -401,7 +401,7 @@ namespace t3d
 		SurfaceRef<fixp28> getZBufferRef28(void) const;
 	};
 
-	class T3DLIB_API TextureContext
+	class TextureContext
 	{
 	private:
 		void * m_textureBuffer;
@@ -439,7 +439,7 @@ namespace t3d
 
 	//typedef std::vector<TextureContext> TextureContextList;
 
-	//class T3DLIB_API TextureListContext
+	//class TextureListContext
 	//{
 	//protected:
 	//	TextureContextList m_textureList;
@@ -476,7 +476,7 @@ namespace t3d
 
 	//typedef std::vector<size_t> TextureIndexList;
 
-	//class T3DLIB_API TextureIndexListContext
+	//class TextureIndexListContext
 	//{
 	//protected:
 	//	TextureIndexList m_textureIndexList;
@@ -509,7 +509,7 @@ namespace t3d
 	//	TextureIndexList::const_iterator getTextureIndexListEnd() const;
 	//};
 
-	class T3DLIB_API ClipperContext
+	class ClipperContext
 	{
 	private:
 		RECT m_clipper;
@@ -520,7 +520,7 @@ namespace t3d
 		const RECT & getClipperRect(void) const;
 	};
 
-	struct T3DLIB_API MATERIAL
+	struct MATERIAL
 	{
 		Vec4<real> ambient;
 		Vec4<real> diffuse;
@@ -528,7 +528,7 @@ namespace t3d
 		Vec4<real> emissive;
 	};
 
-	class T3DLIB_API MaterialContext
+	class MaterialContext
 	{
 	private:
 		MATERIAL m_material;
@@ -562,7 +562,7 @@ namespace t3d
 		LS_OFF,
 	};
 
-	struct T3DLIB_API LIGHT
+	struct LIGHT
 	{
 		LIGHT_TYPE type;
 		LIGHT_STATE state;
@@ -578,7 +578,7 @@ namespace t3d
 
 	typedef std::vector<LIGHT> LightList;
 
-	class T3DLIB_API LightListContext
+	class LightListContext
 	{
 	private:
 		LightList m_lightList;
@@ -637,7 +637,7 @@ namespace t3d
 		RS_ZYX,
 	};
 
-	struct T3DLIB_API CAMERA
+	struct CAMERA
 	{
 		//Vec4<real> vpos;
 		Mat4<real> mcam;
@@ -647,7 +647,7 @@ namespace t3d
 		RECT viewport;
 	};
 
-	class T3DLIB_API CameraContext
+	class CameraContext
 	{
 	private:
 		CAMERA m_camera;
@@ -717,7 +717,7 @@ namespace t3d
 
 	typedef std::vector<TRI_STATE> TriStateList;
 
-	class T3DLIB_API TriangleStateListContext
+	class TriangleStateListContext
 	{
 	private:
 		TriStateList m_triStateList;
@@ -755,7 +755,7 @@ namespace t3d
 		TriStateList::const_iterator getTriStateListEnd() const;
 	};
 
-	class T3DLIB_API TriangleContext
+	class TriangleContext
 		: virtual public VertexListContext
 		, virtual public VertexIndexListContext
 		, virtual public NormalListContext
@@ -774,7 +774,7 @@ namespace t3d
 	{
 	};
 
-	class T3DLIB_API RenderLineListZBufferRW
+	class RenderLineListZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -798,7 +798,7 @@ namespace t3d
 		void drawLineList32(const Vec4<real> & color);
 	};
 
-	class T3DLIB_API RenderLineIndexListZBufferRW
+	class RenderLineIndexListZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -822,7 +822,7 @@ namespace t3d
 		void drawLineIndexList32(const Vec4<real> & color);
 	};
 
-	class T3DLIB_API RenderTriangleListWireZBufferRW
+	class RenderTriangleListWireZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -856,7 +856,7 @@ namespace t3d
 		void drawTriangleListWithoutThird32(const Vec4<real> & color);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListWireZBufferRW
+	class RenderTriangleIndexListWireZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -890,7 +890,7 @@ namespace t3d
 		void drawTriangleIndexListWithoutThird32(const Vec4<real> & color);
 	};
 
-	class T3DLIB_API RenderTriangleListSolidZBufferRW
+	class RenderTriangleListSolidZBufferRW
 		: public RenderTriangleListWireZBufferRW
 	{
 	public:
@@ -899,7 +899,7 @@ namespace t3d
 		void drawTriangleList32(const Vec4<real> & color);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListSolidZBufferRW
+	class RenderTriangleIndexListSolidZBufferRW
 		: public RenderTriangleIndexListWireZBufferRW
 	{
 	public:
@@ -908,7 +908,7 @@ namespace t3d
 		void drawTriangleIndexList32(const Vec4<real> & color);
 	};
 
-	class T3DLIB_API RenderTriangleListGouraudZBufferRW
+	class RenderTriangleListGouraudZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -940,7 +940,7 @@ namespace t3d
 		void drawTriangleList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListGouraudZBufferRW
+	class RenderTriangleIndexListGouraudZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -972,7 +972,7 @@ namespace t3d
 		void drawTriangleIndexList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleListTextureZBufferRW
+	class RenderTriangleListTextureZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -1006,7 +1006,7 @@ namespace t3d
 		void drawTriangleList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListTextureZBufferRW
+	class RenderTriangleIndexListTextureZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -1040,7 +1040,7 @@ namespace t3d
 		void drawTriangleIndexList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleListTexturePerspectiveLPZBufferRW
+	class RenderTriangleListTexturePerspectiveLPZBufferRW
 		: public RenderTriangleListTextureZBufferRW
 	{
 	public:
@@ -1053,7 +1053,7 @@ namespace t3d
 		void drawTriangleList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListTexturePerspectiveLPZBufferRW
+	class RenderTriangleIndexListTexturePerspectiveLPZBufferRW
 		: public RenderTriangleIndexListTextureZBufferRW
 	{
 	public:
@@ -1066,7 +1066,7 @@ namespace t3d
 		void drawTriangleIndexList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleListGouraudTextureZBufferRW
+	class RenderTriangleListGouraudTextureZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -1098,7 +1098,7 @@ namespace t3d
 		void drawTriangleList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListGouraudTextureZBufferRW
+	class RenderTriangleIndexListGouraudTextureZBufferRW
 		: public TriangleContext
 	{
 	protected:
@@ -1130,7 +1130,7 @@ namespace t3d
 		void drawTriangleIndexList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
+	class RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
 		: public RenderTriangleListGouraudTextureZBufferRW
 	{
 	public:
@@ -1139,7 +1139,7 @@ namespace t3d
 		void drawTriangleList32(void);
 	};
 
-	class T3DLIB_API RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW
+	class RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW
 		: public RenderTriangleIndexListGouraudTextureZBufferRW
 	{
 	public:
@@ -1148,7 +1148,7 @@ namespace t3d
 		void drawTriangleIndexList32(void);
 	};
 
-	class T3DLIB_API RenderContext
+	class RenderContext
 		: public RenderLineListZBufferRW
 		, public RenderLineIndexListZBufferRW
 		//, public RenderTriangleListWireZBufferRW
@@ -1257,7 +1257,7 @@ namespace t3d
 		virtual void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void) = 0;
 	};
 
-	class T3DLIB_API RenderContext16
+	class RenderContext16
 		: virtual public RenderContext
 	{
 	public:
@@ -1346,7 +1346,7 @@ namespace t3d
 		void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void);
 	};
 
-	class T3DLIB_API RenderContext32
+	class RenderContext32
 		: virtual public RenderContext
 	{
 	public:

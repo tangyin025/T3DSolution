@@ -10,12 +10,12 @@
 
 namespace t3d
 {
-	class T3DLIB_API DSound
+	class DSound
 	{
 	public:
 		static std::basic_string<charT> getResultStr(HRESULT hres);
 
-		class T3DLIB_API Exception : public t3d::Exception
+		class Exception : public t3d::Exception
 		{
 		public:
 			Exception(const std::basic_string<charT> & file, int line, HRESULT hres);
@@ -45,7 +45,7 @@ namespace t3d
 		void setCooperativeLevel(HWND hwnd, DWORD level = CL_PRIORITY);
 
 	public:
-		class T3DLIB_API Buffer
+		class Buffer
 		{
 		protected:
 			LPDIRECTSOUNDBUFFER m_lpdsbuffer;

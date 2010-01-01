@@ -10,7 +10,7 @@
 
 namespace t3d
 {
-	class T3DLIB_API STreeNode
+	class STreeNode
 	{
 	public:
 		static const size_t invalid_i = SIZE_MAX;
@@ -80,7 +80,7 @@ namespace t3d
 		}
 	};
 
-	class T3DLIB_API Bone
+	class Bone
 	{
 	protected:
 		Vec4<real> m_pos;
@@ -103,12 +103,12 @@ namespace t3d
 			const Quat<real> & ori);
 	};
 
-	T3DLIB_API Bone & incrementBone(
+	Bone & incrementBone(
 		Bone & bone,
 		const Bone & bone0,
 		const Bone & bone1);
 
-	T3DLIB_API Bone & intersectBone(
+	Bone & intersectBone(
 		Bone & bone,
 		const Bone & bone0,
 		const Bone & bone1,
@@ -116,7 +116,7 @@ namespace t3d
 		real value1,
 		real clipper);
 
-	class T3DLIB_API BoneNode
+	class BoneNode
 		: public Bone
 		, public STreeNode
 	{
@@ -131,13 +131,13 @@ namespace t3d
 
 	typedef std::vector<BoneNode> BoneNodeList;
 
-	T3DLIB_API BoneNodeList & incrementBoneNodeList(
+	BoneNodeList & incrementBoneNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneNodeList & boneNodeList0,
 		const BoneNodeList & boneNodeList1,
 		size_t root_i);
 
-	T3DLIB_API BoneNodeList & intersectBoneNodeList(
+	BoneNodeList & intersectBoneNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneNodeList & boneNodeList0,
 		const BoneNodeList & boneNodeList1,
@@ -146,7 +146,7 @@ namespace t3d
 		real value1,
 		real clipper);
 
-	class T3DLIB_API BoneKeyFrame : public Bone
+	class BoneKeyFrame : public Bone
 	{
 	protected:
 		real m_time;
@@ -164,7 +164,7 @@ namespace t3d
 			real time);
 	};
 
-	T3DLIB_API Bone & intersectBoneKeyFrame(
+	Bone & intersectBoneKeyFrame(
 		Bone & bone,
 		const BoneKeyFrame & boneKeyFrame0,
 		const BoneKeyFrame & boneKeyFrame1,
@@ -172,16 +172,16 @@ namespace t3d
 
 	typedef std::vector<BoneKeyFrame> BoneKeyFrameList;
 
-	T3DLIB_API real getBoneKeyFrameListMinTime(const BoneKeyFrameList & boneKeyFrameList);
+	real getBoneKeyFrameListMinTime(const BoneKeyFrameList & boneKeyFrameList);
 
-	T3DLIB_API real getBoneKeyFrameListMaxTime(const BoneKeyFrameList & boneKeyFrameList);
+	real getBoneKeyFrameListMaxTime(const BoneKeyFrameList & boneKeyFrameList);
 
-	T3DLIB_API Bone & intersectBoneKeyFrameList(
+	Bone & intersectBoneKeyFrameList(
 		Bone & bone,
 		const BoneKeyFrameList & boneKeyFrameList,
 		real time);
 
-	class T3DLIB_API BoneAnimation
+	class BoneAnimation
 	{
 	protected:
 		t3d::BoneKeyFrameList m_boneKeyFrameList;
@@ -210,7 +210,7 @@ namespace t3d
 		real getMaxTime(void) const;
 	};
 
-	class T3DLIB_API BoneAnimationNode
+	class BoneAnimationNode
 		: public BoneAnimation
 		, public STreeNode
 	{
@@ -220,19 +220,19 @@ namespace t3d
 
 	typedef std::vector<BoneAnimationNode> BoneAnimationNodeList;
 
-	T3DLIB_API real getBoneAnimationNodeListMinTime(
+	real getBoneAnimationNodeListMinTime(
 		const BoneAnimationNodeList & boneAnimationNodeList);
 
-	T3DLIB_API real getBoneAnimationNodeListMaxTime(
+	real getBoneAnimationNodeListMaxTime(
 		const BoneAnimationNodeList & boneAnimationNodeList);
 
-	T3DLIB_API BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
+	BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneAnimationNodeList & boneAnimationNodeList,
 		size_t bone_i,
 		real time);
 
-	class T3DLIB_API BoneTransform
+	class BoneTransform
 	{
 	protected:
 		Mat4<real> m_mrot;
@@ -257,53 +257,53 @@ namespace t3d
 
 	typedef std::vector<BoneTransform> BoneTransformList;
 
-	T3DLIB_API BoneTransform & updateBoneTransformFromBone(
+	BoneTransform & updateBoneTransformFromBone(
 		BoneTransform & boneTransform,
 		const Bone & bone,
 		const Mat4<real> & mrot,
 		const Mat4<real> & mmat);
 
-	T3DLIB_API BoneTransformList & updateBoneTransformListFromBoneNodeList(
+	BoneTransformList & updateBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
 		size_t root_i,
 		const Mat4<real> & mrot,
 		const Mat4<real> & mmat);
 
-	T3DLIB_API BoneTransform & updateBoneInverseTransformFromBone(
+	BoneTransform & updateBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
 		const Bone & bone,
 		const Mat4<real> & mInverseRot,
 		const Mat4<real> & mInverseMat);
 
-	T3DLIB_API BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
 		size_t root_i,
 		const Mat4<real> & mInverseRot,
 		const Mat4<real> & mInverseMat);
 
-	T3DLIB_API BoneTransform & combineVertexBoneTransform(
+	BoneTransform & combineVertexBoneTransform(
 		BoneTransform & res,
 		const BoneTransform & lhs,
 		const BoneTransform & rhs);
 
-	T3DLIB_API BoneTransform & combineVertexNormalBoneTransform(
+	BoneTransform & combineVertexNormalBoneTransform(
 		BoneTransform & res,
 		const BoneTransform & lhs,
 		const BoneTransform & rhs);
 
-	T3DLIB_API BoneTransformList & combineVertexBoneTransformList(
+	BoneTransformList & combineVertexBoneTransformList(
 		BoneTransformList & res,
 		const BoneTransformList & lhs,
 		const BoneTransformList & rhs);
 
-	T3DLIB_API BoneTransformList & combineVertexNormalBoneTransformList(
+	BoneTransformList & combineVertexNormalBoneTransformList(
 		BoneTransformList & res,
 		const BoneTransformList & lhs,
 		const BoneTransformList & rhs);
 
-	class T3DLIB_API BoneAssignment
+	class BoneAssignment
 	{
 	public:
 		size_t vertex_i;
@@ -319,23 +319,23 @@ namespace t3d
 
 	typedef std::vector<BoneAssignment> BoneAssignmentList;
 
-	T3DLIB_API Vec4<real> buildVertexFromBoneTransform(
+	Vec4<real> buildVertexFromBoneTransform(
 		const Vec4<real> & vertex,
 		const BoneTransform & boneTransform,
 		real weight);
 
-	T3DLIB_API Vec4<real> buildNormalFromBoneTransform(
+	Vec4<real> buildNormalFromBoneTransform(
 		const Vec4<real> & normal,
 		const BoneTransform & boneTransform,
 		real weight);
 
-	T3DLIB_API void bindVertexListFromBoneTransformList(
+	void bindVertexListFromBoneTransformList(
 		VertexList & vertexList,
 		const VertexList & origVertexList,
 		const BoneAssignmentList & boneAssignmentList,
 		const BoneTransformList & boneTransformList);
 
-	T3DLIB_API void bindVertexListNormalListFromBoneTransformList(
+	void bindVertexListNormalListFromBoneTransformList(
 		VertexList & vertexList,
 		NormalList & normalList,
 		const VertexList & origVertexList,

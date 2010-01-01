@@ -11,12 +11,12 @@
 
 namespace t3d
 {
-	class T3DLIB_API DInput
+	class DInput
 	{
 	public:
 		static std::basic_string<charT> getResultStr(HRESULT hres);
 
-		class T3DLIB_API Exception : public t3d::Exception
+		class Exception : public t3d::Exception
 		{
 		public:
 			Exception(const std::basic_string<charT> & file, int line, HRESULT hres);
@@ -37,7 +37,7 @@ namespace t3d
 		LPDIRECTINPUT8 m_lpdinput;
 
 	public:
-		class T3DLIB_API Device
+		class Device
 		{
 		public:
 			enum COOPERATIVE_LEVEL
@@ -65,7 +65,7 @@ namespace t3d
 			LPDIRECTINPUTDEVICE8 m_lpdidevice;
 		};
 
-		class T3DLIB_API Keyboard : public Device
+		class Keyboard : public Device
 		{
 		public:
 			Keyboard(DInput * input, const GUID & guid, HWND hwnd, DWORD level);
@@ -89,7 +89,7 @@ namespace t3d
 			byte m_state[256];
 		};
 
-		class T3DLIB_API Mouse : public Device
+		class Mouse : public Device
 		{
 		public:
 			Mouse(DInput * input, const GUID & guid, HWND hwnd, DWORD level);
@@ -128,7 +128,7 @@ namespace t3d
 			DIMOUSESTATE m_state;
 		};
 
-		class T3DLIB_API Joystick : public Device
+		class Joystick : public Device
 		{
 		public:
 			Joystick(
@@ -223,7 +223,7 @@ namespace t3d
 			DIJOYSTATE m_state;
 		};
 
-		class T3DLIB_API EnumDevicesInterface
+		class EnumDevicesInterface
 		{
 		public:
 			virtual ~EnumDevicesInterface(void);

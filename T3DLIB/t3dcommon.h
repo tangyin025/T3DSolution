@@ -1,12 +1,6 @@
 ﻿
 #ifndef __T3DCOMMON_H__
 #define __T3DCOMMON_H__
-//
-//#ifdef T3DLIB_EXPORTS
-//#define T3DLIB_API __declspec(dllexport)
-//#else
-//#define T3DLIB_API __declspec(dllimport)
-//#endif
 
 #include <cfloat>
 #include <algorithm>
@@ -65,29 +59,7 @@ namespace t3d
 	#define FIXP28_MIN			-8
 	#define FIXP28_MAX			7
 
-	//class T3DLIB_API Exception
-	//{
-	//public:
-	//	explicit Exception(const std::basic_string<charT> info);
-
-	//	Exception(const std::basic_string<charT> info, const std::basic_string<charT> file, int line);
-
-	//	virtual ~Exception();
-
-	//public:
-	//	virtual std::basic_string<charT> what(void) const throw();
-
-	//	virtual std::basic_string<charT> getFullDesc(void) const throw();
-
-	//public:
-	//	std::basic_string<charT> m_info;
-
-	//	std::basic_string<charT> m_file;
-
-	//	int m_line;
-	//};
-
-	class T3DLIB_API Exception
+	class Exception
 	{
 	public:
 		virtual std::basic_string<charT> what(void) const throw() = 0;
@@ -105,7 +77,7 @@ namespace t3d
 		int m_line;
 	};
 
-	class T3DLIB_API CustomException : public Exception
+	class CustomException : public Exception
 	{
 	public:
 		CustomException(const std::basic_string<charT> & file, int line, const std::basic_string<charT> & info);
@@ -143,11 +115,5 @@ namespace t3d
 #ifndef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION 0x0800
 #endif
-
-#define _CRTDBG_MAP_ALLOC
-
-#pragma warning(disable: 4201) // warning C4201: 使用了非标准扩展 : 无名称的结构/联合
-
-#pragma warning(disable: 4251) // warning C4251: “t3d::VertexListContext::m_vertexList” : class“stlp_std::vector<_Tp>”需要有 dll 接口由 class“t3d::VertexListContext”的客户端使用
 
 #endif // __T3DCOMMON_H__

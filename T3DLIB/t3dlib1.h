@@ -8,25 +8,87 @@
 #include <climits>
 #include <windows.h>
 #include <ddraw.h>
+#include <atlbase.h>
+#include <boost/shared_ptr.hpp>
 
 namespace t3d
 {
-	class T3DLIB_API DDraw
+	class DDException : public t3d::Exception
 	{
 	public:
-		static std::basic_string<charT> getResultStr(HRESULT hres);
+		static std::basic_string<charT> GetResultStr(HRESULT hres);
 
-		class T3DLIB_API Exception : public t3d::Exception
-		{
-		public:
-			Exception(const std::basic_string<charT> & file, int line, HRESULT hres);
+	public:
+		DDException(const std::basic_string<charT> & file, int line, HRESULT hres);
 
-		public:
-			std::basic_string<charT> what(void) const throw();
+	public:
+		std::basic_string<charT> what(void) const throw();
 
-		protected:
-			HRESULT m_hres;
-		};
+	protected:
+		HRESULT m_hres;
+	};
+
+	class DDraw;
+
+	class DDClipper
+	{
+		friend DDraw;
+
+	public:
+		CComPtr<IDirectDrawClipper> m_ddclipper;
+
+	protected:
+		DDClipper(const DDraw * ddraw);
+
+	public:
+		virtual ~DDClipper(void);
+
+		void SetHWnd(HWND hWnd);
+
+		void SetClipList(LPRGNDATA lpClipList);
+	};
+
+	typedef boost::shared_ptr<DDClipper> DDClipperPtr;
+
+	class DDSurface
+	{
+		friend DDraw;
+
+	public:
+		CComPtr<IDirectDrawSurface7> m_ddsurface;
+
+	protected:
+		DDSurface(const DDraw * ddraw, DDSURFACEDESC2 & ddsd);
+
+	public:
+		virtual ~DDSurface(void);
+
+	public:
+		void SetClipper(LPDIRECTDRAWCLIPPER lpDDClipper);
+
+		void GetPixelFormat(LPDDPIXELFORMAT lpDDPixelFormat);
+
+		void Lock(LPDDSURFACEDESC2 lpDDSurfaceDesc, LPRECT lpDestRect = NULL, DWORD dwFlags = DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR);
+
+		void Unlock(LPRECT lpRect = NULL);
+
+		void Blt(LPRECT lpDestRect, LPDIRECTDRAWSURFACE7 lpDDSrcSurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
+
+		void FILL(LPRECT lpDestRect, DWORD color);
+
+		void Restore(void);
+
+		HDC GetDC(void);
+
+		void ReleaseDC(HDC hdc);
+	};
+
+	typedef boost::shared_ptr<DDSurface> DDSurfacePtr;
+
+	class DDraw
+	{
+	public:
+		CComPtr<IDirectDraw7> m_ddraw;
 
 	public:
 		enum COOPERATIVE_LEVEL
@@ -41,105 +103,30 @@ namespace t3d
 			WF_END			= DDWAITVB_BLOCKEND,
 		};
 
-	public:
-		DDraw();
-
-		virtual ~DDraw();
-
-	public:
-		void setCooperativeLevel(HWND hwnd, DWORD level);
-
-		void setDisplayMode(DWORD width, DWORD height, DWORD bpp, DWORD refreshRate = 0);
-
-		//void restoreDisplayMode(void);
-
-		void waitForVerticalBlank(DWORD flags = WF_BEGIN);
-
-		class Clipper;
-
-		Clipper * createWindowClipper(HWND hwnd);
-
-		Clipper * createMemoryClipper(const RECT rect[], size_t rect_size);
-
-		class Surface;
-
-		Surface * createWindowSurface(void);
-
-		Surface * createMemorySurface(DWORD width, DWORD height);
-
 	protected:
-		LPDIRECTDRAW7 m_lpddraw;
+		DDraw(void);
+
+		virtual ~DDraw(void);
 
 	public:
-		class T3DLIB_API Clipper
-		{
-			friend class Surface;
+		void SetCooperativeLevel( HWND hWnd, DWORD dwFlags);
 
-		protected:
-			Clipper(const DDraw * ddraw);
+		void SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate = 0);
 
-		public:
-			virtual ~Clipper();
+		void RestoreDisplayMode(void);
 
-		protected:
-			LPDIRECTDRAWCLIPPER m_lpddclipper;
-		};
+		void WaitForVerticalBlank(DWORD dwFlags = WF_BEGIN);
 
-		class T3DLIB_API WindowClipper : public Clipper
-		{
-		public:
-			WindowClipper(const DDraw * ddraw, HWND hwnd);
-		};
+		DDClipperPtr CreateWindowClipper(HWND hWnd);
 
-		class T3DLIB_API MemoryClipper : public Clipper
-		{
-		public:
-			MemoryClipper(const DDraw * ddraw, const RECT rect[], size_t rect_size);
-		};
+		DDClipperPtr CreateMemoryClipper(LPRECT lpRect, DWORD dwCount);
 
-		class T3DLIB_API Surface
-		{
-		protected:
-			Surface(const DDraw * ddraw);
+		DDSurfacePtr CreateWindowSurface(void);
 
-		public:
-			virtual ~Surface();
-
-		public:
-			void setClipper(Clipper * clipper);
-
-			DDPIXELFORMAT getPixelFormat(void);
-
-			DDSURFACEDESC2 lock(const RECT * prect = NULL);
-
-			void unlock(const RECT * prect = NULL);
-
-			void blt(const RECT * dst_rect, const Surface * src_surf, const RECT * src_rect, DWORD flag = DDBLT_DONOTWAIT);
-
-			void fill(const RECT * dst_rect, DWORD color);
-
-			HDC getDC(void);
-
-			void releaseDC(HDC hdc);
-
-			//void restore(void);
-
-		protected:
-			LPDIRECTDRAWSURFACE7 m_lpddsurface;
-		};
-
-		class T3DLIB_API WindowSurface : public Surface
-		{
-		public:
-			WindowSurface(const DDraw * ddraw);
-		};
-
-		class T3DLIB_API MemorySurface : public Surface
-		{
-		public:
-			MemorySurface(const DDraw * ddraw, DWORD width, DWORD height);
-		};
+		DDSurfacePtr CreateMemorySurface(DWORD dwWidth, DWORD dwHeight);
 	};
+
+	typedef boost::shared_ptr<DDraw> DDrawPtr;
 }
 
 #endif // __T3DLIB1_H__
