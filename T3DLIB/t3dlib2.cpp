@@ -74,9 +74,9 @@ namespace t3d
 
 #define FAILED_DIEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DIEXCEPT(hres) }
 
-	DIDevice::DIDevice(LPDIRECTINPUT8 lpdinput, REFGUID rguid)
+	DIDevice::DIDevice(DInput * dinput, REFGUID rguid)
 	{
-		FAILED_DIEXCEPT(lpdinput->CreateDevice(rguid, &m_didevice, NULL));
+		FAILED_DIEXCEPT(dinput->m_dinput->CreateDevice(rguid, &m_didevice, NULL));
 	}
 
 	DIDevice::~DIDevice(void)
@@ -108,20 +108,20 @@ namespace t3d
 		FAILED_DIEXCEPT(m_didevice->GetDeviceState(cbData, lpvData));
 	}
 
-	DIKeyboard::DIKeyboard(LPDIRECTINPUT8 lpdinput, REFGUID rguid)
-		: DIDevice(lpdinput, rguid)
+	DIKeyboard::DIKeyboard(DInput * dinput, REFGUID rguid)
+		: DIDevice(dinput, rguid)
 	{
 		SetDataFormat(&c_dfDIKeyboard);
 	}
 
-	DIMouse::DIMouse(LPDIRECTINPUT8 lpdinput, REFGUID rguid)
-		: DIDevice(lpdinput, rguid)
+	DIMouse::DIMouse(DInput * dinput, REFGUID rguid)
+		: DIDevice(dinput, rguid)
 	{
 		SetDataFormat(&c_dfDIMouse);
 	}
 
 	DIJoystick::DIJoystick(
-			LPDIRECTINPUT8 lpdinput,
+			DInput * dinput,
 			REFGUID rguid,
 			LONG min_x,
 			LONG max_x,
@@ -130,7 +130,7 @@ namespace t3d
 			LONG min_z,
 			LONG max_z,
 			real dead_zone)
-			: DIDevice(lpdinput, rguid)
+			: DIDevice(dinput, rguid)
 	{
 		SetDataFormat(&c_dfDIJoystick);
 
@@ -253,12 +253,12 @@ namespace t3d
 
 	DIKeyboardPtr DInput::CreateSysKeyboard(void)
 	{
-		return DIKeyboardPtr(new DIKeyboard(m_dinput, GUID_SysKeyboard));
+		return DIKeyboardPtr(new DIKeyboard(this, GUID_SysKeyboard));
 	}
 
 	DIMousePtr DInput::CreateSysMouse(void)
 	{
-		return DIMousePtr(new DIMouse(m_dinput, GUID_SysMouse));
+		return DIMousePtr(new DIMouse(this, GUID_SysMouse));
 	}
 
 	DIJoystickPtr DInput::CreateJoystick(
@@ -271,6 +271,6 @@ namespace t3d
 		LONG max_z /*=  255*/,
 		real dead_zone /*= 10*/)
 	{
-		return DIJoystickPtr(new DIJoystick(m_dinput, rguid, min_x, max_x, min_y, max_y, min_z, max_z, dead_zone));
+		return DIJoystickPtr(new DIJoystick(this, rguid, min_x, max_x, min_y, max_y, min_z, max_z, dead_zone));
 	}
 }

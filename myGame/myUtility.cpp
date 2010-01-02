@@ -1,9 +1,8 @@
 
 #include "stdafx.h"
 #include "myUtility.h"
-
+#include <tinyxml.h>
 #include "myWindow.h"
-#include "tinyxml.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -62,11 +61,11 @@ namespace my
 	{
 		LARGE_INTEGER qwFrequency;
 		if(!QueryPerformanceFrequency(&qwFrequency))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 		m_frequency = (double)qwFrequency.QuadPart;
 
 		if(!QueryPerformanceCounter(&m_lastTime))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		pause();
 	}
@@ -83,7 +82,7 @@ namespace my
 	void Timer::start(void)
 	{
 		if(!QueryPerformanceCounter(&m_lastTime))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		m_paused = false;
 	}
@@ -94,7 +93,7 @@ namespace my
 		{
 			LARGE_INTEGER qwTime;
 			if(!QueryPerformanceCounter(&qwTime))
-				T3D_APPEXCEPT(::GetLastError());
+				T3D_WINEXCEPT(::GetLastError());
 
 			m_lastTime.QuadPart = qwTime.QuadPart - m_lastTime.QuadPart;
 
@@ -104,7 +103,7 @@ namespace my
 		{
 			LARGE_INTEGER qwTime;
 			if(!QueryPerformanceCounter(&qwTime))
-				T3D_APPEXCEPT(::GetLastError());
+				T3D_WINEXCEPT(::GetLastError());
 
 			m_lastTime.QuadPart = qwTime.QuadPart - m_lastTime.QuadPart;
 
@@ -118,7 +117,7 @@ namespace my
 
 		LARGE_INTEGER qwTime;
 		if(!QueryPerformanceCounter(&qwTime))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		double ret = (double)(qwTime.QuadPart - m_lastTime.QuadPart) / m_frequency;
 
@@ -204,7 +203,7 @@ namespace my
 		return vres;
 	}
 
-	t3d::Vec4<real> EularCamera::buildMovOffset(t3d::DInput::Keyboard * keyboard, real angle, real scaler)
+	t3d::Vec4<real> EularCamera::buildMovOffset(t3d::DIKeyboard * keyboard, real angle, real scaler)
 	{
 		static const DWORD MOV_STATE_UP		= 0x01;
 		static const DWORD MOV_STATE_DOWN	= 0x02;
@@ -212,22 +211,22 @@ namespace my
 		static const DWORD MOV_STATE_RIGHT	= 0x08;
 
 		DWORD state = 0;
-		if(keyboard->isKeyDown(DIK_W) || keyboard->isKeyDown(DIK_UP))
+		if(keyboard->IsKeyDown(DIK_W) || keyboard->IsKeyDown(DIK_UP))
 		{
 			state |= MOV_STATE_UP;
 		}
 
-		if(keyboard->isKeyDown(DIK_S) || keyboard->isKeyDown(DIK_DOWN))
+		if(keyboard->IsKeyDown(DIK_S) || keyboard->IsKeyDown(DIK_DOWN))
 		{
 			state |= MOV_STATE_DOWN;
 		}
 
-		if(keyboard->isKeyDown(DIK_A) || keyboard->isKeyDown(DIK_LEFT))
+		if(keyboard->IsKeyDown(DIK_A) || keyboard->IsKeyDown(DIK_LEFT))
 		{
 			state |= MOV_STATE_LEFT;
 		}
 
-		if(keyboard->isKeyDown(DIK_D) || keyboard->isKeyDown(DIK_RIGHT))
+		if(keyboard->IsKeyDown(DIK_D) || keyboard->IsKeyDown(DIK_RIGHT))
 		{
 			state |= MOV_STATE_RIGHT;
 		}
@@ -271,21 +270,21 @@ namespace my
 			break;
 		}
 
-		if(keyboard->isKeyDown(DIK_HOME))
+		if(keyboard->IsKeyDown(DIK_HOME))
 		{
 			updateVec4OnMovUp(vres, scaler);
 		}
 
-		if(keyboard->isKeyDown(DIK_END))
+		if(keyboard->IsKeyDown(DIK_END))
 		{
 			updateVec4OnMovDown(vres, scaler);
 		}
 		return vres;
 	}
 
-	t3d::Vec4<real> EularCamera::buildRotOffset(t3d::DInput::Mouse * mouse)
+	t3d::Vec4<real> EularCamera::buildRotOffset(t3d::DIMouse * mouse)
 	{
-		return my::Vec4<real>(DEG_TO_RAD(mouse->getY()), DEG_TO_RAD(mouse->getX()), 0);
+		return my::Vec4<real>(DEG_TO_RAD(mouse->GetY()), DEG_TO_RAD(mouse->GetX()), 0);
 	}
 
 	EularCamera::EularCamera(void)
@@ -413,9 +412,9 @@ namespace my
 		setRotation(getDefaultRotation());
 	}
 
-	void EularCamera::update(t3d::DInput::Keyboard * keyboard, t3d::DInput::Mouse * mouse, real step_time)
+	void EularCamera::update(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time)
 	{
-		if(!keyboard->isKeyDown(DIK_R))
+		if(!keyboard->IsKeyDown(DIK_R))
 		{
 			addPosition(buildMovOffset(keyboard, m_rot.y, m_movSpeed * step_time));
 
@@ -456,16 +455,16 @@ namespace my
 		m_lines.clear();
 	}
 
-	void ConsoleSimulator::draw(t3d::DDraw::Surface * surface, int x, int y) const
+	void ConsoleSimulator::draw(t3d::DDSurface * surface, int x, int y) const
 	{
-		HDC hdc = surface->getDC();
+		HDC hdc = surface->GetDC();
 
 		for(int i = 0; i < (int)m_lines.size(); i++)
 		{
 			::TextOut(hdc, x, y + i * m_step, m_lines[i].c_str(), (int)m_lines[i].length());
 		}
 
-		surface->releaseDC(hdc);
+		surface->ReleaseDC(hdc);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -498,7 +497,7 @@ namespace my
 		return m_height;
 	}
 
-	void MenuItemArrow::draw(t3d::DDraw::Surface * surface, int x, int y) const
+	void MenuItemArrow::draw(t3d::DDSurface * surface, int x, int y) const
 	{
 		RECT rect;
 		rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
@@ -506,11 +505,11 @@ namespace my
 		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
 		rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
 
-		HDC hdc = surface->getDC();
+		HDC hdc = surface->GetDC();
 
 		::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUARROW);
 
-		surface->releaseDC(hdc);
+		surface->ReleaseDC(hdc);
 	}
 
 	MenuItemCheck::MenuItemCheck(int width /*= ::GetSystemMetrics(SM_CYMENU)*/, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
@@ -539,7 +538,7 @@ namespace my
 		return m_height;
 	}
 
-	void MenuItemCheck::draw(t3d::DDraw::Surface * surface, int x, int y) const
+	void MenuItemCheck::draw(t3d::DDSurface * surface, int x, int y) const
 	{
 		RECT rect;
 		rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
@@ -547,11 +546,11 @@ namespace my
 		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
 		rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
 
-		HDC hdc = surface->getDC();
+		HDC hdc = surface->GetDC();
 
 		::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUCHECK | DFCS_CHECKED);
 
-		surface->releaseDC(hdc);
+		surface->ReleaseDC(hdc);
 	}
 
 	MenuItem::MenuItem(const std::basic_string<charT> & text, int width, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
@@ -593,18 +592,18 @@ namespace my
 		return m_height;
 	}
 
-	void MenuItem::draw(t3d::DDraw::Surface * surface, int x, int y, bool arrow /*= false*/, bool check /*= false*/) const
+	void MenuItem::draw(t3d::DDSurface * surface, int x, int y, bool arrow /*= false*/, bool check /*= false*/) const
 	{
 		if(check)
 		{
 			m_check.draw(surface, x, y);
 		}
 
-		HDC hdc = surface->getDC();
+		HDC hdc = surface->GetDC();
 
 		::TextOut(hdc, x + m_check.getWidth(), y, m_text.c_str(), (int)m_text.length());
 
-		surface->releaseDC(hdc);
+		surface->ReleaseDC(hdc);
 
 		if(arrow)
 		{
@@ -692,7 +691,7 @@ namespace my
 		getMenuItemNode(item_i)->setCheck(true);
 	}
 
-	void Menu::draw(t3d::DDraw::Surface * surface, int x, int y) const
+	void Menu::draw(t3d::DDSurface * surface, int x, int y) const
 	{
 		size_t i = 0;
 		for(; i < getMenuItemNodeCount(); i++)
@@ -732,7 +731,7 @@ namespace my
 		return m_checked;
 	}
 
-	void MenuItemNode::draw(t3d::DDraw::Surface * surface, int x, int y) const
+	void MenuItemNode::draw(t3d::DDSurface * surface, int x, int y) const
 	{
 		MenuItem::draw(surface, x, y, 0 != m_subMenu.getMenuItemNodeCount(), getCheck());
 	}
@@ -803,7 +802,7 @@ namespace my
 		}
 	}
 
-	void MenuSystem::draw(t3d::DDraw::Surface * surface, int x, int y) const
+	void MenuSystem::draw(t3d::DDSurface * surface, int x, int y) const
 	{
 		if(!m_menuStack.empty())
 		{
@@ -811,13 +810,13 @@ namespace my
 		}
 		else
 		{
-			HDC hdc = surface->getDC();
+			HDC hdc = surface->GetDC();
 
 			std::basic_string<charT> info = _T("[~] toggle menu");
 
 			::TextOut(hdc, x, y, info.c_str(), (int)info.length());
 
-			surface->releaseDC(hdc);
+			surface->ReleaseDC(hdc);
 		}
 	}
 

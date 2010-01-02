@@ -3,7 +3,7 @@
 #define __MYMATH_H__
 
 #include "myCommon.h"
-#include "t3dlib4.h"
+#include <t3dlib4.h>
 
 namespace my
 {

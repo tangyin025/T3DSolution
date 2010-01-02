@@ -2,7 +2,7 @@
 #ifndef __MYCOMMON_H__
 #define __MYCOMMON_H__
 
-#include "t3dCommon.h"
+#include <t3dCommon.h>
 
 namespace my
 {

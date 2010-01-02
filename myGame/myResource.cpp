@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "myResource.h"
-
 #include <sstream>
 #include <mmsystem.h>
 

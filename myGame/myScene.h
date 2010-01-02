@@ -3,9 +3,7 @@
 #define __MYSCENE_H__
 
 #include "myCommon.h"
-
 #include <boost/shared_ptr.hpp>
-
 #include "myUtility.h"
 
 namespace my

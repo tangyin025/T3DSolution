@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "t3dlib1.h"
 #include <cassert>
-#include <boost/shared_array.hpp>
+#include <boost/scoped_array.hpp>
 
 #pragma comment(lib, "DDraw.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -152,9 +152,9 @@ namespace t3d
 
 #define FAILED_DDEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DDEXCEPT(hres) }
 
-	DDClipper::DDClipper(LPDIRECTDRAW7 lpddraw)
+	DDClipper::DDClipper(DDraw * ddraw)
 	{
-		FAILED_DDEXCEPT(lpddraw->CreateClipper(0, &m_ddclipper, NULL));
+		FAILED_DDEXCEPT(ddraw->m_ddraw->CreateClipper(0, &m_ddclipper, NULL));
 	}
 
 	DDClipper::~DDClipper(void)
@@ -171,28 +171,36 @@ namespace t3d
 		SUCCEEDED_VERIFY(m_ddclipper->SetClipList(lpClipList, 0));
 	}
 
-	DDSurface::DDSurface(LPDIRECTDRAW7 lpddraw, DDSURFACEDESC2 & ddsd)
+	DDSurface::DDSurface(DDraw * ddraw, DDSURFACEDESC2 & ddsd)
 	{
-		FAILED_DDEXCEPT(lpddraw->CreateSurface(&ddsd, &m_ddsurface, NULL));
+		FAILED_DDEXCEPT(ddraw->m_ddraw->CreateSurface(&ddsd, &m_ddsurface, NULL));
 	}
 
 	DDSurface::~DDSurface(void)
 	{
 	}
 
-	void DDSurface::SetClipper(LPDIRECTDRAWCLIPPER lpDDClipper)
+	void DDSurface::SetClipper(DDClipper * ddclipper)
 	{
-		SUCCEEDED_VERIFY(m_ddsurface->SetClipper(lpDDClipper));
+		SUCCEEDED_VERIFY(m_ddsurface->SetClipper(ddclipper->m_ddclipper));
 	}
 
-	void DDSurface::GetPixelFormat(LPDDPIXELFORMAT lpDDPixelFormat)
+	DDPIXELFORMAT DDSurface::GetPixelFormat(void)
 	{
-		SUCCEEDED_VERIFY(m_ddsurface->GetPixelFormat(lpDDPixelFormat));
+		DDPIXELFORMAT ddpf;
+		ddpf.dwSize = sizeof(ddpf);
+		SUCCEEDED_VERIFY(m_ddsurface->GetPixelFormat(&ddpf));
+
+		return ddpf;
 	}
 
-	void DDSurface::Lock(LPDDSURFACEDESC2 lpDDSurfaceDesc, LPRECT lpDestRect /*= NULL*/, DWORD dwFlags /*= DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR*/)
+	DDSURFACEDESC2 DDSurface::Lock(LPRECT lpDestRect /*= NULL*/, DWORD dwFlags /*= DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR*/)
 	{
-		FAILED_DDEXCEPT(m_ddsurface->Lock(lpDestRect, lpDDSurfaceDesc, dwFlags, NULL));
+		DDSURFACEDESC2 ddsd;
+		ddsd.dwSize = sizeof(ddsd);
+		FAILED_DDEXCEPT(m_ddsurface->Lock(lpDestRect, &ddsd, dwFlags, NULL));
+
+		return ddsd;
 	}
 
 	void DDSurface::Unlock(LPRECT lpRect /*= NULL*/)
@@ -200,12 +208,12 @@ namespace t3d
 		FAILED_DDEXCEPT(m_ddsurface->Unlock(lpRect));
 	}
 
-	void DDSurface::Blt(LPRECT lpDestRect, LPDIRECTDRAWSURFACE7 lpDDSrcSurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
+	void DDSurface::Blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
 	{
-		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx));
+		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, dsurface->m_ddsurface, lpSrcRect, dwFlags, lpDDBltFx));
 	}
 
-	void DDSurface::FILL(LPRECT lpDestRect, DWORD color)
+	void DDSurface::Fill(LPRECT lpDestRect, DWORD color)
 	{
 		DDBLTFX ddbf;
 		memset(&ddbf, 0, sizeof(ddbf));
@@ -263,14 +271,14 @@ namespace t3d
 
 	DDClipperPtr DDraw::CreateWindowClipper(HWND hWnd)
 	{
-		DDClipperPtr clipper(new DDClipper(m_ddraw));
+		DDClipperPtr clipper(new DDClipper(this));
 		clipper->SetHWnd(hWnd);
 		return clipper;
 	}
 
 	DDClipperPtr DDraw::CreateMemoryClipper(LPRECT lpRect, DWORD dwCount)
 	{
-		boost::shared_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
+		boost::scoped_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
 
 		LPRGNDATA pRgnd = (LPRGNDATA)tmpData.get();
 		if(NULL == pRgnd)
@@ -297,7 +305,7 @@ namespace t3d
 
 		memcpy(pRgnd->Buffer, lpRect, sizeof(RECT) * dwCount);
 
-		DDClipperPtr clipper(new DDClipper(m_ddraw));
+		DDClipperPtr clipper(new DDClipper(this));
 		clipper->SetClipList(pRgnd);
 		return clipper;
 	}
@@ -311,7 +319,7 @@ namespace t3d
 		ddsd.ddsCaps.dwCaps		= DDSCAPS_PRIMARYSURFACE;
 		ddsd.dwBackBufferCount	= 0;
 
-		DDSurfacePtr surface(new DDSurface(m_ddraw, ddsd));
+		DDSurfacePtr surface(new DDSurface(this, ddsd));
 		return surface;
 	}
 
@@ -325,7 +333,7 @@ namespace t3d
 		ddsd.dwWidth			= dwWidth;
 		ddsd.dwHeight			= dwHeight;
 
-		DDSurfacePtr surface(new DDSurface(m_ddraw, ddsd));
+		DDSurfacePtr surface(new DDSurface(this, ddsd));
 		return surface;
 	}
 }

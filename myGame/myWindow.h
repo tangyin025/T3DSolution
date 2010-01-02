@@ -3,7 +3,6 @@
 #define __MYWINDOW_H__
 
 #include "myCommon.h"
-
 #include <cassert>
 #include <string>
 #include <vector>
@@ -13,10 +12,30 @@
 
 namespace my
 {
+	class WinException : public t3d::Exception
+	{
+	public:
+		static std::basic_string<charT> GetErrorCodeStr(DWORD dwCode);
+
+	public:
+		WinException(const std::basic_string<charT> & file, int line, DWORD dwCode);
+
+	public:
+		std::basic_string<charT> what(void) const throw();
+
+	protected:
+		DWORD m_code;
+	};
+
+#define T3D_WINEXCEPT(code) { throw my::WinException( _T(__FILE__), __LINE__, (code) ); }
+
 	class WindowBase
 	{
 	public:
 		static std::basic_string<charT> getWindowMessageStr(UINT message);
+
+	protected:
+		HWND m_hwnd;
 
 	public:
 		WindowBase(HWND hwnd = NULL);
@@ -47,13 +66,14 @@ namespace my
 		void setClientRect(const RECT & rect);
 
 		void centerWindow(void);
-
-	protected:
-		HWND m_hwnd;
 	};
+
+	class Application;
 
 	class Window : public WindowBase
 	{
+		friend Application;
+
 	public:
 		class MessageListener
 		{
@@ -67,8 +87,11 @@ namespace my
 		static void registerWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
 
 	protected:
-		friend class Application;
+		typedef std::vector<MessageListener *> MessageListenerList;
 
+		MessageListenerList m_msgListenerList;
+
+	protected:
 		Window(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle, const Application * app);
 
 	public:
@@ -80,13 +103,6 @@ namespace my
 		HWND getHandle(void) const;
 
 		LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-
-	protected:
-		typedef std::vector<MessageListener *> MessageListenerList;
-
-		MessageListenerList m_msgListenerList;
-
-		//HWND m_hwnd;
 	};
 
 	typedef boost::shared_ptr<Window> WindowPtr;
@@ -94,33 +110,27 @@ namespace my
 	class Application
 	{
 	public:
-		static std::basic_string<charT> getErrorCodeStr(DWORD errorCode);
-
-		class Exception : public t3d::Exception
-		{
-		public:
-			Exception(const std::basic_string<charT> & file, int line, DWORD code);
-
-		public:
-			std::basic_string<charT> what(void) const throw();
-
-		protected:
-			HRESULT m_code;
-		};
-
-#define T3D_APPEXCEPT(code) { throw my::Application::Exception(_T(__FILE__), __LINE__, (code)); }
-
-	public:
 		class IdleListener
 		{
 		public:
 			virtual void nodifyIdle(void) = 0;
 		};
 
+	protected:
+		typedef std::vector<IdleListener *> IdleListenerList;
+
+		IdleListenerList m_idleListenerList;
+
+		typedef std::map<HWND, WindowPtr> WindowPtrMap;
+
+		WindowPtrMap m_wndMap;
+
+		HINSTANCE m_hinst;
+
 	public:
 		static Application * s_ptr;
 
-		static inline Application & getSingleton(void)
+		static Application & getSingleton(void)
 		{
 			assert(NULL != s_ptr); return *s_ptr;
 		}
@@ -142,17 +152,6 @@ namespace my
 		void addIdleListener(IdleListener * listener);
 
 		int run(void);
-
-	protected:
-		typedef std::vector<IdleListener *> IdleListenerList;
-
-		IdleListenerList m_idleListenerList;
-
-		typedef std::map<HWND, WindowPtr> WindowPtrMap;
-
-		WindowPtrMap m_wndMap;
-
-		HINSTANCE m_hinst;
 	};
 
 	typedef boost::shared_ptr<Application> ApplicationPtr;

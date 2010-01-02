@@ -36,7 +36,7 @@ namespace t3d
 		CComPtr<IDirectSoundBuffer8> m_dsbuffer;
 
 	protected:
-		DSBuffer(LPDIRECTSOUND8 lpdsound, LPCDSBUFFERDESC pcDSBufferDesc);
+		DSBuffer(DSound * dsound, LPCDSBUFFERDESC pcDSBufferDesc);
 
 	public:
 		virtual ~DSBuffer(void);
@@ -88,6 +88,8 @@ namespace t3d
 
 		DSBufferPtr CreateSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc);
 	};
+
+	typedef boost::shared_ptr<DSound> DSoundPtr;
 }
 
 #endif // __T3DLIB3_H__
