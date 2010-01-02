@@ -1,26 +1,32 @@
-﻿//
-//#pragma once
-//#include "t3dcommon.h"
-//
-////全部查找 "\#include:b+\<.+", 大小写匹配, 全字匹配, 正则表达式, 子文件夹, 查找结果 1, 当前项目: T3DLIB\scripts\T3DLIB.vcproj, "*.c;*.cpp;*.cxx;*.cc;*.tli;*.tlh;*.h;*.hpp;*.hxx;*.hh;*.inl;*.rc;*.resx;*.idl;*.asm;*.inc"
-//#include <sstream>
-//#include <cassert>
-//#include <crtdbg.h>
-//#include <boost/scoped_ptr.hpp>
-//#include <cmath>
-//#include <cfloat>
-//#include <string>
-//#include <string>
-//#include <climits>
-//#include <windows.h>
-//#include <ddraw.h>
-//#include <string>
-//#include <cassert>
-//#include <dinput.h>
-//#include <cassert>
-//#include <cmath>
-//#include <iostream>
-//#include <windows.h>
-//#include <vector>
-//#include <cmath>
-////合计找到: 20    匹配文件: 9    合计搜索文件: 22
+﻿//#include <", Match case, Whole word, Subfolders, Keep modified files open, Find Results 1, "Current Project"
+#include "t3dCommon.h"
+#include <cfloat>
+#include <algorithm>
+#include <string>
+#include <string>
+#include <ddraw.h>
+#include <atlbase.h>
+#include <boost/shared_ptr.hpp>
+#include <string>
+#include <dinput.h>
+#include <atlbase.h>
+#include <cassert>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+#include <string>
+#include <cassert>
+#include <dsound.h>
+#include <atlbase.h>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <windows.h>
+#include <vector>
+#include <cmath>
+#include <vector>
+#include <cassert>
+#include <sstream>
+#include <cassert>
+#include <boost/shared_array.hpp>
+#include <cmath>
+//  Matching lines: 29    Matching files: 11    Total files searched: 22
