@@ -8,7 +8,7 @@ namespace t3d
 {
 #define CASE_RETURN_STRING(branch) case branch: return std::basic_string<charT>(_T( #branch ));
 
-	std::basic_string<charT> DSException::GetResultStr(HRESULT hres)
+	std::basic_string<charT> DSException::getResultStr(HRESULT hres)
 	{
 		switch(hres)
 		{
@@ -50,7 +50,7 @@ namespace t3d
 
 	std::basic_string<charT> DSException::what(void) const throw()
 	{
-		return GetResultStr(m_hres);
+		return getResultStr(m_hres);
 	}
 
 #define T3D_DSEXCEPT(hres) { throw DSException( _T(__FILE__), __LINE__, (hres) ); }
@@ -69,42 +69,42 @@ namespace t3d
 	{
 	}
 
-	void DSBuffer::SetCurrentPosition(DWORD dwNewPosition)
+	void DSBuffer::setCurrentPosition(DWORD dwNewPosition)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->SetCurrentPosition(dwNewPosition));
 	}
 
-	void DSBuffer::GetCurrentPosition(LPDWORD pdwCurrentPlayCursor, LPDWORD pdwCurrentWriteCursor /*= NULL*/)
+	void DSBuffer::getCurrentPosition(LPDWORD pdwCurrentPlayCursor, LPDWORD pdwCurrentWriteCursor /*= NULL*/)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->GetCurrentPosition(pdwCurrentPlayCursor, pdwCurrentWriteCursor));
 	}
 
-	void DSBuffer::Lock(DWORD dwOffset, DWORD dwBytes, LPVOID * ppvAudioPtr1, LPDWORD  pdwAudioBytes1, LPVOID * ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags)
+	void DSBuffer::lock(DWORD dwOffset, DWORD dwBytes, LPVOID * ppvAudioPtr1, LPDWORD  pdwAudioBytes1, LPVOID * ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags)
 	{
 		FAILED_DSEXCEPT(m_dsbuffer->Lock(dwOffset, dwBytes, ppvAudioPtr1, pdwAudioBytes1, ppvAudioPtr2, pdwAudioBytes2, dwFlags));
 	}
 
-	void DSBuffer::Unlock(LPVOID pvAudioPtr1, DWORD dwAudioBytes1, LPVOID pvAudioPtr2, DWORD dwAudioBytes2)
+	void DSBuffer::unlock(LPVOID pvAudioPtr1, DWORD dwAudioBytes1, LPVOID pvAudioPtr2, DWORD dwAudioBytes2)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->Unlock(pvAudioPtr1, dwAudioBytes1, pvAudioPtr2, dwAudioBytes2));
 	}
 
-	void DSBuffer::Play(DWORD dwPriority /*= 0*/, DWORD dwFlags /*= 0*/)
+	void DSBuffer::play(DWORD dwPriority /*= 0*/, DWORD dwFlags /*= 0*/)
 	{
 		FAILED_DSEXCEPT(m_dsbuffer->Play(0, dwPriority, dwFlags));
 	}
 
-	void DSBuffer::Stop(void)
+	void DSBuffer::stop(void)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->Stop());
 	}
 
-	void DSBuffer::SetFrequency(DWORD dwFrequency)
+	void DSBuffer::setFrequency(DWORD dwFrequency)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->SetFrequency(dwFrequency));
 	}
 
-	DWORD DSBuffer::GetFrequency(void)
+	DWORD DSBuffer::getFrequency(void)
 	{
 		DWORD dwFrequency;
 		SUCCEEDED_VERIFY(m_dsbuffer->GetFrequency(&dwFrequency));
@@ -112,12 +112,12 @@ namespace t3d
 		return dwFrequency;
 	}
 
-	void DSBuffer::SetPan(LONG lPan)
+	void DSBuffer::setPan(LONG lPan)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->SetPan(lPan));
 	}
 
-	LONG DSBuffer::GetPan(void)
+	LONG DSBuffer::getPan(void)
 	{
 		LONG lPan;
 		SUCCEEDED_VERIFY(m_dsbuffer->GetPan(&lPan));
@@ -125,12 +125,12 @@ namespace t3d
 		return lPan;
 	}
 
-	void DSBuffer::SetVolume(LONG lVolume)
+	void DSBuffer::setVolume(LONG lVolume)
 	{
 		SUCCEEDED_VERIFY(m_dsbuffer->SetVolume(lVolume));
 	}
 
-	LONG DSBuffer::GetVolume(void)
+	LONG DSBuffer::getVolume(void)
 	{
 		LONG lVolume;
 		SUCCEEDED_VERIFY(m_dsbuffer->GetVolume(&lVolume));
@@ -147,12 +147,12 @@ namespace t3d
 	{
 	}
 
-	void DSound::SetCooperativeLevel(HWND hwnd, DWORD dwLevel /*= CL_PRIORITY*/)
+	void DSound::setCooperativeLevel(HWND hwnd, DWORD dwLevel /*= CL_PRIORITY*/)
 	{
 		FAILED_DSEXCEPT(m_dsound->SetCooperativeLevel(hwnd, dwLevel));
 	}
 
-	DSBufferPtr DSound::CreateSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc)
+	DSBufferPtr DSound::createSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc)
 	{
 		return DSBufferPtr(new DSBuffer(this, pcDSBufferDesc));
 	}

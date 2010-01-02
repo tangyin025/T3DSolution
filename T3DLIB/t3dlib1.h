@@ -13,7 +13,7 @@ namespace t3d
 	class DDException : public Exception
 	{
 	public:
-		static std::basic_string<charT> GetResultStr(HRESULT hres);
+		static std::basic_string<charT> getResultStr(HRESULT hres);
 
 	public:
 		DDException(const std::basic_string<charT> & file, int line, HRESULT hres);
@@ -40,9 +40,9 @@ namespace t3d
 	public:
 		virtual ~DDClipper(void);
 
-		void SetHWnd(HWND hWnd);
+		void setHWnd(HWND hWnd);
 
-		void SetClipList(LPRGNDATA lpClipList);
+		void setClipList(LPRGNDATA lpClipList);
 	};
 
 	typedef boost::shared_ptr<DDClipper> DDClipperPtr;
@@ -61,23 +61,23 @@ namespace t3d
 		virtual ~DDSurface(void);
 
 	public:
-		void SetClipper(DDClipper * ddclipper);
+		void setClipper(DDClipper * ddclipper);
 
-		DDPIXELFORMAT GetPixelFormat(void);
+		DDPIXELFORMAT getPixelFormat(void);
 
-		DDSURFACEDESC2 Lock(LPRECT lpDestRect = NULL, DWORD dwFlags = DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR);
+		DDSURFACEDESC2 lock(LPRECT lpDestRect = NULL, DWORD dwFlags = DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR);
 
-		void Unlock(LPRECT lpRect = NULL);
+		void unlock(LPRECT lpRect = NULL);
 
-		void Blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
+		void blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
 
-		void Fill(LPRECT lpDestRect, DWORD color);
+		void fill(LPRECT lpDestRect, DWORD color);
 
-		void Restore(void);
+		void restore(void);
 
-		HDC GetDC(void);
+		HDC getDC(void);
 
-		void ReleaseDC(HDC hdc);
+		void releaseDC(HDC hdc);
 	};
 
 	typedef boost::shared_ptr<DDSurface> DDSurfacePtr;
@@ -106,21 +106,21 @@ namespace t3d
 		virtual ~DDraw(void);
 
 	public:
-		void SetCooperativeLevel(HWND hWnd, DWORD dwFlags = CL_NORMAL);
+		void setCooperativeLevel(HWND hWnd, DWORD dwFlags = CL_NORMAL);
 
-		void SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate = 0);
+		void setDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate = 0);
 
-		void RestoreDisplayMode(void);
+		void restoreDisplayMode(void);
 
-		void WaitForVerticalBlank(DWORD dwFlags = WF_BEGIN);
+		void waitForVerticalBlank(DWORD dwFlags = WF_BEGIN);
 
-		DDClipperPtr CreateWindowClipper(HWND hWnd);
+		DDClipperPtr createWindowClipper(HWND hWnd);
 
-		DDClipperPtr CreateMemoryClipper(LPRECT lpRect, DWORD dwCount);
+		DDClipperPtr createMemoryClipper(LPRECT lpRect, DWORD dwCount);
 
-		DDSurfacePtr CreateWindowSurface(void);
+		DDSurfacePtr createWindowSurface(void);
 
-		DDSurfacePtr CreateMemorySurface(DWORD dwWidth, DWORD dwHeight);
+		DDSurfacePtr createMemorySurface(DWORD dwWidth, DWORD dwHeight);
 	};
 
 	typedef boost::shared_ptr<DDraw> DDrawPtr;

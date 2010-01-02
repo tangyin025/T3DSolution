@@ -11,7 +11,7 @@ namespace t3d
 {
 #define CASE_RETURN_STRING(branch) case branch: return std::basic_string<charT>(_T( #branch ));
 
-	std::basic_string<charT> DDException::GetResultStr(HRESULT hres)
+	std::basic_string<charT> DDException::getResultStr(HRESULT hres)
 	{
 		switch(hres)
 		{
@@ -145,7 +145,7 @@ namespace t3d
 
 	std::basic_string<charT> DDException::what(void) const throw()
 	{
-		return GetResultStr(m_hres);
+		return getResultStr(m_hres);
 	}
 
 #define T3D_DDEXCEPT(hres) { throw DDException( _T(__FILE__), __LINE__, (hres) ); }
@@ -161,12 +161,12 @@ namespace t3d
 	{
 	}
 
-	void DDClipper::SetHWnd(HWND hWnd)
+	void DDClipper::setHWnd(HWND hWnd)
 	{
 		SUCCEEDED_VERIFY(m_ddclipper->SetHWnd(0, hWnd));
 	}
 
-	void DDClipper::SetClipList(LPRGNDATA lpClipList)
+	void DDClipper::setClipList(LPRGNDATA lpClipList)
 	{
 		SUCCEEDED_VERIFY(m_ddclipper->SetClipList(lpClipList, 0));
 	}
@@ -180,12 +180,12 @@ namespace t3d
 	{
 	}
 
-	void DDSurface::SetClipper(DDClipper * ddclipper)
+	void DDSurface::setClipper(DDClipper * ddclipper)
 	{
 		SUCCEEDED_VERIFY(m_ddsurface->SetClipper(ddclipper->m_ddclipper));
 	}
 
-	DDPIXELFORMAT DDSurface::GetPixelFormat(void)
+	DDPIXELFORMAT DDSurface::getPixelFormat(void)
 	{
 		DDPIXELFORMAT ddpf;
 		ddpf.dwSize = sizeof(ddpf);
@@ -194,7 +194,7 @@ namespace t3d
 		return ddpf;
 	}
 
-	DDSURFACEDESC2 DDSurface::Lock(LPRECT lpDestRect /*= NULL*/, DWORD dwFlags /*= DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR*/)
+	DDSURFACEDESC2 DDSurface::lock(LPRECT lpDestRect /*= NULL*/, DWORD dwFlags /*= DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR*/)
 	{
 		DDSURFACEDESC2 ddsd;
 		ddsd.dwSize = sizeof(ddsd);
@@ -203,39 +203,39 @@ namespace t3d
 		return ddsd;
 	}
 
-	void DDSurface::Unlock(LPRECT lpRect /*= NULL*/)
+	void DDSurface::unlock(LPRECT lpRect /*= NULL*/)
 	{
 		FAILED_DDEXCEPT(m_ddsurface->Unlock(lpRect));
 	}
 
-	void DDSurface::Blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
+	void DDSurface::blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
 	{
 		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, dsurface->m_ddsurface, lpSrcRect, dwFlags, lpDDBltFx));
 	}
 
-	void DDSurface::Fill(LPRECT lpDestRect, DWORD color)
+	void DDSurface::fill(LPRECT lpDestRect, DWORD color)
 	{
 		DDBLTFX ddbf;
 		memset(&ddbf, 0, sizeof(ddbf));
 		ddbf.dwSize = sizeof(ddbf);
 		ddbf.dwFillColor = color;
 
-		Blt(lpDestRect, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf);
+		blt(lpDestRect, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf);
 	}
 
-	void DDSurface::Restore(void)
+	void DDSurface::restore(void)
 	{
 		FAILED_DDEXCEPT(m_ddsurface->Restore());
 	}
 
-	HDC DDSurface::GetDC(void)
+	HDC DDSurface::getDC(void)
 	{
 		HDC hdc;
 		FAILED_DDEXCEPT(m_ddsurface->GetDC(&hdc));
 		return hdc;
 	}
 
-	void DDSurface::ReleaseDC(HDC hdc)
+	void DDSurface::releaseDC(HDC hdc)
 	{
 		FAILED_DDEXCEPT(m_ddsurface->ReleaseDC(hdc));
 	}
@@ -249,34 +249,34 @@ namespace t3d
 	{
 	}
 
-	void DDraw::SetCooperativeLevel(HWND hWnd, DWORD dwFlags /*= CL_NORMAL*/)
+	void DDraw::setCooperativeLevel(HWND hWnd, DWORD dwFlags /*= CL_NORMAL*/)
 	{
 		FAILED_DDEXCEPT(m_ddraw->SetCooperativeLevel(hWnd, dwFlags));
 	}
 
-	void DDraw::SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate /*= 0*/)
+	void DDraw::setDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate /*= 0*/)
 	{
 		FAILED_DDEXCEPT(m_ddraw->SetDisplayMode(dwWidth, dwHeight, dwBPP, dwRefreshRate, 0));
 	}
 
-	void DDraw::RestoreDisplayMode(void)
+	void DDraw::restoreDisplayMode(void)
 	{
 		FAILED_DDEXCEPT(m_ddraw->RestoreDisplayMode());
 	}
 
-	void DDraw::WaitForVerticalBlank(DWORD dwFlags /*= WF_BEGIN*/)
+	void DDraw::waitForVerticalBlank(DWORD dwFlags /*= WF_BEGIN*/)
 	{
 		FAILED_DDEXCEPT(m_ddraw->WaitForVerticalBlank(dwFlags, NULL));
 	}
 
-	DDClipperPtr DDraw::CreateWindowClipper(HWND hWnd)
+	DDClipperPtr DDraw::createWindowClipper(HWND hWnd)
 	{
 		DDClipperPtr clipper(new DDClipper(this));
-		clipper->SetHWnd(hWnd);
+		clipper->setHWnd(hWnd);
 		return clipper;
 	}
 
-	DDClipperPtr DDraw::CreateMemoryClipper(LPRECT lpRect, DWORD dwCount)
+	DDClipperPtr DDraw::createMemoryClipper(LPRECT lpRect, DWORD dwCount)
 	{
 		boost::scoped_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
 
@@ -306,11 +306,11 @@ namespace t3d
 		memcpy(pRgnd->Buffer, lpRect, sizeof(RECT) * dwCount);
 
 		DDClipperPtr clipper(new DDClipper(this));
-		clipper->SetClipList(pRgnd);
+		clipper->setClipList(pRgnd);
 		return clipper;
 	}
 
-	DDSurfacePtr DDraw::CreateWindowSurface(void)
+	DDSurfacePtr DDraw::createWindowSurface(void)
 	{
 		DDSURFACEDESC2 ddsd;
 		memset(&ddsd, 0, sizeof(ddsd));
@@ -323,7 +323,7 @@ namespace t3d
 		return surface;
 	}
 
-	DDSurfacePtr DDraw::CreateMemorySurface(DWORD dwWidth, DWORD dwHeight)
+	DDSurfacePtr DDraw::createMemorySurface(DWORD dwWidth, DWORD dwHeight)
 	{
 		DDSURFACEDESC2 ddsd;
 		memset(&ddsd, 0, sizeof(ddsd));

@@ -14,7 +14,7 @@ namespace t3d
 	class DSException : public Exception
 	{
 	public:
-		static std::basic_string<charT> GetResultStr(HRESULT hres);
+		static std::basic_string<charT> getResultStr(HRESULT hres);
 
 	public:
 		DSException(const std::basic_string<charT> & file, int line, HRESULT hres);
@@ -41,29 +41,29 @@ namespace t3d
 	public:
 		virtual ~DSBuffer(void);
 
-		void SetCurrentPosition(DWORD dwNewPosition);
+		void setCurrentPosition(DWORD dwNewPosition);
 
-		void GetCurrentPosition(LPDWORD pdwCurrentPlayCursor, LPDWORD pdwCurrentWriteCursor = NULL);
+		void getCurrentPosition(LPDWORD pdwCurrentPlayCursor, LPDWORD pdwCurrentWriteCursor = NULL);
 
-		void Lock(DWORD dwOffset, DWORD dwBytes, LPVOID * ppvAudioPtr1, LPDWORD  pdwAudioBytes1, LPVOID * ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags);
+		void lock(DWORD dwOffset, DWORD dwBytes, LPVOID * ppvAudioPtr1, LPDWORD  pdwAudioBytes1, LPVOID * ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags);
 
-		void Unlock(LPVOID pvAudioPtr1, DWORD dwAudioBytes1, LPVOID pvAudioPtr2, DWORD dwAudioBytes2);
+		void unlock(LPVOID pvAudioPtr1, DWORD dwAudioBytes1, LPVOID pvAudioPtr2, DWORD dwAudioBytes2);
 
-		void Play(DWORD dwPriority = 0, DWORD dwFlags = 0);
+		void play(DWORD dwPriority = 0, DWORD dwFlags = 0);
 
-		void Stop(void);
+		void stop(void);
 
-		void SetFrequency(DWORD dwFrequency);
+		void setFrequency(DWORD dwFrequency);
 
-		DWORD GetFrequency(void);
+		DWORD getFrequency(void);
 
-		void SetPan(LONG lPan);
+		void setPan(LONG lPan);
 
-		LONG GetPan(void);
+		LONG getPan(void);
 
-		void SetVolume(LONG lVolume);
+		void setVolume(LONG lVolume);
 
-		LONG GetVolume(void);
+		LONG getVolume(void);
 	};
 
 	typedef boost::shared_ptr<DSBuffer> DSBufferPtr;
@@ -84,9 +84,9 @@ namespace t3d
 
 		virtual ~DSound(void);
 
-		void SetCooperativeLevel(HWND hwnd, DWORD dwLevel = CL_PRIORITY);
+		void setCooperativeLevel(HWND hwnd, DWORD dwLevel = CL_PRIORITY);
 
-		DSBufferPtr CreateSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc);
+		DSBufferPtr createSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc);
 	};
 
 	typedef boost::shared_ptr<DSound> DSoundPtr;
