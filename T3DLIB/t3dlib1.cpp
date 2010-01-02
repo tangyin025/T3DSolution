@@ -210,6 +210,8 @@ namespace t3d
 
 	void DDSurface::blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
 	{
+		assert(NULL != dsurface);
+
 		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, dsurface->m_ddsurface, lpSrcRect, dwFlags, lpDDBltFx));
 	}
 
@@ -220,7 +222,7 @@ namespace t3d
 		ddbf.dwSize = sizeof(ddbf);
 		ddbf.dwFillColor = color;
 
-		blt(lpDestRect, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf);
+		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf));
 	}
 
 	void DDSurface::restore(void)

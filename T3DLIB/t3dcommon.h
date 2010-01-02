@@ -84,7 +84,7 @@ namespace t3d
 
 		virtual ~Exception(void);
 
-		std::basic_string<charT> GetFullDesc(void) const throw();
+		std::basic_string<charT> getFullDesc(void) const throw();
 
 	protected:
 		std::basic_string<charT> m_file;

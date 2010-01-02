@@ -17,7 +17,7 @@ namespace t3d
 	{
 	}
 
-	std::basic_string<charT> Exception::GetFullDesc(void) const
+	std::basic_string<charT> Exception::getFullDesc(void) const
 	{
 		std::basic_stringstream<charT> osstr;
 		osstr << m_file << _T(" (") << m_line << _T("): ") << what();

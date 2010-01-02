@@ -78,7 +78,7 @@ namespace my
 
 		virtual uint32 convertColor(const t3d::Vec4<int> & color) = 0;
 
-		virtual my::ImagePtr convertImage(const my::Image & image) = 0;
+		virtual my::ImagePtr convertImage(const my::Image * image) = 0;
 	};
 
 	typedef boost::shared_ptr<ColorConversion> ColorConversionPtr;
@@ -90,7 +90,7 @@ namespace my
 
 		uint32 convertColor(const t3d::Vec4<int> & color);
 
-		my::ImagePtr convertImage(const my::Image & image);
+		my::ImagePtr convertImage(const my::Image * image);
 	};
 
 	class ColorConversion32 : public ColorConversion
@@ -100,7 +100,7 @@ namespace my
 
 		uint32 convertColor(const t3d::Vec4<int> & color);
 
-		my::ImagePtr convertImage(const my::Image & image);
+		my::ImagePtr convertImage(const my::Image * image);
 	};
 
 	typedef boost::shared_ptr<ErrorReporter> ErrorReporterPtr;
@@ -167,9 +167,9 @@ namespace my
 
 		void bltBackSurfaceToPrimary(void);
 
-		void fillBackSurface(LPRECT lpRect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
+		void fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
 
-		void clearZBuffer(LPRECT lpRect, t3d::fixp28 value = 0);
+		void clearZBuffer(const RECT & rect, t3d::fixp28 value = 0);
 	};
 
 	class Game : public GameBase, public Application::IdleListener
