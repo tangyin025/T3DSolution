@@ -80,9 +80,9 @@ namespace my
 			color.x, color.y, color.z);
 	}
 
-	my::ImagePtr ColorConversion16::convertImage(const my::Image & image)
+	my::ImagePtr ColorConversion16::convertImage(const my::Image * image)
 	{
-		return image.convertTo16Bits565();
+		return image->convertTo16Bits565();
 	}
 
 	uint32 ColorConversion32::convertColor(const my::Color & color)
@@ -107,9 +107,9 @@ namespace my
 			color.x, color.y, color.z);
 	}
 
-	my::ImagePtr ColorConversion32::convertImage(const my::Image & image)
+	my::ImagePtr ColorConversion32::convertImage(const my::Image * image)
 	{
-		return image.convertTo32Bits();
+		return image->convertTo32Bits();
 	}
 
 	GameBase::CONFIG_DESC::CONFIG_DESC(DWORD _width /*= 800*/, DWORD _height /*= 600*/, int _smode /*= SM_WINDOWED*/)
@@ -254,25 +254,25 @@ namespace my
 		m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
 	}
 
-	void GameBase::fillBackSurface(LPRECT lpRect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
+	void GameBase::fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
 	{
 		// clear back surface use render context's clipper
-		m_sback->fill(lpRect, m_cc->convertColor(color));
+		m_sback->fill(const_cast<RECT *>(&rect), m_cc->convertColor(color));
 	}
 
-	static inline void _clearZBuffer(void * pbuffer, DWORD pitch, LPRECT lpRect, fixp28 value /*= 0*/)
+	static void _clearZBuffer(void * pbuffer, DWORD pitch, const RECT & rect, fixp28 value /*= 0*/)
 	{
 		// clear zbuffer with specified value
-		for(LONG y = lpRect->top; y < lpRect->bottom; y++)
+		for(LONG y = rect.top; y < rect.bottom; y++)
 		{
-			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][lpRect->left], value, (lpRect->right - lpRect->left) * sizeof(fixp28));
+			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][rect.left], value, (rect.right - rect.left) * sizeof(fixp28));
 		}
 	}
 
-	void GameBase::clearZBuffer(LPRECT lpRect, t3d::fixp28 value /*= 0*/)
+	void GameBase::clearZBuffer(const RECT & rect, t3d::fixp28 value /*= 0*/)
 	{
 		// clear zbuffer use render context's clipper
-		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, lpRect, value);
+		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, rect, value);
 	}
 
 	Game::Game(HINSTANCE hinst /*= Application::getModuleHandle()*/)

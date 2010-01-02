@@ -3381,7 +3381,7 @@ namespace my
 						T3D_CUSEXCEPT(_T("invalid texcoord.u"));
 				}
 
-				pushUV((real)u, (real)(1 - v)); // ***
+				pushUV((real)u, (real)(/*1 - */v)); // ***
 			}
 
 			if((int)getUVListSize() != vertexcount)

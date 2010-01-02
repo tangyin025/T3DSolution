@@ -8,7 +8,7 @@ namespace my
 
 	Image::Image(const std::basic_string<charT> & strFileName)
 	{
-		FAILED_CUSEXCEPT(m_image.Load(strFileName.c_str()));
+		FAILED_CUSEXCEPT(SUCCEEDED(m_image.Load(strFileName.c_str())));
 	}
 
 	Image::Image(int nWidth, int nHeight, int nBPP, DWORD dwFlags /*= 0*/)
@@ -21,9 +21,7 @@ namespace my
 		ImagePtr image(new Image(getWidth(), getHeight(), 16, 0));
 
 		HDC hdc = image->getDC();
-		HDC hdcSrc = getDC();
-		FAILED_CUSEXCEPT(BitBlt(hdc, 0, 0, getWidth(), getHeight(), hdcSrc, 0, 0, SRCCOPY));
-		releaseDC();
+		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
 		image->releaseDC();
 
 		return image;
@@ -34,9 +32,7 @@ namespace my
 		ImagePtr image(new Image(getWidth(), getHeight(), 32, 0));
 
 		HDC hdc = image->getDC();
-		HDC hdcSrc = getDC();
-		FAILED_CUSEXCEPT(BitBlt(hdc, 0, 0, getWidth(), getHeight(), hdcSrc, 0, 0, SRCCOPY));
-		releaseDC();
+		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
 		image->releaseDC();
 
 		return image;
