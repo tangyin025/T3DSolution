@@ -10,7 +10,7 @@
 #define FAILED_EXCEPT(expr) \
 	if(!(expr) ) { /*throw std::exception(#expr);*/ T3D_CUSEXCEPT(_T(#expr)); }
 
-MYGAME_API char * asprintf(const char * format, ...)
+char * asprintf(const char * format, ...)
 {
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
@@ -34,7 +34,7 @@ MYGAME_API char * asprintf(const char * format, ...)
 	return buffer;
 }
 
-MYGAME_API wchar_t * aswprintf(const wchar_t * format, ...)
+wchar_t * aswprintf(const wchar_t * format, ...)
 {
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
@@ -58,7 +58,7 @@ MYGAME_API wchar_t * aswprintf(const wchar_t * format, ...)
 	return buffer;
 }
 
-MYGAME_API char * avsprintf(const char * format, va_list args)
+char * avsprintf(const char * format, va_list args)
 {
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
@@ -79,7 +79,7 @@ MYGAME_API char * avsprintf(const char * format, va_list args)
 	return buffer;
 }
 
-MYGAME_API wchar_t * avswprintf(const wchar_t * format, va_list args)
+wchar_t * avswprintf(const wchar_t * format, va_list args)
 {
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
@@ -100,7 +100,7 @@ MYGAME_API wchar_t * avswprintf(const wchar_t * format, va_list args)
 	return buffer;
 }
 
-MYGAME_API std::basic_string<char> str_printf(const char * format, ...)
+std::basic_string<char> str_printf(const char * format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -110,7 +110,7 @@ MYGAME_API std::basic_string<char> str_printf(const char * format, ...)
 	return std::basic_string<char>(ptr.get());
 }
 
-MYGAME_API std::basic_string<wchar_t> str_printf(const wchar_t * format, ...)
+std::basic_string<wchar_t> str_printf(const wchar_t * format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -120,7 +120,7 @@ MYGAME_API std::basic_string<wchar_t> str_printf(const wchar_t * format, ...)
 	return std::basic_string<wchar_t>(ptr.get());
 }
 
-MYGAME_API std::basic_string<wchar_t> mstringToWstring(const char * str)
+std::basic_string<wchar_t> mstringToWstring(const char * str)
 {
 	int wlen;
 	if(0 == (wlen = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str, -1, NULL, 0)))
@@ -137,7 +137,7 @@ MYGAME_API std::basic_string<wchar_t> mstringToWstring(const char * str)
 	return std::basic_string<wchar_t>(ptr.get());
 }
 
-MYGAME_API std::basic_string<char> wstringToMstring(const wchar_t * str)
+std::basic_string<char> wstringToMstring(const wchar_t * str)
 {
 	int wlen;
 	if(0 == (wlen = WideCharToMultiByte(CP_ACP, WC_SEPCHARS, str, -1, NULL, 0, NULL, NULL)))

@@ -151,4 +151,9 @@ namespace t3d
 	{
 		FAILED_DSEXCEPT(m_dsound->SetCooperativeLevel(hwnd, dwLevel));
 	}
+
+	DSBufferPtr DSound::CreateSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc)
+	{
+		return DSBufferPtr(new DSBuffer(m_dsound, pcDSBufferDesc));
+	}
 }

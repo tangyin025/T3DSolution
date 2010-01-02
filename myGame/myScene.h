@@ -10,7 +10,7 @@
 
 namespace my
 {
-	class MYGAME_API CustomShaderObject
+	class CustomShaderObject
 	{
 	//public:
 	//	ObjectBasePtr m_obj;
@@ -33,7 +33,7 @@ namespace my
 
 	typedef std::vector<CustomShaderObjectPtr> CustomShaderObjectPtrList;
 
-	class MYGAME_API CustomShaderObjectPtrListContext
+	class CustomShaderObjectPtrListContext
 	{
 	private:
 		CustomShaderObjectPtrList m_customShaderObjList;
@@ -71,7 +71,7 @@ namespace my
 
 	//typedef std::vector<ObjectBasePtr> ObjectBasePtrList;
 
-	//class MYGAME_API ObjectListContext
+	//class ObjectListContext
 	//{
 	//private:
 	//	ObjectBasePtrList m_objList;
@@ -104,7 +104,7 @@ namespace my
 	//	ObjectBasePtrList::const_iterator getObjListEnd(void) const;
 	//};
 
-	//class MYGAME_API ObjectList
+	//class ObjectList
 	//	: public ObjectListContext
 	//{
 	//public:
@@ -253,7 +253,7 @@ namespace my
 
 	typedef boost::shared_ptr<BSPNode> BSPNodePtr;
 
-	class MYGAME_API BSPNode
+	class BSPNode
 		: public Object
 		//, public ObjectList
 	{
@@ -423,7 +423,7 @@ namespace my
 			const t3d::Mat4<real> & mrot);
 	};
 
-	MYGAME_API void splitTriangleVertexNormalUVUp(
+	void splitTriangleVertexNormalUVUp(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -442,7 +442,7 @@ namespace my
 		const t3d::Vec4<real> & planePoint,
 		const t3d::Vec4<real> & planeNormal);
 
-	MYGAME_API void splitTriangleVertexNormalUVDown(
+	void splitTriangleVertexNormalUVDown(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -461,7 +461,7 @@ namespace my
 		const t3d::Vec4<real> & planePoint,
 		const t3d::Vec4<real> & planeNormal);
 
-	MYGAME_API void splitTriangleVertexNormalUVLeft(
+	void splitTriangleVertexNormalUVLeft(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -480,7 +480,7 @@ namespace my
 		const t3d::Vec4<real> & planePoint,
 		const t3d::Vec4<real> & planeNormal);
 
-	MYGAME_API void splitTriangleVertexNormalUVRight(
+	void splitTriangleVertexNormalUVRight(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -499,7 +499,7 @@ namespace my
 		const t3d::Vec4<real> & planePoint,
 		const t3d::Vec4<real> & planeNormal);
 
-	MYGAME_API bool splitTriangleVertexNormalUV(
+	bool splitTriangleVertexNormalUV(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -518,30 +518,30 @@ namespace my
 		const t3d::Vec4<real> & planePoint,
 		const t3d::Vec4<real> & planeNormal);
 
-	MYGAME_API BSPNodePtr buildBSPScene(
+	BSPNodePtr buildBSPScene(
 		const t3d::VertexList & vertexList,
 		const t3d::NormalList & normalList,
 		const t3d::UVList & uvList);
 
-	MYGAME_API void insertObjectToBSPScene(
+	void insertObjectToBSPScene(
 		BSPNodePtr node,
 		const CustomShaderObjectPtr & customShaderObj,
 		const t3d::VertexList & objVertexList);
 
-	//MYGAME_API void insertObjectToBSPScene(
+	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
 	//	CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end);
 
-	//MYGAME_API void insertObjectToBSPScene(
+	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
 	//	const CustomShaderObjectPtrList & objPtrList);
 
 	//typedef std::vector<ObjectBasePtr> ObjectBasePtrList;
 
-	//MYGAME_API ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
+	//ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
 	//	IOStream * meshStream);
 
-	//MYGAME_API void pushVertexByDirectionProject(
+	//void pushVertexByDirectionProject(
 	//	t3d::RenderContext * rc,
 	//	const t3d::Vec4<real> & dir,
 	//	const t3d::Vec4<real> & planePoint,
@@ -550,7 +550,7 @@ namespace my
 	//	t3d::VertexList::const_iterator end,
 	//	const t3d::Mat4<real> & mmat);
 
-	//MYGAME_API void pushVertexByPointProject(
+	//void pushVertexByPointProject(
 	//	t3d::RenderContext * rc,
 	//	const t3d::Vec4<real> & point,
 	//	const t3d::Vec4<real> & planePoint,

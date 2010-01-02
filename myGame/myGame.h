@@ -17,7 +17,7 @@
 
 namespace my
 {
-	class MYGAME_API ErrorListener
+	class ErrorListener
 	{
 	public:
 		virtual ~ErrorListener(void);
@@ -25,7 +25,7 @@ namespace my
 		virtual void onReport(const std::basic_string<charT> & info) = 0;
 	};
 
-	class MYGAME_API ErrorReporter
+	class ErrorReporter
 	{
 	protected:
 		static ErrorReporter * s_ptr;
@@ -58,7 +58,7 @@ namespace my
 //#define REPORT_ERROR(e)
 //#endif
 
-	class MYGAME_API ColorConversion
+	class ColorConversion
 	{
 	protected:
 		static ColorConversion * s_ptr;
@@ -84,7 +84,7 @@ namespace my
 
 	typedef boost::shared_ptr<ColorConversion> ColorConversionPtr;
 
-	class MYGAME_API ColorConversion16 : public ColorConversion
+	class ColorConversion16 : public ColorConversion
 	{
 	public:
 		uint32 convertColor(const my::Color & color);
@@ -94,7 +94,7 @@ namespace my
 		my::Image * convertImage(const my::Image & image);
 	};
 
-	class MYGAME_API ColorConversion32 : public ColorConversion
+	class ColorConversion32 : public ColorConversion
 	{
 	public:
 		uint32 convertColor(const my::Color & color);
@@ -128,7 +128,7 @@ namespace my
 
 	typedef boost::shared_array<fixp28> ZBufferPtr;
 
-	class MYGAME_API GameBase : public Application
+	class GameBase : public Application
 	{
 	public:
 		enum SCREEN_MODE
@@ -138,7 +138,7 @@ namespace my
 			SM_FULLSCREEN32 = 32,
 		};
 
-		struct MYGAME_API CONFIG_DESC
+		struct CONFIG_DESC
 		{
 		public:
 			CONFIG_DESC(DWORD _width = 800, DWORD _height = 600, int _smode = SM_WINDOWED);
@@ -191,7 +191,7 @@ namespace my
 		void clearZBuffer(const RECT & rect, t3d::fixp28 value = 0);
 	};
 
-	class MYGAME_API Game : public GameBase, public Application::IdleListener
+	class Game : public GameBase, public Application::IdleListener
 	{
 	protected:
 		DInputPtr m_dinput;

@@ -3,70 +3,70 @@
 #define __MYIMAGE_H__
 
 #include "myCommon.h"
-
+#pragma push_macro("min")
+#pragma push_macro("max")
+#define min std::min
+#define max std::max
+#include <atlimage.h>
+#pragma pop_macro("max")
+#pragma pop_macro("min")
 #include <boost/shared_ptr.hpp>
-
-#include "FreeImage.h"
-#include "myResource.h"
 
 namespace my
 {
-	class MYGAME_API Image
-	{
-	protected:
-		class InitManager
-		{
-		public:
-			InitManager(void);
-
-			virtual ~InitManager(void);
-		};
-
-		static InitManager m_initMgr;
-
-	public:
-		static std::basic_string<charT> getFIFStr(FREE_IMAGE_FORMAT fif);
-
-		static std::basic_string<charT> getFITStr(FREE_IMAGE_TYPE fit);
-
-		static FREE_IMAGE_FORMAT getFileType(IOStream * stream);
-
-		static Image * allocate(FREE_IMAGE_TYPE type, int width, int height, int bpp);
-
-		static Image * load(IOStream * stream);
-
-	protected:
-		Image(FIBITMAP * dib);
-
-	public:
-		virtual ~Image(void);
-
-	public:
-		BOOL save(FREE_IMAGE_FORMAT fif, IOStream * stream);
-
-		Image * clone(void);
-
-		FREE_IMAGE_TYPE getType(void);
-
-		unsigned getBPP(void);
-
-		unsigned getWidth(void);
-
-		unsigned getHeight(void);
-
-		unsigned getPitch(void);
-
-		BYTE * getBits(void);
-
-		Image * convertTo16Bits565(void) const;
-
-		Image * convertTo32Bits(void) const;
-
-	protected:
-		FIBITMAP * m_dib;
-	};
+	class Image;
 
 	typedef boost::shared_ptr<Image> ImagePtr;
+
+	class Image
+	{
+	protected:
+		CImage m_image;
+
+	public:
+		Image(const std::basic_string<charT> & strFileName);
+
+		Image(int nWidth, int nHeight, int nBPP, DWORD dwFlags = 0);
+
+		int getBPP(void) const
+		{
+			return m_image.GetBPP();
+		}
+
+		int getWidth(void) const
+		{
+			return m_image.GetWidth();
+		}
+
+		int getHeight(void) const
+		{
+			return m_image.GetHeight();
+		}
+
+		int getPitch(void) const
+		{
+			return m_image.GetPitch();
+		}
+
+		void * getBits(void)
+		{
+			return m_image.GetBits();
+		}
+
+		HDC getDC(void) const
+		{
+			return m_image.GetDC();
+		}
+
+		void releaseDC(void) const
+		{
+			m_image.ReleaseDC();
+		}
+
+		ImagePtr convertTo16Bits565(void);
+
+		ImagePtr convertTo32Bits(void);
+	};
 }
 
 #endif // __MYIMAGE_H__

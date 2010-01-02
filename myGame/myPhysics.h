@@ -3,7 +3,6 @@
 #define __MYPHYSICS_H__
 
 #include "myCommon.h"
-
 #include <cmath>
 #include <list>
 #include <vector>
@@ -17,7 +16,7 @@ namespace my
 	// Particle
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Particle
+	class Particle
 	{
 	protected:
 		t3d::Vec4<real> position;
@@ -80,10 +79,10 @@ namespace my
 
 	class ParticleForceGenerator;
 
-	class MYGAME_API ParticleForceRegistry
+	class ParticleForceRegistry
 	{
 	protected:
-		class MYGAME_API ParticleForceRegistration
+		class ParticleForceRegistration
 		{
 		public:
 			Particle * particle;
@@ -114,7 +113,7 @@ namespace my
 	// ParticleForceGenerator
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleForceGenerator
+	class ParticleForceGenerator
 	{
 	public:
 		virtual ~ParticleForceGenerator(void);
@@ -129,7 +128,7 @@ namespace my
 	// ParticleGravity
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleGravity : public ParticleForceGenerator
+	class ParticleGravity : public ParticleForceGenerator
 	{
 	protected:
 		t3d::Vec4<real> gravity;
@@ -146,7 +145,7 @@ namespace my
 	// ParticleDrag
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleDrag : public ParticleForceGenerator
+	class ParticleDrag : public ParticleForceGenerator
 	{
 	protected:
 		real k1;
@@ -165,7 +164,7 @@ namespace my
 	// ParticleSpring
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleSpring : public ParticleForceGenerator
+	class ParticleSpring : public ParticleForceGenerator
 	{
 	protected:
 		Particle * other;
@@ -186,7 +185,7 @@ namespace my
 	// ParticleAnchoredSpring
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleAnchoredSpring : public ParticleForceGenerator
+	class ParticleAnchoredSpring : public ParticleForceGenerator
 	{
 	protected:
 		t3d::Vec4<real> anchor;
@@ -207,7 +206,7 @@ namespace my
 	// ParticleBungee
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleBungee : public ParticleForceGenerator
+	class ParticleBungee : public ParticleForceGenerator
 	{
 	protected:
 		Particle * other;
@@ -228,7 +227,7 @@ namespace my
 	// ParticleAnchoredBungee
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleAnchoredBungee : public ParticleForceGenerator
+	class ParticleAnchoredBungee : public ParticleForceGenerator
 	{
 	protected:
 		t3d::Vec4<real> anchor;
@@ -247,7 +246,7 @@ namespace my
 	// ParticleBuoyancy
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleBuoyancy : public ParticleForceGenerator
+	class ParticleBuoyancy : public ParticleForceGenerator
 	{
 	protected:
 		real maxDepth;
@@ -270,7 +269,7 @@ namespace my
 	// ParticleFakeSpring
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleFakeSpring : public ParticleForceGenerator
+	class ParticleFakeSpring : public ParticleForceGenerator
 	{
 	protected:
 		t3d::Vec4<real> anchor;
@@ -291,9 +290,9 @@ namespace my
 	// ParticleContact
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleContact
+	class ParticleContact
 	{
-		friend class MYGAME_API ParticleContactResolver;
+		friend class ParticleContactResolver;
 
 	public:
 		Particle * particles[2];
@@ -320,7 +319,7 @@ namespace my
 	// ParticleContactResolver
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleContactResolver
+	class ParticleContactResolver
 	{
 	protected:
 		unsigned iterations;
@@ -343,7 +342,7 @@ namespace my
 	// ParticleContactGenerator
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleContactGenerator
+	class ParticleContactGenerator
 	{
 	public:
 		virtual ~ParticleContactGenerator(void);
@@ -358,7 +357,7 @@ namespace my
 	// ParticleLink
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleLink : public ParticleContactGenerator
+	class ParticleLink : public ParticleContactGenerator
 	{
 	public:
 		Particle * particles[2];
@@ -379,7 +378,7 @@ namespace my
 	// ParticleCable
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleCable : public ParticleLink
+	class ParticleCable : public ParticleLink
 	{
 	public:
 		real maxLength;
@@ -398,7 +397,7 @@ namespace my
 	// ParticleRod
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleRod : public ParticleLink
+	class ParticleRod : public ParticleLink
 	{
 	public:
 		real length;
@@ -415,7 +414,7 @@ namespace my
 	// ParticleConstraint
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleConstraint : public ParticleContactGenerator
+	class ParticleConstraint : public ParticleContactGenerator
 	{
 	public:
 		Particle * particle;
@@ -438,7 +437,7 @@ namespace my
 	// ParticleCableConstraint
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleCableConstraint : public ParticleConstraint
+	class ParticleCableConstraint : public ParticleConstraint
 	{
 	public:
 		real maxLength;
@@ -457,7 +456,7 @@ namespace my
 	// ParticleRodConstraint
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleRodConstraint : public ParticleConstraint
+	class ParticleRodConstraint : public ParticleConstraint
 	{
 	public:
 		real length;
@@ -474,22 +473,22 @@ namespace my
 	// ParticleWorld
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ParticleWorld
+	typedef std::vector<my::ParticlePtr> ParticlePtrList;
+
+	typedef std::vector<my::ParticleContactGeneratorPtr> ParticleContactGeneratorPtrList;
+
+	typedef boost::shared_array<my::ParticleContact> ParticleContactArray;
+
+	class ParticleWorld
 	{
 	protected:
-		typedef std::vector<my::ParticlePtr> ParticlePtrList;
-
 		ParticlePtrList particleList;
 
 		ParticleForceRegistry registry;
 
 		ParticleContactResolver resolver;
 
-		typedef std::vector<my::ParticleContactGeneratorPtr> ParticleContactGeneratorPtrList;
-
 		ParticleContactGeneratorPtrList particleContactGeneratorList;
-
-		typedef boost::shared_array<my::ParticleContact> ParticleContactArray;
 
 		ParticleContactArray particleContactArray;
 
@@ -515,7 +514,7 @@ namespace my
 	// RigidBody
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API RigidBody
+	class RigidBody
 	{
 	//protected:
 	public:
@@ -659,10 +658,10 @@ namespace my
 
 	class ForceGenerator;
 
-	class MYGAME_API ForceRegistry
+	class ForceRegistry
 	{
 	protected:
-		class MYGAME_API ForceRegistration
+		class ForceRegistration
 		{
 		public:
 			RigidBody * body;
@@ -693,7 +692,7 @@ namespace my
 	// ForceGenerator
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ForceGenerator
+	class ForceGenerator
 	{
 	public:
 		virtual ~ForceGenerator(void);
@@ -705,7 +704,7 @@ namespace my
 	// Gravity
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Gravity : public ForceGenerator
+	class Gravity : public ForceGenerator
 	{
 	protected:
 		t3d::Vec4<real> gravity;
@@ -720,7 +719,7 @@ namespace my
 	// Spring
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Spring : public ForceGenerator
+	class Spring : public ForceGenerator
 	{
 	protected:
 		t3d::Vec4<real> connectionPoint;
@@ -748,7 +747,7 @@ namespace my
 	// Aero
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Aero : public ForceGenerator
+	class Aero : public ForceGenerator
 	{
 	//protected:
 	public:
@@ -773,7 +772,7 @@ namespace my
 	// AeroControl
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API AeroControl : public Aero
+	class AeroControl : public Aero
 	{
 	//protected:
 	public:
@@ -803,7 +802,7 @@ namespace my
 	// AngledAero
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API AngledAero : public Aero
+	class AngledAero : public Aero
 	{
 	protected:
 		t3d::Quat<real> orientation;
@@ -826,7 +825,7 @@ namespace my
 	// Buoyancy
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Buoyancy : public ForceGenerator
+	class Buoyancy : public ForceGenerator
 	{
 	protected:
 		real maxDepth;
@@ -854,7 +853,7 @@ namespace my
 	// Contact
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Contact
+	class Contact
 	{
 		friend class ContactResolver;
 
@@ -910,7 +909,7 @@ namespace my
 	// ContactResolver
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ContactResolver
+	class ContactResolver
 	{
 	protected:
 		unsigned positionIterations;
@@ -992,7 +991,7 @@ namespace my
 
 	typedef std::vector<RigidBodyPtr> RigidBodyPtrList;
 
-	class MYGAME_API World
+	class World
 	{
 	protected:
 		RigidBodyPtrList bodyList;

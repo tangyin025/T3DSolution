@@ -124,29 +124,10 @@ namespace my
 		T3D_CUSEXCEPT(osstr.str());
 	}
 
-	//Wav * ResourceMgr::openWav(const std::basic_string<charT> & fpath, DWORD dwOpen /*= MMIO_READ | MMIO_ALLOCBUF*/)
-	//{
-	//	DirList::const_iterator iter = m_dirList.begin();
-	//	for(; iter != m_dirList.end(); iter++)
-	//	{
-	//		std::basic_string<charT> full_path = *iter + _T("/") + fpath;
-	//		FILE * handle;
-	//		if(NULL != (handle = fopen(full_path.c_str(), _T("rb"))))
-	//		{
-	//			fclose(handle);
-	//			return new Wav(full_path, dwOpen);
-	//		}
-	//	}
-
-	//	std::basic_ostringstream<charT> osstr;
-	//	osstr << _T("cannot find \"") << fpath << _T("\" in resource dirs");
-	//	T3D_CUSEXCEPT(osstr.str());
-	//}
-
-	Wav::Wav(const std::basic_string<charT> & wavFilePath, DWORD dwOpen /*= MMIO_READ | MMIO_ALLOCBUF*/)
+	Wav::Wav(const std::basic_string<charT> & wavFilePath)
 		: hwav(NULL)
 	{
-		if(NULL == (hwav = mmioOpen(const_cast<charT *>(wavFilePath.c_str()), NULL, dwOpen)))
+		if(NULL == (hwav = mmioOpen(const_cast<charT *>(wavFilePath.c_str()), NULL, MMIO_READ | MMIO_ALLOCBUF)))
 			T3D_CUSEXCEPT(_T("open wave file failed"));
 
 		parent.fccType = mmioFOURCC('W', 'A', 'V', 'E');
@@ -206,8 +187,8 @@ namespace my
 		mmioClose(hwav, 0);
 	}
 
-	MYGAME_API t3d::DSound::Buffer * createDSoundBufferForWholeWav(
-		t3d::DSound & dsound,
+	t3d::DSBufferPtr createDSoundBufferForWholeWav(
+		t3d::DSound * dsound,
 		const Wav & wav,
 		int flags /*= DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME*/,
 		unsigned short channels /*= 1*/,
@@ -230,18 +211,18 @@ namespace my
 		dsbd.lpwfxFormat = &wavfmt;
 		dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
 
-		return new t3d::DSound::Buffer(&dsound, dsbd);
+		return dsound->CreateSoundBuffer(&dsbd);
 	}
 
-	MYGAME_API void copyWholeWavBufferToDSoundBuffer(
-		t3d::DSound::Buffer & dsbuffer,
+	void copyWholeWavBufferToDSoundBuffer(
+		t3d::DSBuffer * dsbuffer,
 		const Wav & wav)
 	{
 		unsigned char * audioPtr1;
 		DWORD audioBytes1;
 		unsigned char * audioPtr2;
 		DWORD audioBytes2;
-		dsbuffer.lock(0, wav.child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR);
+		dsbuffer->Lock(0, wav.child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER);
 
 		assert(audioBytes1 + audioBytes2 <= wav.child.cksize);
 
@@ -251,6 +232,6 @@ namespace my
 		if(audioPtr2 != NULL)
 			memcpy(audioPtr2, wav.buffer.get() + audioBytes1, audioBytes2);
 
-		dsbuffer.unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+		dsbuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
 	}
 }

@@ -3,8 +3,9 @@
 #define __MYCOLLISION_H__
 
 #include "myCommon.h"
-
+#include <vector>
 #include "myMath.h"
+#include "myPhysics.h"
 
 namespace my
 {
@@ -12,7 +13,7 @@ namespace my
 	// BoundingSphere
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API BoundingSphere
+	class BoundingSphere
 	{
 	protected:
 		t3d::Vec4<real> center;
@@ -38,7 +39,7 @@ namespace my
 		real getVolumn(void) const;
 	};
 
-	MYGAME_API BoundingSphere buildBoundingSphere(const BoundingSphere & lhs, const BoundingSphere & rhs);
+	BoundingSphere buildBoundingSphere(const BoundingSphere & lhs, const BoundingSphere & rhs);
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// PotentialContact
@@ -46,7 +47,7 @@ namespace my
 
 	class RigidBody;
 
-	struct MYGAME_API PotentialContact
+	struct PotentialContact
 	{
 		RigidBody * body0;
 
@@ -225,7 +226,7 @@ namespace my
 	// CollisionPrimitive
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API CollisionPrimitive
+	class CollisionPrimitive
 	{
 		friend class IntersectionTests;
 
@@ -270,7 +271,7 @@ namespace my
 	// CollisionSphere
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API CollisionSphere : public CollisionPrimitive
+	class CollisionSphere : public CollisionPrimitive
 	{
 	public:
 		real radius;
@@ -280,7 +281,7 @@ namespace my
 	// CollisionBox
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API CollisionBox : public CollisionPrimitive
+	class CollisionBox : public CollisionPrimitive
 	{
 	public:
 		t3d::Vec4<real> halfSize;
@@ -290,7 +291,7 @@ namespace my
 	// CollisionPlane
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API CollisionPlane //: public CollisionPrimitive
+	class CollisionPlane //: public CollisionPrimitive
 	{
 	public:
 		t3d::Vec4<real> direction;
@@ -302,7 +303,7 @@ namespace my
 	// IntersectionTests
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API IntersectionTests
+	class IntersectionTests
 	{
 	public:
 		static bool sphereAndHalfSpace(
@@ -338,7 +339,7 @@ namespace my
 
 	typedef std::vector<Contact> ContactList;
 
-	class MYGAME_API CollisionDetector
+	class CollisionDetector
 	{
 	public:
 		static unsigned sphereAndHalfSpace(

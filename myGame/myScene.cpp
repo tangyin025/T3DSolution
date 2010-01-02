@@ -1037,7 +1037,7 @@ namespace my
 		rUVList.push_back(t##index2); \
 	}
 
-	MYGAME_API void splitTriangleVertexNormalUVUp(
+	void splitTriangleVertexNormalUVUp(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1081,7 +1081,7 @@ namespace my
 		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(3, 2, 4);
 	}
 
-	MYGAME_API void splitTriangleVertexNormalUVDown(
+	void splitTriangleVertexNormalUVDown(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1125,7 +1125,7 @@ namespace my
 		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(3, 4, 0);
 	}
 
-	MYGAME_API void splitTriangleVertexNormalUVLeft(
+	void splitTriangleVertexNormalUVLeft(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1161,7 +1161,7 @@ namespace my
 		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 3, 2);
 	}
 
-	MYGAME_API void splitTriangleVertexNormalUVRight(
+	void splitTriangleVertexNormalUVRight(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1253,7 +1253,7 @@ namespace my
 		t##index2, \
 		planePoint, planeNormal);
 
-	MYGAME_API bool splitTriangleVertexNormalUV(
+	bool splitTriangleVertexNormalUV(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1424,7 +1424,7 @@ namespace my
 		return true;
 	}
 
-	MYGAME_API BSPNodePtr buildBSPScene(
+	BSPNodePtr buildBSPScene(
 		const t3d::VertexList & vertexList,
 		const t3d::NormalList & normalList,
 		const t3d::UVList & uvList)
@@ -1494,7 +1494,7 @@ namespace my
 		return node;
 	}
 
-	MYGAME_API void insertObjectToBSPScene(
+	void insertObjectToBSPScene(
 		BSPNodePtr node,
 		const CustomShaderObjectPtr & customShaderObj,
 		const t3d::VertexList & objVertexList)
@@ -1559,7 +1559,7 @@ namespace my
 		}
 	}
 
-	//MYGAME_API void insertObjectToBSPScene(
+	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
 	//	CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end)
 	//{
@@ -1570,7 +1570,7 @@ namespace my
 	//	}
 	//}
 
-	//MYGAME_API void insertObjectToBSPScene(
+	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
 	//	const CustomShaderObjectPtrList & customShaderObjPtrList)
 	//{
@@ -1617,7 +1617,7 @@ namespace my
 	//#define DEFINE_XML_ATTRIBUTE_BOOL_SIMPLE(attr_v, elem_p) \
 	//	DEFINE_XML_ATTRIBUTE_BOOL(attr_v, elem_p, attr_v)
 
-	//MYGAME_API ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
+	//ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
 	//	IOStream * meshStream)
 	//{
 	//	TiXmlDocument doc;
@@ -1849,7 +1849,7 @@ namespace my
 	//	return objPtrList;
 	//}
 
-	//MYGAME_API void pushVertexByDirectionProject(
+	//void pushVertexByDirectionProject(
 	//	t3d::RenderContext * rc,
 	//	const t3d::Vec4<real> & dir,
 	//	const t3d::Vec4<real> & planePoint,
@@ -1869,7 +1869,7 @@ namespace my
 	//	}
 	//}
 
-	//MYGAME_API void pushVertexByPointProject(
+	//void pushVertexByPointProject(
 	//	t3d::RenderContext * rc,
 	//	const t3d::Vec4<real> & point,
 	//	const t3d::Vec4<real> & planePoint,
