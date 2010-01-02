@@ -2,8 +2,9 @@
 #include "stdafx.h"
 #include "myPhysics.h"
 
-#pragma push_macro("UNREFERENCED_PARAMETER")
+#ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(P) (P)
+#endif
 
 namespace my
 {
@@ -2228,5 +2229,3 @@ namespace my
 		resolver.resolveContacts(&contactList[0], usedContacts, duration);
 	}
 }
-
-#pragma pop_macro("UNREFERENCED_PARAMETER")

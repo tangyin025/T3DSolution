@@ -105,24 +105,6 @@ namespace my
 
 	typedef boost::shared_ptr<ErrorReporter> ErrorReporterPtr;
 
-	//typedef boost::shared_ptr<t3d::DDraw> DDrawPtr;
-
-	//typedef boost::shared_ptr<t3d::DDraw::Surface> DDrawSurfacePtr;
-
-	//typedef boost::shared_ptr<t3d::DDraw::Clipper> DDrawClipperPtr;
-
-	//typedef boost::shared_ptr<t3d::DInput> DInputPtr;
-
-	//typedef boost::shared_ptr<t3d::DInput::Keyboard> DInputKeyboardPtr;
-
-	//typedef boost::shared_ptr<t3d::DInput::Mouse> DInputMousePtr;
-
-	//typedef boost::shared_ptr<t3d::DInput::Joystick> DInputJoystickPtr;
-
-	//typedef boost::shared_ptr<t3d::DSound> DSoundPtr;
-
-	//typedef boost::shared_ptr<t3d::DSound::Buffer> DSoundBufferPtr;
-
 	typedef boost::shared_ptr<t3d::RenderContext> RenderContextPtr;
 
 	typedef boost::shared_array<fixp28> ZBufferPtr;
@@ -153,7 +135,7 @@ namespace my
 
 		ResourceMgrPtr m_resourceMgr;
 
-		Window * m_win;
+		Window * m_pwnd;
 
 		t3d::DDrawPtr m_ddraw;
 

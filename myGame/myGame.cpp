@@ -119,7 +119,7 @@ namespace my
 
 	GameBase::GameBase(HINSTANCE hinst)
 		: Application(hinst)
-		, m_win(NULL)
+		, m_pwnd(NULL)
 	{
 	}
 
@@ -136,11 +136,11 @@ namespace my
 		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
 
 		// create main window
-		m_win = createWindow(_T("T3DLIB_WINDOW"), _T("myWindow"));
+		m_pwnd = createWindow(_T("T3DLIB_WINDOW"), _T("myWindow"));
 
 		// create ddraw object
 		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
-		m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_NORMAL);
+		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// update video config
 		prepareConfig(cfg);
@@ -150,7 +150,7 @@ namespace my
 	{
 		assert(m_ddraw != NULL);
 
-		assert(NULL != m_win);
+		assert(NULL != m_pwnd);
 
 		RECT clientRect = {0, 0, cfg.width, cfg.height};
 
@@ -158,25 +158,25 @@ namespace my
 		switch(cfg.smode)
 		{
 		case my::GameBase::SM_WINDOWED:
-			m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_NORMAL);
+			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 			//m_ddraw->RestoreDisplayMode();
-			m_win->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
-			m_win->setClientRect(clientRect);
-			m_win->centerWindow();
+			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
+			m_pwnd->setClientRect(clientRect);
+			m_pwnd->centerWindow();
 			break;
 
 		case my::GameBase::SM_FULLSCREEN16:
-			m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
+			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
-			m_win->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_win->setClientRect(clientRect);
+			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
+			m_pwnd->setClientRect(clientRect);
 			break;
 
 		case my::GameBase::SM_FULLSCREEN32:
-			m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
+			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
-			m_win->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_win->setClientRect(clientRect);
+			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
+			m_pwnd->setClientRect(clientRect);
 			break;
 
 		default:
@@ -184,7 +184,7 @@ namespace my
 		}
 
 		// show main window
-		m_win->showWindow();
+		m_pwnd->showWindow();
 
 		// NOTE: destroy existed primary surface before m_ddraw->createWindowSurface !!!
 		m_sprim = t3d::DDSurfacePtr();;
@@ -192,7 +192,7 @@ namespace my
 		// create primary surface with main window clipper
 		m_sprim = m_ddraw->createWindowSurface();
 
-		m_sprim->setClipper(m_ddraw->createWindowClipper(m_win->getHandle()).get());
+		m_sprim->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
 
 		// create back surface with custom rect clipper
 		m_sback = m_ddraw->createMemorySurface(cfg.width, cfg.height);
@@ -242,7 +242,7 @@ namespace my
 	void GameBase::bltBackSurfaceToPrimary(void)
 	{
 		// commit back surface to primary surface within corrected rectangle
-		m_rprim = m_win->getClientRect();
+		m_rprim = m_pwnd->getClientRect();
 
 		/*
 		 * NOTE: for some reason, if the window size is greater than the desktop size, will lead these assert abort
@@ -316,15 +316,15 @@ namespace my
 		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
 
 		m_keyboard = m_dinput->createSysKeyboard();
-		m_keyboard->setCooperativeLevel(m_win->getHandle(), t3d::DIDevice::CL_NORMAL);
+		m_keyboard->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
 		m_keyboard->acquire();
 
 		m_mouse = m_dinput->createSysMouse();
-		m_mouse->setCooperativeLevel(m_win->getHandle(), t3d::DIDevice::CL_NORMAL);
+		m_mouse->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
 		m_mouse->acquire();
 
 		m_dsound = t3d::DSoundPtr(new t3d::DSound());
-		m_dsound->setCooperativeLevel(m_win->getHandle(), t3d::DSound::CL_PRIORITY);
+		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
 
 		// register this to idle listener
 		addIdleListener(this);
@@ -356,9 +356,9 @@ namespace my
 		// do client's frame, if failed destroy main window
 		if(!onFrame())
 		{
-			::DestroyWindow(m_win->getHandle());
+			m_pwnd->destroyWindow();
 
-			m_win = NULL;
+			m_pwnd = NULL;
 
 			return;
 		}
