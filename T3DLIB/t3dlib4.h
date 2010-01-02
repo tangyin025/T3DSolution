@@ -3,29 +3,28 @@
 #define __T3DLIB4_H__
 
 #include "t3dcommon.h"
-
 #include <cassert>
 #include <cmath>
 #include <iostream>
 
+#define IR(f)				((t3d::uint32 &)(f))
+#define IS_NAN(f)			((IR(f) & 0x7f800000) == 0x7f800000)
+#define IS_INDETERMINATE(f)	(IR(f) == 0xffc00000)
+#define IS_PLUS_INF(f)		(IR(f) == 0x7f800000)
+#define IS_MINUS_INF(f)		(IR(f) == 0xff800000)
+#define IS_VALID_FLOAT(f)	(!IS_NAN(f) && !IS_INDETERMINATE(f) && !IS_PLUS_INF(f) && !IS_MINUS_INF(f))
+
+#define IS_ZERO_FLOAT(f)	(abs(f) < REAL_ZERO_LIMIT) // -1.1102230246251565e-016
+
+#define PI					(3.1415926535897932384626433832795)
+
+#define DEG_TO_RAD(deg)		(((deg) / (t3d::real)180.0) * (t3d::real)PI)
+#define RAD_TO_DEG(rad)		(((rad) / (t3d::real)PI) * (t3d::real)180.0)
+
+#define LINE2D_INTERSECT(ca, a0, a1, b0, b1)	((b0) + ((b1) - (b0)) * ((ca) - (a0)) / ((a1) - (a0)))
+
 namespace t3d
 {
-	#define IR(f)				((t3d::uint32 &)(f))
-	#define IS_NAN(f)			((IR(f) & 0x7f800000) == 0x7f800000)
-	#define IS_INDETERMINATE(f)	(IR(f) == 0xffc00000)
-	#define IS_PLUS_INF(f)		(IR(f) == 0x7f800000)
-	#define IS_MINUS_INF(f)		(IR(f) == 0xff800000)
-	#define IS_VALID_FLOAT(f)	(!IS_NAN(f) && !IS_INDETERMINATE(f) && !IS_PLUS_INF(f) && !IS_MINUS_INF(f))
-
-	#define IS_ZERO_FLOAT(f)	(abs(f) < REAL_ZERO_LIMIT) // -1.1102230246251565e-016
-
-	#define PI					(3.1415926535897932384626433832795)
-
-	#define DEG_TO_RAD(deg)		(((deg) / (t3d::real)180.0) * (t3d::real)PI)
-	#define RAD_TO_DEG(rad)		(((rad) / (t3d::real)PI) * (t3d::real)180.0)
-
-	#define LINE2D_INTERSECT(ca, a0, a1, b0, b1)	((b0) + ((b1) - (b0)) * ((ca) - (a0)) / ((a1) - (a0)))
-
 	//inline long _ftoi(double dval)
 	//{
 	//	/************************************************************************************
@@ -97,7 +96,7 @@ namespace t3d
 
 	//	return *(fixp28 *)&(fval += 1.5 * (1LL << (23 - 18))) << 10;
 	//}
-
+#pragma warning(disable: 4201)
 	template <typename elem_t>
 	class Mat4
 	{
@@ -1232,7 +1231,7 @@ namespace t3d
 			return *this;
 		}
 	};
-
+#pragma warning(default: 4201)
 	//template <>
 	//inline Quat<float>::Quat(float _w, float _x, float _y, float _z)
 	//	: w(_w)

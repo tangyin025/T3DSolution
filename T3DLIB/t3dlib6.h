@@ -5,127 +5,12 @@
 #include "t3dcommon.h"
 
 #include <vector>
-//#include <stack>
 #include <cmath>
 #include "t3dlib4.h"
 #include "t3dlib5.h"
 
 namespace t3d
 {
-	//template <class elemT, class allocatorT = std::allocator<elemT> >
-	//class vector : public std::vector<elemT, allocatorT>
-	//{
-	//protected:
-	//	static const size_type increment = 128;
-
-	//	static const size_type max_elements = 3000 * 3 * 3;
-
-	//	size_type num_elements;
-
-	//	typedef std::vector<elemT, allocatorT> base_vector_class;
-
-	//public:
-	//	explicit inline vector(unsigned capacity = increment * 4)
-	//		: base_vector_class(capacity)
-	//		, num_elements(0)
-	//	{
-	//	}
-
-	//	~vector(void)
-	//	{
-	//	}
-
-	//public:
-	//	inline void push_back(const elemT & elem)
-	//	{
-	//		if(base_vector_class::size() <= num_elements)
-	//		{
-	//			base_vector_class::resize(num_elements + increment);
-	//		}
-
-	//		base_vector_class::at(num_elements++) = elem;
-	//	}
-
-	//	inline void insert(iterator iter_where, const_iterator insert_iter_first, const_iterator insert_iter_last)
-	//	{
-	//		difference_type insert_length = std::distance(insert_iter_first, insert_iter_last);
-
-	//		assert(insert_length > 0);
-
-	//		difference_type where_pos = std::distance(begin(), iter_where);
-
-	//		difference_type remain_length = size() - where_pos;
-
-	//		resize(size() + insert_length);
-
-	//		memcpy(&*begin() + where_pos, &*begin() + where_pos + insert_length, remain_length * sizeof(reference));
-
-	//		memcpy(&*begin() + where_pos, &*insert_iter_first, insert_length * sizeof(reference));
-	//	}
-
-	//	inline size_type size(void) const
-	//	{
-	//		return num_elements;
-	//	}
-
-	//	inline void resize(size_type new_size)
-	//	{
-	//		assert(new_size <= max_elements);
-
-	//		if(base_vector_class::size() <= new_size)
-	//		{
-	//			base_vector_class::resize((new_size / increment + 1) * increment);
-	//		}
-
-	//		num_elements = new_size;
-	//	}
-
-	//	inline void resize(size_type new_size, const elemT & elem)
-	//	{
-	//		size_type old_size = size();
-
-	//		resize(new_size);
-
-	//		if(old_size < size())
-	//		{
-	//			iterator elem_iter = begin() + old_size;
-	//			for(; elem_iter != end(); elem_iter++)
-	//			{
-	//				*elem_iter = elem;
-	//			}
-	//		}
-	//	}
-
-	//	inline const_iterator end(void) const
-	//	{
-	//		return begin() + size();
-	//	}
-
-	//	inline iterator end(void)
-	//	{
-	//		return begin() + size();
-	//	}
-
-	//	inline const_reference operator [] (size_type i) const
-	//	{
-	//		assert(i < size());
-
-	//		return base_vector_class::operator [] (i);
-	//	}
-
-	//	inline reference operator [] (size_type i)
-	//	{
-	//		assert(i < size());
-
-	//		return base_vector_class::operator [] (i);
-	//	}
-
-	//	inline void clear(void)
-	//	{
-	//		resize(0);
-	//	}
-	//};
-
 	typedef std::vector<Vec4<real> > VertexList;
 
 	typedef std::vector<size_t> VertexIndexList;
@@ -135,14 +20,6 @@ namespace t3d
 	typedef std::vector<Vec2<real> > UVList;
 
 	typedef std::vector<Vec4<real> > ColorList;
-
-	//typedef std::stack<VertexList> VertexListStack;
-
-	//typedef std::stack<VertexIndexList> VertexIndexListStack;
-
-	//typedef std::stack<NormalList> NormalListStack;
-
-	//typedef std::stack<UVList> UVListStack;
 
 	class VertexListContext
 	{
@@ -437,78 +314,6 @@ namespace t3d
 		SurfaceRef<uint32> getTextureRef32(void) const;
 	};
 
-	//typedef std::vector<TextureContext> TextureContextList;
-
-	//class TextureListContext
-	//{
-	//protected:
-	//	TextureContextList m_textureList;
-
-	//public:
-	//	const TextureContextList & getTextureList(void) const;
-
-	//	TextureContextList & getTextureList(void);
-
-	//	void pushTexture(TextureContextList::const_reference texture);
-
-	//	void pushTextureList(TextureContextList::const_iterator begin, TextureContextList::const_iterator end);
-
-	//	void clearTextureList(void);
-
-	//	//void resizeTextureList(TextureContextList::size_type size);
-
-	//	void resizeTextureList(TextureContextList::size_type size, TextureContextList::const_reference texture);
-
-	//	TextureContextList::size_type getTextureListSize(void) const;
-
-	//	TextureContextList::reference textureAt(TextureContextList::size_type i);
-
-	//	TextureContextList::const_reference textureAt(TextureContextList::size_type i) const;
-
-	//	TextureContextList::iterator getTextureListBegin();
-
-	//	TextureContextList::const_iterator getTextureListBegin() const;
-
-	//	TextureContextList::iterator getTextureListEnd();
-
-	//	TextureContextList::const_iterator getTextureListEnd() const;
-	//};
-
-	//typedef std::vector<size_t> TextureIndexList;
-
-	//class TextureIndexListContext
-	//{
-	//protected:
-	//	TextureIndexList m_textureIndexList;
-
-	//public:
-	//	const TextureIndexList & getTextureIndexList(void) const;
-
-	//	TextureIndexList & getTextureIndexList(void);
-
-	//	void pushTextureIndex(TextureIndexList::const_reference index);
-
-	//	void pushTextureIndexList(TextureIndexList::const_iterator begin, TextureIndexList::const_iterator end);
-
-	//	void clearTextureIndexList(void);
-
-	//	void resizeTextureIndexList(TextureIndexList::size_type size);
-
-	//	TextureIndexList::size_type getTextureIndexListSize(void) const;
-
-	//	TextureIndexList::reference textureIndexAt(TextureIndexList::size_type i);
-
-	//	TextureIndexList::const_reference textureIndexAt(TextureIndexList::size_type i) const;
-
-	//	TextureIndexList::iterator getTextureIndexListBegin();
-
-	//	TextureIndexList::const_iterator getTextureIndexListBegin() const;
-
-	//	TextureIndexList::iterator getTextureIndexListEnd();
-
-	//	TextureIndexList::const_iterator getTextureIndexListEnd() const;
-	//};
-
 	class ClipperContext
 	{
 	private:
@@ -639,7 +444,6 @@ namespace t3d
 
 	struct CAMERA
 	{
-		//Vec4<real> vpos;
 		Mat4<real> mcam;
 		Vec2<real> proj;
 		real nz;
@@ -676,10 +480,6 @@ namespace t3d
 		static Vec4<real> calculateCameraDirection(const Mat4<real> & mcam);
 
 	public:
-		//void setCameraPosition(const Vec4<real> & vpos);
-
-		//const Vec4<real> & getCameraPosition(void) const;
-
 		void setCameraMatrix(const Mat4<real> & mcam);
 
 		const Mat4<real> & getCameraMatrix(void) const;
@@ -699,8 +499,6 @@ namespace t3d
 		void setViewport(const RECT & viewport);
 
 		const RECT & getViewport(void) const;
-
-		//const CAMERA & getCamera(void) const;
 
 	public:
 		Vec4<real> getCameraPosition(void) const;
@@ -764,8 +562,6 @@ namespace t3d
 		, virtual public SurfaceContext
 		, virtual public ZBufferContext
 		, virtual public TextureContext
-		//, virtual public TextureListContext
-		//, virtual public TextureIndexListContext
 		, virtual public ClipperContext
 		, virtual public MaterialContext
 		, virtual public LightListContext
@@ -1151,16 +947,10 @@ namespace t3d
 	class RenderContext
 		: public RenderLineListZBufferRW
 		, public RenderLineIndexListZBufferRW
-		//, public RenderTriangleListWireZBufferRW
-		//, public RenderTriangleIndexListWireZBufferRW
 		, public RenderTriangleListSolidZBufferRW
 		, public RenderTriangleIndexListSolidZBufferRW
 		, public RenderTriangleListGouraudZBufferRW
 		, public RenderTriangleIndexListGouraudZBufferRW
-		//, public RenderTriangleListTextureZBufferRW
-		//, public RenderTriangleIndexListTextureZBufferRW
-		//, public RenderTriangleListGouraudTextureZBufferRW
-		//, public RenderTriangleIndexListGouraudTextureZBufferRW
 		, public RenderTriangleListTexturePerspectiveLPZBufferRW
 		, public RenderTriangleIndexListTexturePerspectiveLPZBufferRW
 		, public RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
