@@ -15,7 +15,7 @@ namespace t3d
 	class DIException : public Exception
 	{
 	public:
-		static std::basic_string<charT> GetResultStr(HRESULT hres);
+		static std::basic_string<charT> getResultStr(HRESULT hres);
 
 	public:
 		DIException(const std::basic_string<charT> & file, int line, HRESULT hres);
@@ -48,15 +48,15 @@ namespace t3d
 		virtual ~DIDevice(void);
 
 	public:
-		void SetCooperativeLevel(HWND hwnd, DWORD dwFlags);
+		void setCooperativeLevel(HWND hwnd, DWORD dwFlags);
 
-		void SetDataFormat(LPCDIDATAFORMAT lpdf);
+		void setDataFormat(LPCDIDATAFORMAT lpdf);
 
-		void SetProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph);
+		void setProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph);
 
-		void Acquire(void);
+		void acquire(void);
 
-		void GetDeviceState(DWORD cbData, LPVOID lpvData);
+		void getDeviceState(DWORD cbData, LPVOID lpvData);
 	};
 
 	class DIKeyboard : public DIDevice
@@ -68,17 +68,17 @@ namespace t3d
 		DIKeyboard(DInput * dinput, REFGUID rguid);
 
 	public:
-		void Update(void)
+		void update(void)
 		{
-			GetDeviceState(sizeof(m_state), m_state);
+			getDeviceState(sizeof(m_state), m_state);
 		}
 
-		const BYTE * GetKeyState(void) const
+		const BYTE * getKeyState(void) const
 		{
 			return m_state;
 		}
 
-		BYTE IsKeyDown(DWORD dwIndex) const
+		BYTE isKeyDown(DWORD dwIndex) const
 		{
 			assert(dwIndex < sizeof(m_state));
 
@@ -97,32 +97,32 @@ namespace t3d
 		DIMouse(DInput * dinput, REFGUID rguid);
 
 	public:
-		void Update(void)
+		void update(void)
 		{
-			GetDeviceState(sizeof(m_state), (LPVOID)&m_state);
+			getDeviceState(sizeof(m_state), (LPVOID)&m_state);
 		}
 
-		const DIMOUSESTATE & GetMouseState(void) const
+		const DIMOUSESTATE & getMouseState(void) const
 		{
 			return m_state;
 		}
 
-		LONG GetX(void) const
+		LONG getX(void) const
 		{
 			return m_state.lX;
 		}
 
-		LONG GetY(void) const
+		LONG getY(void) const
 		{
 			return m_state.lY;
 		}
 
-		LONG GetZ(void) const
+		LONG getZ(void) const
 		{
 			return m_state.lZ;
 		}
 
-		BYTE IsButtonDown(DWORD dwIndex) const
+		BYTE isButtonDown(DWORD dwIndex) const
 		{
 			assert(dwIndex < sizeof(m_state.rgbButtons) / sizeof(m_state.rgbButtons[0]));
 
@@ -150,72 +150,72 @@ namespace t3d
 			real dead_zone);
 
 	public:
-		void Update(void)
+		void update(void)
 		{
-			GetDeviceState(sizeof(m_state), (LPVOID)&m_state);
+			getDeviceState(sizeof(m_state), (LPVOID)&m_state);
 		}
 
-		const DIJOYSTATE & GetJoyState(void) const
+		const DIJOYSTATE & getJoyState(void) const
 		{
 			return m_state;
 		}
 
-		LONG GetX(void) const
+		LONG getX(void) const
 		{
 			return m_state.lX;
 		}
 
-		LONG GetY(void) const
+		LONG getY(void) const
 		{
 			return m_state.lY;
 		}
 
-		LONG GetZ(void) const
+		LONG getZ(void) const
 		{
 			return m_state.lZ;
 		}
 
-		LONG GetRx(void) const
+		LONG getRx(void) const
 		{
 			return m_state.lRx;
 		}
 
-		LONG GetRy(void) const
+		LONG getRy(void) const
 		{
 			return m_state.lRy;
 		}
 
-		LONG GetRz(void) const
+		LONG getRz(void) const
 		{
 			return m_state.lRz;
 		}
 
-		LONG GetU(void) const
+		LONG getU(void) const
 		{
 			return m_state.rglSlider[0];
 		}
 
-		LONG GetV(void) const
+		LONG getV(void) const
 		{
 			return m_state.rglSlider[1];
 		}
 
-		DWORD GetPOV0(void) const
+		DWORD getPOV0(void) const
 		{
 			return m_state.rgdwPOV[0];
 		}
 
-		DWORD GetPOV1(void) const
+		DWORD getPOV1(void) const
 		{
 			return m_state.rgdwPOV[1];
 		}
 
-		DWORD GetPOV2(void) const
+		DWORD getPOV2(void) const
 		{
 			return m_state.rgdwPOV[2];
 		}
 
-		DWORD GetPOV3(void) const
+		DWORD getPOV3(void) const
 		{
 			return m_state.rgdwPOV[3];
 		}
@@ -240,15 +240,15 @@ namespace t3d
 
 		virtual ~DInput(void);
 
-		void EnumDevices(DWORD dwDevType, LPDIENUMDEVICESCALLBACK lpCallback, LPVOID pvRef, DWORD dwFlags);
+		void enumDevices(DWORD dwDevType, LPDIENUMDEVICESCALLBACK lpCallback, LPVOID pvRef, DWORD dwFlags);
 
-		void FindJoystickList(std::vector<DIDEVICEINSTANCE> & DIDeviceInstList, const std::basic_string<charT> & DeviceName = _T(""), DWORD dwMaxDeviceCount = 1);
+		void findJoystickList(std::vector<DIDEVICEINSTANCE> & DIDeviceInstList, const std::basic_string<charT> & DeviceName = _T(""), DWORD dwMaxDeviceCount = 1);
 
-		DIKeyboardPtr CreateSysKeyboard(void);
+		DIKeyboardPtr createSysKeyboard(void);
 
-		DIMousePtr CreateSysMouse(void);
+		DIMousePtr createSysMouse(void);
 
-		DIJoystickPtr CreateJoystick(
+		DIJoystickPtr createJoystick(
 			REFGUID rguid,
 			LONG min_x = -255,
 			LONG max_x =  255,

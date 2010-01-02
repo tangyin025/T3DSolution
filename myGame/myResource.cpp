@@ -210,7 +210,7 @@ namespace my
 		dsbd.lpwfxFormat = &wavfmt;
 		dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
 
-		return dsound->CreateSoundBuffer(&dsbd);
+		return dsound->createSoundBuffer(&dsbd);
 	}
 
 	void copyWholeWavBufferToDSoundBuffer(
@@ -221,7 +221,7 @@ namespace my
 		DWORD audioBytes1;
 		unsigned char * audioPtr2;
 		DWORD audioBytes2;
-		dsbuffer->Lock(0, wav.child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER);
+		dsbuffer->lock(0, wav.child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER);
 
 		assert(audioBytes1 + audioBytes2 <= wav.child.cksize);
 
@@ -231,6 +231,6 @@ namespace my
 		if(audioPtr2 != NULL)
 			memcpy(audioPtr2, wav.buffer.get() + audioBytes1, audioBytes2);
 
-		dsbuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+		dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
 	}
 }

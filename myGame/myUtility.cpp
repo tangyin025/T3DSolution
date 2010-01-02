@@ -211,22 +211,22 @@ namespace my
 		static const DWORD MOV_STATE_RIGHT	= 0x08;
 
 		DWORD state = 0;
-		if(keyboard->IsKeyDown(DIK_W) || keyboard->IsKeyDown(DIK_UP))
+		if(keyboard->isKeyDown(DIK_W) || keyboard->isKeyDown(DIK_UP))
 		{
 			state |= MOV_STATE_UP;
 		}
 
-		if(keyboard->IsKeyDown(DIK_S) || keyboard->IsKeyDown(DIK_DOWN))
+		if(keyboard->isKeyDown(DIK_S) || keyboard->isKeyDown(DIK_DOWN))
 		{
 			state |= MOV_STATE_DOWN;
 		}
 
-		if(keyboard->IsKeyDown(DIK_A) || keyboard->IsKeyDown(DIK_LEFT))
+		if(keyboard->isKeyDown(DIK_A) || keyboard->isKeyDown(DIK_LEFT))
 		{
 			state |= MOV_STATE_LEFT;
 		}
 
-		if(keyboard->IsKeyDown(DIK_D) || keyboard->IsKeyDown(DIK_RIGHT))
+		if(keyboard->isKeyDown(DIK_D) || keyboard->isKeyDown(DIK_RIGHT))
 		{
 			state |= MOV_STATE_RIGHT;
 		}
@@ -270,12 +270,12 @@ namespace my
 			break;
 		}
 
-		if(keyboard->IsKeyDown(DIK_HOME))
+		if(keyboard->isKeyDown(DIK_HOME))
 		{
 			updateVec4OnMovUp(vres, scaler);
 		}
 
-		if(keyboard->IsKeyDown(DIK_END))
+		if(keyboard->isKeyDown(DIK_END))
 		{
 			updateVec4OnMovDown(vres, scaler);
 		}
@@ -284,7 +284,7 @@ namespace my
 
 	t3d::Vec4<real> EularCamera::buildRotOffset(t3d::DIMouse * mouse)
 	{
-		return my::Vec4<real>(DEG_TO_RAD(mouse->GetY()), DEG_TO_RAD(mouse->GetX()), 0);
+		return my::Vec4<real>(DEG_TO_RAD(mouse->getY()), DEG_TO_RAD(mouse->getX()), 0);
 	}
 
 	EularCamera::EularCamera(void)
@@ -414,7 +414,7 @@ namespace my
 
 	void EularCamera::update(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time)
 	{
-		if(!keyboard->IsKeyDown(DIK_R))
+		if(!keyboard->isKeyDown(DIK_R))
 		{
 			addPosition(buildMovOffset(keyboard, m_rot.y, m_movSpeed * step_time));
 
@@ -457,14 +457,14 @@ namespace my
 
 	void ConsoleSimulator::draw(t3d::DDSurface * surface, int x, int y) const
 	{
-		HDC hdc = surface->GetDC();
+		HDC hdc = surface->getDC();
 
 		for(int i = 0; i < (int)m_lines.size(); i++)
 		{
 			::TextOut(hdc, x, y + i * m_step, m_lines[i].c_str(), (int)m_lines[i].length());
 		}
 
-		surface->ReleaseDC(hdc);
+		surface->releaseDC(hdc);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -505,11 +505,11 @@ namespace my
 		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
 		rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
 
-		HDC hdc = surface->GetDC();
+		HDC hdc = surface->getDC();
 
 		::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUARROW);
 
-		surface->ReleaseDC(hdc);
+		surface->releaseDC(hdc);
 	}
 
 	MenuItemCheck::MenuItemCheck(int width /*= ::GetSystemMetrics(SM_CYMENU)*/, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
@@ -546,11 +546,11 @@ namespace my
 		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
 		rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
 
-		HDC hdc = surface->GetDC();
+		HDC hdc = surface->getDC();
 
 		::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUCHECK | DFCS_CHECKED);
 
-		surface->ReleaseDC(hdc);
+		surface->releaseDC(hdc);
 	}
 
 	MenuItem::MenuItem(const std::basic_string<charT> & text, int width, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
@@ -599,11 +599,11 @@ namespace my
 			m_check.draw(surface, x, y);
 		}
 
-		HDC hdc = surface->GetDC();
+		HDC hdc = surface->getDC();
 
 		::TextOut(hdc, x + m_check.getWidth(), y, m_text.c_str(), (int)m_text.length());
 
-		surface->ReleaseDC(hdc);
+		surface->releaseDC(hdc);
 
 		if(arrow)
 		{
@@ -810,13 +810,13 @@ namespace my
 		}
 		else
 		{
-			HDC hdc = surface->GetDC();
+			HDC hdc = surface->getDC();
 
 			std::basic_string<charT> info = _T("[~] toggle menu");
 
 			::TextOut(hdc, x, y, info.c_str(), (int)info.length());
 
-			surface->ReleaseDC(hdc);
+			surface->releaseDC(hdc);
 		}
 	}
 
