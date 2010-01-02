@@ -2,12 +2,12 @@
 #include "stdafx.h"
 #include "t3dlib6.h"
 
-namespace t3d
-{
 #define CLIP_MASK_V0	0x01
 #define CLIP_MASK_V1	0x02
 #define CLIP_MASK_V2	0x04
 
+namespace t3d
+{
 	const VertexList & VertexListContext::getVertexList(void) const
 	{
 		return m_vertexList;
@@ -595,157 +595,6 @@ namespace t3d
 		return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
 	}
 
-	//TextureContext::TextureContext(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
-	//	: m_textureBuffer(pbuffer)
-	//	, m_texturePitch(pitch)
-	//	, m_textureWidth(width)
-	//	, m_textureHeight(height)
-	//{
-	//}
-
-	//const TextureContextList & TextureListContext::getTextureList(void) const
-	//{
-	//	return m_textureList;
-	//}
-
-	//TextureContextList & TextureListContext::getTextureList(void)
-	//{
-	//	return m_textureList;
-	//}
-
-	//void TextureListContext::pushTexture(TextureContextList::const_reference texture)
-	//{
-	//	m_textureList.push_back(texture);
-	//}
-
-	//void TextureListContext::pushTextureList(TextureContextList::const_iterator begin, TextureContextList::const_iterator end)
-	//{
-	//	m_textureList.insert(getTextureListEnd(), begin, end);
-	//}
-
-	//void TextureListContext::clearTextureList(void)
-	//{
-	//	m_textureList.clear();
-	//}
-
-	////void TextureListContext::resizeTextureList(TextureContextList::size_type size)
-	////{
-	////	m_textureList.resize(size);
-	////}
-
-	//void TextureListContext::resizeTextureList(TextureContextList::size_type size, TextureContextList::const_reference texture)
-	//{
-	//	m_textureList.resize(size, texture);
-	//}
-
-	//TextureContextList::size_type TextureListContext::getTextureListSize(void) const
-	//{
-	//	return m_textureList.size();
-	//}
-
-	//TextureContextList::reference TextureListContext::textureAt(TextureContextList::size_type i)
-	//{
-	//	assert(i < getTextureListSize());
-
-	//	return m_textureList[i];
-	//}
-
-	//TextureContextList::const_reference TextureListContext::textureAt(TextureContextList::size_type i) const
-	//{
-	//	assert(i < getTextureListSize());
-
-	//	return m_textureList[i];
-	//}
-
-	//TextureContextList::iterator TextureListContext::getTextureListBegin()
-	//{
-	//	return m_textureList.begin();
-	//}
-
-	//TextureContextList::const_iterator TextureListContext::getTextureListBegin() const
-	//{
-	//	return m_textureList.begin();
-	//}
-
-	//TextureContextList::iterator TextureListContext::getTextureListEnd()
-	//{
-	//	return m_textureList.end();
-	//}
-
-	//TextureContextList::const_iterator TextureListContext::getTextureListEnd() const
-	//{
-	//	return m_textureList.end();
-	//}
-
-	//const TextureIndexList & TextureIndexListContext::getTextureIndexList(void) const
-	//{
-	//	return m_textureIndexList;
-	//}
-
-	//TextureIndexList & TextureIndexListContext::getTextureIndexList(void)
-	//{
-	//	return m_textureIndexList;
-	//}
-
-	//void TextureIndexListContext::pushTextureIndex(TextureIndexList::const_reference index)
-	//{
-	//	m_textureIndexList.push_back(index);
-	//}
-
-	//void TextureIndexListContext::pushTextureIndexList(TextureIndexList::const_iterator begin, TextureIndexList::const_iterator end)
-	//{
-	//	m_textureIndexList.insert(getTextureIndexListEnd(), begin, end);
-	//}
-
-	//void TextureIndexListContext::clearTextureIndexList(void)
-	//{
-	//	m_textureIndexList.clear();
-	//}
-
-	//void TextureIndexListContext::resizeTextureIndexList(TextureIndexList::size_type size)
-	//{
-	//	m_textureIndexList.resize(size);
-	//}
-
-	//TextureIndexList::size_type TextureIndexListContext::getTextureIndexListSize(void) const
-	//{
-	//	return m_textureIndexList.size();
-	//}
-
-	//TextureIndexList::reference TextureIndexListContext::textureIndexAt(TextureIndexList::size_type i)
-	//{
-	//	assert(i < getTextureIndexListSize());
-
-	//	return m_textureIndexList[i];
-	//}
-
-	//TextureIndexList::const_reference TextureIndexListContext::textureIndexAt(TextureIndexList::size_type i) const
-	//{
-	//	assert(i < getTextureIndexListSize());
-
-	//	return m_textureIndexList[i];
-	//}
-
-	//TextureIndexList::iterator TextureIndexListContext::getTextureIndexListBegin()
-	//{
-	//	return m_textureIndexList.begin();
-	//}
-
-	//TextureIndexList::const_iterator TextureIndexListContext::getTextureIndexListBegin() const
-	//{
-	//	return m_textureIndexList.begin();
-	//}
-
-	//TextureIndexList::iterator TextureIndexListContext::getTextureIndexListEnd()
-	//{
-	//	return m_textureIndexList.end();
-	//}
-
-	//TextureIndexList::const_iterator TextureIndexListContext::getTextureIndexListEnd() const
-	//{
-	//	return m_textureIndexList.end();
-	//}
-
 	void ClipperContext::setClipperRect(const RECT & clipper)
 	{
 		m_clipper = clipper;
@@ -1057,16 +906,6 @@ namespace t3d
 		return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
 	}
 
-	//void CameraContext::setCameraPosition(const Vec4<real> & vpos)
-	//{
-	//	m_camera.vpos = vpos;
-	//}
-
-	//const Vec4<real> & CameraContext::getCameraPosition(void) const
-	//{
-	//	return m_camera.vpos;
-	//}
-
 	void CameraContext::setCameraMatrix(const Mat4<real> & mcam)
 	{
 		m_camera.mcam = mcam;
@@ -1116,11 +955,6 @@ namespace t3d
 	{
 		return m_camera.viewport;
 	}
-
-	//const CAMERA & CameraContext::getCamera(void) const
-	//{
-	//	return m_camera;
-	//}
 
 	Vec4<real> CameraContext::getCameraPosition(void) const
 	{

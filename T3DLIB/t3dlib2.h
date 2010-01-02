@@ -3,7 +3,6 @@
 #define __T3DLIB2_H__
 
 #include "t3dcommon.h"
-
 #include <string>
 #include <dinput.h>
 #include <atlbase.h>

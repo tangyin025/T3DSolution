@@ -1,11 +1,8 @@
 
 #include "stdafx.h"
 #include "t3dlib5.h"
-
 #include <cmath>
 
-namespace t3d
-{
 #define CLIP_REGION_C		0x00
 #define CLIP_REGION_N		0x01
 #define CLIP_REGION_S		0x02
@@ -16,6 +13,10 @@ namespace t3d
 #define CLIP_REGION_SW		0x06
 #define CLIP_REGION_SE		0x0A
 
+#pragma warning(disable: 4244)
+
+namespace t3d
+{
 	const unsigned char color_add_table[UCHAR_MAX + 1][UCHAR_MAX + 1] = {
 #include "color_add_table.hpp"
 	};

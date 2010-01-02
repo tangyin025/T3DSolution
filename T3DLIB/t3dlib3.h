@@ -3,7 +3,6 @@
 #define __T3DLIB3_H__
 
 #include "t3dcommon.h"
-
 #include <string>
 #include <cassert>
 #include <dsound.h>

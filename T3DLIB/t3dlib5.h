@@ -3,9 +3,48 @@
 #define __T3DLIB5_H__
 
 #include "t3dcommon.h"
-
 #include <windows.h>
 #include "t3dlib4.h"
+
+#define RGB16_RED_SHIFT		11
+#define RGB16_GREEN_SHIFT	5
+#define	RGB16_BLUE_SHIFT	0
+
+#define RGB16_RED_RSHIFT	3
+#define RGB16_GREEN_RSHIFT	2
+#define	RGB16_BLUE_RSHIFT	3
+
+#define RGB16_RED_MASK		0xF800
+#define RGB16_GREEN_MASK	0x07E0
+#define	RGB16_BLUE_MASK		0x001F
+
+#define RGB32_RED_SHIFT		16
+#define RGB32_GREEN_SHIFT	8
+#define	RGB32_BLUE_SHIFT	0
+
+#define RGB32_RED_RSHIFT	0
+#define RGB32_GREEN_RSHIFT	0
+#define	RGB32_BLUE_RSHIFT	0
+
+#define RGB32_RED_MASK		0x00FF0000
+#define RGB32_GREEN_MASK	0x0000FF00
+#define	RGB32_BLUE_MASK		0x000000FF
+
+#define _RGB16GETR(v)		(((v) & RGB16_RED_MASK)		>> (RGB16_RED_SHIFT		- RGB16_RED_RSHIFT))
+#define _RGB16GETG(v)		(((v) & RGB16_GREEN_MASK)	>> (RGB16_GREEN_SHIFT	- RGB16_GREEN_RSHIFT))
+#define _RGB16GETB(v)		(((v) & RGB16_BLUE_MASK)	>> (RGB16_BLUE_SHIFT	- RGB16_BLUE_RSHIFT))
+
+#define _RGB32GETR(v)		(((v) & RGB32_RED_MASK)		>> (RGB32_RED_SHIFT		- RGB32_RED_RSHIFT))
+#define _RGB32GETG(v)		(((v) & RGB32_GREEN_MASK)	>> (RGB32_GREEN_SHIFT	- RGB32_GREEN_RSHIFT))
+#define _RGB32GETB(v)		(((v) & RGB32_BLUE_MASK)	>> (RGB32_BLUE_SHIFT	- RGB32_BLUE_RSHIFT))
+
+#define _RGB16BIT(r, g, b)	((((r) >> RGB16_RED_RSHIFT) << RGB16_RED_SHIFT) | (((g) >> RGB16_GREEN_RSHIFT) << RGB16_GREEN_SHIFT) | (((b) >> RGB16_BLUE_RSHIFT) << RGB16_BLUE_SHIFT))
+
+#define _RGB32BIT(r, g, b)	((((r) >> RGB32_RED_RSHIFT) << RGB32_RED_SHIFT) | (((g) >> RGB32_GREEN_RSHIFT) << RGB32_GREEN_SHIFT) | (((b) >> RGB32_BLUE_RSHIFT) << RGB32_BLUE_SHIFT))
+
+#define _COLORADD(lhs, rhs)	color_add_table[(lhs)][(rhs)]
+
+#define _COLORMUL(lhs, rhs)	color_mul_table[(lhs)][(rhs)]
 
 namespace t3d
 {
@@ -31,49 +70,9 @@ namespace t3d
 		}
 	}
 
-	#define RGB16_RED_SHIFT		11
-	#define RGB16_GREEN_SHIFT	5
-	#define	RGB16_BLUE_SHIFT	0
-
-	#define RGB16_RED_RSHIFT	3
-	#define RGB16_GREEN_RSHIFT	2
-	#define	RGB16_BLUE_RSHIFT	3
-
-	#define RGB16_RED_MASK		0xF800
-	#define RGB16_GREEN_MASK	0x07E0
-	#define	RGB16_BLUE_MASK		0x001F
-
-	#define RGB32_RED_SHIFT		16
-	#define RGB32_GREEN_SHIFT	8
-	#define	RGB32_BLUE_SHIFT	0
-
-	#define RGB32_RED_RSHIFT	0
-	#define RGB32_GREEN_RSHIFT	0
-	#define	RGB32_BLUE_RSHIFT	0
-
-	#define RGB32_RED_MASK		0x00FF0000
-	#define RGB32_GREEN_MASK	0x0000FF00
-	#define	RGB32_BLUE_MASK		0x000000FF
-
 	extern const unsigned char color_add_table[UCHAR_MAX + 1][UCHAR_MAX + 1];
 
 	extern const unsigned char color_mul_table[UCHAR_MAX + 1][UCHAR_MAX + 1];
-
-	#define _RGB16GETR(v)		(((v) & RGB16_RED_MASK)		>> (RGB16_RED_SHIFT		- RGB16_RED_RSHIFT))
-	#define _RGB16GETG(v)		(((v) & RGB16_GREEN_MASK)	>> (RGB16_GREEN_SHIFT	- RGB16_GREEN_RSHIFT))
-	#define _RGB16GETB(v)		(((v) & RGB16_BLUE_MASK)	>> (RGB16_BLUE_SHIFT	- RGB16_BLUE_RSHIFT))
-
-	#define _RGB32GETR(v)		(((v) & RGB32_RED_MASK)		>> (RGB32_RED_SHIFT		- RGB32_RED_RSHIFT))
-	#define _RGB32GETG(v)		(((v) & RGB32_GREEN_MASK)	>> (RGB32_GREEN_SHIFT	- RGB32_GREEN_RSHIFT))
-	#define _RGB32GETB(v)		(((v) & RGB32_BLUE_MASK)	>> (RGB32_BLUE_SHIFT	- RGB32_BLUE_RSHIFT))
-
-	#define _RGB16BIT(r, g, b)	((((r) >> RGB16_RED_RSHIFT) << RGB16_RED_SHIFT) | (((g) >> RGB16_GREEN_RSHIFT) << RGB16_GREEN_SHIFT) | (((b) >> RGB16_BLUE_RSHIFT) << RGB16_BLUE_SHIFT))
-
-	#define _RGB32BIT(r, g, b)	((((r) >> RGB32_RED_RSHIFT) << RGB32_RED_SHIFT) | (((g) >> RGB32_GREEN_RSHIFT) << RGB32_GREEN_SHIFT) | (((b) >> RGB32_BLUE_RSHIFT) << RGB32_BLUE_SHIFT))
-
-	#define _COLORADD(lhs, rhs)	color_add_table[(lhs)][(rhs)]
-
-	#define _COLORMUL(lhs, rhs)	color_mul_table[(lhs)][(rhs)]
 
 	template <typename elem_t>
 	class ConstSurfaceRef
