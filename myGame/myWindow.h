@@ -66,6 +66,8 @@ namespace my
 		void setClientRect(const RECT & rect);
 
 		void centerWindow(void);
+
+		void destroyWindow(void);
 	};
 
 	class Application;

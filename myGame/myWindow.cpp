@@ -700,6 +700,11 @@ namespace my
 			T3D_WINEXCEPT(::GetLastError());
 	}
 
+	void WindowBase::destroyWindow(void)
+	{
+		::DestroyWindow(m_hwnd);
+	}
+
 	BOOL Window::isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle)
 	{
 		WNDCLASSEX wcex;
