@@ -13,7 +13,7 @@
 
 namespace my
 {
-	class MYGAME_API WindowBase
+	class WindowBase
 	{
 	public:
 		static std::basic_string<charT> getWindowMessageStr(UINT message);
@@ -52,7 +52,7 @@ namespace my
 		HWND m_hwnd;
 	};
 
-	class MYGAME_API Window : public WindowBase
+	class Window : public WindowBase
 	{
 	public:
 		class MessageListener
@@ -91,12 +91,12 @@ namespace my
 
 	typedef boost::shared_ptr<Window> WindowPtr;
 
-	class MYGAME_API Application
+	class Application
 	{
 	public:
 		static std::basic_string<charT> getErrorCodeStr(DWORD errorCode);
 
-		class MYGAME_API Exception : public t3d::Exception
+		class Exception : public t3d::Exception
 		{
 		public:
 			Exception(const std::basic_string<charT> & file, int line, DWORD code);

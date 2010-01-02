@@ -13,7 +13,7 @@
 
 namespace my
 {
-	class MYGAME_API IOStream
+	class IOStream
 	{
 	public:
 		enum seek_type
@@ -40,7 +40,7 @@ namespace my
 
 	typedef boost::shared_ptr<IOStream> IOStreamPtr;
 
-	class MYGAME_API FileIOStream : public IOStream
+	class FileIOStream : public IOStream
 	{
 		friend class ResourceMgr;
 
@@ -65,7 +65,7 @@ namespace my
 		FILE * m_handle;
 	};
 
-	class MYGAME_API ResourceMgr
+	class ResourceMgr
 	{
 	protected:
 		static ResourceMgr * s_ptr;
@@ -90,8 +90,6 @@ namespace my
 
 		std::basic_string<charT> findFileOrException(const std::basic_string<charT> & fname);
 
-		//Wav * openWav(const std::basic_string<charT> & fpath, DWORD dwOpen = MMIO_READ | MMIO_ALLOCBUF);
-
 	protected:
 		typedef std::list<std::basic_string<charT> > DirList;
 
@@ -100,10 +98,10 @@ namespace my
 
 	typedef boost::shared_ptr<ResourceMgr> ResourceMgrPtr;
 
-	class MYGAME_API Wav
+	class Wav
 	{
 	public:
-		Wav(const std::basic_string<charT> & wavFilePath, DWORD dwOpen = MMIO_READ | MMIO_ALLOCBUF);
+		Wav(const std::basic_string<charT> & wavFilePath);
 
 		virtual ~Wav(void);
 
@@ -117,15 +115,15 @@ namespace my
 
 	typedef boost::shared_ptr<Wav> WavPtr;
 
-	MYGAME_API t3d::DSound::Buffer * createDSoundBufferForWholeWav(
-		t3d::DSound & dsound,
+	t3d::DSBufferPtr createDSoundBufferForWholeWav(
+		t3d::DSound * dsound,
 		const Wav & wav,
 		int flags = DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME,
 		unsigned short channels = 1,
 		int samplesPerSec = 11025);
 
-	MYGAME_API void copyWholeWavBufferToDSoundBuffer(
-		t3d::DSound::Buffer & dsbuffer,
+	void copyWholeWavBufferToDSoundBuffer(
+		t3d::DSBuffer * dsbuffer,
 		const Wav & wav);
 }
 

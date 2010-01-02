@@ -1,9 +1,6 @@
 
 #include "stdafx.h"
 #include "myCollision.h"
-#include "myPhysics.h"
-#include "myGame.h"
-#include "libc.h"
 
 namespace my
 {

@@ -7,6 +7,7 @@
 #include <cassert>
 #include <dsound.h>
 #include <atlbase.h>
+#include <boost/shared_ptr.hpp>
 
 namespace t3d
 {
@@ -25,14 +26,19 @@ namespace t3d
 		HRESULT m_hres;
 	};
 
+	class DSound;
+
 	class DSBuffer
 	{
+		friend DSound;
+
 	public:
 		CComPtr<IDirectSoundBuffer8> m_dsbuffer;
 
-	public:
+	protected:
 		DSBuffer(LPDIRECTSOUND8 lpdsound, LPCDSBUFFERDESC pcDSBufferDesc);
 
+	public:
 		virtual ~DSBuffer(void);
 
 		void SetCurrentPosition(DWORD dwNewPosition);
@@ -60,6 +66,8 @@ namespace t3d
 		LONG GetVolume(void);
 	};
 
+	typedef boost::shared_ptr<DSBuffer> DSBufferPtr;
+
 	class DSound
 	{
 	public:
@@ -77,6 +85,8 @@ namespace t3d
 		virtual ~DSound(void);
 
 		void SetCooperativeLevel(HWND hwnd, DWORD dwLevel = CL_PRIORITY);
+
+		DSBufferPtr CreateSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc);
 	};
 }
 

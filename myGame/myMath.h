@@ -3,7 +3,6 @@
 #define __MYMATH_H__
 
 #include "myCommon.h"
-
 #include "t3dlib4.h"
 
 namespace my
@@ -12,9 +11,9 @@ namespace my
 	class Mat4 : public t3d::Mat4<elem_t>
 	{
 	public:
-		static const Mat4 MYGAME_API ZERO;
+		static const Mat4 ZERO;
 
-		static const Mat4 MYGAME_API IDENTITY;
+		static const Mat4 IDENTITY;
 
 	public:
 		inline Mat4
@@ -56,17 +55,17 @@ namespace my
 	class Vec2 : public t3d::Vec2<elem_t>
 	{
 	public:
-		static const MYGAME_API Vec2 ZERO;
+		static const Vec2 ZERO;
 
-		static const MYGAME_API Vec2 UNIT_X;
+		static const Vec2 UNIT_X;
 
-		static const MYGAME_API Vec2 UNIT_Y;
+		static const Vec2 UNIT_Y;
 
-		static const MYGAME_API Vec2 NEGATIVE_UNIT_X;
+		static const Vec2 NEGATIVE_UNIT_X;
 
-		static const MYGAME_API Vec2 NEGATIVE_UNIT_Y;
+		static const Vec2 NEGATIVE_UNIT_Y;
 
-		static const MYGAME_API Vec2 UNIT_SCALE;
+		static const Vec2 UNIT_SCALE;
 
 	public:
 		inline Vec2(const elem_t _x, const elem_t _y)
@@ -102,27 +101,27 @@ namespace my
 	class Vec4 : public t3d::Vec4<elem_t>
 	{
 	public:
-		static const MYGAME_API Vec4 ZERO;
+		static const Vec4 ZERO;
 
-		static const MYGAME_API Vec4 UNIT_X;
+		static const Vec4 UNIT_X;
 
-		static const MYGAME_API Vec4 UNIT_Y;
+		static const Vec4 UNIT_Y;
 
-		static const MYGAME_API Vec4 UNIT_Z;
+		static const Vec4 UNIT_Z;
 
-		//static const MYGAME_API Vec4 UNIT_W;
+		//static const Vec4 UNIT_W;
 
-		static const MYGAME_API Vec4 UNIT_SCALE;
+		static const Vec4 UNIT_SCALE;
 
-		static const MYGAME_API Vec4 NEGATIVE_UNIT_X;
+		static const Vec4 NEGATIVE_UNIT_X;
 
-		static const MYGAME_API Vec4 NEGATIVE_UNIT_Y;
+		static const Vec4 NEGATIVE_UNIT_Y;
 
-		static const MYGAME_API Vec4 NEGATIVE_UNIT_Z;
+		static const Vec4 NEGATIVE_UNIT_Z;
 
-		//static const MYGAME_API Vec4 NEGATIVE_UNIT_W;
+		//static const Vec4 NEGATIVE_UNIT_W;
 
-		static const MYGAME_API Vec4 NEGATIVE_UNIT_SCALE;
+		static const Vec4 NEGATIVE_UNIT_SCALE;
 
 	public:
 		inline Vec4(const elem_t _x, const elem_t _y, const elem_t _z = 0, const elem_t _w = 1)
@@ -158,9 +157,9 @@ namespace my
 	class Quat : public t3d::Quat<elem_t>
 	{
 	public:
-		static const Quat MYGAME_API ZERO;
+		static const Quat ZERO;
 
-		static const Quat MYGAME_API IDENTITY;
+		static const Quat IDENTITY;
 
 	public:
 		inline Quat(elem_t w, elem_t x, elem_t y, elem_t z)
@@ -190,17 +189,17 @@ namespace my
 	class Color : public my::Vec4<real>
 	{
 	public:
-		static const Color MYGAME_API WHITE;
+		static const Color WHITE;
 
-		static const Color MYGAME_API RED;
+		static const Color RED;
 
-		static const Color MYGAME_API GREEN;
+		static const Color GREEN;
 
-		static const Color MYGAME_API BLUE;
+		static const Color BLUE;
 
-		static const Color MYGAME_API BLACK;
+		static const Color BLACK;
 
-		static const Color MYGAME_API YELLOW;
+		static const Color YELLOW;
 
 	public:
 		inline Color(real r, real g, real b, real a = 1)

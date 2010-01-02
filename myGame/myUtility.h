@@ -23,7 +23,7 @@ namespace my
 	// FPSManager
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API FPSManager
+	class FPSManager
 	{
 	public:
 		FPSManager(void);
@@ -51,7 +51,7 @@ namespace my
 	// Timer
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Timer
+	class Timer
 	{
 	public:
 		Timer(void);
@@ -83,7 +83,7 @@ namespace my
 	// EularCamera
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API EularCamera
+	class EularCamera
 	{
 	public:
 		static t3d::Vec4<real> & updateVec4OnMovFront(t3d::Vec4<real> & vres, real angle, real scaler);
@@ -180,7 +180,7 @@ namespace my
 	// ConsoleSimulator
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ConsoleSimulator
+	class ConsoleSimulator
 	{
 	//protected:
 	public:
@@ -210,7 +210,7 @@ namespace my
 	// MenuSystem
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API MenuItemArrow
+	class MenuItemArrow
 	{
 	protected:
 		int m_width;
@@ -231,7 +231,7 @@ namespace my
 		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
 	};
 
-	class MYGAME_API MenuItemCheck
+	class MenuItemCheck
 	{
 	protected:
 		int m_width;
@@ -252,7 +252,7 @@ namespace my
 		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
 	};
 
-	class MYGAME_API MenuItem
+	class MenuItem
 	{
 	protected:
 		MenuItemArrow m_arrow;
@@ -287,7 +287,7 @@ namespace my
 
 	typedef boost::shared_ptr<MenuItemNode> MenuItemNodePtr;
 
-	class MYGAME_API Menu
+	class Menu
 	{
 	public:
 		enum MenuCheckType
@@ -329,7 +329,7 @@ namespace my
 		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
 	};
 
-	class MYGAME_API MenuItemNode : public MenuItem
+	class MenuItemNode : public MenuItem
 	{
 	protected:
 		Menu m_subMenu;
@@ -350,7 +350,7 @@ namespace my
 		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
 	};
 
-	class MYGAME_API MenuSystem : public Menu
+	class MenuSystem : public Menu
 	{
 	protected:
 		typedef std::vector<Menu *> PMenuStack;
@@ -373,7 +373,7 @@ namespace my
 	// Grid
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Grid
+	class Grid
 	{
 	protected:
 		t3d::VertexList m_axisList;
@@ -399,7 +399,7 @@ namespace my
 	// Material
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Material
+	class Material
 	{
 	public:
 		t3d::Vec4<real> ambient;
@@ -419,7 +419,7 @@ namespace my
 	// ObjectBase
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ObjectBase
+	class ObjectBase
 		: public t3d::VertexListContext
 		, public t3d::NormalListContext
 		, public t3d::UVListContext
@@ -616,7 +616,7 @@ namespace my
 	// Object
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API Object
+	class Object
 		: public ObjectBase
 	{
 	public:
@@ -811,7 +811,7 @@ namespace my
 
 	//typedef std::vector<AxisAlignedBox> AxisAlignedBoxList;
 
-	//class MYGAME_API SimpleAxisAlignedBoxObject : public Object
+	//class SimpleAxisAlignedBoxObject : public Object
 	//{
 	//protected:
 	//	AxisAlignedBoxList m_axisAlignedBoxList;
@@ -954,7 +954,7 @@ namespace my
 	// ObjectFromOgreMesh
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API ObjectFromOgreMesh : public Object
+	class ObjectFromOgreMesh : public Object
 	{
 	public:
 		ObjectFromOgreMesh(
@@ -969,7 +969,7 @@ namespace my
 	// IndexObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API IndexObject
+	class IndexObject
 		: public ObjectBase
 		, public t3d::VertexIndexListContext
 	{
@@ -1163,7 +1163,7 @@ namespace my
 	// IndexPlaneObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API IndexPlaneObject : public IndexObject
+	class IndexPlaneObject : public IndexObject
 	{
 	protected:
 		enum PLANE_TYPE
@@ -1204,7 +1204,7 @@ namespace my
 	// IndexSphereObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API IndexSphereObject : public IndexObject
+	class IndexSphereObject : public IndexObject
 	{
 	public:
 		IndexSphereObject(
@@ -1222,7 +1222,7 @@ namespace my
 	// IndexCubeObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API IndexCubeObject : public IndexPlaneObject
+	class IndexCubeObject : public IndexPlaneObject
 	{
 	public:
 		IndexCubeObject(
@@ -1243,7 +1243,7 @@ namespace my
 	// IndexConeObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API IndexConeObject : public IndexObject
+	class IndexConeObject : public IndexObject
 	{
 	public:
 		IndexConeObject(
@@ -1262,7 +1262,7 @@ namespace my
 	// BoneAssignmentIndexObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API BoneAssignmentIndexObject : public IndexObject
+	class BoneAssignmentIndexObject : public IndexObject
 	{
 	public:
 		t3d::VertexList m_origVertexList;
@@ -1347,7 +1347,7 @@ namespace my
 	// BoneAssignmentIndexObjectFromOgreMesh
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API BoneAssignmentIndexObjectFromOgreMesh : public BoneAssignmentIndexObject
+	class BoneAssignmentIndexObjectFromOgreMesh : public BoneAssignmentIndexObject
 	{
 	public:
 		BoneAssignmentIndexObjectFromOgreMesh(
@@ -1364,7 +1364,7 @@ namespace my
 
 	//typedef boost::shared_ptr<SkeletonAnimationManager> SkeletonAnimationManagerPtr;
 
-	class MYGAME_API SkeletonAnimationsFromOgreSkeleton : public SkeletonAnimationManager
+	class SkeletonAnimationsFromOgreSkeleton : public SkeletonAnimationManager
 	{
 	public:
 		t3d::BoneNodeList m_origBoneNodeList;
@@ -1475,7 +1475,7 @@ namespace my
 	// DrawnHelper
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MYGAME_API DrawnHelper
+	class DrawnHelper
 	{
 	protected:
 		IndexSphereObject sphere0;
