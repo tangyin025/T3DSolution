@@ -74,9 +74,9 @@ namespace t3d
 
 #define FAILED_DIEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DIEXCEPT(hres) }
 
-	DIDevice::DIDevice(DInput * input, REFGUID rguid)
+	DIDevice::DIDevice(LPDIRECTINPUT8 lpdinput, REFGUID rguid)
 	{
-		FAILED_DIEXCEPT(input->m_dinput->CreateDevice(rguid, &m_didevice, NULL));
+		FAILED_DIEXCEPT(lpdinput->CreateDevice(rguid, &m_didevice, NULL));
 	}
 
 	DIDevice::~DIDevice(void)
@@ -90,12 +90,12 @@ namespace t3d
 
 	void DIDevice::SetDataFormat(LPCDIDATAFORMAT lpdf)
 	{
-		SUCCEEDED_VERIFY(m_didevice->SetDataFormat(lpdf));
+		FAILED_DIEXCEPT(m_didevice->SetDataFormat(lpdf));
 	}
 
 	void DIDevice::SetProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph)
 	{
-		SUCCEEDED_VERIFY(m_didevice->SetProperty(rguidProp, pdiph));
+		FAILED_DIEXCEPT(m_didevice->SetProperty(rguidProp, pdiph));
 	}
 
 	void DIDevice::Acquire(void)
@@ -108,20 +108,20 @@ namespace t3d
 		FAILED_DIEXCEPT(m_didevice->GetDeviceState(cbData, lpvData));
 	}
 
-	DIKeyboard::DIKeyboard(DInput * input, REFGUID rguid)
-		: DIDevice(input, rguid)
+	DIKeyboard::DIKeyboard(LPDIRECTINPUT8 lpdinput, REFGUID rguid)
+		: DIDevice(lpdinput, rguid)
 	{
 		SetDataFormat(&c_dfDIKeyboard);
 	}
 
-	DIMouse::DIMouse(DInput * input, REFGUID rguid)
-		: DIDevice(input, rguid)
+	DIMouse::DIMouse(LPDIRECTINPUT8 lpdinput, REFGUID rguid)
+		: DIDevice(lpdinput, rguid)
 	{
 		SetDataFormat(&c_dfDIMouse);
 	}
 
 	DIJoystick::DIJoystick(
-			DInput * input,
+			LPDIRECTINPUT8 lpdinput,
 			REFGUID rguid,
 			LONG min_x,
 			LONG max_x,
@@ -130,7 +130,7 @@ namespace t3d
 			LONG min_z,
 			LONG max_z,
 			real dead_zone)
-			: DIDevice(input, rguid)
+			: DIDevice(lpdinput, rguid)
 	{
 		SetDataFormat(&c_dfDIJoystick);
 
@@ -227,9 +227,12 @@ namespace t3d
 
 		BOOL FindDIJoystick(LPCDIDEVICEINSTANCE lpddi)
 		{
-			if(m_DeviceName.empty() || lpddi->tszInstanceName == m_DeviceName)
+			if(lpddi->dwDevType & DI8DEVTYPEJOYSTICK_STANDARD)
 			{
-				m_DIDeviceInstList.push_back(*lpddi);
+				if(m_DeviceName.empty() || lpddi->tszInstanceName == m_DeviceName)
+				{
+					m_DIDeviceInstList.push_back(*lpddi);
+				}
 			}
 
 			return m_DIDeviceInstList.size() < m_MaxDeviceCount ? DIENUM_CONTINUE : DIENUM_STOP;
@@ -243,17 +246,19 @@ namespace t3d
 
 	void DInput::FindJoystickList(std::vector<DIDEVICEINSTANCE> & DIDeviceInstList, const std::basic_string<charT> & DeviceName /*= _T("")*/, DWORD dwMaxDeviceCount /*= 1*/)
 	{
-		EnumDevices(DI8DEVCLASS_GAMECTRL, DIJoystickFinderCallback, &DIJoystickFinder(DIDeviceInstList, DeviceName, dwMaxDeviceCount), DIEDFL_ATTACHEDONLY);
+		DIJoystickFinder finder(DIDeviceInstList, DeviceName, dwMaxDeviceCount);
+
+		EnumDevices(DI8DEVCLASS_GAMECTRL, DIJoystickFinderCallback, &finder, DIEDFL_ATTACHEDONLY);
 	}
 
 	DIKeyboardPtr DInput::CreateSysKeyboard(void)
 	{
-		return DIKeyboardPtr(new DIKeyboard(this, GUID_SysKeyboard));
+		return DIKeyboardPtr(new DIKeyboard(m_dinput, GUID_SysKeyboard));
 	}
 
 	DIMousePtr DInput::CreateSysMouse(void)
 	{
-		return DIMousePtr(new DIMouse(this, GUID_SysMouse));
+		return DIMousePtr(new DIMouse(m_dinput, GUID_SysMouse));
 	}
 
 	DIJoystickPtr DInput::CreateJoystick(
@@ -266,6 +271,6 @@ namespace t3d
 		LONG max_z /*=  255*/,
 		real dead_zone /*= 10*/)
 	{
-		return DIJoystickPtr(new DIJoystick(this, rguid, min_x, max_x, min_y, max_y, min_z, max_z, dead_zone));
+		return DIJoystickPtr(new DIJoystick(m_dinput, rguid, min_x, max_x, min_y, max_y, min_z, max_z, dead_zone));
 	}
 }

@@ -152,9 +152,9 @@ namespace t3d
 
 #define FAILED_DDEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DDEXCEPT(hres) }
 
-	DDClipper::DDClipper(const DDraw * ddraw)
+	DDClipper::DDClipper(LPDIRECTDRAW7 lpddraw)
 	{
-		FAILED_DDEXCEPT(ddraw->m_ddraw->CreateClipper(0, &m_ddclipper, NULL));
+		FAILED_DDEXCEPT(lpddraw->CreateClipper(0, &m_ddclipper, NULL));
 	}
 
 	DDClipper::~DDClipper(void)
@@ -171,9 +171,9 @@ namespace t3d
 		SUCCEEDED_VERIFY(m_ddclipper->SetClipList(lpClipList, 0));
 	}
 
-	DDSurface::DDSurface(const DDraw * ddraw, DDSURFACEDESC2 & ddsd)
+	DDSurface::DDSurface(LPDIRECTDRAW7 lpddraw, DDSURFACEDESC2 & ddsd)
 	{
-		FAILED_DDEXCEPT(ddraw->m_ddraw->CreateSurface(&ddsd, &m_ddsurface, NULL));
+		FAILED_DDEXCEPT(lpddraw->CreateSurface(&ddsd, &m_ddsurface, NULL));
 	}
 
 	DDSurface::~DDSurface(void)
@@ -241,7 +241,7 @@ namespace t3d
 	{
 	}
 
-	void DDraw::SetCooperativeLevel( HWND hWnd, DWORD dwFlags)
+	void DDraw::SetCooperativeLevel(HWND hWnd, DWORD dwFlags /*= CL_NORMAL*/)
 	{
 		FAILED_DDEXCEPT(m_ddraw->SetCooperativeLevel(hWnd, dwFlags));
 	}
@@ -263,7 +263,7 @@ namespace t3d
 
 	DDClipperPtr DDraw::CreateWindowClipper(HWND hWnd)
 	{
-		DDClipperPtr clipper(new DDClipper(this));
+		DDClipperPtr clipper(new DDClipper(m_ddraw));
 		clipper->SetHWnd(hWnd);
 		return clipper;
 	}
@@ -297,7 +297,7 @@ namespace t3d
 
 		memcpy(pRgnd->Buffer, lpRect, sizeof(RECT) * dwCount);
 
-		DDClipperPtr clipper(new DDClipper(this));
+		DDClipperPtr clipper(new DDClipper(m_ddraw));
 		clipper->SetClipList(pRgnd);
 		return clipper;
 	}
@@ -311,7 +311,7 @@ namespace t3d
 		ddsd.ddsCaps.dwCaps		= DDSCAPS_PRIMARYSURFACE;
 		ddsd.dwBackBufferCount	= 0;
 
-		DDSurfacePtr surface(new DDSurface(this, ddsd));
+		DDSurfacePtr surface(new DDSurface(m_ddraw, ddsd));
 		return surface;
 	}
 
@@ -325,7 +325,7 @@ namespace t3d
 		ddsd.dwWidth			= dwWidth;
 		ddsd.dwHeight			= dwHeight;
 
-		DDSurfacePtr surface(new DDSurface(this, ddsd));
+		DDSurfacePtr surface(new DDSurface(m_ddraw, ddsd));
 		return surface;
 	}
 }

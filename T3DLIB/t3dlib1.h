@@ -35,7 +35,7 @@ namespace t3d
 		CComPtr<IDirectDrawClipper> m_ddclipper;
 
 	protected:
-		DDClipper(const DDraw * ddraw);
+		DDClipper(LPDIRECTDRAW7 lpddraw);
 
 	public:
 		virtual ~DDClipper(void);
@@ -55,7 +55,7 @@ namespace t3d
 		CComPtr<IDirectDrawSurface7> m_ddsurface;
 
 	protected:
-		DDSurface(const DDraw * ddraw, DDSURFACEDESC2 & ddsd);
+		DDSurface(LPDIRECTDRAW7 lpddraw, DDSURFACEDESC2 & ddsd);
 
 	public:
 		virtual ~DDSurface(void);
@@ -106,7 +106,7 @@ namespace t3d
 		virtual ~DDraw(void);
 
 	public:
-		void SetCooperativeLevel( HWND hWnd, DWORD dwFlags);
+		void SetCooperativeLevel(HWND hWnd, DWORD dwFlags = CL_NORMAL);
 
 		void SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate = 0);
 
