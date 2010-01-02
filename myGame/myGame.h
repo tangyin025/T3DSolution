@@ -3,17 +3,16 @@
 #define __MYGAME_H__
 
 #include "myCommon.h"
-
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
-
+#include <t3dlib1.h>
+#include <t3dlib2.h>
+#include <t3dlib3.h>
+#include <t3dlib6.h>
 #include "myWindow.h"
-#include "myResource.h"
 #include "myMath.h"
 #include "myImage.h"
-#include "t3dlib1.h"
-#include "t3dlib2.h"
-#include "t3dlib6.h"
+#include "myResource.h"
+#include <list>
+#include <boost/shared_array.hpp>
 
 namespace my
 {
@@ -31,7 +30,7 @@ namespace my
 		static ErrorReporter * s_ptr;
 
 	public:
-		static inline ErrorReporter & getSingleton(void)
+		static ErrorReporter & getSingleton(void)
 		{
 			assert(NULL != s_ptr); return * s_ptr;
 		}
@@ -64,7 +63,7 @@ namespace my
 		static ColorConversion * s_ptr;
 
 	public:
-		static inline ColorConversion & getSingleton(void)
+		static ColorConversion & getSingleton(void)
 		{
 			assert(NULL != s_ptr); return * s_ptr;
 		}
@@ -79,7 +78,7 @@ namespace my
 
 		virtual uint32 convertColor(const t3d::Vec4<int> & color) = 0;
 
-		virtual my::Image * convertImage(const my::Image & image) = 0;
+		virtual my::ImagePtr convertImage(const my::Image & image) = 0;
 	};
 
 	typedef boost::shared_ptr<ColorConversion> ColorConversionPtr;
@@ -91,7 +90,7 @@ namespace my
 
 		uint32 convertColor(const t3d::Vec4<int> & color);
 
-		my::Image * convertImage(const my::Image & image);
+		my::ImagePtr convertImage(const my::Image & image);
 	};
 
 	class ColorConversion32 : public ColorConversion
@@ -101,28 +100,28 @@ namespace my
 
 		uint32 convertColor(const t3d::Vec4<int> & color);
 
-		my::Image * convertImage(const my::Image & image);
+		my::ImagePtr convertImage(const my::Image & image);
 	};
 
 	typedef boost::shared_ptr<ErrorReporter> ErrorReporterPtr;
 
-	typedef boost::shared_ptr<t3d::DDraw> DDrawPtr;
+	//typedef boost::shared_ptr<t3d::DDraw> DDrawPtr;
 
-	typedef boost::shared_ptr<t3d::DDraw::Surface> DDrawSurfacePtr;
+	//typedef boost::shared_ptr<t3d::DDraw::Surface> DDrawSurfacePtr;
 
-	typedef boost::shared_ptr<t3d::DDraw::Clipper> DDrawClipperPtr;
+	//typedef boost::shared_ptr<t3d::DDraw::Clipper> DDrawClipperPtr;
 
-	typedef boost::shared_ptr<t3d::DInput> DInputPtr;
+	//typedef boost::shared_ptr<t3d::DInput> DInputPtr;
 
-	typedef boost::shared_ptr<t3d::DInput::Keyboard> DInputKeyboardPtr;
+	//typedef boost::shared_ptr<t3d::DInput::Keyboard> DInputKeyboardPtr;
 
-	typedef boost::shared_ptr<t3d::DInput::Mouse> DInputMousePtr;
+	//typedef boost::shared_ptr<t3d::DInput::Mouse> DInputMousePtr;
 
-	typedef boost::shared_ptr<t3d::DInput::Joystick> DInputJoystickPtr;
+	//typedef boost::shared_ptr<t3d::DInput::Joystick> DInputJoystickPtr;
 
-	typedef boost::shared_ptr<t3d::DSound> DSoundPtr;
+	//typedef boost::shared_ptr<t3d::DSound> DSoundPtr;
 
-	typedef boost::shared_ptr<t3d::DSound::Buffer> DSoundBufferPtr;
+	//typedef boost::shared_ptr<t3d::DSound::Buffer> DSoundBufferPtr;
 
 	typedef boost::shared_ptr<t3d::RenderContext> RenderContextPtr;
 
@@ -149,18 +148,18 @@ namespace my
 			int smode;
 		};
 
-	public:
+	protected:
 		ErrorReporterPtr m_errorRpt;
 
 		ResourceMgrPtr m_resourceMgr;
 
 		Window * m_win;
 
-		DDrawPtr m_ddraw;
+		t3d::DDrawPtr m_ddraw;
 
-		DDrawSurfacePtr m_sprim;
+		t3d::DDSurfacePtr m_sprim;
 
-		DDrawSurfacePtr m_sback;
+		t3d::DDSurfacePtr m_sback;
 
 		RECT m_rprim;
 
@@ -186,21 +185,21 @@ namespace my
 
 		void bltBackSurfaceToPrimary(void);
 
-		void fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
+		void fillBackSurface(LPRECT lpRect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
 
-		void clearZBuffer(const RECT & rect, t3d::fixp28 value = 0);
+		void clearZBuffer(LPRECT lpRect, t3d::fixp28 value = 0);
 	};
 
 	class Game : public GameBase, public Application::IdleListener
 	{
 	protected:
-		DInputPtr m_dinput;
+		t3d::DInputPtr m_dinput;
 
-		DSoundPtr m_dsound;
+		t3d::DSoundPtr m_dsound;
 
-		DInputKeyboardPtr m_keyboard;
+		t3d::DIKeyboardPtr m_keyboard;
 
-		DInputMousePtr m_mouse;
+		t3d::DIMousePtr m_mouse;
 
 	public:
 		Game(HINSTANCE hinst = Application::getModuleHandle());

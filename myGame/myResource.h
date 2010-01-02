@@ -3,13 +3,11 @@
 #define __MYRESOURCE_H__
 
 #include "myCommon.h"
-
+#include <t3dlib3.h>
 #include <cstdio>
 #include <cassert>
 #include <list>
 #include <boost/shared_ptr.hpp>
-
-#include "t3dlib3.h"
 
 namespace my
 {

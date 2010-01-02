@@ -1,8 +1,7 @@
 
 #include "stdafx.h"
 #include "myScene.h"
-
-#include "tinyxml.h"
+#include <tinyxml.h>
 
 namespace my
 {

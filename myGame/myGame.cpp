@@ -1,39 +1,10 @@
 
 #include "stdafx.h"
 #include "myGame.h"
-
 #include <cmath>
 #include <iostream>
 #include <crtdbg.h>
 //#include <boost/program_options.hpp>
-
-#ifdef MYGAME_EXPORTS
-BOOL APIENTRY DllMain(HANDLE	hModule,
-					  DWORD		ul_reason_for_call,
-					  LPVOID	lpReserved)
-{
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-		break;
-
-	case DLL_THREAD_ATTACH:
-		break;
-
-	case DLL_THREAD_DETACH:
-		break;
-
-	case DLL_PROCESS_DETACH:
-		//_CrtDumpMemoryLeaks(); // NOTE: dont use like this, because some glabol obj havent been destroyed yet !!!
-		break;
-	}
-
-	return TRUE;
-	hModule;
-	lpReserved;
-}
-#endif
 
 namespace my
 {
@@ -109,7 +80,7 @@ namespace my
 			color.x, color.y, color.z);
 	}
 
-	my::Image * ColorConversion16::convertImage(const my::Image & image)
+	my::ImagePtr ColorConversion16::convertImage(const my::Image & image)
 	{
 		return image.convertTo16Bits565();
 	}
@@ -136,7 +107,7 @@ namespace my
 			color.x, color.y, color.z);
 	}
 
-	my::Image * ColorConversion32::convertImage(const my::Image & image)
+	my::ImagePtr ColorConversion32::convertImage(const my::Image & image)
 	{
 		return image.convertTo32Bits();
 	}
@@ -168,7 +139,8 @@ namespace my
 		m_win = createWindow(_T("T3DLIB_WINDOW"), _T("myWindow"));
 
 		// create ddraw object
-		m_ddraw = DDrawPtr(new t3d::DDraw());
+		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
+		m_ddraw->SetCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// update video config
 		prepareConfig(cfg);
@@ -186,23 +158,23 @@ namespace my
 		switch(cfg.smode)
 		{
 		case my::GameBase::SM_WINDOWED:
-			m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_NORMAL);
-			//m_ddraw->restoreDisplayMode();
+			m_ddraw->SetCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_NORMAL);
+			//m_ddraw->RestoreDisplayMode();
 			m_win->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
 			m_win->setClientRect(clientRect);
 			m_win->centerWindow();
 			break;
 
 		case my::GameBase::SM_FULLSCREEN16:
-			m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
-			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
+			m_ddraw->SetCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
+			m_ddraw->SetDisplayMode(cfg.width, cfg.height, 16);
 			m_win->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_win->setClientRect(clientRect);
 			break;
 
 		case my::GameBase::SM_FULLSCREEN32:
-			m_ddraw->setCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
-			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
+			m_ddraw->SetCooperativeLevel(m_win->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
+			m_ddraw->SetDisplayMode(cfg.width, cfg.height, 32);
 			m_win->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_win->setClientRect(clientRect);
 			break;
@@ -215,27 +187,23 @@ namespace my
 		m_win->showWindow();
 
 		// NOTE: destroy existed primary surface before m_ddraw->createWindowSurface !!!
-		m_sprim = DDrawSurfacePtr();
+		m_sprim = t3d::DDSurfacePtr();;
 
 		// create primary surface with main window clipper
-		m_sprim = DDrawSurfacePtr(m_ddraw->createWindowSurface());
+		m_sprim = m_ddraw->CreateWindowSurface();
 
-		DDrawClipperPtr clipperPtr(m_ddraw->createWindowClipper(m_win->getHandle()));
-
-		m_sprim->setClipper(clipperPtr.get());
+		m_sprim->SetClipper(m_ddraw->CreateWindowClipper(m_win->getHandle()).get());
 
 		// create back surface with custom rect clipper
-		m_sback = DDrawSurfacePtr(m_ddraw->createMemorySurface(cfg.width, cfg.height));
+		m_sback = m_ddraw->CreateMemorySurface(cfg.width, cfg.height);
 
-		clipperPtr = DDrawClipperPtr(m_ddraw->createMemoryClipper(&clientRect, 1));
-
-		m_sback->setClipper(clipperPtr.get());
+		m_sback->SetClipper(m_ddraw->CreateMemoryClipper(&clientRect, 1).get());
 
 		// save the back surface rect clipper for blt
 		m_rback = clientRect;
 
 		// create render context
-		switch(m_sprim->getPixelFormat().dwRGBBitCount)
+		switch(m_sprim->GetPixelFormat().dwRGBBitCount)
 		{
 		case 16:
 			m_rc = RenderContextPtr(new t3d::RenderContext16());
@@ -259,11 +227,11 @@ namespace my
 		m_zbuffPitch = cfg.width * sizeof(fixp28);
 
 		// save back surface & zbuffer to render context
-		DDSURFACEDESC2 ddsc = m_sback->lock();
+		DDSURFACEDESC2 ddsc = m_sback->Lock();
 
 		m_rc->setSurfaceBuffer(ddsc.lpSurface, ddsc.lPitch, ddsc.dwWidth, ddsc.dwHeight);
 
-		m_sback->unlock();
+		m_sback->Unlock();
 
 		m_rc->setZBufferBuffer(m_zbuff.get(), m_zbuffPitch, 0, 0);
 
@@ -283,28 +251,28 @@ namespace my
 
 		assert((m_rprim.bottom - m_rprim.top) == m_rback.bottom && m_rback.top == 0);
 
-		m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
+		m_sprim->Blt(&m_rprim, m_sback.get(), &m_rback);
 	}
 
-	void GameBase::fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
+	void GameBase::fillBackSurface(LPRECT lpRect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
 	{
 		// clear back surface use render context's clipper
-		m_sback->fill(&rect, m_cc->convertColor(color));
+		m_sback->Fill(lpRect, m_cc->convertColor(color));
 	}
 
-	static inline void _clearZBuffer(void * pbuffer, DWORD pitch, const RECT & clipper, fixp28 value /*= 0*/)
+	static inline void _clearZBuffer(void * pbuffer, DWORD pitch, LPRECT lpRect, fixp28 value /*= 0*/)
 	{
 		// clear zbuffer with specified value
-		for(LONG y = clipper.top; y < clipper.bottom; y++)
+		for(LONG y = lpRect->top; y < lpRect->bottom; y++)
 		{
-			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][clipper.left], value, (clipper.right - clipper.left) * sizeof(fixp28));
+			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][lpRect->left], value, (lpRect->right - lpRect->left) * sizeof(fixp28));
 		}
 	}
 
-	void GameBase::clearZBuffer(const RECT & rect, t3d::fixp28 value /*= 0*/)
+	void GameBase::clearZBuffer(LPRECT lpRect, t3d::fixp28 value /*= 0*/)
 	{
 		// clear zbuffer use render context's clipper
-		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, rect, value);
+		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, lpRect, value);
 	}
 
 	Game::Game(HINSTANCE hinst /*= Application::getModuleHandle()*/)
@@ -345,15 +313,18 @@ namespace my
 		prepare(cfg);
 
 		// create dinput and keyboard & mouse
-		m_dinput = DInputPtr(new t3d::DInput(getHandle()));
+		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
 
-		m_dsound = DSoundPtr(new t3d::DSound());
+		m_keyboard = m_dinput->CreateSysKeyboard();
+		m_keyboard->SetCooperativeLevel(m_win->getHandle(), t3d::DIDevice::CL_NORMAL);
+		m_keyboard->Acquire();
 
-		m_dsound->setCooperativeLevel(m_win->getHandle(), t3d::DSound::CL_PRIORITY);
+		m_mouse = m_dinput->CreateSysMouse();
+		m_mouse->SetCooperativeLevel(m_win->getHandle(), t3d::DIDevice::CL_NORMAL);
+		m_mouse->Acquire();
 
-		m_keyboard = DInputKeyboardPtr(m_dinput->createSysKeyboard(m_win->getHandle()));
-
-		m_mouse = DInputMousePtr(m_dinput->createSysMouse(m_win->getHandle()));
+		m_dsound = t3d::DSoundPtr(new t3d::DSound());
+		m_dsound->SetCooperativeLevel(m_win->getHandle(), t3d::DSound::CL_PRIORITY);
 
 		// register this to idle listener
 		addIdleListener(this);
@@ -377,10 +348,10 @@ namespace my
 	void Game::nodifyIdle(void)
 	{
 		// update keyboard
-		m_keyboard->update();
+		m_keyboard->Update();
 
 		// update mouse
-		m_mouse->update();
+		m_mouse->Update();
 
 		// do client's frame, if failed destroy main window
 		if(!onFrame())

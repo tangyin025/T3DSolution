@@ -16,7 +16,7 @@ namespace my
 		FAILED_CUSEXCEPT(m_image.Create(nWidth, nHeight, nBPP, dwFlags));
 	}
 
-	ImagePtr Image::convertTo16Bits565(void)
+	ImagePtr Image::convertTo16Bits565(void) const
 	{
 		ImagePtr image(new Image(getWidth(), getHeight(), 16, 0));
 
@@ -29,7 +29,7 @@ namespace my
 		return image;
 	}
 
-	ImagePtr Image::convertTo32Bits(void)
+	ImagePtr Image::convertTo32Bits(void) const
 	{
 		ImagePtr image(new Image(getWidth(), getHeight(), 32, 0));
 

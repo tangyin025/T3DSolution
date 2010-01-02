@@ -57,10 +57,10 @@ namespace t3d
 
 #define FAILED_DSEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DSEXCEPT(hres) }
 
-	DSBuffer::DSBuffer(LPDIRECTSOUND8 lpdsound, LPCDSBUFFERDESC pcDSBufferDesc)
+	DSBuffer::DSBuffer(DSound * dsound, LPCDSBUFFERDESC pcDSBufferDesc)
 	{
 		CComPtr<IDirectSoundBuffer> dsbuffer;
-		FAILED_DSEXCEPT(lpdsound->CreateSoundBuffer(pcDSBufferDesc, &dsbuffer, NULL));
+		FAILED_DSEXCEPT(dsound->m_dsound->CreateSoundBuffer(pcDSBufferDesc, &dsbuffer, NULL));
 
 		FAILED_DSEXCEPT(dsbuffer->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID *)&m_dsbuffer));
 	}
@@ -154,6 +154,6 @@ namespace t3d
 
 	DSBufferPtr DSound::CreateSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc)
 	{
-		return DSBufferPtr(new DSBuffer(m_dsound, pcDSBufferDesc));
+		return DSBufferPtr(new DSBuffer(this, pcDSBufferDesc));
 	}
 }

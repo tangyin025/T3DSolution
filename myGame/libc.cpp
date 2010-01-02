@@ -4,6 +4,7 @@
 #include <cassert>
 #include <crtdbg.h>
 #include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
 #include "libc.h"
 #include "myWindow.h"
 
@@ -125,13 +126,13 @@ std::basic_string<wchar_t> mstringToWstring(const char * str)
 	int wlen;
 	if(0 == (wlen = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str, -1, NULL, 0)))
 	{
-		T3D_APPEXCEPT(::GetLastError());
+		T3D_WINEXCEPT(::GetLastError());
 	}
 
-	boost::shared_array<wchar_t> ptr(new wchar_t[wlen]);
+	boost::scoped_array<wchar_t> ptr(new wchar_t[wlen]);
 	if(0 == (wlen = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str, -1, ptr.get(), wlen)))
 	{
-		T3D_APPEXCEPT(::GetLastError());
+		T3D_WINEXCEPT(::GetLastError());
 	}
 
 	return std::basic_string<wchar_t>(ptr.get());
@@ -142,13 +143,13 @@ std::basic_string<char> wstringToMstring(const wchar_t * str)
 	int wlen;
 	if(0 == (wlen = WideCharToMultiByte(CP_ACP, WC_SEPCHARS, str, -1, NULL, 0, NULL, NULL)))
 	{
-		T3D_APPEXCEPT(::GetLastError());
+		T3D_WINEXCEPT(::GetLastError());
 	}
 
-	boost::shared_array<char> ptr(new char[wlen]);
+	boost::scoped_array<char> ptr(new char[wlen]);
 	if(0 == (wlen = WideCharToMultiByte(CP_ACP, WC_SEPCHARS, str, -1, ptr.get(), wlen, NULL, NULL)))
 	{
-		T3D_APPEXCEPT(::GetLastError());
+		T3D_WINEXCEPT(::GetLastError());
 	}
 
 	return std::basic_string<char>(ptr.get());

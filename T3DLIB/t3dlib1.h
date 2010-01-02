@@ -35,7 +35,7 @@ namespace t3d
 		CComPtr<IDirectDrawClipper> m_ddclipper;
 
 	protected:
-		DDClipper(LPDIRECTDRAW7 lpddraw);
+		DDClipper(DDraw * ddraw);
 
 	public:
 		virtual ~DDClipper(void);
@@ -55,23 +55,23 @@ namespace t3d
 		CComPtr<IDirectDrawSurface7> m_ddsurface;
 
 	protected:
-		DDSurface(LPDIRECTDRAW7 lpddraw, DDSURFACEDESC2 & ddsd);
+		DDSurface(DDraw * ddraw, DDSURFACEDESC2 & ddsd);
 
 	public:
 		virtual ~DDSurface(void);
 
 	public:
-		void SetClipper(LPDIRECTDRAWCLIPPER lpDDClipper);
+		void SetClipper(DDClipper * ddclipper);
 
-		void GetPixelFormat(LPDDPIXELFORMAT lpDDPixelFormat);
+		DDPIXELFORMAT GetPixelFormat(void);
 
-		void Lock(LPDDSURFACEDESC2 lpDDSurfaceDesc, LPRECT lpDestRect = NULL, DWORD dwFlags = DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR);
+		DDSURFACEDESC2 Lock(LPRECT lpDestRect = NULL, DWORD dwFlags = DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR);
 
 		void Unlock(LPRECT lpRect = NULL);
 
-		void Blt(LPRECT lpDestRect, LPDIRECTDRAWSURFACE7 lpDDSrcSurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
+		void Blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
 
-		void FILL(LPRECT lpDestRect, DWORD color);
+		void Fill(LPRECT lpDestRect, DWORD color);
 
 		void Restore(void);
 
@@ -100,7 +100,7 @@ namespace t3d
 			WF_END			= DDWAITVB_BLOCKEND,
 		};
 
-	protected:
+	public:
 		DDraw(void);
 
 		virtual ~DDraw(void);

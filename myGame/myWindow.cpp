@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "myWindow.h"
-
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -9,6 +8,32 @@
 
 namespace my
 {
+	std::basic_string<charT> WinException::GetErrorCodeStr(DWORD dwCode)
+	{
+		LPVOID lpMsg;
+		if(0 == ::FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL, dwCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsg, 0, NULL))
+		{
+			return GetErrorCodeStr(::GetLastError());
+		}
+
+		std::basic_string<charT> ret((charT *)lpMsg);
+		::LocalFree(lpMsg);
+		return ret;
+	}
+
+	WinException::WinException(const std::basic_string<charT> & file, int line, DWORD dwCode)
+		: t3d::Exception(file, line)
+		, m_code(dwCode)
+	{
+	}
+
+	std::basic_string<charT> WinException::what(void) const throw()
+	{
+		return GetErrorCodeStr(m_code);
+	}
+
 	std::basic_string<charT> WindowBase::getWindowMessageStr(UINT message)
 	{
 		const charT * pstr;
@@ -560,7 +585,7 @@ namespace my
 		::ShowWindow(m_hwnd, nShow);
 
 		if(!::UpdateWindow(m_hwnd))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 	}
 
 	std::basic_string<charT> WindowBase::getWindowText(void) const
@@ -582,7 +607,7 @@ namespace my
 
 			ret_size = ::GetWindowText(m_hwnd, buffer, (int)new_size);
 			if(0 == ret_size)
-				T3D_APPEXCEPT(::GetLastError());
+				T3D_WINEXCEPT(::GetLastError());
 		}
 
 		return std::basic_string<charT>(buffer);
@@ -591,7 +616,7 @@ namespace my
 	void WindowBase::setWindowText(const std::basic_string<charT> winTitle)
 	{
 		if(!::SetWindowText(m_hwnd, winTitle.c_str()))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 	}
 
 	DWORD WindowBase::getWindowStyle(void) const
@@ -602,10 +627,10 @@ namespace my
 	void WindowBase::setWindowStyle(DWORD dwStyle)
 	{
 		if(0 == ::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)dwStyle))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		if(0 == ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 	}
 
 	DWORD WindowBase::getWindowExtansionStyle(void) const
@@ -616,39 +641,39 @@ namespace my
 	void WindowBase::setWindowExtansionStyle(DWORD dwExStyle)
 	{
 		if(0 == ::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)dwExStyle))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		if(!::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 	}
 
 	RECT WindowBase::getWindowRect(void) const
 	{
 		RECT rect;
 		if(!::GetWindowRect(m_hwnd, &rect))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 		return rect;
 	}
 
 	void WindowBase::setWindowRect(const RECT & rect)
 	{
 		if(!::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, 0))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 	}
 
 	RECT WindowBase::getClientRect(void) const
 	{
 		RECT clientRect;
 		if(!::GetClientRect(m_hwnd, &clientRect))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		RECT adjustRect = clientRect;
 		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExtansionStyle()))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		RECT windowRect = getWindowRect();
 		if(!::OffsetRect(&clientRect, windowRect.left - adjustRect.left, windowRect.top - adjustRect.top))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 		return clientRect;
 	}
 
@@ -656,7 +681,7 @@ namespace my
 	{
 		RECT adjustRect = rect;
 		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExtansionStyle()))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		setWindowRect(adjustRect);
 	}
@@ -665,14 +690,14 @@ namespace my
 	{
 		RECT desktopRect;
 		if(!::GetWindowRect(::GetDesktopWindow(), &desktopRect))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		RECT windowRect = getWindowRect();
 		int x = ((desktopRect.right - desktopRect.left) - (windowRect.right - windowRect.left)) / 2;
 		int y = ((desktopRect.bottom - desktopRect.top) - (windowRect.bottom - windowRect.top)) / 2;
 
 		if(!::SetWindowPos(m_hwnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE))
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 	}
 
 	BOOL Window::isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle)
@@ -699,7 +724,7 @@ namespace my
 
 		if(NULL == ::RegisterClassEx(&wcex))
 		{
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 		}
 	}
 
@@ -708,7 +733,7 @@ namespace my
 		if(NULL == (m_hwnd = ::CreateWindowEx(0, winClass.c_str(), winTitle.c_str(),
 			WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, app->getHandle(), NULL)))
 		{
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 		}
 	}
 
@@ -746,32 +771,6 @@ namespace my
 		return ::DefWindowProc(hwnd, message, wparam, lparam);
 	}
 
-	std::basic_string<charT> Application::getErrorCodeStr(DWORD errorCode)
-	{
-		LPVOID lpMsg;
-		if(0 == ::FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-			NULL, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsg, 0, NULL))
-		{
-			return getErrorCodeStr(::GetLastError());
-		}
-
-		std::basic_string<charT> ret((charT *)lpMsg);
-		::LocalFree(lpMsg);
-		return ret;
-	}
-
-	my::Application::Exception::Exception(const std::basic_string<charT> & file, int line, DWORD code)
-		: t3d::Exception(file, line)
-		, m_code(code)
-	{
-	}
-
-	std::basic_string<charT> my::Application::Exception::what(void) const throw()
-	{
-		return getErrorCodeStr(m_code);
-	}
-
 	Application * Application::s_ptr = NULL;
 
 	HINSTANCE Application::getModuleHandle(const std::basic_string<charT> moduleName /*= _T("")*/)
@@ -783,7 +782,7 @@ namespace my
 			hinst = ::GetModuleHandle(moduleName.c_str());
 
 		if(!hinst)
-			T3D_APPEXCEPT(::GetLastError());
+			T3D_WINEXCEPT(::GetLastError());
 
 		return hinst;
 	}

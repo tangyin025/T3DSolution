@@ -63,9 +63,9 @@ namespace my
 			m_image.ReleaseDC();
 		}
 
-		ImagePtr convertTo16Bits565(void);
+		ImagePtr convertTo16Bits565(void) const;
 
-		ImagePtr convertTo32Bits(void);
+		ImagePtr convertTo32Bits(void) const;
 	};
 }
 

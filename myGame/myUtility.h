@@ -3,15 +3,13 @@
 #define __MYUTILITY_H__
 
 #include "myCommon.h"
-
+#include <t3dlib1.h>
+#include <t3dlib2.h>
+#include <t3dlib6.h>
 #include <map>
 #include <deque>
 #include <stack>
 #include <boost/shared_ptr.hpp>
-
-#include "t3dlib1.h"
-#include "t3dlib2.h"
-#include "t3dlib6.h"
 #include "myMath.h"
 #include "myResource.h"
 #include "mySkeleton.h"
@@ -106,9 +104,9 @@ namespace my
 
 		static t3d::Vec4<real> & updateVec4OnMovDown(t3d::Vec4<real> & vres, real scaler);
 
-		static t3d::Vec4<real> buildMovOffset(t3d::DInput::Keyboard * keyboard, real angle, real scaler);
+		static t3d::Vec4<real> buildMovOffset(t3d::DIKeyboard * keyboard, real angle, real scaler);
 
-		static t3d::Vec4<real> buildRotOffset(t3d::DInput::Mouse * mouse);
+		static t3d::Vec4<real> buildRotOffset(t3d::DIMouse * mouse);
 
 	public:
 		EularCamera(void);
@@ -160,7 +158,7 @@ namespace my
 
 		void reset(void);
 
-		void update(t3d::DInput::Keyboard * keyboard, t3d::DInput::Mouse * mouse, real step_time);
+		void update(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time);
 
 	protected:
 		t3d::Vec4<real> m_posDefault;
@@ -201,7 +199,7 @@ namespace my
 
 		void clear(void);
 
-		virtual void draw(t3d::DDraw::Surface * surface, int x, int y) const;
+		virtual void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
 	typedef boost::shared_ptr<ConsoleSimulator> ConsoleSimulatorPtr;
@@ -228,7 +226,7 @@ namespace my
 
 		int getHeight(void) const;
 
-		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
+		void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
 	class MenuItemCheck
@@ -249,7 +247,7 @@ namespace my
 
 		int getHeight(void) const;
 
-		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
+		void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
 	class MenuItem
@@ -280,7 +278,7 @@ namespace my
 
 		int getHeight(void) const;
 
-		void draw(t3d::DDraw::Surface * surface, int x, int y, bool arrow = false, bool check = false) const;
+		void draw(t3d::DDSurface * surface, int x, int y, bool arrow = false, bool check = false) const;
 	};
 
 	class MenuItemNode;
@@ -326,7 +324,7 @@ namespace my
 
 		void singleCheckItemNode(size_t item_i);
 
-		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
+		void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
 	class MenuItemNode : public MenuItem
@@ -347,7 +345,7 @@ namespace my
 
 		bool getCheck(void) const;
 
-		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
+		void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
 	class MenuSystem : public Menu
@@ -364,7 +362,7 @@ namespace my
 
 		void onKeyRelease(UINT vkcode);
 
-		void draw(t3d::DDraw::Surface * surface, int x, int y) const;
+		void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
 	typedef boost::shared_ptr<MenuSystem> MenuSystemPtr;
