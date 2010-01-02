@@ -6,205 +6,149 @@
 
 namespace t3d
 {
-	std::basic_string<charT> DSound::getResultStr(HRESULT hres)
+#define CASE_RETURN_STRING(branch) case branch: return std::basic_string<charT>(_T( #branch ));
+
+	std::basic_string<charT> DSException::GetResultStr(HRESULT hres)
 	{
-		const charT * pstr;
 		switch(hres)
 		{
-		case DS_OK:
-			pstr = _T("DS_OK"); break;
-		case DS_NO_VIRTUALIZATION:
-			pstr = _T("DS_NO_VIRTUALIZATION"); break;
-		//case DS_INCOMPLETE:
-		//	pstr = _T("DS_INCOMPLETE"); break;
-		case DSERR_ACCESSDENIED:
-			pstr = _T("DSERR_ACCESSDENIED"); break;
-		case DSERR_ALLOCATED:
-			pstr = _T("DSERR_ALLOCATED"); break;
-		case DSERR_ALREADYINITIALIZED:
-			pstr = _T("DSERR_ALREADYINITIALIZED"); break;
-		case DSERR_BADFORMAT:
-			pstr = _T("DSERR_BADFORMAT"); break;
-		case DSERR_BADSENDBUFFERGUID:
-			pstr = _T("DSERR_BADSENDBUFFERGUID"); break;
-		case DSERR_BUFFERLOST:
-			pstr = _T("DSERR_BUFFERLOST"); break;
-		case DSERR_BUFFERTOOSMALL:
-			pstr = _T("DSERR_BUFFERTOOSMALL"); break;
-		case DSERR_CONTROLUNAVAIL:
-			pstr = _T("DSERR_CONTROLUNAVAIL"); break;
-		case DSERR_DS8_REQUIRED:
-			pstr = _T("DSERR_DS8_REQUIRED"); break;
-		case DSERR_FXUNAVAILABLE:
-			pstr = _T("DSERR_FXUNAVAILABLE"); break;
-		case DSERR_GENERIC:
-			pstr = _T("DSERR_GENERIC"); break;
-		case DSERR_INVALIDCALL:
-			pstr = _T("DSERR_INVALIDCALL"); break;
-		case DSERR_INVALIDPARAM:
-			pstr = _T("DSERR_INVALIDPARAM"); break;
-		case DSERR_NOAGGREGATION:
-			pstr = _T("DSERR_NOAGGREGATION"); break;
-		case DSERR_NODRIVER:
-			pstr = _T("DSERR_NODRIVER"); break;
-		case DSERR_NOINTERFACE:
-			pstr = _T("DSERR_NOINTERFACE"); break;
-		case DSERR_OBJECTNOTFOUND:
-			pstr = _T("DSERR_OBJECTNOTFOUND"); break;
-		case DSERR_OTHERAPPHASPRIO:
-			pstr = _T("DSERR_OTHERAPPHASPRIO"); break;
-		case DSERR_OUTOFMEMORY:
-			pstr = _T("DSERR_OUTOFMEMORY"); break;
-		case DSERR_PRIOLEVELNEEDED:
-			pstr = _T("DSERR_PRIOLEVELNEEDED"); break;
-		case DSERR_SENDLOOP:
-			pstr = _T("DSERR_SENDLOOP"); break;
-		case DSERR_UNINITIALIZED:
-			pstr = _T("DSERR_UNINITIALIZED"); break;
-		case DSERR_UNSUPPORTED:
-			pstr = _T("DSERR_UNSUPPORTED"); break;
-		default:
-			pstr = _T("unknown dsound error result"); break;
+		CASE_RETURN_STRING(DS_OK)
+		CASE_RETURN_STRING(DS_NO_VIRTUALIZATION)
+		//CASE_RETURN_STRING(DS_INCOMPLETE)
+		CASE_RETURN_STRING(DSERR_ACCESSDENIED)
+		CASE_RETURN_STRING(DSERR_ALLOCATED)
+		CASE_RETURN_STRING(DSERR_ALREADYINITIALIZED)
+		CASE_RETURN_STRING(DSERR_BADFORMAT)
+		CASE_RETURN_STRING(DSERR_BADSENDBUFFERGUID)
+		CASE_RETURN_STRING(DSERR_BUFFERLOST)
+		CASE_RETURN_STRING(DSERR_BUFFERTOOSMALL)
+		CASE_RETURN_STRING(DSERR_CONTROLUNAVAIL)
+		CASE_RETURN_STRING(DSERR_DS8_REQUIRED)
+		CASE_RETURN_STRING(DSERR_FXUNAVAILABLE)
+		CASE_RETURN_STRING(DSERR_GENERIC)
+		CASE_RETURN_STRING(DSERR_INVALIDCALL)
+		CASE_RETURN_STRING(DSERR_INVALIDPARAM)
+		CASE_RETURN_STRING(DSERR_NOAGGREGATION)
+		CASE_RETURN_STRING(DSERR_NODRIVER)
+		CASE_RETURN_STRING(DSERR_NOINTERFACE)
+		CASE_RETURN_STRING(DSERR_OBJECTNOTFOUND)
+		CASE_RETURN_STRING(DSERR_OTHERAPPHASPRIO)
+		CASE_RETURN_STRING(DSERR_OUTOFMEMORY)
+		CASE_RETURN_STRING(DSERR_PRIOLEVELNEEDED)
+		CASE_RETURN_STRING(DSERR_SENDLOOP)
+		CASE_RETURN_STRING(DSERR_UNINITIALIZED)
+		CASE_RETURN_STRING(DSERR_UNSUPPORTED)
 		}
-
-		return std::basic_string<charT>(pstr);
+		return std::basic_string<charT>(_T("unknown dsound error result"));
 	}
 
-	t3d::DSound::Exception::Exception(const std::basic_string<charT> & file, int line, HRESULT hres)
-		: t3d::Exception(file, line)
+	DSException::DSException(const std::basic_string<charT> & file, int line, HRESULT hres)
+		: Exception(file, line)
 		, m_hres(hres)
 	{
 	}
 
-	std::basic_string<charT> t3d::DSound::Exception::what(void) const throw()
+	std::basic_string<charT> DSException::what(void) const throw()
 	{
-		return getResultStr(m_hres);
+		return GetResultStr(m_hres);
 	}
 
-#define T3D_DSEXCEPT(hres) { throw t3d::DSound::Exception(_T(__FILE__), __LINE__, (hres)); }
+#define T3D_DSEXCEPT(hres) { throw DSException( _T(__FILE__), __LINE__, (hres) ); }
+
+#define FAILED_DSEXCEPT(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) T3D_DSEXCEPT(hres) }
+
+	DSBuffer::DSBuffer(LPDIRECTSOUND8 lpdsound, LPCDSBUFFERDESC pcDSBufferDesc)
+	{
+		CComPtr<IDirectSoundBuffer> dsbuffer;
+		FAILED_DSEXCEPT(lpdsound->CreateSoundBuffer(pcDSBufferDesc, &dsbuffer, NULL));
+
+		FAILED_DSEXCEPT(dsbuffer->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID *)&m_dsbuffer));
+	}
+
+	DSBuffer::~DSBuffer(void)
+	{
+	}
+
+	void DSBuffer::SetCurrentPosition(DWORD dwNewPosition)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->SetCurrentPosition(dwNewPosition));
+	}
+
+	void DSBuffer::GetCurrentPosition(LPDWORD pdwCurrentPlayCursor, LPDWORD pdwCurrentWriteCursor /*= NULL*/)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->GetCurrentPosition(pdwCurrentPlayCursor, pdwCurrentWriteCursor));
+	}
+
+	void DSBuffer::Lock(DWORD dwOffset, DWORD dwBytes, LPVOID * ppvAudioPtr1, LPDWORD  pdwAudioBytes1, LPVOID * ppvAudioPtr2, LPDWORD pdwAudioBytes2, DWORD dwFlags)
+	{
+		FAILED_DSEXCEPT(m_dsbuffer->Lock(dwOffset, dwBytes, ppvAudioPtr1, pdwAudioBytes1, ppvAudioPtr2, pdwAudioBytes2, dwFlags));
+	}
+
+	void DSBuffer::Unlock(LPVOID pvAudioPtr1, DWORD dwAudioBytes1, LPVOID pvAudioPtr2, DWORD dwAudioBytes2)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->Unlock(pvAudioPtr1, dwAudioBytes1, pvAudioPtr2, dwAudioBytes2));
+	}
+
+	void DSBuffer::Play(DWORD dwPriority /*= 0*/, DWORD dwFlags /*= 0*/)
+	{
+		FAILED_DSEXCEPT(m_dsbuffer->Play(0, dwPriority, dwFlags));
+	}
+
+	void DSBuffer::Stop(void)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->Stop());
+	}
+
+	void DSBuffer::SetFrequency(DWORD dwFrequency)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->SetFrequency(dwFrequency));
+	}
+
+	DWORD DSBuffer::GetFrequency(void)
+	{
+		DWORD dwFrequency;
+		SUCCEEDED_VERIFY(m_dsbuffer->GetFrequency(&dwFrequency));
+
+		return dwFrequency;
+	}
+
+	void DSBuffer::SetPan(LONG lPan)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->SetPan(lPan));
+	}
+
+	LONG DSBuffer::GetPan(void)
+	{
+		LONG lPan;
+		SUCCEEDED_VERIFY(m_dsbuffer->GetPan(&lPan));
+
+		return lPan;
+	}
+
+	void DSBuffer::SetVolume(LONG lVolume)
+	{
+		SUCCEEDED_VERIFY(m_dsbuffer->SetVolume(lVolume));
+	}
+
+	LONG DSBuffer::GetVolume(void)
+	{
+		LONG lVolume;
+		SUCCEEDED_VERIFY(m_dsbuffer->GetVolume(&lVolume));
+
+		return lVolume;
+	}
 
 	DSound::DSound(void)
-		: m_lpdsound(NULL)
 	{
-		HRESULT hres;
-		if(FAILED(hres = ::DirectSoundCreate8(NULL, &m_lpdsound, NULL)))
-			T3D_DSEXCEPT(hres);
+		FAILED_DSEXCEPT(DirectSoundCreate8(NULL, &m_dsound, NULL));
 	}
 
 	DSound::~DSound(void)
 	{
-		SAFE_RELEASE(m_lpdsound);
 	}
 
-	void DSound::setCooperativeLevel(HWND hwnd, DWORD level /*= CL_PRIORITY*/)
+	void DSound::SetCooperativeLevel(HWND hwnd, DWORD dwLevel /*= CL_PRIORITY*/)
 	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsound->SetCooperativeLevel(hwnd, level)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	DSound::Buffer::Buffer(DSound * sound, const DSBUFFERDESC & dsbd)
-	{
-		HRESULT hres;
-		if(FAILED(hres = sound->m_lpdsound->CreateSoundBuffer(&dsbd, &m_lpdsbuffer, NULL)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	DSound::Buffer::~Buffer(void)
-	{
-		SAFE_RELEASE(m_lpdsbuffer);
-	}
-
-	void DSound::Buffer::setCurrentPosition(DWORD position)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->SetCurrentPosition(position)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	void DSound::Buffer::getCurrentPosition(LPDWORD pCurrentPlayCursor, LPDWORD pCurrentWriteCursor /*= NULL*/) const
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->GetCurrentPosition(pCurrentPlayCursor, pCurrentWriteCursor)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	void DSound::Buffer::lock(DWORD offset, DWORD bytes, LPVOID * audioPtr1, LPDWORD  audioBytes1, LPVOID * audioPtr2, LPDWORD audioBytes2, DWORD flags)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->Lock(offset, bytes, audioPtr1, audioBytes1, audioPtr2, audioBytes2, flags)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	void DSound::Buffer::unlock(LPVOID audioPtr1, DWORD audioBytes1, LPVOID audioPtr2, DWORD audioBytes2)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	void DSound::Buffer::play(DWORD priority /*= 0*/, DWORD flags /*= 0*/)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->Play(0, priority, flags)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	void DSound::Buffer::stop(void)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->Stop()))
-			T3D_DSEXCEPT(hres);
-	}
-
-	void DSound::Buffer::setFrequency(DWORD frequency)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->SetFrequency(frequency)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	DWORD DSound::Buffer::getFrequency(void) const
-	{
-		DWORD ret;
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->GetFrequency(&ret)))
-			T3D_DSEXCEPT(hres);
-
-		return ret;
-	}
-
-	void DSound::Buffer::setPan(LONG lPan)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->SetPan(lPan)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	LONG DSound::Buffer::getPan(void) const
-	{
-		LONG ret;
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->GetPan(&ret)))
-			T3D_DSEXCEPT(hres);
-
-		return ret;
-	}
-
-	void DSound::Buffer::setVolume(LONG lVolume)
-	{
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->SetVolume(lVolume)))
-			T3D_DSEXCEPT(hres);
-	}
-
-	LONG DSound::Buffer::getVolume(void) const
-	{
-		LONG ret;
-		HRESULT hres;
-		if(FAILED(hres = m_lpdsbuffer->GetVolume(&ret)))
-			T3D_DSEXCEPT(hres);
-
-		return ret;
+		FAILED_DSEXCEPT(m_dsound->SetCooperativeLevel(hwnd, dwLevel));
 	}
 }

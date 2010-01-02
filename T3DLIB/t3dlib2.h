@@ -44,7 +44,7 @@ namespace t3d
 		};
 
 	public:
-		DIDevice(DInput * input, REFGUID rguid);
+		DIDevice(LPDIRECTINPUT8 lpdinput, REFGUID rguid);
 
 		virtual ~DIDevice(void);
 
@@ -66,7 +66,7 @@ namespace t3d
 		BYTE m_state[256];
 
 	public:
-		DIKeyboard(DInput * input, REFGUID rguid);
+		DIKeyboard(LPDIRECTINPUT8 lpdinput, REFGUID rguid);
 
 	public:
 		void Update(void)
@@ -95,7 +95,7 @@ namespace t3d
 		DIMOUSESTATE m_state;
 
 	public:
-		DIMouse(DInput * input, REFGUID rguid);
+		DIMouse(LPDIRECTINPUT8 lpdinput, REFGUID rguid);
 
 	public:
 		void Update(void)
@@ -140,7 +140,7 @@ namespace t3d
 
 	public:
 		DIJoystick(
-			DInput * input,
+			LPDIRECTINPUT8 lpdinput,
 			REFGUID rguid,
 			LONG min_x,
 			LONG max_x,
