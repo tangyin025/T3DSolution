@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="T3DLIB"
-	ProjectGUID="{2D00AB57-36DC-427E-96FB-88FC6676C90D}"
-	RootNamespace="T3DLIB"
+	Name="myGame"
+	ProjectGUID="{2F061483-C206-43E8-89ED-AC2013209309}"
+	RootNamespace="myGame"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,13 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;"
+				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;;&quot;$(SolutionDir)\tinyxml&quot;;&quot;$(SolutionDir)\T3DLIB&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
-				WarningLevel="4"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -105,12 +105,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;"
+				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;;&quot;$(SolutionDir)\tinyxml&quot;;&quot;$(SolutionDir)\T3DLIB&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="4"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -151,63 +151,55 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\libc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myCollision.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myGame.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myPhysics.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myScene.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\mySkeleton.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\myWindow.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\t3dcommon.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib1.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib2.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib3.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib4.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib5.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib6.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib7.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib8.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib9.cpp"
 				>
 			</File>
 		</Filter>
@@ -217,47 +209,55 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\libc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myCollision.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myCommon.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myGame.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myImage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myMath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myPhysics.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myResource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myScene.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mySkeleton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myUtility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\myWindow.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dcommon.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib1.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib3.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib4.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib5.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib6.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib7.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib8.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib9.h"
 				>
 			</File>
 		</Filter>

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="T3DLIB"
-	ProjectGUID="{2D00AB57-36DC-427E-96FB-88FC6676C90D}"
-	RootNamespace="T3DLIB"
+	Name="tinyxml"
+	ProjectGUID="{C607BB7F-2BA8-43BA-BBF4-3CFF325F62D7}"
+	RootNamespace="tinyxml"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,13 +41,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
-				WarningLevel="4"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -105,12 +104,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="4"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -151,63 +149,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\t3dcommon.cpp"
+				RelativePath=".\tinystr.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib1.cpp"
+				RelativePath=".\tinyxml.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib2.cpp"
+				RelativePath=".\tinyxmlerror.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib3.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib4.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib5.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib6.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib7.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib8.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib9.cpp"
+				RelativePath=".\tinyxmlparser.cpp"
 				>
 			</File>
 		</Filter>
@@ -217,47 +171,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath=".\tinystr.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dcommon.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib1.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib3.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib4.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib5.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib6.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib7.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib8.h"
-				>
-			</File>
-			<File
-				RelativePath=".\t3dlib9.h"
+				RelativePath=".\tinyxml.h"
 				>
 			</File>
 		</Filter>
