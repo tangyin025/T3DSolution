@@ -184,7 +184,7 @@ namespace my
 		t3d::DIMousePtr m_mouse;
 
 	public:
-		Game(HINSTANCE hinst = Application::getModuleHandle());
+		Game(HINSTANCE hinst = NULL);
 
 		~Game(void);
 
@@ -200,7 +200,7 @@ namespace my
 
 		int run(const CONFIG_DESC & cfg = Game::CONFIG_DESC());
 
-		void nodifyIdle(void);
+		BOOL nodifyIdle(void);
 	};
 }
 

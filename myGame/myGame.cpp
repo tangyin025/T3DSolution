@@ -136,10 +136,11 @@ namespace my
 		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
 
 		// create main window
-		m_pwnd = createWindow(_T("T3DLIB_WINDOW"), _T("myWindow"));
+		m_pwnd = createWindow(_T("T3DLIB_WINDOW"), getModuleFileName());
 
 		// create ddraw object
 		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
+
 		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// update video config
@@ -152,6 +153,9 @@ namespace my
 
 		assert(NULL != m_pwnd);
 
+		// NOTE: destory previous primary surface before re-create it
+		m_sprim = t3d::DDSurfacePtr();
+
 		RECT clientRect = {0, 0, cfg.width, cfg.height};
 
 		// set ddraw and main window with config
@@ -161,7 +165,7 @@ namespace my
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 			//m_ddraw->RestoreDisplayMode();
 			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
-			m_pwnd->setClientRect(clientRect);
+			m_pwnd->adjustClientRect(clientRect);
 			m_pwnd->centerWindow();
 			break;
 
@@ -169,25 +173,19 @@ namespace my
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->setClientRect(clientRect);
+			m_pwnd->adjustClientRect(clientRect);
 			break;
 
 		case my::GameBase::SM_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->setClientRect(clientRect);
+			m_pwnd->adjustClientRect(clientRect);
 			break;
 
 		default:
 			T3D_CUSEXCEPT(_T("unsupported screen mode"));
 		}
-
-		// show main window
-		m_pwnd->showWindow();
-
-		// NOTE: destroy existed primary surface before m_ddraw->createWindowSurface !!!
-		m_sprim = t3d::DDSurfacePtr();;
 
 		// create primary surface with main window clipper
 		m_sprim = m_ddraw->createWindowSurface();
@@ -237,6 +235,9 @@ namespace my
 
 		// set back surface rect to render context clipper
 		m_rc->setClipperRect(m_rback);
+
+		// show main window
+		m_pwnd->showWindow();
 	}
 
 	void GameBase::bltBackSurfaceToPrimary(void)
@@ -251,7 +252,12 @@ namespace my
 
 		assert((m_rprim.bottom - m_rprim.top) == m_rback.bottom && m_rback.top == 0);
 
-		m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
+		//m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
+		HDC hdcSrc = m_sback->getDC();
+		HDC hdc = m_pwnd->getDC();
+		::BitBlt(hdc, 0, 0, m_rback.right - m_rback.left, m_rback.bottom - m_rback.top, hdcSrc, 0, 0, SRCCOPY);
+		m_pwnd->releaseDC(hdc);
+		m_sback->releaseDC(hdcSrc);
 	}
 
 	void GameBase::fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
@@ -275,7 +281,7 @@ namespace my
 		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, rect, value);
 	}
 
-	Game::Game(HINSTANCE hinst /*= Application::getModuleHandle()*/)
+	Game::Game(HINSTANCE hinst /*= NULL*/)
 		: GameBase(hinst)
 	{
 	}
@@ -327,7 +333,7 @@ namespace my
 		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
 
 		// register this to idle listener
-		addIdleListener(this);
+		setIdleListener(this);
 
 		//// register current directory input source dir
 		//m_resourceMgr->registerDir(_T("."));
@@ -345,7 +351,7 @@ namespace my
 		return res;
 	}
 
-	void Game::nodifyIdle(void)
+	BOOL Game::nodifyIdle(void)
 	{
 		// update keyboard
 		m_keyboard->update();
@@ -356,14 +362,17 @@ namespace my
 		// do client's frame, if failed destroy main window
 		if(!onFrame())
 		{
+			// destroy window
 			m_pwnd->destroyWindow();
 
 			m_pwnd = NULL;
 
-			return;
+			return TRUE;
 		}
 
 		// swap the backup and primary surface
 		bltBackSurfaceToPrimary();
+
+		return TRUE;
 	}
 }

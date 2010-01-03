@@ -11,16 +11,16 @@ namespace my
 	std::basic_string<charT> WinException::GetErrorCodeStr(DWORD dwCode)
 	{
 		LPVOID lpMsg;
-		if(0 == ::FormatMessage(
+		if(0 != ::FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL, dwCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsg, 0, NULL))
 		{
-			return GetErrorCodeStr(::GetLastError());
+			std::basic_string<charT> ret((charT *)lpMsg);
+			::LocalFree(lpMsg);
+			return ret;
 		}
 
-		std::basic_string<charT> ret((charT *)lpMsg);
-		::LocalFree(lpMsg);
-		return ret;
+		return std::basic_string<charT>(_T("unknown windows error"));
 	}
 
 	WinException::WinException(const std::basic_string<charT> & file, int line, DWORD dwCode)
@@ -677,7 +677,7 @@ namespace my
 		return clientRect;
 	}
 
-	void WindowBase::setClientRect(const RECT & rect)
+	void WindowBase::adjustClientRect(const RECT & rect)
 	{
 		RECT adjustRect = rect;
 		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExtansionStyle()))
@@ -703,6 +703,16 @@ namespace my
 	void WindowBase::destroyWindow(void)
 	{
 		::DestroyWindow(m_hwnd);
+	}
+
+	HDC WindowBase::getDC(void)
+	{
+		return ::GetDC(m_hwnd);
+	}
+
+	void WindowBase::releaseDC(HDC hdc)
+	{
+		::ReleaseDC(m_hwnd, hdc);
 	}
 
 	BOOL Window::isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle)
@@ -734,6 +744,7 @@ namespace my
 	}
 
 	Window::Window(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle, const Application * app)
+		: m_pMessageListener(NULL)
 	{
 		if(NULL == (m_hwnd = ::CreateWindowEx(0, winClass.c_str(), winTitle.c_str(),
 			WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, app->getHandle(), NULL)))
@@ -744,13 +755,11 @@ namespace my
 
 	Window::~Window(void)
 	{
-		//assert(!::IsWindow(m_hwnd));
 	}
 
-	void Window::addMessageListener(MessageListener * listener)
+	void Window::setMessageListener(MessageListener * pMessageListener)
 	{
-		assert(NULL != listener);
-		m_msgListenerList.push_back(listener);
+		m_pMessageListener = pMessageListener;
 	}
 
 	HWND Window::getHandle(void) const
@@ -762,14 +771,30 @@ namespace my
 	{
 		assert(hwnd == m_hwnd);
 
-		MessageListenerList::iterator iter = m_msgListenerList.begin();
-
-		for(; iter != m_msgListenerList.end(); iter++)
+		HRESULT lres;
+		if(NULL != m_pMessageListener && m_pMessageListener->notifyMessage(lres, this, message, wparam, lparam))
 		{
-			LRESULT lres;
-			if((*iter)->notifyMessage(this, message, wparam, lparam, lres))
+			assert(WM_NCDESTROY != message); return lres;
+		}
+
+		switch(message)
+		{
+		case WM_NCDESTROY:
 			{
-				return lres;
+				WindowPtrMap & wndMap = Application::getSingleton().m_wndMap;
+
+				WindowPtrMap::iterator iter = wndMap.find(hwnd);
+
+				assert(iter != wndMap.end());
+
+				wndMap.erase(iter);
+
+				if(wndMap.empty())
+				{
+					::PostQuitMessage(0);
+				}
+
+				return 0;
 			}
 		}
 
@@ -778,69 +803,47 @@ namespace my
 
 	Application * Application::s_ptr = NULL;
 
-	HINSTANCE Application::getModuleHandle(const std::basic_string<charT> moduleName /*= _T("")*/)
-	{
-		HINSTANCE hinst;
-		if(moduleName.empty())
-			hinst = ::GetModuleHandle(NULL);
-		else
-			hinst = ::GetModuleHandle(moduleName.c_str());
-
-		if(!hinst)
-			T3D_WINEXCEPT(::GetLastError());
-
-		return hinst;
-	}
-
 	LRESULT CALLBACK Application::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		WindowPtrMap & wndMap = getSingleton().m_wndMap;
-
-		WindowPtrMap::iterator iter = wndMap.find(hwnd);
-
-		if(iter != wndMap.end())
+		if(NULL != s_ptr)
 		{
-			LRESULT res = iter->second->onProc(hwnd, message, wparam, lparam);
+			WindowPtrMap & wndMap = getSingleton().m_wndMap;
 
-			if(WM_NCDESTROY == message)
+			WindowPtrMap::iterator iter = wndMap.find(hwnd);
+
+			if(iter != wndMap.end())
 			{
-				wndMap.erase(iter);
-
-				if(wndMap.empty())
-				{
-					::PostQuitMessage(0);
-				}
+				return iter->second->onProc(hwnd, message, wparam, lparam);
 			}
-
-			return res;
 		}
-
 		return ::DefWindowProc(hwnd, message, wparam, lparam);
 	}
 
-	Application::Application(HINSTANCE hinst)
+	Application::Application(HINSTANCE hinst /*= NULL*/)
 		: m_hinst(hinst)
+		, m_pIdleListener(NULL)
 	{
-		assert(NULL == s_ptr);
-		s_ptr = this;
+		if(NULL == m_hinst)
+			m_hinst = ::GetModuleHandle(NULL);
 
-		assert(NULL != m_hinst);
+		if(NULL == m_hinst)
+			T3D_WINEXCEPT(::GetLastError());
+
+		s_ptr = this;
 	}
 
 	Application::~Application(void)
 	{
-		while(!m_wndMap.empty())
-		{
-			WindowPtrMap::iterator iter = m_wndMap.begin();
+		//while(!m_wndMap.empty())
+		//{
+		//	WindowPtrMap::iterator iter = m_wndMap.begin();
 
-			assert(m_wndMap.end() != iter);
+		//	assert(m_wndMap.end() != iter);
 
-			WindowPtr win = iter->second;
+		//	WindowPtr win = iter->second;
 
-			m_wndMap.erase(iter); // ??? if not do this will lead unknown error at following ::MessageBox(...)
-
-			::DestroyWindow(win->getHandle());
-		}
+		//	win->destroyWindow();
+		//}
 
 		s_ptr = NULL;
 	}
@@ -866,10 +869,16 @@ namespace my
 		return m_hinst;
 	}
 
-	void Application::addIdleListener(IdleListener * listener)
+	std::basic_string<charT> Application::getModuleFileName(void) const
 	{
-		assert(NULL != listener);
-		m_idleListenerList.push_back(listener);
+		TCHAR buffer[MAX_PATH];
+		::GetModuleFileName(getHandle(), buffer, sizeof(buffer) / sizeof(TCHAR));
+		return std::basic_string<charT>(buffer);
+	}
+
+	void Application::setIdleListener(IdleListener * pIdleListener)
+	{
+		m_pIdleListener = pIdleListener;
 	}
 
 	int Application::run(void)
@@ -886,15 +895,7 @@ namespace my
 			}
 			else
 			{
-				if(!m_idleListenerList.empty())
-				{
-					IdleListenerList::iterator iter = m_idleListenerList.begin();
-					for(; iter != m_idleListenerList.end(); iter++)
-					{
-						(*iter)->nodifyIdle();
-					}
-				}
-				else
+				if(NULL != m_pIdleListener && !m_pIdleListener->nodifyIdle())
 				{
 					::WaitMessage();
 				}
