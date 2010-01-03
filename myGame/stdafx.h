@@ -44,15 +44,16 @@
 #include <vector>
 #include <map>
 #include <Windows.h>
+#include <atltypes.h>
 #include <boost/shared_ptr.hpp>
 #include <cstdio>
 #include <cassert>
-#include <crtdbg.h>
+//#include <crtdbg.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
 #include <cmath>
 #include <iostream>
-#include <crtdbg.h>
+//#include <crtdbg.h>
 //#include <boost/program_options.hpp>
 #include <sstream>
 #include <mmsystem.h>
@@ -61,5 +62,10 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <crtdbg.h>
+//#include <crtdbg.h>
 //  Matching lines: 56    Matching files: 18    Total files searched: 26
+
+#include <crtdbg.h>
+#ifdef _DEBUG
+#define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
+#endif

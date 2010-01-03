@@ -30,3 +30,8 @@
 #include <boost/shared_array.hpp>
 #include <cmath>
 //  Matching lines: 29    Matching files: 11    Total files searched: 22
+
+#include <crtdbg.h>
+#ifdef _DEBUG
+#define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
+#endif
