@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <crtdbg.h>
 
 namespace my
 {
@@ -36,290 +35,289 @@ namespace my
 
 	std::basic_string<charT> WindowBase::getWindowMessageStr(UINT message)
 	{
-		const charT * pstr;
 		switch(message)
 		{
 		case WM_NULL:
-			pstr = _T("WM_NULL"); break;
+			return std::basic_string<charT>(_T("WM_NULL"));
 		case WM_CREATE:
-			pstr = _T("WM_CREATE"); break;
+			return std::basic_string<charT>(_T("WM_CREATE"));
 		case WM_DESTROY:
-			pstr = _T("WM_DESTROY"); break;
+			return std::basic_string<charT>(_T("WM_DESTROY"));
 		case WM_MOVE:
-			pstr = _T("WM_MOVE"); break;
+			return std::basic_string<charT>(_T("WM_MOVE"));
 		case WM_SIZE:
-			pstr = _T("WM_SIZE"); break;
+			return std::basic_string<charT>(_T("WM_SIZE"));
 		case WM_ACTIVATE:
-			pstr = _T("WM_ACTIVATE"); break;
+			return std::basic_string<charT>(_T("WM_ACTIVATE"));
 		case WM_SETFOCUS:
-			pstr = _T("WM_SETFOCUS"); break;
+			return std::basic_string<charT>(_T("WM_SETFOCUS"));
 		case WM_KILLFOCUS:
-			pstr = _T("WM_KILLFOCUS"); break;
+			return std::basic_string<charT>(_T("WM_KILLFOCUS"));
 		case WM_ENABLE:
-			pstr = _T("WM_ENABLE"); break;
+			return std::basic_string<charT>(_T("WM_ENABLE"));
 		case WM_SETREDRAW:
-			pstr = _T("WM_SETREDRAW"); break;
+			return std::basic_string<charT>(_T("WM_SETREDRAW"));
 		case WM_SETTEXT:
-			pstr = _T("WM_SETTEXT"); break;
+			return std::basic_string<charT>(_T("WM_SETTEXT"));
 		case WM_GETTEXT:
-			pstr = _T("WM_GETTEXT"); break;
+			return std::basic_string<charT>(_T("WM_GETTEXT"));
 		case WM_GETTEXTLENGTH:
-			pstr = _T("WM_GETTEXTLENGTH"); break;
+			return std::basic_string<charT>(_T("WM_GETTEXTLENGTH"));
 		case WM_PAINT:
-			pstr = _T("WM_PAINT"); break;
+			return std::basic_string<charT>(_T("WM_PAINT"));
 		case WM_CLOSE:
-			pstr = _T("WM_CLOSE"); break;
+			return std::basic_string<charT>(_T("WM_CLOSE"));
 #ifndef _WIN32_WCE
 		case WM_QUERYENDSESSION:
-			pstr = _T("WM_QUERYENDSESSION"); break;
+			return std::basic_string<charT>(_T("WM_QUERYENDSESSION"));
 		case WM_QUERYOPEN:
-			pstr = _T("WM_QUERYOPEN"); break;
+			return std::basic_string<charT>(_T("WM_QUERYOPEN"));
 		case WM_ENDSESSION:
-			pstr = _T("WM_ENDSESSION"); break;
+			return std::basic_string<charT>(_T("WM_ENDSESSION"));
 #endif
 		case WM_QUIT:
-			pstr = _T("WM_QUIT"); break;
+			return std::basic_string<charT>(_T("WM_QUIT"));
 		case WM_ERASEBKGND:
-			pstr = _T("WM_ERASEBKGND"); break;
+			return std::basic_string<charT>(_T("WM_ERASEBKGND"));
 		case WM_SYSCOLORCHANGE:
-			pstr = _T("WM_SYSCOLORCHANGE"); break;
+			return std::basic_string<charT>(_T("WM_SYSCOLORCHANGE"));
 		case WM_SHOWWINDOW:
-			pstr = _T("WM_SHOWWINDOW"); break;
+			return std::basic_string<charT>(_T("WM_SHOWWINDOW"));
 		case WM_WININICHANGE:
-			pstr = _T("WM_WININICHANGE"); break;
+			return std::basic_string<charT>(_T("WM_WININICHANGE"));
 #if(WINVER >= 0x0400)
 		//case WM_SETTINGCHANGE:
-		//	pstr = _T("WM_SETTINGCHANGE"); break;
+		//	return std::basic_string<charT>(_T("WM_SETTINGCHANGE"));
 #endif /* WINVER >= 0x0400 */
 		case WM_DEVMODECHANGE:
-			pstr = _T("WM_DEVMODECHANGE"); break;
+			return std::basic_string<charT>(_T("WM_DEVMODECHANGE"));
 		case WM_ACTIVATEAPP:
-			pstr = _T("WM_ACTIVATEAPP"); break;
+			return std::basic_string<charT>(_T("WM_ACTIVATEAPP"));
 		case WM_FONTCHANGE:
-			pstr = _T("WM_FONTCHANGE"); break;
+			return std::basic_string<charT>(_T("WM_FONTCHANGE"));
 		case WM_TIMECHANGE:
-			pstr = _T("WM_TIMECHANGE"); break;
+			return std::basic_string<charT>(_T("WM_TIMECHANGE"));
 		case WM_CANCELMODE:
-			pstr = _T("WM_CANCELMODE"); break;
+			return std::basic_string<charT>(_T("WM_CANCELMODE"));
 		case WM_SETCURSOR:
-			pstr = _T("WM_SETCURSOR"); break;
+			return std::basic_string<charT>(_T("WM_SETCURSOR"));
 		case WM_MOUSEACTIVATE:
-			pstr = _T("WM_MOUSEACTIVATE"); break;
+			return std::basic_string<charT>(_T("WM_MOUSEACTIVATE"));
 		case WM_CHILDACTIVATE:
-			pstr = _T("WM_CHILDACTIVATE"); break;
+			return std::basic_string<charT>(_T("WM_CHILDACTIVATE"));
 		case WM_QUEUESYNC:
-			pstr = _T("WM_QUEUESYNC"); break;
+			return std::basic_string<charT>(_T("WM_QUEUESYNC"));
 		case WM_GETMINMAXINFO:
-			pstr = _T("WM_GETMINMAXINFO"); break;
+			return std::basic_string<charT>(_T("WM_GETMINMAXINFO"));
 		case WM_PAINTICON:
-			pstr = _T("WM_PAINTICON"); break;
+			return std::basic_string<charT>(_T("WM_PAINTICON"));
 		case WM_ICONERASEBKGND:
-			pstr = _T("WM_ICONERASEBKGND"); break;
+			return std::basic_string<charT>(_T("WM_ICONERASEBKGND"));
 		case WM_NEXTDLGCTL:
-			pstr = _T("WM_NEXTDLGCTL"); break;
+			return std::basic_string<charT>(_T("WM_NEXTDLGCTL"));
 		case WM_SPOOLERSTATUS:
-			pstr = _T("WM_SPOOLERSTATUS"); break;
+			return std::basic_string<charT>(_T("WM_SPOOLERSTATUS"));
 		case WM_DRAWITEM:
-			pstr = _T("WM_DRAWITEM"); break;
+			return std::basic_string<charT>(_T("WM_DRAWITEM"));
 		case WM_MEASUREITEM:
-			pstr = _T("WM_MEASUREITEM"); break;
+			return std::basic_string<charT>(_T("WM_MEASUREITEM"));
 		case WM_DELETEITEM:
-			pstr = _T("WM_DELETEITEM"); break;
+			return std::basic_string<charT>(_T("WM_DELETEITEM"));
 		case WM_VKEYTOITEM:
-			pstr = _T("WM_VKEYTOITEM"); break;
+			return std::basic_string<charT>(_T("WM_VKEYTOITEM"));
 		case WM_CHARTOITEM:
-			pstr = _T("WM_CHARTOITEM"); break;
+			return std::basic_string<charT>(_T("WM_CHARTOITEM"));
 		case WM_SETFONT:
-			pstr = _T("WM_SETFONT"); break;
+			return std::basic_string<charT>(_T("WM_SETFONT"));
 		case WM_GETFONT:
-			pstr = _T("WM_GETFONT"); break;
+			return std::basic_string<charT>(_T("WM_GETFONT"));
 		case WM_SETHOTKEY:
-			pstr = _T("WM_SETHOTKEY"); break;
+			return std::basic_string<charT>(_T("WM_SETHOTKEY"));
 		case WM_GETHOTKEY:
-			pstr = _T("WM_GETHOTKEY"); break;
+			return std::basic_string<charT>(_T("WM_GETHOTKEY"));
 		case WM_QUERYDRAGICON:
-			pstr = _T("WM_QUERYDRAGICON"); break;
+			return std::basic_string<charT>(_T("WM_QUERYDRAGICON"));
 		case WM_COMPAREITEM:
-			pstr = _T("WM_COMPAREITEM"); break;
+			return std::basic_string<charT>(_T("WM_COMPAREITEM"));
 #if(WINVER >= 0x0500)
 #ifndef _WIN32_WCE
 		case WM_GETOBJECT:
-			pstr = _T("WM_GETOBJECT"); break;
+			return std::basic_string<charT>(_T("WM_GETOBJECT"));
 #endif
 #endif /* WINVER >= 0x0500 */
 		case WM_COMPACTING:
-			pstr = _T("WM_COMPACTING"); break;
+			return std::basic_string<charT>(_T("WM_COMPACTING"));
 		case WM_COMMNOTIFY:
-			pstr = _T("WM_COMMNOTIFY"); break;
+			return std::basic_string<charT>(_T("WM_COMMNOTIFY"));
 		case WM_WINDOWPOSCHANGING:
-			pstr = _T("WM_WINDOWPOSCHANGING"); break;
+			return std::basic_string<charT>(_T("WM_WINDOWPOSCHANGING"));
 		case WM_WINDOWPOSCHANGED:
-			pstr = _T("WM_WINDOWPOSCHANGED"); break;
+			return std::basic_string<charT>(_T("WM_WINDOWPOSCHANGED"));
 		case WM_POWER:
-			pstr = _T("WM_POWER"); break;
+			return std::basic_string<charT>(_T("WM_POWER"));
 		case WM_COPYDATA:
-			pstr = _T("WM_COPYDATA"); break;
+			return std::basic_string<charT>(_T("WM_COPYDATA"));
 		case WM_CANCELJOURNAL:
-			pstr = _T("WM_CANCELJOURNAL"); break;
+			return std::basic_string<charT>(_T("WM_CANCELJOURNAL"));
 #if(WINVER >= 0x0400)
 #endif /* WINVER >= 0x0400 */
 #if(WINVER >= 0x0400)
 		case WM_NOTIFY:
-			pstr = _T("WM_NOTIFY"); break;
+			return std::basic_string<charT>(_T("WM_NOTIFY"));
 		case WM_INPUTLANGCHANGEREQUEST:
-			pstr = _T("WM_INPUTLANGCHANGEREQUEST"); break;
+			return std::basic_string<charT>(_T("WM_INPUTLANGCHANGEREQUEST"));
 		case WM_INPUTLANGCHANGE:
-			pstr = _T("WM_INPUTLANGCHANGE"); break;
+			return std::basic_string<charT>(_T("WM_INPUTLANGCHANGE"));
 		case WM_TCARD:
-			pstr = _T("WM_TCARD"); break;
+			return std::basic_string<charT>(_T("WM_TCARD"));
 		case WM_HELP:
-			pstr = _T("WM_HELP"); break;
+			return std::basic_string<charT>(_T("WM_HELP"));
 		case WM_USERCHANGED:
-			pstr = _T("WM_USERCHANGED"); break;
+			return std::basic_string<charT>(_T("WM_USERCHANGED"));
 		case WM_NOTIFYFORMAT:
-			pstr = _T("WM_NOTIFYFORMAT"); break;
+			return std::basic_string<charT>(_T("WM_NOTIFYFORMAT"));
 		case WM_CONTEXTMENU:
-			pstr = _T("WM_CONTEXTMENU"); break;
+			return std::basic_string<charT>(_T("WM_CONTEXTMENU"));
 		case WM_STYLECHANGING:
-			pstr = _T("WM_STYLECHANGING"); break;
+			return std::basic_string<charT>(_T("WM_STYLECHANGING"));
 		case WM_STYLECHANGED:
-			pstr = _T("WM_STYLECHANGED"); break;
+			return std::basic_string<charT>(_T("WM_STYLECHANGED"));
 		case WM_DISPLAYCHANGE:
-			pstr = _T("WM_DISPLAYCHANGE"); break;
+			return std::basic_string<charT>(_T("WM_DISPLAYCHANGE"));
 		case WM_GETICON:
-			pstr = _T("WM_GETICON"); break;
+			return std::basic_string<charT>(_T("WM_GETICON"));
 		case WM_SETICON:
-			pstr = _T("WM_SETICON"); break;
+			return std::basic_string<charT>(_T("WM_SETICON"));
 #endif /* WINVER >= 0x0400 */
 		case WM_NCCREATE:
-			pstr = _T("WM_NCCREATE"); break;
+			return std::basic_string<charT>(_T("WM_NCCREATE"));
 		case WM_NCDESTROY:
-			pstr = _T("WM_NCDESTROY"); break;
+			return std::basic_string<charT>(_T("WM_NCDESTROY"));
 		case WM_NCCALCSIZE:
-			pstr = _T("WM_NCCALCSIZE"); break;
+			return std::basic_string<charT>(_T("WM_NCCALCSIZE"));
 		case WM_NCHITTEST:
-			pstr = _T("WM_NCHITTEST"); break;
+			return std::basic_string<charT>(_T("WM_NCHITTEST"));
 		case WM_NCPAINT:
-			pstr = _T("WM_NCPAINT"); break;
+			return std::basic_string<charT>(_T("WM_NCPAINT"));
 		case WM_NCACTIVATE:
-			pstr = _T("WM_NCACTIVATE"); break;
+			return std::basic_string<charT>(_T("WM_NCACTIVATE"));
 		case WM_GETDLGCODE:
-			pstr = _T("WM_GETDLGCODE"); break;
+			return std::basic_string<charT>(_T("WM_GETDLGCODE"));
 #ifndef _WIN32_WCE
 		case WM_SYNCPAINT:
-			pstr = _T("WM_SYNCPAINT"); break;
+			return std::basic_string<charT>(_T("WM_SYNCPAINT"));
 #endif
 		case WM_NCMOUSEMOVE:
-			pstr = _T("WM_NCMOUSEMOVE"); break;
+			return std::basic_string<charT>(_T("WM_NCMOUSEMOVE"));
 		case WM_NCLBUTTONDOWN:
-			pstr = _T("WM_NCLBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_NCLBUTTONDOWN"));
 		case WM_NCLBUTTONUP:
-			pstr = _T("WM_NCLBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_NCLBUTTONUP"));
 		case WM_NCLBUTTONDBLCLK:
-			pstr = _T("WM_NCLBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_NCLBUTTONDBLCLK"));
 		case WM_NCRBUTTONDOWN:
-			pstr = _T("WM_NCRBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_NCRBUTTONDOWN"));
 		case WM_NCRBUTTONUP:
-			pstr = _T("WM_NCRBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_NCRBUTTONUP"));
 		case WM_NCRBUTTONDBLCLK:
-			pstr = _T("WM_NCRBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_NCRBUTTONDBLCLK"));
 		case WM_NCMBUTTONDOWN:
-			pstr = _T("WM_NCMBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_NCMBUTTONDOWN"));
 		case WM_NCMBUTTONUP:
-			pstr = _T("WM_NCMBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_NCMBUTTONUP"));
 		case WM_NCMBUTTONDBLCLK:
-			pstr = _T("WM_NCMBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_NCMBUTTONDBLCLK"));
 #if(_WIN32_WINNT >= 0x0500)
 		case WM_NCXBUTTONDOWN:
-			pstr = _T("WM_NCXBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_NCXBUTTONDOWN"));
 		case WM_NCXBUTTONUP:
-			pstr = _T("WM_NCXBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_NCXBUTTONUP"));
 		case WM_NCXBUTTONDBLCLK:
-			pstr = _T("WM_NCXBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_NCXBUTTONDBLCLK"));
 #endif /* _WIN32_WINNT >= 0x0500 */
 #if(_WIN32_WINNT >= 0x0501)
 		case WM_INPUT:
-			pstr = _T("WM_INPUT"); break;
+			return std::basic_string<charT>(_T("WM_INPUT"));
 #endif /* _WIN32_WINNT >= 0x0501 */
 		case WM_KEYFIRST:
-			pstr = _T("WM_KEYFIRST"); break;
+			return std::basic_string<charT>(_T("WM_KEYFIRST"));
 		//case WM_KEYDOWN:
-		//	pstr = _T("WM_KEYDOWN"); break;
+		//	return std::basic_string<charT>(_T("WM_KEYDOWN"));
 		case WM_KEYUP:
-			pstr = _T("WM_KEYUP"); break;
+			return std::basic_string<charT>(_T("WM_KEYUP"));
 		case WM_CHAR:
-			pstr = _T("WM_CHAR"); break;
+			return std::basic_string<charT>(_T("WM_CHAR"));
 		case WM_DEADCHAR:
-			pstr = _T("WM_DEADCHAR"); break;
+			return std::basic_string<charT>(_T("WM_DEADCHAR"));
 		case WM_SYSKEYDOWN:
-			pstr = _T("WM_SYSKEYDOWN"); break;
+			return std::basic_string<charT>(_T("WM_SYSKEYDOWN"));
 		case WM_SYSKEYUP:
-			pstr = _T("WM_SYSKEYUP"); break;
+			return std::basic_string<charT>(_T("WM_SYSKEYUP"));
 		case WM_SYSCHAR:
-			pstr = _T("WM_SYSCHAR"); break;
+			return std::basic_string<charT>(_T("WM_SYSCHAR"));
 		case WM_SYSDEADCHAR:
-			pstr = _T("WM_SYSDEADCHAR"); break;
+			return std::basic_string<charT>(_T("WM_SYSDEADCHAR"));
 #if(_WIN32_WINNT >= 0x0501)
 		case WM_UNICHAR:
-			pstr = _T("WM_UNICHAR"); break;
+			return std::basic_string<charT>(_T("WM_UNICHAR"));
 		//case WM_KEYLAST:
-		//	pstr = _T("WM_KEYLAST"); break;
+		//	return std::basic_string<charT>(_T("WM_KEYLAST"));
 #else
 		case WM_KEYLAST:
-			pstr = _T("WM_KEYLAST"); break;
+			return std::basic_string<charT>(_T("WM_KEYLAST"));
 #endif /* _WIN32_WINNT >= 0x0501 */
 #if(WINVER >= 0x0400)
 		case WM_IME_STARTCOMPOSITION:
-			pstr = _T("WM_IME_STARTCOMPOSITION"); break;
+			return std::basic_string<charT>(_T("WM_IME_STARTCOMPOSITION"));
 		case WM_IME_ENDCOMPOSITION:
-			pstr = _T("WM_IME_ENDCOMPOSITION"); break;
+			return std::basic_string<charT>(_T("WM_IME_ENDCOMPOSITION"));
 		case WM_IME_COMPOSITION:
-			pstr = _T("WM_IME_COMPOSITION"); break;
+			return std::basic_string<charT>(_T("WM_IME_COMPOSITION"));
 		//case WM_IME_KEYLAST:
-		//	pstr = _T("WM_IME_KEYLAST"); break;
+		//	return std::basic_string<charT>(_T("WM_IME_KEYLAST"));
 #endif /* WINVER >= 0x0400 */
 		case WM_INITDIALOG:
-			pstr = _T("WM_INITDIALOG"); break;
+			return std::basic_string<charT>(_T("WM_INITDIALOG"));
 		case WM_COMMAND:
-			pstr = _T("WM_COMMAND"); break;
+			return std::basic_string<charT>(_T("WM_COMMAND"));
 		case WM_SYSCOMMAND:
-			pstr = _T("WM_SYSCOMMAND"); break;
+			return std::basic_string<charT>(_T("WM_SYSCOMMAND"));
 		case WM_TIMER:
-			pstr = _T("WM_TIMER"); break;
+			return std::basic_string<charT>(_T("WM_TIMER"));
 		case WM_HSCROLL:
-			pstr = _T("WM_HSCROLL"); break;
+			return std::basic_string<charT>(_T("WM_HSCROLL"));
 		case WM_VSCROLL:
-			pstr = _T("WM_VSCROLL"); break;
+			return std::basic_string<charT>(_T("WM_VSCROLL"));
 		case WM_INITMENU:
-			pstr = _T("WM_INITMENU"); break;
+			return std::basic_string<charT>(_T("WM_INITMENU"));
 		case WM_INITMENUPOPUP:
-			pstr = _T("WM_INITMENUPOPUP"); break;
+			return std::basic_string<charT>(_T("WM_INITMENUPOPUP"));
 		case WM_MENUSELECT:
-			pstr = _T("WM_MENUSELECT"); break;
+			return std::basic_string<charT>(_T("WM_MENUSELECT"));
 		case WM_MENUCHAR:
-			pstr = _T("WM_MENUCHAR"); break;
+			return std::basic_string<charT>(_T("WM_MENUCHAR"));
 		case WM_ENTERIDLE:
-			pstr = _T("WM_ENTERIDLE"); break;
+			return std::basic_string<charT>(_T("WM_ENTERIDLE"));
 #if(WINVER >= 0x0500)
 #ifndef _WIN32_WCE
 		case WM_MENURBUTTONUP:
-			pstr = _T("WM_MENURBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_MENURBUTTONUP"));
 		case WM_MENUDRAG:
-			pstr = _T("WM_MENUDRAG"); break;
+			return std::basic_string<charT>(_T("WM_MENUDRAG"));
 		case WM_MENUGETOBJECT:
-			pstr = _T("WM_MENUGETOBJECT"); break;
+			return std::basic_string<charT>(_T("WM_MENUGETOBJECT"));
 		case WM_UNINITMENUPOPUP:
-			pstr = _T("WM_UNINITMENUPOPUP"); break;
+			return std::basic_string<charT>(_T("WM_UNINITMENUPOPUP"));
 		case WM_MENUCOMMAND:
-			pstr = _T("WM_MENUCOMMAND"); break;
+			return std::basic_string<charT>(_T("WM_MENUCOMMAND"));
 #ifndef _WIN32_WCE
 #if(_WIN32_WINNT >= 0x0500)
 		case WM_CHANGEUISTATE:
-			pstr = _T("WM_CHANGEUISTATE"); break;
+			return std::basic_string<charT>(_T("WM_CHANGEUISTATE"));
 		case WM_UPDATEUISTATE:
-			pstr = _T("WM_UPDATEUISTATE"); break;
+			return std::basic_string<charT>(_T("WM_UPDATEUISTATE"));
 		case WM_QUERYUISTATE:
-			pstr = _T("WM_QUERYUISTATE"); break;
+			return std::basic_string<charT>(_T("WM_QUERYUISTATE"));
 #if(_WIN32_WINNT >= 0x0501)
 #endif /* _WIN32_WINNT >= 0x0501 */
 #endif /* _WIN32_WINNT >= 0x0500 */
@@ -327,248 +325,243 @@ namespace my
 #endif
 #endif /* WINVER >= 0x0500 */
 		case WM_CTLCOLORMSGBOX:
-			pstr = _T("WM_CTLCOLORMSGBOX"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLORMSGBOX"));
 		case WM_CTLCOLOREDIT:
-			pstr = _T("WM_CTLCOLOREDIT"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLOREDIT"));
 		case WM_CTLCOLORLISTBOX:
-			pstr = _T("WM_CTLCOLORLISTBOX"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLORLISTBOX"));
 		case WM_CTLCOLORBTN:
-			pstr = _T("WM_CTLCOLORBTN"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLORBTN"));
 		case WM_CTLCOLORDLG:
-			pstr = _T("WM_CTLCOLORDLG"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLORDLG"));
 		case WM_CTLCOLORSCROLLBAR:
-			pstr = _T("WM_CTLCOLORSCROLLBAR"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLORSCROLLBAR"));
 		case WM_CTLCOLORSTATIC:
-			pstr = _T("WM_CTLCOLORSTATIC"); break;
+			return std::basic_string<charT>(_T("WM_CTLCOLORSTATIC"));
 		case MN_GETHMENU:
-			pstr = _T("MN_GETHMENU"); break;
+			return std::basic_string<charT>(_T("MN_GETHMENU"));
 		case WM_MOUSEFIRST:
-			pstr = _T("WM_MOUSEFIRST"); break;
+			return std::basic_string<charT>(_T("WM_MOUSEFIRST"));
 		//case WM_MOUSEMOVE:
-		//	pstr = _T("WM_MOUSEMOVE"); break;
+		//	return std::basic_string<charT>(_T("WM_MOUSEMOVE"));
 		case WM_LBUTTONDOWN:
-			pstr = _T("WM_LBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_LBUTTONDOWN"));
 		case WM_LBUTTONUP:
-			pstr = _T("WM_LBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_LBUTTONUP"));
 		case WM_LBUTTONDBLCLK:
-			pstr = _T("WM_LBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_LBUTTONDBLCLK"));
 		case WM_RBUTTONDOWN:
-			pstr = _T("WM_RBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_RBUTTONDOWN"));
 		case WM_RBUTTONUP:
-			pstr = _T("WM_RBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_RBUTTONUP"));
 		case WM_RBUTTONDBLCLK:
-			pstr = _T("WM_RBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_RBUTTONDBLCLK"));
 		case WM_MBUTTONDOWN:
-			pstr = _T("WM_MBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_MBUTTONDOWN"));
 		case WM_MBUTTONUP:
-			pstr = _T("WM_MBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_MBUTTONUP"));
 		case WM_MBUTTONDBLCLK:
-			pstr = _T("WM_MBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_MBUTTONDBLCLK"));
 #if (_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400)
 		case WM_MOUSEWHEEL:
-			pstr = _T("WM_MOUSEWHEEL"); break;
+			return std::basic_string<charT>(_T("WM_MOUSEWHEEL"));
 #endif
 #if (_WIN32_WINNT >= 0x0500)
 		case WM_XBUTTONDOWN:
-			pstr = _T("WM_XBUTTONDOWN"); break;
+			return std::basic_string<charT>(_T("WM_XBUTTONDOWN"));
 		case WM_XBUTTONUP:
-			pstr = _T("WM_XBUTTONUP"); break;
+			return std::basic_string<charT>(_T("WM_XBUTTONUP"));
 		case WM_XBUTTONDBLCLK:
-			pstr = _T("WM_XBUTTONDBLCLK"); break;
+			return std::basic_string<charT>(_T("WM_XBUTTONDBLCLK"));
 #endif
 #if (_WIN32_WINNT >= 0x0500)
 		case WM_MOUSELAST:
-			pstr = _T("WM_MOUSELAST"); break;
+			return std::basic_string<charT>(_T("WM_MOUSELAST"));
 #elif (_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400)
 		case WM_MOUSELAST:
-			pstr = _T("WM_MOUSELAST"); break;
+			return std::basic_string<charT>(_T("WM_MOUSELAST"));
 #else
 		//case WM_MOUSELAST:
-		//	pstr = _T("WM_MOUSELAST"); break;
+		//	return std::basic_string<charT>(_T("WM_MOUSELAST"));
 #endif /* (_WIN32_WINNT >= 0x0500) */
 #if(_WIN32_WINNT >= 0x0400)
 #endif /* _WIN32_WINNT >= 0x0400 */
 #if(_WIN32_WINNT >= 0x0500)
 #endif /* _WIN32_WINNT >= 0x0500 */
 		case WM_PARENTNOTIFY:
-			pstr = _T("WM_PARENTNOTIFY"); break;
+			return std::basic_string<charT>(_T("WM_PARENTNOTIFY"));
 		case WM_ENTERMENULOOP:
-			pstr = _T("WM_ENTERMENULOOP"); break;
+			return std::basic_string<charT>(_T("WM_ENTERMENULOOP"));
 		case WM_EXITMENULOOP:
-			pstr = _T("WM_EXITMENULOOP"); break;
+			return std::basic_string<charT>(_T("WM_EXITMENULOOP"));
 #if(WINVER >= 0x0400)
 		case WM_NEXTMENU:
-			pstr = _T("WM_NEXTMENU"); break;
+			return std::basic_string<charT>(_T("WM_NEXTMENU"));
 		case WM_SIZING:
-			pstr = _T("WM_SIZING"); break;
+			return std::basic_string<charT>(_T("WM_SIZING"));
 		case WM_CAPTURECHANGED:
-			pstr = _T("WM_CAPTURECHANGED"); break;
+			return std::basic_string<charT>(_T("WM_CAPTURECHANGED"));
 		case WM_MOVING:
-			pstr = _T("WM_MOVING"); break;
+			return std::basic_string<charT>(_T("WM_MOVING"));
 #endif /* WINVER >= 0x0400 */
 #if(WINVER >= 0x0400)
 		case WM_POWERBROADCAST:
-			pstr = _T("WM_POWERBROADCAST"); break;
+			return std::basic_string<charT>(_T("WM_POWERBROADCAST"));
 #ifndef _WIN32_WCE
 #endif
 #endif /* WINVER >= 0x0400 */
 #if(WINVER >= 0x0400)
 		case WM_DEVICECHANGE:
-			pstr = _T("WM_DEVICECHANGE"); break;
+			return std::basic_string<charT>(_T("WM_DEVICECHANGE"));
 #endif /* WINVER >= 0x0400 */
 		case WM_MDICREATE:
-			pstr = _T("WM_MDICREATE"); break;
+			return std::basic_string<charT>(_T("WM_MDICREATE"));
 		case WM_MDIDESTROY:
-			pstr = _T("WM_MDIDESTROY"); break;
+			return std::basic_string<charT>(_T("WM_MDIDESTROY"));
 		case WM_MDIACTIVATE:
-			pstr = _T("WM_MDIACTIVATE"); break;
+			return std::basic_string<charT>(_T("WM_MDIACTIVATE"));
 		case WM_MDIRESTORE:
-			pstr = _T("WM_MDIRESTORE"); break;
+			return std::basic_string<charT>(_T("WM_MDIRESTORE"));
 		case WM_MDINEXT:
-			pstr = _T("WM_MDINEXT"); break;
+			return std::basic_string<charT>(_T("WM_MDINEXT"));
 		case WM_MDIMAXIMIZE:
-			pstr = _T("WM_MDIMAXIMIZE"); break;
+			return std::basic_string<charT>(_T("WM_MDIMAXIMIZE"));
 		case WM_MDITILE:
-			pstr = _T("WM_MDITILE"); break;
+			return std::basic_string<charT>(_T("WM_MDITILE"));
 		case WM_MDICASCADE:
-			pstr = _T("WM_MDICASCADE"); break;
+			return std::basic_string<charT>(_T("WM_MDICASCADE"));
 		case WM_MDIICONARRANGE:
-			pstr = _T("WM_MDIICONARRANGE"); break;
+			return std::basic_string<charT>(_T("WM_MDIICONARRANGE"));
 		case WM_MDIGETACTIVE:
-			pstr = _T("WM_MDIGETACTIVE"); break;
+			return std::basic_string<charT>(_T("WM_MDIGETACTIVE"));
 		case WM_MDISETMENU:
-			pstr = _T("WM_MDISETMENU"); break;
+			return std::basic_string<charT>(_T("WM_MDISETMENU"));
 		case WM_ENTERSIZEMOVE:
-			pstr = _T("WM_ENTERSIZEMOVE"); break;
+			return std::basic_string<charT>(_T("WM_ENTERSIZEMOVE"));
 		case WM_EXITSIZEMOVE:
-			pstr = _T("WM_EXITSIZEMOVE"); break;
+			return std::basic_string<charT>(_T("WM_EXITSIZEMOVE"));
 		case WM_DROPFILES:
-			pstr = _T("WM_DROPFILES"); break;
+			return std::basic_string<charT>(_T("WM_DROPFILES"));
 		case WM_MDIREFRESHMENU:
-			pstr = _T("WM_MDIREFRESHMENU"); break;
+			return std::basic_string<charT>(_T("WM_MDIREFRESHMENU"));
 #if(WINVER >= 0x0400)
 		case WM_IME_SETCONTEXT:
-			pstr = _T("WM_IME_SETCONTEXT"); break;
+			return std::basic_string<charT>(_T("WM_IME_SETCONTEXT"));
 		case WM_IME_NOTIFY:
-			pstr = _T("WM_IME_NOTIFY"); break;
+			return std::basic_string<charT>(_T("WM_IME_NOTIFY"));
 		case WM_IME_CONTROL:
-			pstr = _T("WM_IME_CONTROL"); break;
+			return std::basic_string<charT>(_T("WM_IME_CONTROL"));
 		case WM_IME_COMPOSITIONFULL:
-			pstr = _T("WM_IME_COMPOSITIONFULL"); break;
+			return std::basic_string<charT>(_T("WM_IME_COMPOSITIONFULL"));
 		case WM_IME_SELECT:
-			pstr = _T("WM_IME_SELECT"); break;
+			return std::basic_string<charT>(_T("WM_IME_SELECT"));
 		case WM_IME_CHAR:
-			pstr = _T("WM_IME_CHAR"); break;
+			return std::basic_string<charT>(_T("WM_IME_CHAR"));
 #endif /* WINVER >= 0x0400 */
 #if(WINVER >= 0x0500)
 		case WM_IME_REQUEST:
-			pstr = _T("WM_IME_REQUEST"); break;
+			return std::basic_string<charT>(_T("WM_IME_REQUEST"));
 #endif /* WINVER >= 0x0500 */
 #if(WINVER >= 0x0400)
 		case WM_IME_KEYDOWN:
-			pstr = _T("WM_IME_KEYDOWN"); break;
+			return std::basic_string<charT>(_T("WM_IME_KEYDOWN"));
 		case WM_IME_KEYUP:
-			pstr = _T("WM_IME_KEYUP"); break;
+			return std::basic_string<charT>(_T("WM_IME_KEYUP"));
 #endif /* WINVER >= 0x0400 */
 #if((_WIN32_WINNT >= 0x0400) || (WINVER >= 0x0500))
 		case WM_MOUSEHOVER:
-			pstr = _T("WM_MOUSEHOVER"); break;
+			return std::basic_string<charT>(_T("WM_MOUSEHOVER"));
 		case WM_MOUSELEAVE:
-			pstr = _T("WM_MOUSELEAVE"); break;
+			return std::basic_string<charT>(_T("WM_MOUSELEAVE"));
 #endif
 #if(WINVER >= 0x0500)
 		case WM_NCMOUSEHOVER:
-			pstr = _T("WM_NCMOUSEHOVER"); break;
+			return std::basic_string<charT>(_T("WM_NCMOUSEHOVER"));
 		case WM_NCMOUSELEAVE:
-			pstr = _T("WM_NCMOUSELEAVE"); break;
+			return std::basic_string<charT>(_T("WM_NCMOUSELEAVE"));
 #endif /* WINVER >= 0x0500 */
 #if(_WIN32_WINNT >= 0x0501)
 		case WM_WTSSESSION_CHANGE:
-			pstr = _T("WM_WTSSESSION_CHANGE"); break;
+			return std::basic_string<charT>(_T("WM_WTSSESSION_CHANGE"));
 		case WM_TABLET_FIRST:
-			pstr = _T("WM_TABLET_FIRST"); break;
+			return std::basic_string<charT>(_T("WM_TABLET_FIRST"));
 		case WM_TABLET_LAST:
-			pstr = _T("WM_TABLET_LAST"); break;
+			return std::basic_string<charT>(_T("WM_TABLET_LAST"));
 #endif /* _WIN32_WINNT >= 0x0501 */
 		case WM_CUT:
-			pstr = _T("WM_CUT"); break;
+			return std::basic_string<charT>(_T("WM_CUT"));
 		case WM_COPY:
-			pstr = _T("WM_COPY"); break;
+			return std::basic_string<charT>(_T("WM_COPY"));
 		case WM_PASTE:
-			pstr = _T("WM_PASTE"); break;
+			return std::basic_string<charT>(_T("WM_PASTE"));
 		case WM_CLEAR:
-			pstr = _T("WM_CLEAR"); break;
+			return std::basic_string<charT>(_T("WM_CLEAR"));
 		case WM_UNDO:
-			pstr = _T("WM_UNDO"); break;
+			return std::basic_string<charT>(_T("WM_UNDO"));
 		case WM_RENDERFORMAT:
-			pstr = _T("WM_RENDERFORMAT"); break;
+			return std::basic_string<charT>(_T("WM_RENDERFORMAT"));
 		case WM_RENDERALLFORMATS:
-			pstr = _T("WM_RENDERALLFORMATS"); break;
+			return std::basic_string<charT>(_T("WM_RENDERALLFORMATS"));
 		case WM_DESTROYCLIPBOARD:
-			pstr = _T("WM_DESTROYCLIPBOARD"); break;
+			return std::basic_string<charT>(_T("WM_DESTROYCLIPBOARD"));
 		case WM_DRAWCLIPBOARD:
-			pstr = _T("WM_DRAWCLIPBOARD"); break;
+			return std::basic_string<charT>(_T("WM_DRAWCLIPBOARD"));
 		case WM_PAINTCLIPBOARD:
-			pstr = _T("WM_PAINTCLIPBOARD"); break;
+			return std::basic_string<charT>(_T("WM_PAINTCLIPBOARD"));
 		case WM_VSCROLLCLIPBOARD:
-			pstr = _T("WM_VSCROLLCLIPBOARD"); break;
+			return std::basic_string<charT>(_T("WM_VSCROLLCLIPBOARD"));
 		case WM_SIZECLIPBOARD:
-			pstr = _T("WM_SIZECLIPBOARD"); break;
+			return std::basic_string<charT>(_T("WM_SIZECLIPBOARD"));
 		case WM_ASKCBFORMATNAME:
-			pstr = _T("WM_ASKCBFORMATNAME"); break;
+			return std::basic_string<charT>(_T("WM_ASKCBFORMATNAME"));
 		case WM_CHANGECBCHAIN:
-			pstr = _T("WM_CHANGECBCHAIN"); break;
+			return std::basic_string<charT>(_T("WM_CHANGECBCHAIN"));
 		case WM_HSCROLLCLIPBOARD:
-			pstr = _T("WM_HSCROLLCLIPBOARD"); break;
+			return std::basic_string<charT>(_T("WM_HSCROLLCLIPBOARD"));
 		case WM_QUERYNEWPALETTE:
-			pstr = _T("WM_QUERYNEWPALETTE"); break;
+			return std::basic_string<charT>(_T("WM_QUERYNEWPALETTE"));
 		case WM_PALETTEISCHANGING:
-			pstr = _T("WM_PALETTEISCHANGING"); break;
+			return std::basic_string<charT>(_T("WM_PALETTEISCHANGING"));
 		case WM_PALETTECHANGED:
-			pstr = _T("WM_PALETTECHANGED"); break;
+			return std::basic_string<charT>(_T("WM_PALETTECHANGED"));
 		case WM_HOTKEY:
-			pstr = _T("WM_HOTKEY"); break;
+			return std::basic_string<charT>(_T("WM_HOTKEY"));
 #if(WINVER >= 0x0400)
 		case WM_PRINT:
-			pstr = _T("WM_PRINT"); break;
+			return std::basic_string<charT>(_T("WM_PRINT"));
 		case WM_PRINTCLIENT:
-			pstr = _T("WM_PRINTCLIENT"); break;
+			return std::basic_string<charT>(_T("WM_PRINTCLIENT"));
 #endif /* WINVER >= 0x0400 */
 #if(_WIN32_WINNT >= 0x0500)
 		case WM_APPCOMMAND:
-			pstr = _T("WM_APPCOMMAND"); break;
+			return std::basic_string<charT>(_T("WM_APPCOMMAND"));
 #endif /* _WIN32_WINNT >= 0x0500 */
 #if(_WIN32_WINNT >= 0x0501)
 		case WM_THEMECHANGED:
-			pstr = _T("WM_THEMECHANGED"); break;
+			return std::basic_string<charT>(_T("WM_THEMECHANGED"));
 #endif /* _WIN32_WINNT >= 0x0501 */
 #if(WINVER >= 0x0400)
 		case WM_HANDHELDFIRST:
-			pstr = _T("WM_HANDHELDFIRST"); break;
+			return std::basic_string<charT>(_T("WM_HANDHELDFIRST"));
 		case WM_HANDHELDLAST:
-			pstr = _T("WM_HANDHELDLAST"); break;
+			return std::basic_string<charT>(_T("WM_HANDHELDLAST"));
 		case WM_AFXFIRST:
-			pstr = _T("WM_AFXFIRST"); break;
+			return std::basic_string<charT>(_T("WM_AFXFIRST"));
 		case WM_AFXLAST:
-			pstr = _T("WM_AFXLAST"); break;
+			return std::basic_string<charT>(_T("WM_AFXLAST"));
 #endif /* WINVER >= 0x0400 */
 		case WM_PENWINFIRST:
-			pstr = _T("WM_PENWINFIRST"); break;
+			return std::basic_string<charT>(_T("WM_PENWINFIRST"));
 		case WM_PENWINLAST:
-			pstr = _T("WM_PENWINLAST"); break;
+			return std::basic_string<charT>(_T("WM_PENWINLAST"));
 #if(WINVER >= 0x0400)
 		case WM_APP:
-			pstr = _T("WM_APP"); break;
+			return std::basic_string<charT>(_T("WM_APP"));
 #endif /* WINVER >= 0x0400 */
 		case WM_USER:
-			pstr = _T("WM_USER"); break;
-		default:
-			std::basic_ostringstream<charT> osstr;
-			osstr << _T("unknown window message: ") << std::hex << std::showbase << message;
-			return osstr.str();
+			return std::basic_string<charT>(_T("WM_USER"));
 		}
-
-		return std::basic_string<charT>(pstr);
+		return std::basic_string<charT>(_T("unknown window message"));
 	}
 
 	WindowBase::WindowBase(HWND hwnd /*= NULL*/)
@@ -633,7 +626,7 @@ namespace my
 			T3D_WINEXCEPT(::GetLastError());
 	}
 
-	DWORD WindowBase::getWindowExtansionStyle(void) const
+	DWORD WindowBase::getWindowExStyle(void) const
 	{
 		return ::GetWindowLong(m_hwnd, GWL_EXSTYLE);
 	}
@@ -647,40 +640,39 @@ namespace my
 			T3D_WINEXCEPT(::GetLastError());
 	}
 
-	RECT WindowBase::getWindowRect(void) const
+	CRect WindowBase::getWindowRect(void) const
 	{
-		RECT rect;
+		CRect rect;
 		if(!::GetWindowRect(m_hwnd, &rect))
 			T3D_WINEXCEPT(::GetLastError());
 		return rect;
 	}
 
-	void WindowBase::setWindowRect(const RECT & rect)
+	void WindowBase::setWindowRect(const CRect & rect)
 	{
-		if(!::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, 0))
+		if(!::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top, rect.Width(), rect.Height(), 0))
 			T3D_WINEXCEPT(::GetLastError());
 	}
 
-	RECT WindowBase::getClientRect(void) const
+	CRect WindowBase::getClientRect(void) const
 	{
-		RECT clientRect;
+		CRect clientRect;
 		if(!::GetClientRect(m_hwnd, &clientRect))
 			T3D_WINEXCEPT(::GetLastError());
 
-		RECT adjustRect = clientRect;
-		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExtansionStyle()))
+		CRect adjustRect = clientRect;
+		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExStyle()))
 			T3D_WINEXCEPT(::GetLastError());
 
-		RECT windowRect = getWindowRect();
-		if(!::OffsetRect(&clientRect, windowRect.left - adjustRect.left, windowRect.top - adjustRect.top))
-			T3D_WINEXCEPT(::GetLastError());
+		CRect windowRect = getWindowRect();
+		clientRect.OffsetRect(windowRect.left - adjustRect.left, windowRect.top - adjustRect.top);
 		return clientRect;
 	}
 
-	void WindowBase::adjustClientRect(const RECT & rect)
+	void WindowBase::adjustClientRect(const CRect & rect)
 	{
-		RECT adjustRect = rect;
-		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExtansionStyle()))
+		CRect adjustRect = rect;
+		if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExStyle()))
 			T3D_WINEXCEPT(::GetLastError());
 
 		setWindowRect(adjustRect);
@@ -688,13 +680,13 @@ namespace my
 
 	void WindowBase::centerWindow(void)
 	{
-		RECT desktopRect;
+		CRect desktopRect;
 		if(!::GetWindowRect(::GetDesktopWindow(), &desktopRect))
 			T3D_WINEXCEPT(::GetLastError());
 
-		RECT windowRect = getWindowRect();
-		int x = ((desktopRect.right - desktopRect.left) - (windowRect.right - windowRect.left)) / 2;
-		int y = ((desktopRect.bottom - desktopRect.top) - (windowRect.bottom - windowRect.top)) / 2;
+		CRect windowRect = getWindowRect();
+		int x = ((desktopRect.Width()) - (windowRect.Width())) / 2;
+		int y = ((desktopRect.Height()) - (windowRect.Height())) / 2;
 
 		if(!::SetWindowPos(m_hwnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE))
 			T3D_WINEXCEPT(::GetLastError());
@@ -823,6 +815,8 @@ namespace my
 		: m_hinst(hinst)
 		, m_pIdleListener(NULL)
 	{
+		_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
+
 		if(NULL == m_hinst)
 			m_hinst = ::GetModuleHandle(NULL);
 

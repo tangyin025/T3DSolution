@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "myUtility.h"
 #include <tinyxml.h>
+#include <atltypes.h>
 #include "myWindow.h"
 
 #pragma comment(lib, "winmm.lib")
@@ -499,7 +500,7 @@ namespace my
 
 	void MenuItemArrow::draw(t3d::DDSurface * surface, int x, int y) const
 	{
-		RECT rect;
+		CRect rect;
 		rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
 		rect.top = y + (m_height - ::GetSystemMetrics(SM_CYMENUCHECK)) / 2;
 		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
@@ -540,7 +541,7 @@ namespace my
 
 	void MenuItemCheck::draw(t3d::DDSurface * surface, int x, int y) const
 	{
-		RECT rect;
+		CRect rect;
 		rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
 		rect.top = y + (m_height - ::GetSystemMetrics(SM_CYMENUCHECK)) / 2;
 		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);

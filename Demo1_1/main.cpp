@@ -1,11 +1,18 @@
 ﻿
 // 包含 c++ 库文件
+
+#define _CRTDBG_MAP_ALLOC
+
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <crtdbg.h>
 #include <boost/shared_array.hpp>
+
+#include <crtdbg.h>
+#ifdef _DEBUG
+#define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
+#endif
 
 // 包含 3d 图形库
 #include "t3dlib1.h"
@@ -126,11 +133,11 @@ public:
 
 		m_jackBoneTransformList.resize(m_jackSkeleton->getOrigBoneNodeListSize());
 
-		//// load 背景音乐
-		//my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
-		//m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
-		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
-		//m_dsbuffer->play();
+		// load 背景音乐
+		my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
+		m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
+		my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
+		m_dsbuffer->play();
 
 		// ======================================== TODO: END   ========================================
 
@@ -331,14 +338,11 @@ int APIENTRY WinMain(
 	LPSTR		/*lpCmdLine*/,
 	int			/*nCmdShow*/)
 {
-	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF & _CRTDBG_ALLOC_MEM_DF);
-
 	try
 	{
 		// 建立一个应用程序，以 800 x 600 窗口模式运行
 		MyGame game;
 		return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
-		//return game.run(my::Game::CONFIG_DESC(1680, 1050, my::Game::SM_FULLSCREEN32));
 	}
 	catch(t3d::Exception & e)
 	{

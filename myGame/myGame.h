@@ -12,6 +12,7 @@
 #include "myImage.h"
 #include "myResource.h"
 #include <list>
+#include <atltypes.h>
 #include <boost/shared_array.hpp>
 
 namespace my
@@ -143,9 +144,9 @@ namespace my
 
 		t3d::DDSurfacePtr m_sback;
 
-		RECT m_rprim;
+		CRect m_rprim;
 
-		RECT m_rback;
+		CRect m_rback;
 
 		RenderContextPtr m_rc;
 
@@ -167,9 +168,9 @@ namespace my
 
 		void bltBackSurfaceToPrimary(void);
 
-		void fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
+		void fillBackSurface(const CRect & rect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
 
-		void clearZBuffer(const RECT & rect, t3d::fixp28 value = 0);
+		void clearZBuffer(const CRect & rect, t3d::fixp28 value = 0);
 	};
 
 	class Game : public GameBase, public Application::IdleListener

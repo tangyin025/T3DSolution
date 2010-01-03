@@ -2,6 +2,8 @@
 #ifndef __T3DCOMMON_H__
 #define __T3DCOMMON_H__
 
+#define _CRTDBG_MAP_ALLOC
+
 #include <cfloat>
 #include <algorithm>
 #include <string>
@@ -130,7 +132,5 @@ namespace t3d
 #ifndef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION 0x0800
 #endif
-
-#define _CRTDBG_MAP_ALLOC
 
 #endif // __T3DCOMMON_H__

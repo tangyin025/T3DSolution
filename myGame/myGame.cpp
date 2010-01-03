@@ -3,7 +3,6 @@
 #include "myGame.h"
 #include <cmath>
 #include <iostream>
-#include <crtdbg.h>
 //#include <boost/program_options.hpp>
 
 namespace my
@@ -156,7 +155,7 @@ namespace my
 		// NOTE: destory previous primary surface before re-create it
 		m_sprim = t3d::DDSurfacePtr();
 
-		RECT clientRect = {0, 0, cfg.width, cfg.height};
+		CRect clientRect(0, 0, cfg.width, cfg.height);
 
 		// set ddraw and main window with config
 		switch(cfg.smode)
@@ -255,27 +254,27 @@ namespace my
 		//m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
 		HDC hdcSrc = m_sback->getDC();
 		HDC hdc = m_pwnd->getDC();
-		::BitBlt(hdc, 0, 0, m_rback.right - m_rback.left, m_rback.bottom - m_rback.top, hdcSrc, 0, 0, SRCCOPY);
+		::BitBlt(hdc, 0, 0, m_rback.Width(), m_rback.Height(), hdcSrc, 0, 0, SRCCOPY);
 		m_pwnd->releaseDC(hdc);
 		m_sback->releaseDC(hdcSrc);
 	}
 
-	void GameBase::fillBackSurface(const RECT & rect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
+	void GameBase::fillBackSurface(const CRect & rect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
 	{
 		// clear back surface use render context's clipper
-		m_sback->fill(const_cast<RECT *>(&rect), m_cc->convertColor(color));
+		m_sback->fill(const_cast<CRect *>(&rect), m_cc->convertColor(color));
 	}
 
-	static void _clearZBuffer(void * pbuffer, DWORD pitch, const RECT & rect, fixp28 value /*= 0*/)
+	static void _clearZBuffer(void * pbuffer, DWORD pitch, const CRect & rect, fixp28 value /*= 0*/)
 	{
 		// clear zbuffer with specified value
 		for(LONG y = rect.top; y < rect.bottom; y++)
 		{
-			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][rect.left], value, (rect.right - rect.left) * sizeof(fixp28));
+			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][rect.left], value, rect.Width() * sizeof(fixp28));
 		}
 	}
 
-	void GameBase::clearZBuffer(const RECT & rect, t3d::fixp28 value /*= 0*/)
+	void GameBase::clearZBuffer(const CRect & rect, t3d::fixp28 value /*= 0*/)
 	{
 		// clear zbuffer use render context's clipper
 		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, rect, value);

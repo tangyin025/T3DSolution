@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include <Windows.h>
+#include <atltypes.h>
 #include <boost/shared_ptr.hpp>
 
 namespace my
@@ -53,17 +54,17 @@ namespace my
 
 		void setWindowStyle(DWORD dwStyle);
 
-		DWORD getWindowExtansionStyle(void) const;
+		DWORD getWindowExStyle(void) const;
 
 		void setWindowExtansionStyle(DWORD dwExStyle);
 
-		RECT getWindowRect(void) const;
+		CRect getWindowRect(void) const;
 
-		void setWindowRect(const RECT & rect);
+		void setWindowRect(const CRect & rect);
 
-		RECT getClientRect(void) const;
+		CRect getClientRect(void) const;
 
-		void adjustClientRect(const RECT & rect);
+		void adjustClientRect(const CRect & rect);
 
 		void centerWindow(void);
 
