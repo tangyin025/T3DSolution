@@ -63,11 +63,15 @@ namespace my
 
 		RECT getClientRect(void) const;
 
-		void setClientRect(const RECT & rect);
+		void adjustClientRect(const RECT & rect);
 
 		void centerWindow(void);
 
 		void destroyWindow(void);
+
+		HDC getDC(void);
+
+		void releaseDC(HDC hdc);
 	};
 
 	class Application;
@@ -77,21 +81,19 @@ namespace my
 		friend Application;
 
 	public:
-		class MessageListener
-		{
-		public:
-			virtual bool notifyMessage(Window * win, UINT message, WPARAM wparam, LPARAM lparam, LRESULT & lResult) = 0;
-		};
-
-	public:
 		static BOOL isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
 
 		static void registerWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
 
-	protected:
-		typedef std::vector<MessageListener *> MessageListenerList;
+	public:
+		class MessageListener
+		{
+		public:
+			virtual BOOL notifyMessage(LRESULT & lResult, Window * win, UINT message, WPARAM wparam, LPARAM lparam) = 0;
+		};
 
-		MessageListenerList m_msgListenerList;
+	protected:
+		MessageListener * m_pMessageListener;
 
 	protected:
 		Window(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle, const Application * app);
@@ -100,7 +102,7 @@ namespace my
 		~Window(void);
 
 	public:
-		void addMessageListener(MessageListener * listener);
+		void setMessageListener(MessageListener * pMessageListener);
 
 		HWND getHandle(void) const;
 
@@ -109,26 +111,10 @@ namespace my
 
 	typedef boost::shared_ptr<Window> WindowPtr;
 
+	typedef std::map<HWND, WindowPtr> WindowPtrMap;
+
 	class Application
 	{
-	public:
-		class IdleListener
-		{
-		public:
-			virtual void nodifyIdle(void) = 0;
-		};
-
-	protected:
-		typedef std::vector<IdleListener *> IdleListenerList;
-
-		IdleListenerList m_idleListenerList;
-
-		typedef std::map<HWND, WindowPtr> WindowPtrMap;
-
-		WindowPtrMap m_wndMap;
-
-		HINSTANCE m_hinst;
-
 	public:
 		static Application * s_ptr;
 
@@ -137,12 +123,25 @@ namespace my
 			assert(NULL != s_ptr); return *s_ptr;
 		}
 
-		static HINSTANCE getModuleHandle(const std::basic_string<charT> moduleName = _T(""));
-
 		static LRESULT CALLBACK onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 	public:
-		Application(HINSTANCE hinst);
+		class IdleListener
+		{
+		public:
+			virtual BOOL nodifyIdle(void) = 0;
+		};
+
+	protected:
+		IdleListener * m_pIdleListener;
+
+	public:
+		WindowPtrMap m_wndMap;
+
+		HINSTANCE m_hinst;
+
+	public:
+		Application(HINSTANCE hinst = NULL);
 
 		virtual ~Application(void);
 
@@ -151,7 +150,9 @@ namespace my
 
 		HINSTANCE getHandle(void) const;
 
-		void addIdleListener(IdleListener * listener);
+		std::basic_string<charT> getModuleFileName(void) const;
+
+		void setIdleListener(IdleListener * pIdleListener);
 
 		int run(void);
 	};

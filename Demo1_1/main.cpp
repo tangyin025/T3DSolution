@@ -33,6 +33,7 @@ class MyGame
 	: public my::Game			// 用以实现基于帧循环的基本应用程序框架，并已经实现了常见的 primary、back surface 结构
 	, public my::DrawnHelper			// 用以绘制常见多边形，如 sphere、box、plane 等
 	, public my::ErrorListener	// 实现接受错误信息的接口，这些错误信息通常来自于 my 的封装，也可以使用 REPORT_ERROR 宏对这个接口报错
+	, public my::Window::MessageListener
 {
 protected:
 	my::ConsoleSimulatorPtr m_consoleSim;	// 一个类似控制台的模拟器，可以在 surface 上输出控制台信息
@@ -125,13 +126,15 @@ public:
 
 		m_jackBoneTransformList.resize(m_jackSkeleton->getOrigBoneNodeListSize());
 
-		// load 背景音乐
-		my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
-		m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
-		my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
-		m_dsbuffer->play();
+		//// load 背景音乐
+		//my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
+		//m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
+		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
+		//m_dsbuffer->play();
 
 		// ======================================== TODO: END   ========================================
+
+		m_pwnd->setMessageListener(this);
 
 		return true;
 	}
@@ -212,18 +215,6 @@ public:
 		// ======================================== TODO: BEGIN ========================================
 
 		// 自定义渲染
-		//drawTriangleGouraudTextureZBufferRW(
-		//	m_rc.get(),
-		//	my::Vec4<real>(-50,  50, 0),
-		//	my::Vec4<real>( 50,  50, 0),
-		//	my::Vec4<real>(-50, -50, 0),
-		//	//my::Vec2<real>(0, 1),
-		//	//my::Vec2<real>(1, 1),
-		//	//my::Vec2<real>(0, 0));
-		//	my::Vec2<real>(0, 0),
-		//	my::Vec2<real>(1, 0),
-		//	my::Vec2<real>(0, 1));
-
 		const t3d::BoneNodeList & boneNodeList =
 			m_jackSkeleton->gotoAnimation(m_jackSkeleton->getCurrentAnimationName(), m_jackSkeleton->getCurrentAnimationTime() + elapsedTime);
 
@@ -302,6 +293,36 @@ public:
 			m_consoleSim->report(info);
 		}
 	}
+
+	BOOL notifyMessage(LRESULT & lResult, my::Window * win, UINT message, WPARAM wparam, LPARAM lparam)
+	{
+		switch(message)
+		{
+		case WM_KEYDOWN:
+			switch(wparam)
+			{
+			case VK_F1:
+				prepareConfig(my::GameBase::CONFIG_DESC(640, 480, SM_WINDOWED));
+				break;
+
+			case VK_F2:
+				prepareConfig(my::GameBase::CONFIG_DESC(800, 600, SM_WINDOWED));
+				break;
+
+			case VK_F3:
+				prepareConfig(my::GameBase::CONFIG_DESC(1024, 768, SM_WINDOWED));
+				break;
+
+			case VK_F4:
+				prepareConfig(my::GameBase::CONFIG_DESC(1280, 1024, SM_WINDOWED));
+				break;
+			}
+			lResult = 0;
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 };
 
 int APIENTRY WinMain(
@@ -317,6 +338,7 @@ int APIENTRY WinMain(
 		// 建立一个应用程序，以 800 x 600 窗口模式运行
 		MyGame game;
 		return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
+		//return game.run(my::Game::CONFIG_DESC(1680, 1050, my::Game::SM_FULLSCREEN32));
 	}
 	catch(t3d::Exception & e)
 	{
