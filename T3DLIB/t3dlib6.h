@@ -1224,6 +1224,19 @@ namespace t3d
 
 		void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void);
 	};
+
+	enum CLIP_STATE
+	{
+		CLIP_STATE_NONE,
+		CLIP_STATE_CULLED,
+		CLIP_STATE_ZCLIPPED_1,
+		CLIP_STATE_ZCLIPPED_2
+	};
+
+	void clipLineListVertexAtCamera(
+		VertexList & vertexList,
+		TriStateList & triStateList,
+		const CAMERA & camera);
 }
 
 #endif // __T3DLIB6_H__
