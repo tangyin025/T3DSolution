@@ -2224,6 +2224,33 @@ namespace t3d
 	}
 
 	template <typename elem_t>
+	inline Vec4<elem_t> lineClipX(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipx)
+	{
+		return vec3Build(
+			clipx,
+			LINE2D_INTERSECT(clipx, v0.x, v1.x, v0.y, v1.y),
+			LINE2D_INTERSECT(clipx, v0.x, v1.x, v0.z, v1.z));
+	}
+
+	template <typename elem_t>
+	inline Vec4<elem_t> lineClipY(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipy)
+	{
+		return vec3Build(
+			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.x, v1.x),
+			clipy,
+			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.z, v1.z));
+	}
+
+	template <typename elem_t>
+	inline Vec4<elem_t> lineClipZ(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipz)
+	{
+		return vec3Build(
+			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.x, v1.x),
+			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.y, v1.y),
+			clipz);
+	}
+
+	template <typename elem_t>
 	inline bool rgbaIsValid(const Vec4<elem_t> & rhs, elem_t min, elem_t max)
 	{
 		return rhs.x >= min && rhs.x <= max

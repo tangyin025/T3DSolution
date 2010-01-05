@@ -6947,4 +6947,101 @@ namespace t3d
 		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
 		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList32();
 	}
+
+	CLIP_STATE clipLineVertexAtCamera(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const CAMERA & camera,
+		VertexList & retVertexList)
+	{
+		if(v0.z > camera.nz)
+		{
+			if(v1.z > camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else if(v1.z == camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else
+			{
+				retVertexList.push_back(v0);
+				retVertexList.push_back(lineClipZ(v0, v1, camera.nz));
+				return CLIP_STATE_ZCLIPPED_1;
+			}
+		}
+		else if(v0.z == camera.nz)
+		{
+			if(v1.z > camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else if(v1.z == camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else
+			{
+				return CLIP_STATE_CULLED;
+			}
+		}
+		else
+		{
+			if(v1.z > camera.nz)
+			{
+				retVertexList.push_back(lineClipZ(v0, v1, camera.nz));
+				retVertexList.push_back(v1);
+				return CLIP_STATE_ZCLIPPED_1;
+			}
+			else if(v1.z == camera.nz)
+			{
+				return CLIP_STATE_CULLED;
+			}
+			else
+			{
+				return CLIP_STATE_CULLED;
+			}
+		}
+	}
+
+	void clipLineListVertexAtCamera(
+		VertexList & vertexList,
+		TriStateList & triStateList,
+		const CAMERA & camera)
+	{
+		assert(vertexList.size() == triStateList.size() / 2);
+
+		const size_t orig_size = triStateList.size();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			if(TS_ACTIVE == triStateList[i])
+			{
+				switch(clipLineVertexAtCamera(
+					vertexList[i * 2 + 0],
+					vertexList[i * 2 + 1],
+					camera,
+					vertexList))
+				{
+				case CLIP_STATE_NONE:
+					break;
+
+				case CLIP_STATE_CULLED:
+					triStateList[i] = TS_CULLED;
+					break;
+
+				case CLIP_STATE_ZCLIPPED_1:
+					triStateList[i] = TS_CULLED;
+					triStateList.push_back(TS_ACTIVE);
+					break;
+
+				default:
+					assert(false); break;
+				}
+			}
+		}
+
+		assert(vertexList.size() == triStateList.size() / 2);
+	}
 }
