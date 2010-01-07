@@ -431,7 +431,7 @@ namespace t3d
 		m_surfaceBuffer = pbuffer;
 	}
 
-	void SurfaceContext::setSurfaceBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	void SurfaceContext::setSurfaceBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
 	{
 		setSurfaceBuffer(pbuffer);
 		setSurfacePitch(pitch);
@@ -444,12 +444,12 @@ namespace t3d
 		return m_surfaceBuffer;
 	}
 
-	void SurfaceContext::setSurfacePitch(DWORD pitch)
+	void SurfaceContext::setSurfacePitch(LONG pitch)
 	{
 		m_surfacePitch = pitch;
 	}
 
-	DWORD SurfaceContext::getSurfacePitch(void) const
+	LONG SurfaceContext::getSurfacePitch(void) const
 	{
 		return m_surfacePitch;
 	}
@@ -489,7 +489,7 @@ namespace t3d
 		m_zbufferBuffer = pbuffer;
 	}
 
-	void ZBufferContext::setZBufferBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	void ZBufferContext::setZBufferBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
 	{
 		setZBufferBuffer(pbuffer);
 		setZBufferPitch(pitch);
@@ -502,12 +502,12 @@ namespace t3d
 		return m_zbufferBuffer;
 	}
 
-	void ZBufferContext::setZBufferPitch(DWORD pitch)
+	void ZBufferContext::setZBufferPitch(LONG pitch)
 	{
 		m_zbufferPitch = pitch;
 	}
 
-	DWORD ZBufferContext::getZBufferPitch(void) const
+	LONG ZBufferContext::getZBufferPitch(void) const
 	{
 		return m_zbufferPitch;
 	}
@@ -542,7 +542,7 @@ namespace t3d
 		m_textureBuffer = pbuffer;
 	}
 
-	void TextureContext::setTextureBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height)
+	void TextureContext::setTextureBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
 	{
 		setTextureBuffer(pbuffer);
 		setTexturePitch(pitch);
@@ -555,12 +555,12 @@ namespace t3d
 		return m_textureBuffer;
 	}
 
-	void TextureContext::setTexturePitch(DWORD pitch)
+	void TextureContext::setTexturePitch(LONG pitch)
 	{
 		m_texturePitch = pitch;
 	}
 
-	DWORD TextureContext::getTexturePitch(void) const
+	LONG TextureContext::getTexturePitch(void) const
 	{
 		return m_texturePitch;
 	}
@@ -595,12 +595,12 @@ namespace t3d
 		return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
 	}
 
-	void ClipperContext::setClipperRect(const RECT & clipper)
+	void ClipperContext::setClipperRect(const CRect & clipper)
 	{
 		m_clipper = clipper;
 	}
 
-	const RECT & ClipperContext::getClipperRect(void) const
+	const CRect & ClipperContext::getClipperRect(void) const
 	{
 		return m_clipper;
 	}
@@ -5972,6 +5972,28 @@ namespace t3d
 	{
 	}
 
+	void RenderContext::fillZbuffer(const CRect & rect, real value)
+	{
+		CRect rectClipped = m_clipper & rect;
+
+		for(int i = rectClipped.top; i < rectClipped.bottom; i++)
+		{
+			memSet32((uint32 *)&getZBufferRef28()[i][rectClipped.left], (uint32)real_to_fixp28(value), rectClipped.Width());
+		}
+	}
+
+	void RenderContext16::fillSurface(const CRect & rect, const Vec4<real> & color)
+	{
+		assert(t3d::rgbaIsValid<real>(color, 0, 1));
+
+		CRect rectClipped = m_clipper & rect;
+
+		for(int i = rectClipped.top; i < rectClipped.bottom; i++)
+		{
+			memSet16(&getSurfaceRef16()[i][rectClipped.left], _RGB16BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rectClipped.Width());
+		}
+	}
+
 	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)
 	{
 		RenderLineListZBufferRW::reset();
@@ -6458,6 +6480,18 @@ namespace t3d
 		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::cameraToScreen();
 		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::sClipAtScreen();
 		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList16();
+	}
+
+	void RenderContext32::fillSurface(const CRect & rect, const Vec4<real> & color)
+	{
+		assert(t3d::rgbaIsValid<real>(color, 0, 1));
+
+		CRect rectClipped = m_clipper & rect;
+
+		for(int i = rectClipped.top; i < rectClipped.bottom; i++)
+		{
+			memSet32(&getSurfaceRef32()[i][rectClipped.left], _RGB32BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rectClipped.Width());
+		}
 	}
 
 	void RenderContext32::drawLineListZBufferRW(const Vec4<real> & color)

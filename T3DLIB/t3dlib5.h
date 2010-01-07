@@ -78,7 +78,7 @@ namespace t3d
 	class ConstSurfaceRef
 	{
 	public:
-		inline ConstSurfaceRef(elem_t * p, DWORD pitch)
+		inline ConstSurfaceRef(elem_t * p, LONG pitch)
 			: _p(p), _pitch(pitch)
 		{
 			assert(NULL != _p);
@@ -98,14 +98,14 @@ namespace t3d
 	protected:
 		elem_t * _p;
 
-		DWORD _pitch;
+		LONG _pitch;
 	};
 
 	template <typename elem_t>
 	class SurfaceRef : public ConstSurfaceRef<elem_t>
 	{
 	public:
-		inline SurfaceRef(elem_t * p, DWORD pitch)
+		inline SurfaceRef(elem_t * p, LONG pitch)
 			: ConstSurfaceRef<elem_t>(p, pitch)
 		{
 		}
