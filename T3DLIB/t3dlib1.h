@@ -7,6 +7,7 @@
 #include <ddraw.h>
 #include <atlbase.h>
 #include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
 
 namespace t3d
 {
@@ -110,6 +111,8 @@ namespace t3d
 
 		void setDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwRefreshRate = 0);
 
+		DDSURFACEDESC2 getDisplayMode(void);
+
 		void restoreDisplayMode(void);
 
 		void waitForVerticalBlank(DWORD dwFlags = WF_BEGIN);
@@ -124,6 +127,27 @@ namespace t3d
 	};
 
 	typedef boost::shared_ptr<DDraw> DDrawPtr;
+
+	class ZBuffer
+	{
+	public:
+		boost::shared_array<fixp28> m_buffer;
+
+		LONG m_lPitch;
+
+	public:
+		ZBuffer(LONG lPitch, DWORD dwHeight);
+
+		virtual ~ZBuffer(void);
+
+		const fixp28 * getBuffer(void) const;
+
+		fixp28 * getBuffer(void);
+
+		LONG getPitch(void);
+	};
+
+	typedef boost::shared_ptr<ZBuffer> ZBufferPtr;
 }
 
 #endif // __T3DLIB1_H__

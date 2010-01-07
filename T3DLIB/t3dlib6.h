@@ -8,6 +8,8 @@
 #include <cmath>
 #include "t3dlib4.h"
 #include "t3dlib5.h"
+#include <boost/shared_ptr.hpp>
+#include <atltypes.h>
 
 namespace t3d
 {
@@ -23,7 +25,7 @@ namespace t3d
 
 	class VertexListContext
 	{
-	private:
+	protected:
 		VertexList m_vertexList;
 
 	public:
@@ -64,7 +66,7 @@ namespace t3d
 
 	class VertexIndexListContext
 	{
-	private:
+	protected:
 		VertexIndexList m_vertexIndexList;
 
 	public:
@@ -97,7 +99,7 @@ namespace t3d
 
 	class NormalListContext
 	{
-	private:
+	protected:
 		NormalList m_normalList;
 
 	public:
@@ -138,7 +140,7 @@ namespace t3d
 
 	class UVListContext
 	{
-	private:
+	protected:
 		UVList m_uvList;
 
 	public:
@@ -173,7 +175,7 @@ namespace t3d
 
 	class ColorListContext
 	{
-	private:
+	protected:
 		ColorList m_colorList;
 
 	public:
@@ -210,10 +212,10 @@ namespace t3d
 
 	class SurfaceContext
 	{
-	private:
+	protected:
 		void * m_surfaceBuffer;
 
-		DWORD m_surfacePitch;
+		LONG m_surfacePitch;
 
 		DWORD m_surfaceWidth;
 
@@ -222,13 +224,13 @@ namespace t3d
 	public:
 		void setSurfaceBuffer(void * pbuffer);
 
-		void setSurfaceBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height);
+		void setSurfaceBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height);
 
 		void * getSurfaceBuffer(void) const;
 
-		void setSurfacePitch(DWORD pitch);
+		void setSurfacePitch(LONG pitch);
 
-		DWORD getSurfacePitch(void) const;
+		LONG getSurfacePitch(void) const;
 
 		void setSurfaceWidth(DWORD width);
 
@@ -246,10 +248,10 @@ namespace t3d
 
 	class ZBufferContext
 	{
-	private:
+	protected:
 		void * m_zbufferBuffer;
 
-		DWORD m_zbufferPitch;
+		LONG m_zbufferPitch;
 
 		DWORD m_zbufferWidth;
 
@@ -258,13 +260,13 @@ namespace t3d
 	public:
 		void setZBufferBuffer(void * pbuffer);
 
-		void setZBufferBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height);
+		void setZBufferBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height);
 
 		void * getZBufferBuffer(void) const;
 
-		void setZBufferPitch(DWORD pitch);
+		void setZBufferPitch(LONG pitch);
 
-		DWORD getZBufferPitch(void) const;
+		LONG getZBufferPitch(void) const;
 
 		void setZBufferWidth(DWORD width);
 
@@ -280,10 +282,10 @@ namespace t3d
 
 	class TextureContext
 	{
-	private:
+	protected:
 		void * m_textureBuffer;
 
-		DWORD m_texturePitch;
+		LONG m_texturePitch;
 
 		DWORD m_textureWidth;
 
@@ -292,13 +294,13 @@ namespace t3d
 	public:
 		void setTextureBuffer(void * pbuffer);
 
-		void setTextureBuffer(void * pbuffer, DWORD pitch, DWORD width, DWORD height);
+		void setTextureBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height);
 
 		void * getTextureBuffer(void) const;
 
-		void setTexturePitch(DWORD pitch);
+		void setTexturePitch(LONG pitch);
 
-		DWORD getTexturePitch(void) const;
+		LONG getTexturePitch(void) const;
 
 		void setTextureWidth(DWORD width);
 
@@ -316,13 +318,13 @@ namespace t3d
 
 	class ClipperContext
 	{
-	private:
-		RECT m_clipper;
+	protected:
+		CRect m_clipper;
 
 	public:
-		void setClipperRect(const RECT & clipper);
+		void setClipperRect(const CRect & clipper);
 
-		const RECT & getClipperRect(void) const;
+		const CRect & getClipperRect(void) const;
 	};
 
 	struct MATERIAL
@@ -335,7 +337,7 @@ namespace t3d
 
 	class MaterialContext
 	{
-	private:
+	protected:
 		MATERIAL m_material;
 
 	public:
@@ -385,7 +387,7 @@ namespace t3d
 
 	class LightListContext
 	{
-	private:
+	protected:
 		LightList m_lightList;
 
 	public:
@@ -453,7 +455,7 @@ namespace t3d
 
 	class CameraContext
 	{
-	private:
+	protected:
 		CAMERA m_camera;
 
 	public:
@@ -517,7 +519,7 @@ namespace t3d
 
 	class TriangleStateListContext
 	{
-	private:
+	protected:
 		TriStateList m_triStateList;
 
 	public:
@@ -962,6 +964,12 @@ namespace t3d
 		virtual ~RenderContext(void);
 
 	public:
+		void fillZbuffer(const CRect & rect, real value);
+
+	public:
+		virtual void fillSurface(const CRect & rect, const Vec4<real> & color) = 0;
+
+	public:
 		virtual void drawLineListZBufferRW(const Vec4<real> & color) = 0;
 
 		virtual void drawLineIndexListZBufferRW(const Vec4<real> & color) = 0;
@@ -1047,9 +1055,14 @@ namespace t3d
 		virtual void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void) = 0;
 	};
 
+	typedef boost::shared_ptr<RenderContext> RenderContextPtr;
+
 	class RenderContext16
 		: virtual public RenderContext
 	{
+	public:
+		void fillSurface(const CRect & rect, const Vec4<real> & color);
+
 	public:
 		void drawLineListZBufferRW(const Vec4<real> & color);
 
@@ -1139,6 +1152,9 @@ namespace t3d
 	class RenderContext32
 		: virtual public RenderContext
 	{
+	public:
+		void fillSurface(const CRect & rect, const Vec4<real> & color);
+
 	public:
 		void drawLineListZBufferRW(const Vec4<real> & color);
 

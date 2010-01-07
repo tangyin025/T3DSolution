@@ -261,6 +261,14 @@ namespace t3d
 		FAILED_DDEXCEPT(m_ddraw->SetDisplayMode(dwWidth, dwHeight, dwBPP, dwRefreshRate, 0));
 	}
 
+	DDSURFACEDESC2 DDraw::getDisplayMode(void)
+	{
+		DDSURFACEDESC2 ddsd;
+		ddsd.dwSize = sizeof(ddsd);
+		FAILED_DDEXCEPT(m_ddraw->GetDisplayMode(&ddsd));
+		return ddsd;
+	}
+
 	void DDraw::restoreDisplayMode(void)
 	{
 		FAILED_DDEXCEPT(m_ddraw->RestoreDisplayMode());
@@ -280,6 +288,8 @@ namespace t3d
 
 	DDClipperPtr DDraw::createMemoryClipper(LPRECT lpRect, DWORD dwCount)
 	{
+		assert(dwCount > 0);
+
 		boost::scoped_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
 
 		LPRGNDATA pRgnd = (LPRGNDATA)tmpData.get();
@@ -337,5 +347,32 @@ namespace t3d
 
 		DDSurfacePtr surface(new DDSurface(this, ddsd));
 		return surface;
+	}
+
+	ZBuffer::ZBuffer(LONG lPitch, DWORD dwHeight)
+		: m_buffer(new fixp28[lPitch * dwHeight])
+		, m_lPitch(lPitch)
+	{
+		if(NULL == m_buffer.get())
+			T3D_CUSEXCEPT(_T("create zbuffer failed"));
+	}
+
+	ZBuffer::~ZBuffer(void)
+	{
+	}
+
+	const fixp28 * ZBuffer::getBuffer(void) const
+	{
+		return m_buffer.get();
+	}
+
+	fixp28 * ZBuffer::getBuffer(void)
+	{
+		return m_buffer.get();
+	}
+
+	LONG ZBuffer::getPitch(void)
+	{
+		return m_lPitch;
 	}
 }
