@@ -25,6 +25,39 @@ namespace t3d
 #include "color_mul_table.hpp"
 	};
 
+	void fillZBuffer28(
+		SurfaceRef<fixp28> zbuffer,
+		const CRect & rect,
+		real value_inv)
+	{
+		for(int i = rect.top; i < rect.bottom; i++)
+		{
+			memSet32((uint32 *)&zbuffer[i][rect.left], (uint32)real_to_fixp28(value_inv), rect.Width());
+		}
+	}
+
+	void fillSurface16(
+		SurfaceRef<uint16> surface,
+		const CRect & rect,
+		const Vec4<real> & color)
+	{
+		for(int i = rect.top; i < rect.bottom; i++)
+		{
+			memSet16(&surface[i][rect.left], _RGB16BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rect.Width());
+		}
+	}
+
+	void fillSurface32(
+		SurfaceRef<uint32> surface,
+		const CRect & rect,
+		const Vec4<real> & color)
+	{
+		for(int i = rect.top; i < rect.bottom; i++)
+		{
+			memSet32(&surface[i][rect.left], _RGB32BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rect.Width());
+		}
+	}
+
 	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,
 		const Vec4<real> & v0,

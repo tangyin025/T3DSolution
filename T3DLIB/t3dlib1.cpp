@@ -349,9 +349,9 @@ namespace t3d
 		return surface;
 	}
 
-	ZBuffer::ZBuffer(LONG lPitch, DWORD dwHeight)
-		: m_buffer(new fixp28[lPitch * dwHeight])
-		, m_lPitch(lPitch)
+	ZBuffer::ZBuffer(DWORD dwWidth, DWORD dwHeight)
+		: m_buffer(new fixp28[dwWidth * dwHeight])
+		, m_lPitch(dwWidth * sizeof(fixp28))
 	{
 		if(NULL == m_buffer.get())
 			T3D_CUSEXCEPT(_T("create zbuffer failed"));

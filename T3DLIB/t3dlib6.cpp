@@ -5972,26 +5972,16 @@ namespace t3d
 	{
 	}
 
-	void RenderContext::fillZbuffer(const CRect & rect, real value)
+	void RenderContext::fillZbuffer(const CRect & rect, real value_inv)
 	{
-		CRect rectClipped = m_clipper & rect;
-
-		for(int i = rectClipped.top; i < rectClipped.bottom; i++)
-		{
-			memSet32((uint32 *)&getZBufferRef28()[i][rectClipped.left], (uint32)real_to_fixp28(value), rectClipped.Width());
-		}
+		fillZBuffer28(getZBufferRef28(), m_clipper & rect, value_inv);
 	}
 
 	void RenderContext16::fillSurface(const CRect & rect, const Vec4<real> & color)
 	{
 		assert(t3d::rgbaIsValid<real>(color, 0, 1));
 
-		CRect rectClipped = m_clipper & rect;
-
-		for(int i = rectClipped.top; i < rectClipped.bottom; i++)
-		{
-			memSet16(&getSurfaceRef16()[i][rectClipped.left], _RGB16BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rectClipped.Width());
-		}
+		fillSurface16(getSurfaceRef16(), m_clipper & rect, color);
 	}
 
 	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)
@@ -6486,12 +6476,7 @@ namespace t3d
 	{
 		assert(t3d::rgbaIsValid<real>(color, 0, 1));
 
-		CRect rectClipped = m_clipper & rect;
-
-		for(int i = rectClipped.top; i < rectClipped.bottom; i++)
-		{
-			memSet32(&getSurfaceRef32()[i][rectClipped.left], _RGB32BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rectClipped.Width());
-		}
+		fillSurface32(getSurfaceRef32(), m_clipper & rect, color);
 	}
 
 	void RenderContext32::drawLineListZBufferRW(const Vec4<real> & color)

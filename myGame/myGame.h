@@ -52,6 +52,8 @@ namespace my
 		ErrorListenerPList m_listenerList;
 	};
 
+	typedef boost::shared_ptr<ErrorReporter> ErrorReporterPtr;
+
 //#ifdef _DEBUG
 #define REPORT_ERROR(e) my::ErrorReporter::getSingleton().report(e);
 //#else
@@ -104,12 +106,6 @@ namespace my
 		my::ImagePtr convertImage(const my::Image * image);
 	};
 
-	typedef boost::shared_ptr<ErrorReporter> ErrorReporterPtr;
-
-	typedef boost::shared_ptr<t3d::RenderContext> RenderContextPtr;
-
-	typedef boost::shared_array<fixp28> ZBufferPtr;
-
 	class GameBase : public Application
 	{
 	public:
@@ -140,7 +136,7 @@ namespace my
 
 		t3d::DDrawPtr m_ddraw;
 
-		t3d::DDSurfacePtr m_sprim;
+		//t3d::DDSurfacePtr m_sprim;
 
 		t3d::DDSurfacePtr m_sback;
 
@@ -148,13 +144,11 @@ namespace my
 
 		CRect m_rback;
 
-		RenderContextPtr m_rc;
+		t3d::RenderContextPtr m_rc;
 
 		ColorConversionPtr m_cc;
 
-		ZBufferPtr m_zbuff;
-
-		DWORD m_zbuffPitch;
+		t3d::ZBufferPtr m_zbuff;
 
 	public:
 		GameBase(HINSTANCE hinst);
@@ -167,10 +161,6 @@ namespace my
 		void prepareConfig(const CONFIG_DESC & cfg);
 
 		void bltBackSurfaceToPrimary(void);
-
-		void fillBackSurface(const CRect & rect, const t3d::Vec4<int> & color = my::Vec4<int>(197, 197, 197));
-
-		void clearZBuffer(const CRect & rect, t3d::fixp28 value = 0);
 	};
 
 	class Game : public GameBase, public Application::IdleListener
