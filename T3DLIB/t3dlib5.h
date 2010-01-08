@@ -5,6 +5,7 @@
 #include "t3dcommon.h"
 #include <windows.h>
 #include "t3dlib4.h"
+#include <atltypes.h>
 
 #define RGB16_RED_SHIFT		11
 #define RGB16_GREEN_SHIFT	5
@@ -121,6 +122,21 @@ namespace t3d
 			return _p;
 		}
 	};
+
+	void fillZBuffer28(
+		SurfaceRef<fixp28> zbuffer,
+		const CRect & rect,
+		real value_inv);
+
+	void fillSurface16(
+		SurfaceRef<uint16> surface,
+		const CRect & rect,
+		const Vec4<real> & color);
+
+	void fillSurface32(
+		SurfaceRef<uint32> surface,
+		const CRect & rect,
+		const Vec4<real> & color);
 
 	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,

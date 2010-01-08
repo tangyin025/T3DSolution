@@ -136,7 +136,7 @@ namespace t3d
 		LONG m_lPitch;
 
 	public:
-		ZBuffer(LONG lPitch, DWORD dwHeight);
+		ZBuffer(DWORD dwWidth, DWORD dwHeight);
 
 		virtual ~ZBuffer(void);
 

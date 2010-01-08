@@ -152,8 +152,8 @@ namespace my
 
 		assert(NULL != m_pwnd);
 
-		// NOTE: destory previous primary surface before re-create it
-		m_sprim = t3d::DDSurfacePtr();
+		//// NOTE: destory previous primary surface before re-create it
+		//m_sprim = t3d::DDSurfacePtr();
 
 		CRect clientRect(0, 0, cfg.width, cfg.height);
 
@@ -186,10 +186,10 @@ namespace my
 			T3D_CUSEXCEPT(_T("unsupported screen mode"));
 		}
 
-		// create primary surface with main window clipper
-		m_sprim = m_ddraw->createWindowSurface();
+		//// create primary surface with main window clipper
+		//m_sprim = m_ddraw->createWindowSurface();
 
-		m_sprim->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
+		//m_sprim->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
 
 		// create back surface with custom rect clipper
 		m_sback = m_ddraw->createMemorySurface(cfg.width, cfg.height);
@@ -199,17 +199,30 @@ namespace my
 		// save the back surface rect clipper for blt
 		m_rback = clientRect;
 
+		// get display mode info
+		DDSURFACEDESC2 ddsd = m_ddraw->getDisplayMode();
+		if( !(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) )
+		{
+			T3D_CUSEXCEPT(_T("unsupported pixel format"));
+		}
+
 		// create render context
-		switch(m_sprim->getPixelFormat().dwRGBBitCount)
+		switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
 		{
 		case 16:
-			m_rc = RenderContextPtr(new t3d::RenderContext16());
+			if(ddsd.ddpfPixelFormat.dwRBitMask != 0xF800
+				|| ddsd.ddpfPixelFormat.dwGBitMask != 0x07E0
+				|| ddsd.ddpfPixelFormat.dwBBitMask != 0x001F)
+			{
+				T3D_CUSEXCEPT(_T("unsupported pixel format"));
+			}
+			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
 			if(m_cc == NULL)
 				m_cc = ColorConversionPtr(new ColorConversion16());
 			break;
 
 		case 32:
-			m_rc = RenderContextPtr(new t3d::RenderContext32());
+			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
 			if(m_cc == NULL)
 				m_cc = ColorConversionPtr(new ColorConversion32());
 			break;
@@ -219,18 +232,16 @@ namespace my
 		}
 
 		// create zbuffer
-		m_zbuff = ZBufferPtr(new fixp28[cfg.width * cfg.height]);
-
-		m_zbuffPitch = cfg.width * sizeof(fixp28);
+		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfg.width, cfg.height));
 
 		// save back surface & zbuffer to render context
-		DDSURFACEDESC2 ddsc = m_sback->lock();
+		ddsd = m_sback->lock();
 
-		m_rc->setSurfaceBuffer(ddsc.lpSurface, ddsc.lPitch, ddsc.dwWidth, ddsc.dwHeight);
+		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
 
 		m_sback->unlock();
 
-		m_rc->setZBufferBuffer(m_zbuff.get(), m_zbuffPitch, 0, 0);
+		m_rc->setZBufferBuffer(m_zbuff->getBuffer(), m_zbuff->getPitch(), m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
 
 		// set back surface rect to render context clipper
 		m_rc->setClipperRect(m_rback);
@@ -257,27 +268,6 @@ namespace my
 		::BitBlt(hdc, 0, 0, m_rback.Width(), m_rback.Height(), hdcSrc, 0, 0, SRCCOPY);
 		m_pwnd->releaseDC(hdc);
 		m_sback->releaseDC(hdcSrc);
-	}
-
-	void GameBase::fillBackSurface(const CRect & rect, const t3d::Vec4<int> & color /*= my::Vec4<int>(197, 197, 197)*/)
-	{
-		// clear back surface use render context's clipper
-		m_sback->fill(const_cast<CRect *>(&rect), m_cc->convertColor(color));
-	}
-
-	static void _clearZBuffer(void * pbuffer, DWORD pitch, const CRect & rect, fixp28 value /*= 0*/)
-	{
-		// clear zbuffer with specified value
-		for(LONG y = rect.top; y < rect.bottom; y++)
-		{
-			memset(&t3d::SurfaceRef<fixp28>(static_cast<fixp28*>(pbuffer), pitch)[y][rect.left], value, rect.Width() * sizeof(fixp28));
-		}
-	}
-
-	void GameBase::clearZBuffer(const CRect & rect, t3d::fixp28 value /*= 0*/)
-	{
-		// clear zbuffer use render context's clipper
-		_clearZBuffer(m_zbuff.get(), m_zbuffPitch, rect, value);
 	}
 
 	Game::Game(HINSTANCE hinst /*= NULL*/)
@@ -334,8 +324,8 @@ namespace my
 		// register this to idle listener
 		setIdleListener(this);
 
-		//// register current directory input source dir
-		//m_resourceMgr->registerDir(_T("."));
+		// register current directory input source dir
+		m_resourceMgr->registerDir(_T("."));
 
 		// do initialize
 		if(onInit())

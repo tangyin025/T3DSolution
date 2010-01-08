@@ -38,7 +38,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	TCHAR szModuleFileName[MAX_PATH];
 	GetModuleFileName(NULL, szModuleFileName, sizeof(szModuleFileName) / sizeof(szModuleFileName[0]));
-
 	try
 	{
 		HWND hWnd = CreateWindow(szWindowClass, szModuleFileName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
@@ -65,7 +64,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	}
 	catch(t3d::Exception & e)
 	{
-		MessageBox(NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+		::MessageBox(NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
 	}
 
 	return 0;
@@ -115,7 +114,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 	case WM_SIZE:
-		if(SIZE_RESTORED == wParam && g_ddraw.get())
+		if((SIZE_RESTORED == wParam || SIZE_MAXIMIZED == wParam) && g_ddraw.get())
 		{
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);

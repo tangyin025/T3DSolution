@@ -9,7 +9,6 @@
 #include "t3dlib4.h"
 #include "t3dlib5.h"
 #include <boost/shared_ptr.hpp>
-#include <atltypes.h>
 
 namespace t3d
 {
@@ -964,7 +963,7 @@ namespace t3d
 		virtual ~RenderContext(void);
 
 	public:
-		void fillZbuffer(const CRect & rect, real value);
+		void fillZbuffer(const CRect & rect, real value_inv);
 
 	public:
 		virtual void fillSurface(const CRect & rect, const Vec4<real> & color) = 0;
