@@ -501,6 +501,16 @@ namespace t3d
 
 		const CRect & getViewport(void) const;
 
+		const CAMERA & getCamera(void) const
+		{
+			return m_camera;
+		}
+
+		CAMERA & getCamera(void)
+		{
+			return m_camera;
+		}
+
 	public:
 		Vec4<real> getCameraPosition(void) const;
 	};
@@ -554,6 +564,97 @@ namespace t3d
 		TriStateList::const_iterator getTriStateListEnd() const;
 	};
 
+	enum CLIP_STATE
+	{
+		CLIP_STATE_NONE,
+		CLIP_STATE_CULLED,
+		CLIP_STATE_SCLIPPED,
+	};
+
+	typedef std::vector<CLIP_STATE> ClipStateList;
+
+	class ClipStateListContext
+	{
+	protected:
+		ClipStateList m_clipStateList;
+
+	public:
+		const ClipStateList & getClipStateList(void) const
+		{
+			return m_clipStateList;
+		}
+
+		ClipStateList & getClipStateList(void)
+		{
+			return m_clipStateList;
+		}
+
+		void pushClipState(CLIP_STATE state)
+		{
+			m_clipStateList.push_back(state);
+		}
+
+		void pushClipStateList(ClipStateList::const_iterator begin, ClipStateList::const_iterator end)
+		{
+			m_clipStateList.insert(getClipStateListBegin(), begin, end);
+		}
+
+		void clearClipStateList(void)
+		{
+			m_clipStateList.clear();
+		}
+
+		void resizeClipStateList(ClipStateList::size_type size, CLIP_STATE state)
+		{
+			m_clipStateList.resize(size, state);
+		}
+
+		ClipStateList::size_type getClipStateListSize(void) const
+		{
+			return m_clipStateList.size();
+		}
+
+		ClipStateList::const_reference clipStateAt(ClipStateList::size_type i) const
+		{
+			assert(i < getClipStateListSize());
+
+			return m_clipStateList[i];
+		}
+
+		ClipStateList::reference clipStateAt(ClipStateList::size_type i)
+		{
+			assert(i < getClipStateListSize());
+
+			return m_clipStateList[i];
+		}
+
+		ClipStateList::const_iterator getClipStateListBegin() const
+		{
+			return m_clipStateList.begin();
+		}
+
+		ClipStateList::iterator getClipStateListBegin()
+		{
+			return m_clipStateList.begin();
+		}
+
+		ClipStateList::const_iterator getClipStateListEnd() const
+		{
+			return m_clipStateList.end();
+		}
+
+		ClipStateList::iterator getClipStateListEnd()
+		{
+			return m_clipStateList.end();
+		}
+	};
+
+	inline void resetClipStateList(ClipStateList & clipStateList, size_t size, CLIP_STATE state = CLIP_STATE_NONE)
+	{
+		clipStateList.clear();
+		clipStateList.resize(size, state);
+	}
+
 	class TriangleContext
 		: virtual public VertexListContext
 		, virtual public VertexIndexListContext
@@ -568,6 +669,7 @@ namespace t3d
 		, virtual public LightListContext
 		, virtual public CameraContext
 		, virtual public TriangleStateListContext
+		, virtual public ClipStateListContext
 	{
 	};
 
@@ -1240,102 +1342,6 @@ namespace t3d
 		void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void);
 	};
 
-	enum CLIP_STATE
-	{
-		CLIP_STATE_NONE,
-		CLIP_STATE_CULLED,
-		CLIP_STATE_SCLIPPED,
-	};
-
-	typedef std::vector<CLIP_STATE> ClipStateList;
-
-	class ClipStateListContext
-	{
-	protected:
-		ClipStateList m_clipStateList;
-
-	public:
-		const ClipStateList & getClipStateList(void) const
-		{
-			return m_clipStateList;
-		}
-
-		ClipStateList & getClipStateList(void)
-		{
-			return m_clipStateList;
-		}
-
-		void pushClipState(CLIP_STATE state)
-		{
-			m_clipStateList.push_back(state);
-		}
-
-		void pushClipStateList(ClipStateList::const_iterator begin, ClipStateList::const_iterator end)
-		{
-			m_clipStateList.insert(getClipStateListBegin(), begin, end);
-		}
-
-		void clearClipStateList(void)
-		{
-			m_clipStateList.clear();
-		}
-
-		void resizeClipStateList(ClipStateList::size_type size, CLIP_STATE state)
-		{
-			m_clipStateList.resize(size, state);
-		}
-
-		ClipStateList::size_type getClipStateListSize(void) const
-		{
-			return m_clipStateList.size();
-		}
-
-		ClipStateList::const_reference vertexAt(ClipStateList::size_type i) const
-		{
-			assert(i < getClipStateListSize());
-
-			return m_clipStateList[i];
-		}
-
-		ClipStateList::reference vertexAt(ClipStateList::size_type i)
-		{
-			assert(i < getClipStateListSize());
-
-			return m_clipStateList[i];
-		}
-
-		ClipStateList::const_iterator getClipStateListBegin() const
-		{
-			return m_clipStateList.begin();
-		}
-
-		ClipStateList::iterator getClipStateListBegin()
-		{
-			return m_clipStateList.begin();
-		}
-
-		ClipStateList::const_iterator getClipStateListEnd() const
-		{
-			return m_clipStateList.end();
-		}
-
-		ClipStateList::iterator getClipStateListEnd()
-		{
-			return m_clipStateList.end();
-		}
-	};
-
-	inline void resetClipStateList(ClipStateList & clipStateList, size_t size, CLIP_STATE state)
-	{
-		clipStateList.clear();
-		clipStateList.resize(size, state);
-	}
-
-	//inline bool canClipStateVisible(CLIP_STATE state)
-	//{
-	//	return CLIP_STATE_NONE == state || CLIP_STATE_SCLIPPED == state;
-	//}
-
 	void transformVertexList(
 		VertexList & vertexList,
 		const Mat4<real> & mmat);
@@ -1355,8 +1361,8 @@ namespace t3d
 		const Mat4<real> & mmat);
 
 	CLIP_STATE clipLineAtCamera(
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
+		Vec4<real> v0,
+		Vec4<real> v1,
 		const CAMERA & camera,
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList);
@@ -1398,6 +1404,56 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec2<real> & projection,
 		const CRect & viewport);
+
+	CLIP_STATE clipLineAtScreen(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const CRect & viewport);
+
+	void clipLineListAtScreen(
+		VertexList & vertexList,
+		ClipStateList & clipStateList,
+		const CRect & viewport);
+
+	void clipLineIndexListAtScreen(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const CRect & viewport);
+
+	void drawLineListZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
+
+	void drawLineListZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
+
+	void drawLineIndexListZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
+
+	void drawLineIndexListZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
 }
 
 #endif // __T3DLIB6_H__

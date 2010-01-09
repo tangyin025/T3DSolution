@@ -47,7 +47,7 @@ namespace t3d
 	{
 		for(int i = rect.top; i < rect.bottom; i++)
 		{
-			memSet16(&surface[i][rect.left], _RGB16BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rect.Width());
+			memSet16(&surface[i][rect.left], _RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), rect.Width());
 		}
 	}
 
@@ -58,7 +58,7 @@ namespace t3d
 	{
 		for(int i = rect.top; i < rect.bottom; i++)
 		{
-			memSet32(&surface[i][rect.left], _RGB32BIT(real_to_int(color.x * 255), real_to_int(color.y * 255), real_to_int(color.z * 255)), rect.Width());
+			memSet32(&surface[i][rect.left], _RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), rect.Width());
 		}
 	}
 

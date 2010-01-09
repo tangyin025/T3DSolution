@@ -5981,27 +5981,39 @@ namespace t3d
 	{
 		assert(t3d::rgbaIsValid<real>(color, 0, 1));
 
-		fillSurface16(getSurfaceRef16(), m_clipper & rect, color);
+		fillSurface16(getSurfaceRef16(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
 	}
 
 	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)
 	{
-		RenderLineListZBufferRW::reset();
-		RenderLineListZBufferRW::worldToCamera();
-		RenderLineListZBufferRW::zClipAtCamera();
-		RenderLineListZBufferRW::cameraToScreen();
-		RenderLineListZBufferRW::sClipAtScreen();
-		RenderLineListZBufferRW::drawLineList16(color);
+		//RenderLineListZBufferRW::reset();
+		//RenderLineListZBufferRW::worldToCamera();
+		//RenderLineListZBufferRW::zClipAtCamera();
+		//RenderLineListZBufferRW::cameraToScreen();
+		//RenderLineListZBufferRW::sClipAtScreen();
+		//RenderLineListZBufferRW::drawLineList16(color);
+		resetClipStateList(getClipStateList(), getVertexListSize() / 2);
+		transformLineList(getVertexList(), getCameraMatrix());
+		clipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenLineList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawLineListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
 	void RenderContext16::drawLineIndexListZBufferRW(const Vec4<real> & color)
 	{
-		RenderLineIndexListZBufferRW::reset();
-		RenderLineIndexListZBufferRW::worldToCamera();
-		RenderLineIndexListZBufferRW::zClipAtCamera();
-		RenderLineIndexListZBufferRW::cameraToScreen();
-		RenderLineIndexListZBufferRW::sClipAtScreen();
-		RenderLineIndexListZBufferRW::drawLineIndexList16(color);
+		//RenderLineIndexListZBufferRW::reset();
+		//RenderLineIndexListZBufferRW::worldToCamera();
+		//RenderLineIndexListZBufferRW::zClipAtCamera();
+		//RenderLineIndexListZBufferRW::cameraToScreen();
+		//RenderLineIndexListZBufferRW::sClipAtScreen();
+		//RenderLineIndexListZBufferRW::drawLineIndexList16(color);
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 2);
+		transformLineIndexList(getVertexList(), getVertexIndexList(), getCameraMatrix());
+		clipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenLineIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawLineIndexListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
 	void RenderContext16::drawTriangleListWireZBufferRW(const Vec4<real> & color)
@@ -6476,27 +6488,39 @@ namespace t3d
 	{
 		assert(t3d::rgbaIsValid<real>(color, 0, 1));
 
-		fillSurface32(getSurfaceRef32(), m_clipper & rect, color);
+		fillSurface32(getSurfaceRef32(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
 	}
 
 	void RenderContext32::drawLineListZBufferRW(const Vec4<real> & color)
 	{
-		RenderLineListZBufferRW::reset();
-		RenderLineListZBufferRW::worldToCamera();
-		RenderLineListZBufferRW::zClipAtCamera();
-		RenderLineListZBufferRW::cameraToScreen();
-		RenderLineListZBufferRW::sClipAtScreen();
-		RenderLineListZBufferRW::drawLineList32(color);
+		//RenderLineListZBufferRW::reset();
+		//RenderLineListZBufferRW::worldToCamera();
+		//RenderLineListZBufferRW::zClipAtCamera();
+		//RenderLineListZBufferRW::cameraToScreen();
+		//RenderLineListZBufferRW::sClipAtScreen();
+		//RenderLineListZBufferRW::drawLineList32(color);
+		resetClipStateList(getClipStateList(), getVertexListSize() / 2);
+		transformLineList(getVertexList(), getCameraMatrix());
+		clipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenLineList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawLineListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
 	void RenderContext32::drawLineIndexListZBufferRW(const Vec4<real> & color)
 	{
-		RenderLineIndexListZBufferRW::reset();
-		RenderLineIndexListZBufferRW::worldToCamera();
-		RenderLineIndexListZBufferRW::zClipAtCamera();
-		RenderLineIndexListZBufferRW::cameraToScreen();
-		RenderLineIndexListZBufferRW::sClipAtScreen();
-		RenderLineIndexListZBufferRW::drawLineIndexList32(color);
+		//RenderLineIndexListZBufferRW::reset();
+		//RenderLineIndexListZBufferRW::worldToCamera();
+		//RenderLineIndexListZBufferRW::zClipAtCamera();
+		//RenderLineIndexListZBufferRW::cameraToScreen();
+		//RenderLineIndexListZBufferRW::sClipAtScreen();
+		//RenderLineIndexListZBufferRW::drawLineIndexList32(color);
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 2);
+		transformLineIndexList(getVertexList(), getVertexIndexList(), getCameraMatrix());
+		clipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenLineIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawLineIndexListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
 	void RenderContext32::drawTriangleListWireZBufferRW(const Vec4<real> & color)
@@ -7006,8 +7030,8 @@ namespace t3d
 	}
 
 	CLIP_STATE clipLineAtCamera(
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
+		Vec4<real> v0,
+		Vec4<real> v1,
 		const CAMERA & camera,
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList)
@@ -7080,10 +7104,12 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
+				// NOTE: clipLineAtCamera will change the length of clipStateList,
+				//	so take care of invalid reference of clipStateList[i]
 				CLIP_STATE state = clipLineAtCamera(
 					vertexList[i * 2 + 0], vertexList[i * 2 + 1], camera, vertexList, clipStateList);
 
-				clipStateList[i] = state; // *** TAKE CARE OF invalid reference
+				clipStateList[i] = state; // ***
 			}
 		}
 
@@ -7231,6 +7257,244 @@ namespace t3d
 		for(; vert_iter != vertexList.end(); vert_iter++)
 		{
 			cameraToScreenVertexSelf(*vert_iter, projection, centerPoint, halfSize);
+		}
+
+		UNREFERENCED_PARAMETER(vertexIndexList);
+		UNREFERENCED_PARAMETER(clipStateList);
+	}
+
+	CLIP_STATE clipLineAtScreen(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const CRect & viewport)
+	{
+		if(std::max(v0.x, v1.x) < viewport.left)
+			return CLIP_STATE_CULLED;
+
+		if(std::max(v0.y, v1.y) < viewport.top)
+			return CLIP_STATE_CULLED;
+
+		if(std::min(v0.x, v1.x) >= viewport.right)
+			return CLIP_STATE_CULLED;
+
+		if(std::min(v0.y, v1.y) >= viewport.bottom)
+			return CLIP_STATE_CULLED;
+
+		if(std::min(v0.x, v1.x) < viewport.left)
+			return CLIP_STATE_SCLIPPED;
+
+		if(std::min(v0.y, v1.y) < viewport.top)
+			return CLIP_STATE_SCLIPPED;
+
+		if(std::max(v0.x, v1.x) >= viewport.right)
+			return CLIP_STATE_SCLIPPED;
+
+		if(std::max(v0.y, v1.y) >= viewport.bottom)
+			return CLIP_STATE_SCLIPPED;
+
+		return CLIP_STATE_NONE;
+	}
+
+	void clipLineListAtScreen(
+		VertexList & vertexList,
+		ClipStateList & clipStateList,
+		const CRect & viewport)
+	{
+		assert(vertexList.size() == clipStateList.size() * 2);
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i])
+			{
+				clipStateList[i] = clipLineAtScreen(
+					vertexList[i * 2 + 0],
+					vertexList[i * 2 + 1],
+					viewport);
+			}
+		}
+	}
+
+	void clipLineIndexListAtScreen(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const CRect & viewport)
+	{
+		assert(vertexIndexList.size() == clipStateList.size() * 2);
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i])
+			{
+				clipStateList[i] = clipLineAtScreen(
+					vertexList[vertexIndexList[i * 2 + 0]],
+					vertexList[vertexIndexList[i * 2 + 1]],
+					viewport);
+			}
+		}
+	}
+
+	void drawLineListZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color)
+	{
+		assert(vertexList.size() == clipStateList.size() * 2);
+
+		assert(t3d::rgbaIsValid<real>(color, 0, 1));
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				//drawLineZBufferRW16(
+				//	surface,
+				//	zbuffer,
+				//	vertexList[i * 2 + 0],
+				//	vertexList[i * 2 + 1],
+				//	color * 255);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				//drawClippedLineZBufferRW16(
+				//	surface,
+				//	clipper,
+				//	zbuffer,
+				//	vertexList[i * 2 + 0],
+				//	vertexList[i * 2 + 1],
+				//	color * 255);
+				break;
+			}
+		}
+	}
+
+	void drawLineListZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color)
+	{
+		assert(vertexList.size() == clipStateList.size() * 2);
+
+		assert(t3d::rgbaIsValid<real>(color, 0, 1));
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				drawLineZBufferRW32(
+					surface,
+					zbuffer,
+					vertexList[i * 2 + 0],
+					vertexList[i * 2 + 1],
+					color * 255);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				drawClippedLineZBufferRW32(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[i * 2 + 0],
+					vertexList[i * 2 + 1],
+					color * 255);
+				break;
+			}
+		}
+	}
+
+	void drawLineIndexListZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color)
+	{
+		assert(vertexIndexList.size() == clipStateList.size() * 2);
+
+		assert(t3d::rgbaIsValid<real>(color, 0, 1));
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				//drawLineZBufferRW16(
+				//	surface,
+				//	zbuffer,
+				//	vertexList[vertexIndexList[i * 2 + 0]],
+				//	vertexList[vertexIndexList[i * 2 + 1]],
+				//	color * 255);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				//drawClippedLineZBufferRW16(
+				//	surface,
+				//	clipper,
+				//	zbuffer,
+				//	vertexList[vertexIndexList[i * 2 + 0]],
+				//	vertexList[vertexIndexList[i * 2 + 1]],
+				//	color * 255);
+				break;
+			}
+		}
+	}
+
+	void drawLineIndexListZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color)
+	{
+		assert(vertexIndexList.size() == clipStateList.size() * 2);
+
+		assert(t3d::rgbaIsValid<real>(color, 0, 1));
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				drawLineZBufferRW32(
+					surface,
+					zbuffer,
+					vertexList[vertexIndexList[i * 2 + 0]],
+					vertexList[vertexIndexList[i * 2 + 1]],
+					color * 255);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				drawClippedLineZBufferRW32(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 2 + 0]],
+					vertexList[vertexIndexList[i * 2 + 1]],
+					color * 255);
+				break;
+			}
 		}
 	}
 }
