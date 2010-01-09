@@ -173,6 +173,11 @@ public:
 		// 从用户输入来更新欧拉相机的坐标和方位
 		m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
 
+		// 清理 zbuffer
+		m_rc->setClipperRect(m_rback);
+
+		m_rc->fillZbuffer(m_rback, 0);
+
 		// 这里创建一个比窗口小的 clipper 区域，仅用于测试 3d 渲染得 clipper bug
 		// 由于软件渲染器，其 clipper 是通过算法实现的，所以若算法不强健，回到之绘图时越过 clipper 区域
 		// 甚至越过窗口区域，所以将绘图区域缩小一部分可以稍微避免，因越界导致系统崩溃的现象
@@ -182,9 +187,6 @@ public:
 
 		// 清理 back surface
 		m_rc->fillSurface(m_rback, my::Color(0.8f, 0.8f, 0.8f));
-
-		// 清理 zbuffer
-		m_rc->fillZbuffer(m_rback, 0);
 
 		// 设置渲染上下文的 camera
 		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
