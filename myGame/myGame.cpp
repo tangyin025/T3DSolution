@@ -200,34 +200,42 @@ namespace my
 		m_rback = clientRect;
 
 		// get display mode info
-		DDSURFACEDESC2 ddsd = m_ddraw->getDisplayMode();
-		if( !(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) )
+		bool bSupportedPixelFormat = false;
+		//DDPIXELFORMAT ddpf = m_sprim->getPixelFormat();
+		DDPIXELFORMAT ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
+		if(ddpf.dwFlags & DDPF_RGB)
 		{
-			T3D_CUSEXCEPT(_T("unsupported pixel format"));
+			// create render context
+			switch(ddpf.dwRGBBitCount)
+			{
+			case 16:
+				if(ddpf.dwRBitMask == RGB16_RED_MASK
+					&& ddpf.dwGBitMask == RGB16_GREEN_MASK
+					&& ddpf.dwBBitMask == RGB16_BLUE_MASK)
+				{
+					m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
+					m_cc = ColorConversionPtr(); // Singleton object should be destoryed before create
+					m_cc = ColorConversionPtr(new ColorConversion16());
+					bSupportedPixelFormat = true;
+				}
+				break;
+
+			case 32:
+				if(ddpf.dwRBitMask == RGB32_RED_MASK
+					&& ddpf.dwGBitMask == RGB32_GREEN_MASK
+					&& ddpf.dwBBitMask == RGB32_BLUE_MASK)
+				{
+					m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
+					m_cc = ColorConversionPtr();
+					m_cc = ColorConversionPtr(new ColorConversion32());
+					bSupportedPixelFormat = true;
+				}
+				break;
+			}
 		}
 
-		// create render context
-		switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
+		if(!bSupportedPixelFormat)
 		{
-		case 16:
-			if(ddsd.ddpfPixelFormat.dwRBitMask != 0xF800
-				|| ddsd.ddpfPixelFormat.dwGBitMask != 0x07E0
-				|| ddsd.ddpfPixelFormat.dwBBitMask != 0x001F)
-			{
-				T3D_CUSEXCEPT(_T("unsupported pixel format"));
-			}
-			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
-			if(m_cc == NULL)
-				m_cc = ColorConversionPtr(new ColorConversion16());
-			break;
-
-		case 32:
-			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
-			if(m_cc == NULL)
-				m_cc = ColorConversionPtr(new ColorConversion32());
-			break;
-
-		default:
 			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
 
@@ -235,7 +243,7 @@ namespace my
 		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfg.width, cfg.height));
 
 		// save back surface & zbuffer to render context
-		ddsd = m_sback->lock();
+		DDSURFACEDESC2 ddsd = m_sback->lock();
 
 		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
 
@@ -253,19 +261,17 @@ namespace my
 	void GameBase::bltBackSurfaceToPrimary(void)
 	{
 		// commit back surface to primary surface within corrected rectangle
-		m_rprim = m_pwnd->getClientRect();
+		//m_rprim = m_pwnd->getClientRect();
+		//m_pwnd->clientToScreenSelf(m_rprim);
+		CRect rect = m_pwnd->getClientRect();
 
-		/*
-		 * NOTE: for some reason, if the window size is greater than the desktop size, will lead these assert abort
-		 */
-		assert((m_rprim.right - m_rprim.left) == m_rback.right && m_rback.left == 0);
-
-		assert((m_rprim.bottom - m_rprim.top) == m_rback.bottom && m_rback.top == 0);
+		// NOTE: for some reason, if the window size is greater than the desktop size, will lead these assert abort
+		assert(rect == m_rback);
 
 		//m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
 		HDC hdcSrc = m_sback->getDC();
 		HDC hdc = m_pwnd->getDC();
-		::BitBlt(hdc, 0, 0, m_rback.Width(), m_rback.Height(), hdcSrc, 0, 0, SRCCOPY);
+		::BitBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), hdcSrc, m_rback.left, m_rback.top, SRCCOPY);
 		m_pwnd->releaseDC(hdc);
 		m_sback->releaseDC(hdcSrc);
 	}

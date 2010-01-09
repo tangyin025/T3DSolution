@@ -449,7 +449,7 @@ namespace t3d
 		Vec2<real> proj;
 		real nz;
 		real fz;
-		RECT viewport;
+		CRect viewport;
 	};
 
 	class CameraContext
@@ -497,9 +497,9 @@ namespace t3d
 
 		real getCameraFarZ(void) const;
 
-		void setViewport(const RECT & viewport);
+		void setViewport(const CRect & viewport);
 
-		const RECT & getViewport(void) const;
+		const CRect & getViewport(void) const;
 
 	public:
 		Vec4<real> getCameraPosition(void) const;
@@ -1244,14 +1244,160 @@ namespace t3d
 	{
 		CLIP_STATE_NONE,
 		CLIP_STATE_CULLED,
-		CLIP_STATE_ZCLIPPED_1,
-		CLIP_STATE_ZCLIPPED_2
+		CLIP_STATE_SCLIPPED,
 	};
 
-	void clipLineListVertexAtCamera(
+	typedef std::vector<CLIP_STATE> ClipStateList;
+
+	class ClipStateListContext
+	{
+	protected:
+		ClipStateList m_clipStateList;
+
+	public:
+		const ClipStateList & getClipStateList(void) const
+		{
+			return m_clipStateList;
+		}
+
+		ClipStateList & getClipStateList(void)
+		{
+			return m_clipStateList;
+		}
+
+		void pushClipState(CLIP_STATE state)
+		{
+			m_clipStateList.push_back(state);
+		}
+
+		void pushClipStateList(ClipStateList::const_iterator begin, ClipStateList::const_iterator end)
+		{
+			m_clipStateList.insert(getClipStateListBegin(), begin, end);
+		}
+
+		void clearClipStateList(void)
+		{
+			m_clipStateList.clear();
+		}
+
+		void resizeClipStateList(ClipStateList::size_type size, CLIP_STATE state)
+		{
+			m_clipStateList.resize(size, state);
+		}
+
+		ClipStateList::size_type getClipStateListSize(void) const
+		{
+			return m_clipStateList.size();
+		}
+
+		ClipStateList::const_reference vertexAt(ClipStateList::size_type i) const
+		{
+			assert(i < getClipStateListSize());
+
+			return m_clipStateList[i];
+		}
+
+		ClipStateList::reference vertexAt(ClipStateList::size_type i)
+		{
+			assert(i < getClipStateListSize());
+
+			return m_clipStateList[i];
+		}
+
+		ClipStateList::const_iterator getClipStateListBegin() const
+		{
+			return m_clipStateList.begin();
+		}
+
+		ClipStateList::iterator getClipStateListBegin()
+		{
+			return m_clipStateList.begin();
+		}
+
+		ClipStateList::const_iterator getClipStateListEnd() const
+		{
+			return m_clipStateList.end();
+		}
+
+		ClipStateList::iterator getClipStateListEnd()
+		{
+			return m_clipStateList.end();
+		}
+	};
+
+	inline void resetClipStateList(ClipStateList & clipStateList, size_t size, CLIP_STATE state)
+	{
+		clipStateList.clear();
+		clipStateList.resize(size, state);
+	}
+
+	//inline bool canClipStateVisible(CLIP_STATE state)
+	//{
+	//	return CLIP_STATE_NONE == state || CLIP_STATE_SCLIPPED == state;
+	//}
+
+	void transformVertexList(
 		VertexList & vertexList,
-		TriStateList & triStateList,
+		const Mat4<real> & mmat);
+
+	void transformVertexIndexList(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		const Mat4<real> & mmat);
+
+	void transformLineList(
+		VertexList & vertexList,
+		const Mat4<real> & mmat);
+
+	void transformLineIndexList(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		const Mat4<real> & mmat);
+
+	CLIP_STATE clipLineAtCamera(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ClipStateList & retClipStateList);
+
+	void clipLineListAtCamera(
+		VertexList & vertexList,
+		ClipStateList & clipStateList,
 		const CAMERA & camera);
+
+	CLIP_STATE clipLineIndexAtCamera(
+		VertexList & vertexList,
+		size_t v0_i,
+		size_t v1_i,
+		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
+		ClipStateList & retClipStateList);
+
+	void clipLineIndexListAtCamera(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const CAMERA & camera);
+
+	void cameraToScreenVertexSelf(
+		Vec4<real> & vertex,
+		const Vec2<real> & projection,
+		const CPoint & centerPoint,
+		const CSize & halfSize);
+
+	void cameraToScreenLineList(
+		VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec2<real> & projection,
+		const CRect & viewport);
+
+	void cameraToScreenLineIndexList(
+		VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec2<real> & projection,
+		const CRect & viewport);
 }
 
 #endif // __T3DLIB6_H__

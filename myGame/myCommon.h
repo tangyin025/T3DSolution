@@ -4,6 +4,14 @@
 
 #include <t3dCommon.h>
 
+#ifndef VERIFY
+#ifdef _DEBUG
+#define VERIFY(expr) assert( expr )
+#else
+#define VERIFY(expr) expr
+#endif
+#endif
+
 namespace my
 {
 	using t3d::charT;

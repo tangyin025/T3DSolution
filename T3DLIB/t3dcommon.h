@@ -49,7 +49,7 @@
 #define SAFE_FCLOSE(p)		if(p != NULL) { fclose(p);		p = NULL; }
 #define SAFE_RELEASE(p)		if(p != NULL) { p->Release();	p = NULL; }
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #define SUCCEEDED_VERIFY(expr) assert( SUCCEEDED( expr ) )
 #else
 #define SUCCEEDED_VERIFY(expr) expr

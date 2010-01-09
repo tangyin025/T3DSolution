@@ -946,12 +946,12 @@ namespace t3d
 		return m_camera.fz;
 	}
 
-	void CameraContext::setViewport(const RECT & viewport)
+	void CameraContext::setViewport(const CRect & viewport)
 	{
 		m_camera.viewport = viewport;
 	}
 
-	const RECT & CameraContext::getViewport(void) const
+	const CRect & CameraContext::getViewport(void) const
 	{
 		return m_camera.viewport;
 	}
@@ -6967,11 +6967,50 @@ namespace t3d
 		RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList32();
 	}
 
-	CLIP_STATE clipLineVertexAtCamera(
+	void transformVertexList(
+		VertexList & vertexList,
+		const Mat4<real> & mmat)
+	{
+		VertexList::iterator vert_iter = vertexList.begin();
+		for(; vert_iter != vertexList.end(); vert_iter++)
+		{
+			(*vert_iter) *= mmat;
+		}
+	}
+
+	void transformVertexIndexList(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		const Mat4<real> & mmat)
+	{
+		VertexIndexList::const_iterator vert_index_iter = vertexIndexList.begin();
+		for(; vert_index_iter != vertexIndexList.end(); vert_index_iter++)
+		{
+			vertexList[*vert_index_iter] *= mmat;
+		}
+	}
+
+	void transformLineList(
+		VertexList & vertexList,
+		const Mat4<real> & mmat)
+	{
+		transformVertexList(vertexList, mmat);
+	}
+
+	void transformLineIndexList(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		const Mat4<real> & mmat)
+	{
+		transformVertexIndexList(vertexList, vertexIndexList, mmat);
+	}
+
+	CLIP_STATE clipLineAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const CAMERA & camera,
-		VertexList & retVertexList)
+		VertexList & retVertexList,
+		ClipStateList & retClipStateList)
 	{
 		if(v0.z > camera.nz)
 		{
@@ -6987,7 +7026,8 @@ namespace t3d
 			{
 				retVertexList.push_back(v0);
 				retVertexList.push_back(lineClipZ(v0, v1, camera.nz));
-				return CLIP_STATE_ZCLIPPED_1;
+				retClipStateList.push_back(CLIP_STATE_NONE);
+				return CLIP_STATE_CULLED;
 			}
 		}
 		else if(v0.z == camera.nz)
@@ -7011,7 +7051,8 @@ namespace t3d
 			{
 				retVertexList.push_back(lineClipZ(v0, v1, camera.nz));
 				retVertexList.push_back(v1);
-				return CLIP_STATE_ZCLIPPED_1;
+				retClipStateList.push_back(CLIP_STATE_NONE);
+				return CLIP_STATE_CULLED;
 			}
 			else if(v1.z == camera.nz)
 			{
@@ -7024,43 +7065,172 @@ namespace t3d
 		}
 	}
 
-	void clipLineListVertexAtCamera(
+	void clipLineListAtCamera(
 		VertexList & vertexList,
-		TriStateList & triStateList,
+		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexList.size() == triStateList.size() / 2);
+		assert(vertexList.size() == clipStateList.size() * 2);
 
-		const size_t orig_size = triStateList.size();
+		const size_t orig_size = clipStateList.size();
 
 		for(size_t i = 0; i < orig_size; i++)
 		{
-			if(TS_ACTIVE == triStateList[i])
+			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				switch(clipLineVertexAtCamera(
-					vertexList[i * 2 + 0],
-					vertexList[i * 2 + 1],
-					camera,
-					vertexList))
-				{
-				case CLIP_STATE_NONE:
-					break;
+				CLIP_STATE state = clipLineAtCamera(
+					vertexList[i * 2 + 0], vertexList[i * 2 + 1], camera, vertexList, clipStateList);
 
-				case CLIP_STATE_CULLED:
-					triStateList[i] = TS_CULLED;
-					break;
-
-				case CLIP_STATE_ZCLIPPED_1:
-					triStateList[i] = TS_CULLED;
-					triStateList.push_back(TS_ACTIVE);
-					break;
-
-				default:
-					assert(false); break;
-				}
+				clipStateList[i] = state; // *** TAKE CARE OF invalid reference
 			}
 		}
 
-		assert(vertexList.size() == triStateList.size() / 2);
+		assert(vertexList.size() == clipStateList.size() * 2);
+	}
+
+	CLIP_STATE clipLineIndexAtCamera(
+		VertexList & vertexList,
+		size_t v0_i,
+		size_t v1_i,
+		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
+		ClipStateList & retClipStateList)
+	{
+		if(vertexList[v0_i].z > camera.nz)
+		{
+			if(vertexList[v1_i].z > camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else if(vertexList[v1_i].z == camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else
+			{
+				retVertexIndexList.push_back(v0_i);
+				retVertexIndexList.push_back(vertexList.size());
+				vertexList.push_back(lineClipZ(vertexList[v0_i], vertexList[v1_i], camera.nz));
+				retClipStateList.push_back(CLIP_STATE_NONE);
+				return CLIP_STATE_CULLED;
+			}
+		}
+		else if(vertexList[v0_i].z == camera.nz)
+		{
+			if(vertexList[v1_i].z > camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else if(vertexList[v1_i].z == camera.nz)
+			{
+				return CLIP_STATE_NONE;
+			}
+			else
+			{
+				return CLIP_STATE_CULLED;
+			}
+		}
+		else
+		{
+			if(vertexList[v1_i].z > camera.nz)
+			{
+				retVertexIndexList.push_back(vertexList.size());
+				vertexList.push_back(lineClipZ(vertexList[v0_i], vertexList[v1_i], camera.nz));
+				retVertexIndexList.push_back(v1_i);
+				retClipStateList.push_back(CLIP_STATE_NONE);
+				return CLIP_STATE_CULLED;
+			}
+			else if(vertexList[v1_i].z == camera.nz)
+			{
+				return CLIP_STATE_CULLED;
+			}
+			else
+			{
+				return CLIP_STATE_CULLED;
+			}
+		}
+	}
+
+	void clipLineIndexListAtCamera(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const CAMERA & camera)
+	{
+		assert(vertexIndexList.size() == clipStateList.size() * 2);
+
+		const size_t orig_size = clipStateList.size();
+
+		for(size_t i = 0; i < orig_size; i++)
+		{
+			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i])
+			{
+				CLIP_STATE state = clipLineIndexAtCamera(
+					vertexList, vertexIndexList[i * 2 + 0], vertexIndexList[i * 2 + 1], camera, vertexIndexList, clipStateList);
+
+				clipStateList[i] = state;
+			}
+		}
+
+		assert(vertexIndexList.size() == clipStateList.size() * 2);
+	}
+
+	void cameraToScreenVertexSelf(
+		Vec4<real> & vertex,
+		const Vec2<real> & projection,
+		const CPoint & centerPoint,
+		const CSize & halfSize)
+	{
+		vertex.x = centerPoint.x + vertex.x * projection.x / vertex.z * halfSize.cx;
+		vertex.y = centerPoint.y - vertex.y * projection.y / vertex.z * halfSize.cy;
+	}
+
+	void cameraToScreenLineList(
+		VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec2<real> & projection,
+		const CRect & viewport)
+	{
+		assert(vertexList.size() == clipStateList.size() * 2);
+
+		CSize halfSize(viewport.Width() / 2, viewport.Height() / 2);
+
+		CPoint centerPoint(viewport.left + halfSize.cx, viewport.top + halfSize.cy);
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i])
+			{
+				cameraToScreenVertexSelf(vertexList[i * 2 + 0], projection, centerPoint, halfSize);
+				cameraToScreenVertexSelf(vertexList[i * 2 + 1], projection, centerPoint, halfSize);
+			}
+		}
+	}
+
+	void cameraToScreenLineIndexList(
+		VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec2<real> & projection,
+		const CRect & viewport)
+	{
+		assert(vertexIndexList.size() == clipStateList.size() * 2);
+
+		CSize halfSize(viewport.Width() / 2, viewport.Height() / 2);
+
+		CPoint centerPoint(viewport.left + halfSize.cx, viewport.top + halfSize.cy);
+
+		VertexList::iterator vert_iter = vertexList.begin();
+		for(; vert_iter != vertexList.end(); vert_iter++)
+		{
+			cameraToScreenVertexSelf(*vert_iter, projection, centerPoint, halfSize);
+		}
 	}
 }

@@ -25,77 +25,41 @@
 
 namespace t3d
 {
-	//inline long _ftoi(double dval)
-	//{
-	//	/************************************************************************************
-	//	 * 6666 5555 5555 5544 4444 4444 3333 3333 3322 2222 2222 1111 1111 1100 0000 0000
-	//	 * 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210
-	//	 * -------------------------------------------------------------------------------
-	//	 * seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
-	//	 ************************************************************************************/
+	inline long _ftoi(double dval)
+	{
+		// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
+		return *(int *)&(dval += 1.5 * (1LL << 52));
+	}
 
-	//	return *(int *)&(dval += 1.5 * (1LL << 52));
-	//}
+	inline long _ftoi(float fval)
+	{
+		// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
+		return *(int *)&(fval += 1.5 * (1LL << 23)) << 10 >> 10;
+	}
 
-	//inline long _ftoi(float fval)
-	//{
-	//	/************************************************************************************
-	//	 * 3322 2222 2222 1111 1111 1000 0000 0000
-	//	 * 1098 7654 3210 9876 5432 1098 7654 3210
-	//	 * ---------------------------------------
-	//	 * seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
-	//	 ************************************************************************************/
+	inline fixp16 _ftofixp16(double dval)
+	{
+		// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
+		return *(fixp16 *)&(dval += 1.5 * (1LL << (52 - 16)));
+	}
 
-	//	return *(int *)&(fval += 1.5 * (1LL << 23)) << 10 >> 10;
-	//}
+	inline fixp16 _ftofixp16(float fval)
+	{
+		// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
+		return *(fixp16 *)&(fval += 1.5 * (1LL << (23 - 6))) << 10;
+	}
 
-	//inline fixp16 _ftofixp16(double dval)
-	//{
-	//	/************************************************************************************
-	//	 * 6666 5555 5555 5544 4444 4444 3333 3333 3322 2222 2222 1111 1111 1100 0000 0000
-	//	 * 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210
-	//	 * -------------------------------------------------------------------------------
-	//	 * seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
-	//	 ************************************************************************************/
+	inline fixp28 _ftofixp28(double dval)
+	{
+		// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
+		return *(fixp28 *)&(dval += 1.5 * (1LL << (52 - 28)));
+	}
 
-	//	return *(fixp16 *)&(dval += 1.5 * (1LL << (52 - 16)));
-	//}
-
-	//inline fixp16 _ftofixp16(float fval)
-	//{
-	//	/************************************************************************************
-	//	 * 3322 2222 2222 1111 1111 1000 0000 0000
-	//	 * 1098 7654 3210 9876 5432 1098 7654 3210
-	//	 * ---------------------------------------
-	//	 * seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
-	//	 ************************************************************************************/
-
-	//	return *(fixp16 *)&(fval += 1.5 * (1LL << (23 - 6))) << 10;
-	//}
-
-	//inline fixp28 _ftofixp28(double dval)
-	//{
-	//	/************************************************************************************
-	//	 * 6666 5555 5555 5544 4444 4444 3333 3333 3322 2222 2222 1111 1111 1100 0000 0000
-	//	 * 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210
-	//	 * -------------------------------------------------------------------------------
-	//	 * seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
-	//	 ************************************************************************************/
-
-	//	return *(fixp28 *)&(dval += 1.5 * (1LL << (52 - 28)));
-	//}
-
-	//inline fixp28 _ftofixp28(float fval)
-	//{
-	//	/************************************************************************************
-	//	 * 3322 2222 2222 1111 1111 1000 0000 0000
-	//	 * 1098 7654 3210 9876 5432 1098 7654 3210
-	//	 * ---------------------------------------
-	//	 * seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
-	//	 ************************************************************************************/
-
-	//	return *(fixp28 *)&(fval += 1.5 * (1LL << (23 - 18))) << 10;
-	//}
+	inline fixp28 _ftofixp28(float fval)
+	{
+		// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
+		return *(fixp28 *)&(fval += 1.5 * (1LL << (23 - 18))) << 10;
+	}
 #pragma warning(disable: 4201)
 	template <typename elem_t>
 	class Mat4
@@ -538,39 +502,6 @@ namespace t3d
 		}
 	};
 
-	//template <>
-	//inline Mat4<float>::Mat4
-	//	( const float _m00, const float _m01, const float _m02, const float _m03
-	//	, const float _m10, const float _m11, const float _m12, const float _m13
-	//	, const float _m20, const float _m21, const float _m22, const float _m23
-	//	, const float _m30, const float _m31, const float _m32, const float _m33
-	//	)
-	//	: m00(_m00), m01(_m01), m02(_m02), m03(_m03)
-	//	, m10(_m10), m11(_m11), m12(_m12), m13(_m13)
-	//	, m20(_m20), m21(_m21), m22(_m22), m23(_m23)
-	//	, m30(_m30), m31(_m31), m32(_m32), m33(_m33)
-	//{
-	//	assert(IS_VALID_FLOAT(m00));
-	//	assert(IS_VALID_FLOAT(m01));
-	//	assert(IS_VALID_FLOAT(m02));
-	//	assert(IS_VALID_FLOAT(m03));
-
-	//	assert(IS_VALID_FLOAT(m10));
-	//	assert(IS_VALID_FLOAT(m11));
-	//	assert(IS_VALID_FLOAT(m12));
-	//	assert(IS_VALID_FLOAT(m13));
-
-	//	assert(IS_VALID_FLOAT(m20));
-	//	assert(IS_VALID_FLOAT(m21));
-	//	assert(IS_VALID_FLOAT(m22));
-	//	assert(IS_VALID_FLOAT(m23));
-
-	//	assert(IS_VALID_FLOAT(m30));
-	//	assert(IS_VALID_FLOAT(m31));
-	//	assert(IS_VALID_FLOAT(m32));
-	//	assert(IS_VALID_FLOAT(m33));
-	//}
-
 	template <typename elem_t>
 	class Vec2
 	{
@@ -723,15 +654,6 @@ namespace t3d
 			return *this;
 		}
 	};
-
-	//template <>
-	//inline Vec2<float>::Vec2(float _x, float _y)
-	//	: x(_x)
-	//	, y(_y)
-	//{
-	//	assert(IS_VALID_FLOAT(x));
-	//	assert(IS_VALID_FLOAT(y));
-	//}
 
 	template <typename elem_t>
 	class Vec4
@@ -964,19 +886,6 @@ namespace t3d
 			return *this = transformTranspose(rhs);
 		}
 	};
-
-	//template <>
-	//inline Vec4<float>::Vec4(float _x, float _y, float _z, float _w)
-	//	: x(_x)
-	//	, y(_y)
-	//	, z(_z)
-	//	, w(_w)
-	//{
-	//	assert(IS_VALID_FLOAT(x));
-	//	assert(IS_VALID_FLOAT(y));
-	//	assert(IS_VALID_FLOAT(z));
-	//	assert(IS_VALID_FLOAT(w));
-	//}
 
 	template <typename elem_t>
 	class Quat
@@ -1232,19 +1141,6 @@ namespace t3d
 		}
 	};
 #pragma warning(default: 4201)
-	//template <>
-	//inline Quat<float>::Quat(float _w, float _x, float _y, float _z)
-	//	: w(_w)
-	//	, x(_x)
-	//	, y(_y)
-	//	, z(_z)
-	//{
-	//	assert(IS_VALID_FLOAT(w));
-	//	assert(IS_VALID_FLOAT(x));
-	//	assert(IS_VALID_FLOAT(y));
-	//	assert(IS_VALID_FLOAT(z));
-	//}
-
 	inline real int_to_real(int ival)
 	{
 		return real(ival);
