@@ -25,41 +25,41 @@
 
 namespace t3d
 {
-	inline long _ftoi(double dval)
-	{
-		// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
-		return *(int *)&(dval += 1.5 * (1LL << 52));
-	}
+	//inline long _ftoi(double dval)
+	//{
+	//	// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
+	//	return *(int *)&(dval += 1.5 * (1LL << 52));
+	//}
 
-	inline long _ftoi(float fval)
-	{
-		// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
-		return *(int *)&(fval += 1.5 * (1LL << 23)) << 10 >> 10;
-	}
+	//inline long _ftoi(float fval)
+	//{
+	//	// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
+	//	return *(int *)&(fval += 1.5 * (1LL << 23)) << 10 >> 10;
+	//}
 
-	inline fixp16 _ftofixp16(double dval)
-	{
-		// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
-		return *(fixp16 *)&(dval += 1.5 * (1LL << (52 - 16)));
-	}
+	//inline fixp16 _ftofixp16(double dval)
+	//{
+	//	// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
+	//	return *(fixp16 *)&(dval += 1.5 * (1LL << (52 - 16)));
+	//}
 
-	inline fixp16 _ftofixp16(float fval)
-	{
-		// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
-		return *(fixp16 *)&(fval += 1.5 * (1LL << (23 - 6))) << 10;
-	}
+	//inline fixp16 _ftofixp16(float fval)
+	//{
+	//	// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
+	//	return *(fixp16 *)&(fval += 1.5 * (1LL << (23 - 6))) << 10;
+	//}
 
-	inline fixp28 _ftofixp28(double dval)
-	{
-		// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
-		return *(fixp28 *)&(dval += 1.5 * (1LL << (52 - 28)));
-	}
+	//inline fixp28 _ftofixp28(double dval)
+	//{
+	//	// seee,eeee,eeee,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm,mmmm
+	//	return *(fixp28 *)&(dval += 1.5 * (1LL << (52 - 28)));
+	//}
 
-	inline fixp28 _ftofixp28(float fval)
-	{
-		// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
-		return *(fixp28 *)&(fval += 1.5 * (1LL << (23 - 18))) << 10;
-	}
+	//inline fixp28 _ftofixp28(float fval)
+	//{
+	//	// seee,eeee,emmm,mmmm,mmmm,mmmm,mmmm,mmmm
+	//	return *(fixp28 *)&(fval += 1.5 * (1LL << (23 - 18))) << 10;
+	//}
 #pragma warning(disable: 4201)
 	template <typename elem_t>
 	class Mat4
