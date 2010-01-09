@@ -25,6 +25,10 @@ namespace t3d
 #include "color_mul_table.hpp"
 	};
 
+#define _COLORADD(lhs, rhs)	color_add_table[(lhs)][(rhs)]
+
+#define _COLORMUL(lhs, rhs)	color_mul_table[(lhs)][(rhs)]
+
 	void fillZBuffer28(
 		SurfaceRef<fixp28> zbuffer,
 		const CRect & rect,

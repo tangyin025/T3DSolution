@@ -70,7 +70,9 @@ namespace t3d
 
 		void unlock(LPRECT lpRect = NULL);
 
-		void blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
+		void blt(LPRECT lpDestRect, DDSurface * srcSurface, LPRECT lpSrcRect, DWORD dwFlags = DDBLT_DONOTWAIT, LPDDBLTFX lpDDBltFx = NULL);
+
+		void bltFast(DWORD dwX, DWORD dwY, DDSurface * srcSurface, LPRECT lpSrcRect, DWORD dwTrans = DDBLTFAST_NOCOLORKEY);
 
 		void fill(LPRECT lpDestRect, DWORD color);
 

@@ -66,6 +66,10 @@ namespace my
 
 		void adjustClientRect(const CRect & rect);
 
+		CRect & screenToClientSelf(CRect & rect);
+
+		CRect & clientToScreenSelf(CRect & rect);
+
 		void centerWindow(void);
 
 		void destroyWindow(void);

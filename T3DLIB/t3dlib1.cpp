@@ -208,11 +208,18 @@ namespace t3d
 		FAILED_DDEXCEPT(m_ddsurface->Unlock(lpRect));
 	}
 
-	void DDSurface::blt(LPRECT lpDestRect, DDSurface * dsurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
+	void DDSurface::blt(LPRECT lpDestRect, DDSurface * srcSurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
 	{
-		assert(NULL != dsurface);
+		assert(NULL != srcSurface);
 
-		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, dsurface->m_ddsurface, lpSrcRect, dwFlags, lpDDBltFx));
+		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, srcSurface->m_ddsurface, lpSrcRect, dwFlags, lpDDBltFx));
+	}
+
+	void DDSurface::bltFast(DWORD dwX, DWORD dwY, DDSurface * srcSurface, LPRECT lpSrcRect, DWORD dwTrans /*= DDBLTFAST_NOCOLORKEY*/)
+	{
+		assert(NULL != srcSurface);
+
+		FAILED_DDEXCEPT(m_ddsurface->BltFast(dwX, dwY, srcSurface->m_ddsurface, lpSrcRect, dwTrans));
 	}
 
 	void DDSurface::fill(LPRECT lpDestRect, DWORD color)

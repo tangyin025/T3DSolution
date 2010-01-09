@@ -43,10 +43,6 @@
 
 #define _RGB32BIT(r, g, b)	((((r) >> RGB32_RED_RSHIFT) << RGB32_RED_SHIFT) | (((g) >> RGB32_GREEN_RSHIFT) << RGB32_GREEN_SHIFT) | (((b) >> RGB32_BLUE_RSHIFT) << RGB32_BLUE_SHIFT))
 
-#define _COLORADD(lhs, rhs)	color_add_table[(lhs)][(rhs)]
-
-#define _COLORMUL(lhs, rhs)	color_mul_table[(lhs)][(rhs)]
-
 namespace t3d
 {
 	inline void memSet16(uint16 * dest, uint16 value, size_t count)

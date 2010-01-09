@@ -138,9 +138,9 @@ namespace my
 
 		//t3d::DDSurfacePtr m_sprim;
 
-		t3d::DDSurfacePtr m_sback;
+		//CRect m_rprim;
 
-		CRect m_rprim;
+		t3d::DDSurfacePtr m_sback;
 
 		CRect m_rback;
 
