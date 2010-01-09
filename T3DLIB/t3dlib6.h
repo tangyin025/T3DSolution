@@ -568,7 +568,7 @@ namespace t3d
 	{
 		CLIP_STATE_NONE,
 		CLIP_STATE_CULLED,
-		CLIP_STATE_SCLIPPED,
+		CLIP_STATE_SCLIPPED
 	};
 
 	typedef std::vector<CLIP_STATE> ClipStateList;
@@ -1346,18 +1346,20 @@ namespace t3d
 		VertexList & vertexList,
 		const Mat4<real> & mmat);
 
-	void transformVertexIndexList(
-		VertexList & vertexList,
-		VertexIndexList & vertexIndexList,
-		const Mat4<real> & mmat);
+	//void transformVertexIndexList(
+	//	VertexList & vertexList,
+	//	VertexIndexList & vertexIndexList,
+	//	const Mat4<real> & mmat);
 
 	void transformLineList(
 		VertexList & vertexList,
+		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat);
 
 	void transformLineIndexList(
 		VertexList & vertexList,
-		VertexIndexList & vertexIndexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat);
 
 	CLIP_STATE clipLineAtCamera(
@@ -1454,6 +1456,107 @@ namespace t3d
 		const VertexIndexList & vertexIndexList,
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color);
+
+	CLIP_STATE clipTriangleBackfaceAtWorld(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & cameraPosition);
+
+	void removeTriangleListBackfaceAtWorld(
+		const VertexList & vertexList,
+		ClipStateList & clipStateList,
+		const Vec4<real> & cameraPosition);
+
+	void removeTriangleIndexListBackfaceAtWorld(
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const Vec4<real> & cameraPosition);
+
+	void transformTriangleList(
+		VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Mat4<real> & mmat);
+
+	void transformTriangleIndexList(
+		VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Mat4<real> & mmat);
+
+	CLIP_STATE clipTriangleVertexAtCameraNearZDouble(
+		Vec4<real> v0,
+		Vec4<real> v1,
+		Vec4<real> v2,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleVertexAtCameraNearZSingle(
+		Vec4<real> v0,
+		Vec4<real> v1,
+		Vec4<real> v2,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleVertexAtCameraFarZ(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const CAMERA & camera);
+
+	CLIP_STATE clipTriangleVertexAtCamera(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ClipStateList & retClipStateList);
+
+	void clipTriangleListVertexAtCamera(
+		VertexList & vertexList,
+		ClipStateList & clipStateList,
+		const CAMERA & camera);
+
+	CLIP_STATE clipTriangleIndexVertexAtCameraNearZDouble(
+		VertexList & vertexList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleIndexVertexAtCameraNearZSingle(
+		VertexList & vertexList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleIndexVertexAtCameraFarZ(
+		VertexList & vertexList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleIndexVertexAtCamera(
+		VertexList & vertexList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		ClipStateList & retClipStateList);
+
+	void clipTriangleIndexListVertexAtCamera(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const CAMERA & camera);
 }
 
 #endif // __T3DLIB6_H__
