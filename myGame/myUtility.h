@@ -485,20 +485,20 @@ namespace my
 		//	const t3d::Vec4<real> & color,
 		//	const t3d::Mat4<real> & mmat) = 0;
 
-		virtual void drawSolidZBufferRW(
+		virtual void drawZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color) = 0;
 
-		virtual void drawSolidZBufferRW(
+		virtual void drawZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) = 0;
 
-		virtual void drawSolidZBufferRWWithBackface(
+		virtual void drawZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color) = 0;
 
-		virtual void drawSolidZBufferRWWithBackface(
+		virtual void drawZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) = 0;
@@ -678,20 +678,20 @@ namespace my
 		//	const t3d::Vec4<real> & color,
 		//	const t3d::Mat4<real> & mmat);
 
-		void drawSolidZBufferRW(
+		void drawZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color);
 
-		void drawSolidZBufferRW(
+		void drawZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat);
 
-		void drawSolidZBufferRWWithBackface(
+		void drawZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color);
 
-		void drawSolidZBufferRWWithBackface(
+		void drawZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat);
@@ -887,20 +887,20 @@ namespace my
 		//	const t3d::Vec4<real> & color,
 		//	const t3d::Mat4<real> & mmat);
 
-		void drawSolidZBufferRW(
+		void drawZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color);
 
-		void drawSolidZBufferRW(
+		void drawZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat);
 
-		void drawSolidZBufferRWWithBackface(
+		void drawZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color);
 
-		void drawSolidZBufferRWWithBackface(
+		void drawZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat);

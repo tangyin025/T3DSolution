@@ -789,7 +789,7 @@ namespace t3d
 		void drawTriangleIndexListWithoutThird32(const Vec4<real> & color);
 	};
 
-	class RenderTriangleListSolidZBufferRW
+	class RenderTriangleListZBufferRW
 		: public RenderTriangleListWireZBufferRW
 	{
 	public:
@@ -798,7 +798,7 @@ namespace t3d
 		void drawTriangleList32(const Vec4<real> & color);
 	};
 
-	class RenderTriangleIndexListSolidZBufferRW
+	class RenderTriangleIndexListZBufferRW
 		: public RenderTriangleIndexListWireZBufferRW
 	{
 	public:
@@ -1055,8 +1055,8 @@ namespace t3d
 		: public EMPTY_CLASS
 		//, public RenderLineListZBufferRW
 		//, public RenderLineIndexListZBufferRW
-		, public RenderTriangleListSolidZBufferRW
-		, public RenderTriangleIndexListSolidZBufferRW
+		, public RenderTriangleListZBufferRW
+		, public RenderTriangleIndexListZBufferRW
 		, public RenderTriangleListGouraudZBufferRW
 		, public RenderTriangleIndexListGouraudZBufferRW
 		, public RenderTriangleListTexturePerspectiveLPZBufferRW
@@ -1096,13 +1096,13 @@ namespace t3d
 
 		//virtual void drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color) = 0;
 
-		virtual void drawTriangleListSolidZBufferRW(const Vec4<real> & color) = 0;
+		virtual void drawTriangleListZBufferRW(const Vec4<real> & color) = 0;
 
-		virtual void drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color) = 0;
+		virtual void drawTriangleIndexListZBufferRW(const Vec4<real> & color) = 0;
 
-		virtual void drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color) = 0;
+		virtual void drawTriangleListZBufferRWWithBackface(const Vec4<real> & color) = 0;
 
-		virtual void drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color) = 0;
+		virtual void drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color) = 0;
 
 		virtual void drawTriangleListGouraudZBufferRW(void) = 0;
 
@@ -1190,13 +1190,13 @@ namespace t3d
 
 		//void drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color);
 
-		void drawTriangleListSolidZBufferRW(const Vec4<real> & color);
+		void drawTriangleListZBufferRW(const Vec4<real> & color);
 
-		void drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color);
+		void drawTriangleIndexListZBufferRW(const Vec4<real> & color);
 
-		void drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color);
+		void drawTriangleListZBufferRWWithBackface(const Vec4<real> & color);
 
-		void drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color);
+		void drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color);
 
 		void drawTriangleListGouraudZBufferRW(void);
 
@@ -1282,13 +1282,13 @@ namespace t3d
 
 		//void drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color);
 
-		void drawTriangleListSolidZBufferRW(const Vec4<real> & color);
+		void drawTriangleListZBufferRW(const Vec4<real> & color);
 
-		void drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color);
+		void drawTriangleIndexListZBufferRW(const Vec4<real> & color);
 
-		void drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color);
+		void drawTriangleListZBufferRWWithBackface(const Vec4<real> & color);
 
-		void drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color);
+		void drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color);
 
 		void drawTriangleListGouraudZBufferRW(void);
 

@@ -529,7 +529,7 @@ namespace t3d
 		}
 	}
 
-	void drawScanSolidZBufferRW32(
+	void drawScanZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		fixp16 lx,
@@ -545,7 +545,7 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
-	void drawClippedScanSolidZBufferRW32(
+	void drawClippedScanZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -725,7 +725,7 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
-	void drawTriangleSolidZBufferRW32(
+	void drawTriangleZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		const Vec4<real> & v0,
@@ -735,12 +735,12 @@ namespace t3d
 	{
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
-#define __draw_func drawScanSolidZBufferRW32
-#define __draw_clipped_func drawClippedScanSolidZBufferRW32
+#define __draw_func drawScanZBufferRW32
+#define __draw_clipped_func drawClippedScanZBufferRW32
 #include "draw_triangle.hpp"
 	}
 
-	void drawClippedTriangleSolidZBufferRW32(
+	void drawClippedTriangleZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -752,8 +752,8 @@ namespace t3d
 #define __draw_clipped
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
-#define __draw_func drawScanSolidZBufferRW32
-#define __draw_clipped_func drawClippedScanSolidZBufferRW32
+#define __draw_func drawScanZBufferRW32
+#define __draw_clipped_func drawClippedScanZBufferRW32
 #include "draw_triangle.hpp"
 	}
 
