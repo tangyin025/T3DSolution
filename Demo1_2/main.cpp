@@ -71,7 +71,7 @@ protected:
 
 	//t3d::DSBufferPtr m_dsbuffer;
 
-	my::ObjectPtr m_obj;
+	my::ObjectBasePtr m_obj;
 
 	// ======================================== TODO: END   ========================================
 
@@ -143,8 +143,8 @@ public:
 		////my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		////m_dsbuffer->play();
 
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene.mesh.xml")));
-		m_obj = my::ObjectPtr(new my::ObjectFromOgreMesh(tmpStream.get()));
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene (shared gemetry).mesh.xml")));
+		m_obj = my::ObjectBasePtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
 		// ======================================== TODO: END   ========================================
 

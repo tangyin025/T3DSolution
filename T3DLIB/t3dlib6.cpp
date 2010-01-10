@@ -6018,24 +6018,38 @@ namespace t3d
 
 	void RenderContext16::drawTriangleListWireZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleListWireZBufferRW::reset();
-		RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleListWireZBufferRW::worldToCamera();
-		RenderTriangleListWireZBufferRW::zClipAtCamera();
-		RenderTriangleListWireZBufferRW::cameraToScreen();
-		RenderTriangleListWireZBufferRW::sClipAtScreen();
-		RenderTriangleListWireZBufferRW::drawTriangleList16(color);
+		//RenderTriangleListWireZBufferRW::reset();
+		//RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListWireZBufferRW::worldToCamera();
+		//RenderTriangleListWireZBufferRW::zClipAtCamera();
+		//RenderTriangleListWireZBufferRW::cameraToScreen();
+		//RenderTriangleListWireZBufferRW::sClipAtScreen();
+		//RenderTriangleListWireZBufferRW::drawTriangleList16(color);
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleList(getVertexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleListVertexAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListWireZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
 	void RenderContext16::drawTriangleIndexListWireZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleIndexListWireZBufferRW::reset();
-		RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleIndexListWireZBufferRW::worldToCamera();
-		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
-		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
-		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
-		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList16(color);
+		//RenderTriangleIndexListWireZBufferRW::reset();
+		//RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		//RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		//RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		//RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		//RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList16(color);
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleIndexListVertexAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListWireZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
 	void RenderContext16::drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color)
@@ -6525,24 +6539,38 @@ namespace t3d
 
 	void RenderContext32::drawTriangleListWireZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleListWireZBufferRW::reset();
-		RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleListWireZBufferRW::worldToCamera();
-		RenderTriangleListWireZBufferRW::zClipAtCamera();
-		RenderTriangleListWireZBufferRW::cameraToScreen();
-		RenderTriangleListWireZBufferRW::sClipAtScreen();
-		RenderTriangleListWireZBufferRW::drawTriangleList32(color);
+		//RenderTriangleListWireZBufferRW::reset();
+		//RenderTriangleListWireZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleListWireZBufferRW::worldToCamera();
+		//RenderTriangleListWireZBufferRW::zClipAtCamera();
+		//RenderTriangleListWireZBufferRW::cameraToScreen();
+		//RenderTriangleListWireZBufferRW::sClipAtScreen();
+		//RenderTriangleListWireZBufferRW::drawTriangleList32(color);
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleList(getVertexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleListVertexAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListWireZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
 	void RenderContext32::drawTriangleIndexListWireZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleIndexListWireZBufferRW::reset();
-		RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleIndexListWireZBufferRW::worldToCamera();
-		RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
-		RenderTriangleIndexListWireZBufferRW::cameraToScreen();
-		RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
-		RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList32(color);
+		//RenderTriangleIndexListWireZBufferRW::reset();
+		//RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld();
+		//RenderTriangleIndexListWireZBufferRW::worldToCamera();
+		//RenderTriangleIndexListWireZBufferRW::zClipAtCamera();
+		//RenderTriangleIndexListWireZBufferRW::cameraToScreen();
+		//RenderTriangleIndexListWireZBufferRW::sClipAtScreen();
+		//RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList32(color);
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleIndexListVertexAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListWireZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
 	void RenderContext32::drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color)
@@ -7620,14 +7648,9 @@ namespace t3d
 
 		Vec4<real> v4 = lineClipZ(v0, v2, camera.nz);
 
-		retVertexList.push_back(v1);
-		retVertexList.push_back(v2);
+		retVertexList.push_back(v0);
 		retVertexList.push_back(v3);
-		retClipStateList.push_back(CLIP_STATE_NONE);
-
-		retVertexList.push_back(v2);
 		retVertexList.push_back(v4);
-		retVertexList.push_back(v3);
 		retClipStateList.push_back(CLIP_STATE_NONE);
 
 		return CLIP_STATE_CULLED;
@@ -7651,8 +7674,13 @@ namespace t3d
 
 		Vec4<real> v4 = lineClipZ(v0, v2, camera.nz);
 
-		retVertexList.push_back(v0);
 		retVertexList.push_back(v3);
+		retVertexList.push_back(v1);
+		retVertexList.push_back(v2);
+		retClipStateList.push_back(CLIP_STATE_NONE);
+
+		retVertexList.push_back(v3);
+		retVertexList.push_back(v2);
 		retVertexList.push_back(v4);
 		retClipStateList.push_back(CLIP_STATE_NONE);
 
@@ -7783,11 +7811,11 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleVertexAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
+					return clipTriangleVertexAtCameraNearZSingle(v0, v1, v2, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleVertexAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
+					return clipTriangleVertexAtCameraNearZSingle(v0, v1, v2, camera, retVertexList, retClipStateList);
 				}
 				else
 				{
@@ -7798,7 +7826,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleVertexAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
+					return clipTriangleVertexAtCameraNearZSingle(v0, v1, v2, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -7881,14 +7909,9 @@ namespace t3d
 		size_t v4_i = vertexList.size();
 		vertexList.push_back(lineClipZ(vertexList[v0_i], vertexList[v2_i], camera.nz));
 
-		retVertexIndexList.push_back(v1_i);
-		retVertexIndexList.push_back(v2_i);
+		retVertexIndexList.push_back(v0_i);
 		retVertexIndexList.push_back(v3_i);
-		retClipStateList.push_back(CLIP_STATE_NONE);
-
-		retVertexIndexList.push_back(v2_i);
 		retVertexIndexList.push_back(v4_i);
-		retVertexIndexList.push_back(v3_i);
 		retClipStateList.push_back(CLIP_STATE_NONE);
 
 		return CLIP_STATE_CULLED;
@@ -7919,8 +7942,13 @@ namespace t3d
 		size_t v4_i = vertexList.size();
 		vertexList.push_back(lineClipZ(vertexList[v0_i], vertexList[v2_i], camera.nz));
 
-		retVertexIndexList.push_back(v0_i);
 		retVertexIndexList.push_back(v3_i);
+		retVertexIndexList.push_back(v1_i);
+		retVertexIndexList.push_back(v2_i);
+		retClipStateList.push_back(CLIP_STATE_NONE);
+
+		retVertexIndexList.push_back(v3_i);
+		retVertexIndexList.push_back(v2_i);
 		retVertexIndexList.push_back(v4_i);
 		retClipStateList.push_back(CLIP_STATE_NONE);
 
@@ -8052,11 +8080,11 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexVertexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return clipTriangleIndexVertexAtCameraNearZSingle(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexVertexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return clipTriangleIndexVertexAtCameraNearZSingle(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
@@ -8067,7 +8095,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexVertexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return clipTriangleIndexVertexAtCameraNearZSingle(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
