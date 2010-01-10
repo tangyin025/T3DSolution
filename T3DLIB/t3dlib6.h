@@ -673,53 +673,53 @@ namespace t3d
 	{
 	};
 
-	class RenderLineListZBufferRW
-		: public TriangleContext
-	{
-	protected:
-		TRI_STATE zClipLineAtCamera(const size_t index);
+	//class RenderLineListZBufferRW
+	//	: public TriangleContext
+	//{
+	//protected:
+	//	TRI_STATE zClipLineAtCamera(const size_t index);
 
-		TRI_STATE sClipLineAtScreen(const size_t index);
+	//	TRI_STATE sClipLineAtScreen(const size_t index);
 
-	public:
-		void reset(void);
+	//public:
+	//	void reset(void);
 
-		void worldToCamera(void);
+	//	void worldToCamera(void);
 
-		void zClipAtCamera(void);
+	//	void zClipAtCamera(void);
 
-		void cameraToScreen(void);
+	//	void cameraToScreen(void);
 
-		void sClipAtScreen(void);
+	//	void sClipAtScreen(void);
 
-		void drawLineList16(const Vec4<real> & color);
+	//	void drawLineList16(const Vec4<real> & color);
 
-		void drawLineList32(const Vec4<real> & color);
-	};
+	//	void drawLineList32(const Vec4<real> & color);
+	//};
 
-	class RenderLineIndexListZBufferRW
-		: public TriangleContext
-	{
-	protected:
-		TRI_STATE zClipLineAtCamera(const size_t index);
+	//class RenderLineIndexListZBufferRW
+	//	: public TriangleContext
+	//{
+	//protected:
+	//	TRI_STATE zClipLineAtCamera(const size_t index);
 
-		TRI_STATE sClipLineAtScreen(const size_t index);
+	//	TRI_STATE sClipLineAtScreen(const size_t index);
 
-	public:
-		void reset(void);
+	//public:
+	//	void reset(void);
 
-		void worldToCamera(void);
+	//	void worldToCamera(void);
 
-		void zClipAtCamera(void);
+	//	void zClipAtCamera(void);
 
-		void cameraToScreen(void);
+	//	void cameraToScreen(void);
 
-		void sClipAtScreen(void);
+	//	void sClipAtScreen(void);
 
-		void drawLineIndexList16(const Vec4<real> & color);
+	//	void drawLineIndexList16(const Vec4<real> & color);
 
-		void drawLineIndexList32(const Vec4<real> & color);
-	};
+	//	void drawLineIndexList32(const Vec4<real> & color);
+	//};
 
 	class RenderTriangleListWireZBufferRW
 		: public TriangleContext
@@ -1047,9 +1047,14 @@ namespace t3d
 		void drawTriangleIndexList32(void);
 	};
 
+	class EMPTY_CLASS
+	{
+	};
+
 	class RenderContext
-		: public RenderLineListZBufferRW
-		, public RenderLineIndexListZBufferRW
+		: public EMPTY_CLASS
+		//, public RenderLineListZBufferRW
+		//, public RenderLineIndexListZBufferRW
 		, public RenderTriangleListSolidZBufferRW
 		, public RenderTriangleIndexListSolidZBufferRW
 		, public RenderTriangleListGouraudZBufferRW
@@ -1413,13 +1418,13 @@ namespace t3d
 		const CRect & viewport);
 
 	void clipLineListAtScreen(
-		VertexList & vertexList,
+		const VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CRect & viewport);
 
 	void clipLineIndexListAtScreen(
-		VertexList & vertexList,
-		VertexIndexList & vertexIndexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
 		const CRect & viewport);
 
@@ -1526,6 +1531,7 @@ namespace t3d
 		size_t v1_i,
 		size_t v2_i,
 		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
 	CLIP_STATE clipTriangleIndexVertexAtCameraNearZSingle(
@@ -1534,15 +1540,17 @@ namespace t3d
 		size_t v1_i,
 		size_t v2_i,
 		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexVertexAtCameraFarZ(
-		VertexList & vertexList,
-		size_t v0_i,
-		size_t v1_i,
-		size_t v2_i,
-		const CAMERA & camera,
-		ClipStateList & retClipStateList);
+	//CLIP_STATE clipTriangleIndexVertexAtCameraFarZ(
+	//	VertexList & vertexList,
+	//	size_t v0_i,
+	//	size_t v1_i,
+	//	size_t v2_i,
+	//	const CAMERA & camera,
+	//	VertexIndexList & retVertexIndexList,
+	//	ClipStateList & retClipStateList);
 
 	CLIP_STATE clipTriangleIndexVertexAtCamera(
 		VertexList & vertexList,
@@ -1550,6 +1558,7 @@ namespace t3d
 		size_t v1_i,
 		size_t v2_i,
 		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
 	void clipTriangleIndexListVertexAtCamera(
@@ -1557,6 +1566,70 @@ namespace t3d
 		VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera);
+
+	void cameraToScreenTriangleList(
+		VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec2<real> & projection,
+		const CRect & viewport);
+
+	void cameraToScreenTriangleIndexList(
+		VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec2<real> & projection,
+		const CRect & viewport);
+
+	CLIP_STATE clipTriangleAtScreen(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const CRect & viewport);
+
+	void clipTriangleListAtScreen(
+		const VertexList & vertexList,
+		ClipStateList & clipStateList,
+		const CRect & viewport);
+
+	void clipTriangleIndexListAtScreen(
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList,
+		const CRect & viewport);
+
+	void drawTriangleListWireZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
+
+	void drawTriangleListWireZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
+
+	void drawTriangleIndexListWireZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
+
+	void drawTriangleIndexListWireZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Vec4<real> & color);
 }
 
 #endif // __T3DLIB6_H__

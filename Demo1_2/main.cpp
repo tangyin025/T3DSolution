@@ -58,18 +58,20 @@ protected:
 
 	// ======================================== TODO: BEGIN ========================================
 
-	// 自定义成员
-	my::BoneAssignmentIndexObjectPtr m_jackModel;
+	//// 自定义成员
+	//my::BoneAssignmentIndexObjectPtr m_jackModel;
 
-	my::ImagePtr m_jackTexture;
+	//my::ImagePtr m_jackTexture;
 
-	my::SkeletonAnimationsFromOgreSkeletonPtr m_jackSkeleton;
+	//my::SkeletonAnimationsFromOgreSkeletonPtr m_jackSkeleton;
 
-	t3d::BoneNodeList m_jackBoneNodeList;
+	//t3d::BoneNodeList m_jackBoneNodeList;
 
-	t3d::BoneTransformList m_jackBoneTransformList;
+	//t3d::BoneTransformList m_jackBoneTransformList;
 
-	t3d::DSBufferPtr m_dsbuffer;
+	//t3d::DSBufferPtr m_dsbuffer;
+
+	my::ObjectPtr m_obj;
 
 	// ======================================== TODO: END   ========================================
 
@@ -110,10 +112,12 @@ public:
 		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
 		m_defaultTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
 
+		// tmp stream
+		my::IOStreamPtr tmpStream;
+
 		// ======================================== TODO: BEGIN ========================================
 
 		//// 自定义初始化
-		//my::IOStreamPtr tmpStream;
 		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml")));
 		//m_jackModel = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
@@ -138,6 +142,9 @@ public:
 		////m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
 		////my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		////m_dsbuffer->play();
+
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene.mesh.xml")));
+		m_obj = my::ObjectPtr(new my::ObjectFromOgreMesh(tmpStream.get()));
 
 		// ======================================== TODO: END   ========================================
 
@@ -253,6 +260,8 @@ public:
 
 		//m_rc->setTextureBuffer(m_jackTexture->getBits(), m_jackTexture->getPitch(), m_jackTexture->getWidth(), m_jackTexture->getHeight());
 		//m_jackModel->drawGouraudTextureZBufferRW(m_rc.get());
+
+		m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
 
 		// ======================================== TODO: END   ========================================
 
