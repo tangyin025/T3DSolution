@@ -182,7 +182,7 @@ namespace t3d
 		const Vec4<real> & v1,
 		const Vec4<real> & color);
 
-	void drawScanSolidZBufferRW32(
+	void drawScanZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		fixp16 lx,
@@ -192,7 +192,7 @@ namespace t3d
 		fixp28 rz,
 		const Vec4<fixp16> & color);
 
-	void drawClippedScanSolidZBufferRW32(
+	void drawClippedScanZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -305,7 +305,7 @@ namespace t3d
 		Vec2<fixp16> lt,
 		const Vec2<fixp16> & rt);
 
-	void drawTriangleSolidZBufferRW32(
+	void drawTriangleZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
 		const Vec4<real> & v0,
@@ -313,7 +313,7 @@ namespace t3d
 		const Vec4<real> & v2,
 		const Vec4<real> & color);
 
-	void drawClippedTriangleSolidZBufferRW32(
+	void drawClippedTriangleZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,

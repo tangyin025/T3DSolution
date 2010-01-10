@@ -1050,17 +1050,17 @@ namespace my
 	//	rc->drawTriangleListWireZBufferRWWithBackfaceWithoutThird(color);
 	//}
 
-	void Object::drawSolidZBufferRW(
+	void Object::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
 
-		rc->drawTriangleListSolidZBufferRW(color);
+		rc->drawTriangleListZBufferRW(color);
 	}
 
-	void Object::drawSolidZBufferRW(
+	void Object::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
@@ -1068,20 +1068,20 @@ namespace my
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
 
-		rc->drawTriangleListSolidZBufferRW(color);
+		rc->drawTriangleListZBufferRW(color);
 	}
 
-	void Object::drawSolidZBufferRWWithBackface(
+	void Object::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
 
-		rc->drawTriangleListSolidZBufferRWWithBackface(color);
+		rc->drawTriangleListZBufferRWWithBackface(color);
 	}
 
-	void Object::drawSolidZBufferRWWithBackface(
+	void Object::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
@@ -1089,7 +1089,7 @@ namespace my
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
 
-		rc->drawTriangleListSolidZBufferRWWithBackface(color);
+		rc->drawTriangleListZBufferRWWithBackface(color);
 	}
 
 	void Object::drawGouraudZBufferRW(
@@ -1996,7 +1996,7 @@ namespace my
 	//	rc->drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(color);
 	//}
 
-	void IndexObject::drawSolidZBufferRW(
+	void IndexObject::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
@@ -2006,10 +2006,10 @@ namespace my
 		rc->clearVertexIndexList();
 		rc->pushVertexIndexList(getVertexIndexListBegin(), getVertexIndexListEnd());
 
-		rc->drawTriangleIndexListSolidZBufferRW(color);
+		rc->drawTriangleIndexListZBufferRW(color);
 	}
 
-	void IndexObject::drawSolidZBufferRW(
+	void IndexObject::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
@@ -2020,10 +2020,10 @@ namespace my
 		rc->clearVertexIndexList();
 		rc->pushVertexIndexList(getVertexIndexListBegin(), getVertexIndexListEnd());
 
-		rc->drawTriangleIndexListSolidZBufferRW(color);
+		rc->drawTriangleIndexListZBufferRW(color);
 	}
 
-	void IndexObject::drawSolidZBufferRWWithBackface(
+	void IndexObject::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
@@ -2033,10 +2033,10 @@ namespace my
 		rc->clearVertexIndexList();
 		rc->pushVertexIndexList(getVertexIndexListBegin(), getVertexIndexListEnd());
 
-		rc->drawTriangleIndexListSolidZBufferRWWithBackface(color);
+		rc->drawTriangleIndexListZBufferRWWithBackface(color);
 	}
 
-	void IndexObject::drawSolidZBufferRWWithBackface(
+	void IndexObject::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
@@ -2047,7 +2047,7 @@ namespace my
 		rc->clearVertexIndexList();
 		rc->pushVertexIndexList(getVertexIndexListBegin(), getVertexIndexListEnd());
 
-		rc->drawTriangleIndexListSolidZBufferRWWithBackface(color);
+		rc->drawTriangleIndexListZBufferRWWithBackface(color);
 	}
 
 	void IndexObject::drawGouraudZBufferRW(

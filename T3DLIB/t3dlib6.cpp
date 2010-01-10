@@ -2432,14 +2432,14 @@ namespace t3d
 		}
 	}
 
-	void RenderTriangleListSolidZBufferRW::drawTriangleList16(const Vec4<real> & color)
+	void RenderTriangleListZBufferRW::drawTriangleList16(const Vec4<real> & color)
 	{
 		assert(false);
 
 		UNREFERENCED_PARAMETER(color);
 	}
 
-	void RenderTriangleListSolidZBufferRW::drawTriangleList32(const Vec4<real> & color)
+	void RenderTriangleListZBufferRW::drawTriangleList32(const Vec4<real> & color)
 	{
 		assert(getTriStateListSize() == getVertexListSize() / 3);
 		//assert(getVertexListSize() == getUVListSize());
@@ -2456,12 +2456,12 @@ namespace t3d
 			switch(triStateAt(i))
 			{
 			case TS_ACTIVE:
-				drawTriangleSolidZBufferRW32(
+				drawTriangleZBufferRW32(
 					getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
 				break;
 
 			case TS_CLIPPED:
-				drawClippedTriangleSolidZBufferRW32(
+				drawClippedTriangleZBufferRW32(
 					getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
 				break;
 
@@ -2471,14 +2471,14 @@ namespace t3d
 		}
 	}
 
-	void RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList16(const Vec4<real> & color)
+	void RenderTriangleIndexListZBufferRW::drawTriangleIndexList16(const Vec4<real> & color)
 	{
 		assert(false);
 
 		UNREFERENCED_PARAMETER(color);
 	}
 
-	void RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList32(const Vec4<real> & color)
+	void RenderTriangleIndexListZBufferRW::drawTriangleIndexList32(const Vec4<real> & color)
 	{
 		assert(getTriStateListSize() == getVertexIndexListSize() / 3);
 		//assert(getVertexListSize() == getUVListSize());
@@ -2495,12 +2495,12 @@ namespace t3d
 			switch(triStateAt(i))
 			{
 			case TS_ACTIVE:
-				drawTriangleSolidZBufferRW32(
+				drawTriangleZBufferRW32(
 					getSurfaceRef32(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
 				break;
 
 			case TS_CLIPPED:
-				drawClippedTriangleSolidZBufferRW32(
+				drawClippedTriangleZBufferRW32(
 					getSurfaceRef32(), getClipperRect(), getZBufferRef28(), vertexAt(v0_i), vertexAt(v1_i), vertexAt(v2_i), rgbaSaturate(color * 255, real(255)));
 				break;
 
@@ -6118,48 +6118,48 @@ namespace t3d
 	//	RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird16(color);
 	//}
 
-	void RenderContext16::drawTriangleListSolidZBufferRW(const Vec4<real> & color)
+	void RenderContext16::drawTriangleListZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleListSolidZBufferRW::reset();
-		RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleListSolidZBufferRW::worldToCamera();
-		RenderTriangleListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleListSolidZBufferRW::cameraToScreen();
-		RenderTriangleListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleListSolidZBufferRW::drawTriangleList16(color);
+		RenderTriangleListZBufferRW::reset();
+		RenderTriangleListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListZBufferRW::worldToCamera();
+		RenderTriangleListZBufferRW::zClipAtCamera();
+		RenderTriangleListZBufferRW::cameraToScreen();
+		RenderTriangleListZBufferRW::sClipAtScreen();
+		RenderTriangleListZBufferRW::drawTriangleList16(color);
 	}
 
-	void RenderContext16::drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color)
+	void RenderContext16::drawTriangleIndexListZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleIndexListSolidZBufferRW::reset();
-		RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
-		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
-		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList16(color);
+		RenderTriangleIndexListZBufferRW::reset();
+		RenderTriangleIndexListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListZBufferRW::worldToCamera();
+		RenderTriangleIndexListZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListZBufferRW::cameraToScreen();
+		RenderTriangleIndexListZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListZBufferRW::drawTriangleIndexList16(color);
 	}
 
-	void RenderContext16::drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	void RenderContext16::drawTriangleListZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		RenderTriangleListSolidZBufferRW::reset();
-		//RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleListSolidZBufferRW::worldToCamera();
-		RenderTriangleListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleListSolidZBufferRW::cameraToScreen();
-		RenderTriangleListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleListSolidZBufferRW::drawTriangleList16(color);
+		RenderTriangleListZBufferRW::reset();
+		//RenderTriangleListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListZBufferRW::worldToCamera();
+		RenderTriangleListZBufferRW::zClipAtCamera();
+		RenderTriangleListZBufferRW::cameraToScreen();
+		RenderTriangleListZBufferRW::sClipAtScreen();
+		RenderTriangleListZBufferRW::drawTriangleList16(color);
 	}
 
-	void RenderContext16::drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	void RenderContext16::drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		RenderTriangleIndexListSolidZBufferRW::reset();
-		//RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
-		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
-		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList16(color);
+		RenderTriangleIndexListZBufferRW::reset();
+		//RenderTriangleIndexListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListZBufferRW::worldToCamera();
+		RenderTriangleIndexListZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListZBufferRW::cameraToScreen();
+		RenderTriangleIndexListZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListZBufferRW::drawTriangleIndexList16(color);
 	}
 
 	void RenderContext16::drawTriangleListGouraudZBufferRW(void)
@@ -6639,48 +6639,48 @@ namespace t3d
 	//	RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird32(color);
 	//}
 
-	void RenderContext32::drawTriangleListSolidZBufferRW(const Vec4<real> & color)
+	void RenderContext32::drawTriangleListZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleListSolidZBufferRW::reset();
-		RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleListSolidZBufferRW::worldToCamera();
-		RenderTriangleListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleListSolidZBufferRW::cameraToScreen();
-		RenderTriangleListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleListSolidZBufferRW::drawTriangleList32(color);
+		RenderTriangleListZBufferRW::reset();
+		RenderTriangleListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListZBufferRW::worldToCamera();
+		RenderTriangleListZBufferRW::zClipAtCamera();
+		RenderTriangleListZBufferRW::cameraToScreen();
+		RenderTriangleListZBufferRW::sClipAtScreen();
+		RenderTriangleListZBufferRW::drawTriangleList32(color);
 	}
 
-	void RenderContext32::drawTriangleIndexListSolidZBufferRW(const Vec4<real> & color)
+	void RenderContext32::drawTriangleIndexListZBufferRW(const Vec4<real> & color)
 	{
-		RenderTriangleIndexListSolidZBufferRW::reset();
-		RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
-		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
-		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList32(color);
+		RenderTriangleIndexListZBufferRW::reset();
+		RenderTriangleIndexListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListZBufferRW::worldToCamera();
+		RenderTriangleIndexListZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListZBufferRW::cameraToScreen();
+		RenderTriangleIndexListZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListZBufferRW::drawTriangleIndexList32(color);
 	}
 
-	void RenderContext32::drawTriangleListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	void RenderContext32::drawTriangleListZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		RenderTriangleListSolidZBufferRW::reset();
-		//RenderTriangleListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleListSolidZBufferRW::worldToCamera();
-		RenderTriangleListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleListSolidZBufferRW::cameraToScreen();
-		RenderTriangleListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleListSolidZBufferRW::drawTriangleList32(color);
+		RenderTriangleListZBufferRW::reset();
+		//RenderTriangleListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleListZBufferRW::worldToCamera();
+		RenderTriangleListZBufferRW::zClipAtCamera();
+		RenderTriangleListZBufferRW::cameraToScreen();
+		RenderTriangleListZBufferRW::sClipAtScreen();
+		RenderTriangleListZBufferRW::drawTriangleList32(color);
 	}
 
-	void RenderContext32::drawTriangleIndexListSolidZBufferRWWithBackface(const Vec4<real> & color)
+	void RenderContext32::drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		RenderTriangleIndexListSolidZBufferRW::reset();
-		//RenderTriangleIndexListSolidZBufferRW::removeBackfaceAtWorld();
-		RenderTriangleIndexListSolidZBufferRW::worldToCamera();
-		RenderTriangleIndexListSolidZBufferRW::zClipAtCamera();
-		RenderTriangleIndexListSolidZBufferRW::cameraToScreen();
-		RenderTriangleIndexListSolidZBufferRW::sClipAtScreen();
-		RenderTriangleIndexListSolidZBufferRW::drawTriangleIndexList32(color);
+		RenderTriangleIndexListZBufferRW::reset();
+		//RenderTriangleIndexListZBufferRW::removeBackfaceAtWorld();
+		RenderTriangleIndexListZBufferRW::worldToCamera();
+		RenderTriangleIndexListZBufferRW::zClipAtCamera();
+		RenderTriangleIndexListZBufferRW::cameraToScreen();
+		RenderTriangleIndexListZBufferRW::sClipAtScreen();
+		RenderTriangleIndexListZBufferRW::drawTriangleIndexList32(color);
 	}
 
 	void RenderContext32::drawTriangleListGouraudZBufferRW(void)
