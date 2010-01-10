@@ -58,20 +58,20 @@ protected:
 
 	// ======================================== TODO: BEGIN ========================================
 
-	//// 自定义成员
-	//my::BoneAssignmentIndexObjectPtr m_jackModel;
+	// 自定义成员
+	my::BoneAssignmentIndexObjectPtr m_jackModel;
 
-	//my::ImagePtr m_jackTexture;
+	my::ImagePtr m_jackTexture;
 
-	//my::SkeletonAnimationsFromOgreSkeletonPtr m_jackSkeleton;
+	my::SkeletonAnimationsFromOgreSkeletonPtr m_jackSkeleton;
 
-	//t3d::BoneNodeList m_jackBoneNodeList;
+	t3d::BoneNodeList m_jackBoneNodeList;
 
-	//t3d::BoneTransformList m_jackBoneTransformList;
+	t3d::BoneTransformList m_jackBoneTransformList;
 
-	//t3d::DSBufferPtr m_dsbuffer;
+	t3d::DSBufferPtr m_dsbuffer;
 
-	my::ObjectBasePtr m_obj;
+	//my::ObjectBasePtr m_obj;
 
 	// ======================================== TODO: END   ========================================
 
@@ -117,34 +117,34 @@ public:
 
 		// ======================================== TODO: BEGIN ========================================
 
-		//// 自定义初始化
-		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml")));
-		//m_jackModel = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		// 自定义初始化
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml")));
+		m_jackModel = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
-		//tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png"))));
-		//m_jackTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png"))));
+		m_jackTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
 
-		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_anim_stand.skeleton.xml")));
-		//m_jackSkeleton = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(tmpStream.get()));
-		//m_jackSkeleton->getSkeletonAnimation("clip1").setNextAnimationName("clip2");
-		//m_jackSkeleton->getSkeletonAnimation("clip2").setNextAnimationName("clip1");
-		//m_jackSkeleton->getSkeletonAnimation("clip3").setNextAnimationName("clip4");
-		//m_jackSkeleton->getSkeletonAnimation("clip4").setNextAnimationName("clip3");
-		//m_jackSkeleton->setCurrentAnimationName("clip3");
-		//m_jackSkeleton->setCurrentAnimationTime(0);
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_anim_stand.skeleton.xml")));
+		m_jackSkeleton = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(tmpStream.get()));
+		m_jackSkeleton->getSkeletonAnimation("clip1").setNextAnimationName("clip2");
+		m_jackSkeleton->getSkeletonAnimation("clip2").setNextAnimationName("clip1");
+		m_jackSkeleton->getSkeletonAnimation("clip3").setNextAnimationName("clip4");
+		m_jackSkeleton->getSkeletonAnimation("clip4").setNextAnimationName("clip3");
+		m_jackSkeleton->setCurrentAnimationName("clip3");
+		m_jackSkeleton->setCurrentAnimationTime(0);
 
-		//m_jackBoneNodeList = m_jackSkeleton->getOrigBoneNodeList();
+		m_jackBoneNodeList = m_jackSkeleton->getOrigBoneNodeList();
 
-		//m_jackBoneTransformList.resize(m_jackSkeleton->getOrigBoneNodeListSize());
+		m_jackBoneTransformList.resize(m_jackSkeleton->getOrigBoneNodeListSize());
 
-		////// load 背景音乐
-		////my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
-		////m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
-		////my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
-		////m_dsbuffer->play();
+		//// load 背景音乐
+		//my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
+		//m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
+		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
+		//m_dsbuffer->play();
 
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene (shared gemetry).mesh.xml")));
-		m_obj = my::ObjectBasePtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene (shared gemetry).mesh.xml")));
+		//m_obj = my::ObjectBasePtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
 		// ======================================== TODO: END   ========================================
 
@@ -221,47 +221,48 @@ public:
 
 		// ======================================== TODO: BEGIN ========================================
 
-		//// 自定义渲染
-		//const t3d::BoneNodeList & boneNodeList =
-		//	m_jackSkeleton->gotoAnimation(m_jackSkeleton->getCurrentAnimationName(), m_jackSkeleton->getCurrentAnimationTime() + elapsedTime);
+		// 自定义渲染
+		const t3d::BoneNodeList & boneNodeList =
+			m_jackSkeleton->gotoAnimation(m_jackSkeleton->getCurrentAnimationName(), m_jackSkeleton->getCurrentAnimationTime() + elapsedTime);
 
-		//t3d::STreeNode::IndexList::const_iterator root_iter = m_jackSkeleton->getRootIndexListBegin();
-		//for(; root_iter != m_jackSkeleton->getRootIndexListEnd(); root_iter++)
-		//{
-		//	// 和 banding position 叠加
-		//	t3d::incrementBoneNodeList(
-		//		m_jackBoneNodeList,
-		//		m_jackSkeleton->getOrigBoneNodeList(),
-		//		boneNodeList,
-		//		*root_iter);
+		t3d::STreeNode::IndexList::const_iterator root_iter = m_jackSkeleton->getRootIndexListBegin();
+		for(; root_iter != m_jackSkeleton->getRootIndexListEnd(); root_iter++)
+		{
+			// 和 banding position 叠加
+			t3d::incrementBoneNodeList(
+				m_jackBoneNodeList,
+				m_jackSkeleton->getOrigBoneNodeList(),
+				boneNodeList,
+				*root_iter);
 
-		//	// 获取当前动作的 transform matrix
-		//	t3d::updateBoneTransformListFromBoneNodeList(
-		//		m_jackBoneTransformList,
-		//		m_jackBoneNodeList,
-		//		*root_iter,
-		//		my::Mat4<real>::IDENTITY,
-		//		my::Mat4<real>::IDENTITY);
-		//}
+			// 获取当前动作的 transform matrix
+			t3d::updateBoneTransformListFromBoneNodeList(
+				m_jackBoneTransformList,
+				m_jackBoneNodeList,
+				*root_iter,
+				my::Mat4<real>::IDENTITY,
+				my::Mat4<real>::IDENTITY);
+		}
 
-		//// 获取最终 transform matrix
-		//t3d::combineVertexNormalBoneTransformList(
-		//	m_jackBoneTransformList,
-		//	m_jackSkeleton->getOrigBoneInverseTransformList(),
-		//	m_jackBoneTransformList);
+		// 获取最终 transform matrix
+		t3d::combineVertexNormalBoneTransformList(
+			m_jackBoneTransformList,
+			m_jackSkeleton->getOrigBoneInverseTransformList(),
+			m_jackBoneTransformList);
 
-		//t3d::bindVertexListNormalListFromBoneTransformList(
-		//	m_jackModel->getVertexList(),
-		//	m_jackModel->getNormalList(),
-		//	m_jackModel->getOriginalVertexList(),
-		//	m_jackModel->getOriginalNormalList(),
-		//	m_jackModel->getBoneAssignmentList(),
-		//	m_jackBoneTransformList);
+		t3d::bindVertexListNormalListFromBoneTransformList(
+			m_jackModel->getVertexList(),
+			m_jackModel->getNormalList(),
+			m_jackModel->getOriginalVertexList(),
+			m_jackModel->getOriginalNormalList(),
+			m_jackModel->getBoneAssignmentList(),
+			m_jackBoneTransformList);
 
-		//m_rc->setTextureBuffer(m_jackTexture->getBits(), m_jackTexture->getPitch(), m_jackTexture->getWidth(), m_jackTexture->getHeight());
+		m_rc->setTextureBuffer(m_jackTexture->getBits(), m_jackTexture->getPitch(), m_jackTexture->getWidth(), m_jackTexture->getHeight());
 		//m_jackModel->drawGouraudTextureZBufferRW(m_rc.get());
+		m_jackModel->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
 
-		m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
+		//m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
 
 		// ======================================== TODO: END   ========================================
 
