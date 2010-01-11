@@ -143,11 +143,11 @@ public:
 		////my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		////m_dsbuffer->play();
 
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene.mesh.xml")));
-		m_obj = my::ObjectBasePtr(new my::ObjectFromOgreMesh(tmpStream.get()));
+		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene.mesh.xml")));
+		//m_obj = my::ObjectBasePtr(new my::ObjectFromOgreMesh(tmpStream.get()));
 
-		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene (shared gemetry).mesh.xml")));
-		//m_obj = my::ObjectBasePtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene (shared gemetry).mesh.xml")));
+		m_obj = my::ObjectBasePtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
 		// ======================================== TODO: END   ========================================
 
@@ -263,12 +263,14 @@ public:
 
 		//m_rc->setTextureBuffer(m_jackTexture->getBits(), m_jackTexture->getPitch(), m_jackTexture->getWidth(), m_jackTexture->getHeight());
 		////m_jackModel->drawGouraudTextureZBufferRW(m_rc.get());
-		//m_jackModel->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
+		////m_jackModel->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
+		//m_jackModel->drawGouraudZBufferRW(m_rc.get());
 
 		//m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
 		//m_obj->drawWireZBufferRWWithBackface(m_rc.get(), my::Color::BLUE);
 		//m_obj->drawZBufferRW(m_rc.get(), my::Color::BLUE);
-		m_obj->drawZBufferRWWithBackface(m_rc.get(), my::Color::BLUE);
+		//m_obj->drawZBufferRWWithBackface(m_rc.get(), my::Color::BLUE);
+		m_obj->drawGouraudZBufferRWWithBackface(m_rc.get());
 
 		// ======================================== TODO: END   ========================================
 

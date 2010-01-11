@@ -209,6 +209,12 @@ namespace t3d
 		ColorList::const_iterator getColorListEnd() const;
 	};
 
+	inline void resetColorList(ColorList & colorList, size_t size, const Vec4<real> & color)
+	{
+		colorList.clear();
+		colorList.resize(size, color);
+	}
+
 	class SurfaceContext
 	{
 	protected:
@@ -807,69 +813,69 @@ namespace t3d
 	//	void drawTriangleIndexList32(const Vec4<real> & color);
 	//};
 
-	class RenderTriangleListGouraudZBufferRW
-		: public TriangleContext
-	{
-	protected:
-		void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
+	//class RenderTriangleListGouraudZBufferRW
+	//	: public TriangleContext
+	//{
+	//protected:
+	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
 
-		void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
+	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
 
-		TRI_STATE zClipTriangleAtCamera(const size_t index);
+	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
 
-		TRI_STATE sClipTriangleAtScreen(const size_t index);
+	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
 
-	public:
-		void reset(void);
+	//public:
+	//	void reset(void);
 
-		void removeBackfaceAtWorld(void);
+	//	void removeBackfaceAtWorld(void);
 
-		void lightAtWorld(void);
+	//	void lightAtWorld(void);
 
-		void worldToCamera(void);
+	//	void worldToCamera(void);
 
-		void zClipAtCamera(void);
+	//	void zClipAtCamera(void);
 
-		void cameraToScreen(void);
+	//	void cameraToScreen(void);
 
-		void sClipAtScreen(void);
+	//	void sClipAtScreen(void);
 
-		void drawTriangleList16(void);
+	//	void drawTriangleList16(void);
 
-		void drawTriangleList32(void);
-	};
+	//	void drawTriangleList32(void);
+	//};
 
-	class RenderTriangleIndexListGouraudZBufferRW
-		: public TriangleContext
-	{
-	protected:
-		void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
+	//class RenderTriangleIndexListGouraudZBufferRW
+	//	: public TriangleContext
+	//{
+	//protected:
+	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
 
-		void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
+	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
 
-		TRI_STATE zClipTriangleAtCamera(const size_t index);
+	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
 
-		TRI_STATE sClipTriangleAtScreen(const size_t index);
+	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
 
-	public:
-		void reset(void);
+	//public:
+	//	void reset(void);
 
-		void removeBackfaceAtWorld(void);
+	//	void removeBackfaceAtWorld(void);
 
-		void lightAtWorld(void);
+	//	void lightAtWorld(void);
 
-		void worldToCamera(void);
+	//	void worldToCamera(void);
 
-		void zClipAtCamera(void);
+	//	void zClipAtCamera(void);
 
-		void cameraToScreen(void);
+	//	void cameraToScreen(void);
 
-		void sClipAtScreen(void);
+	//	void sClipAtScreen(void);
 
-		void drawTriangleIndexList16(void);
+	//	void drawTriangleIndexList16(void);
 
-		void drawTriangleIndexList32(void);
-	};
+	//	void drawTriangleIndexList32(void);
+	//};
 
 	class RenderTriangleListTextureZBufferRW
 		: public TriangleContext
@@ -1057,8 +1063,8 @@ namespace t3d
 		//, public RenderLineIndexListZBufferRW
 		//, public RenderTriangleListZBufferRW
 		//, public RenderTriangleIndexListZBufferRW
-		, public RenderTriangleListGouraudZBufferRW
-		, public RenderTriangleIndexListGouraudZBufferRW
+		//, public RenderTriangleListGouraudZBufferRW
+		//, public RenderTriangleIndexListGouraudZBufferRW
 		, public RenderTriangleListTexturePerspectiveLPZBufferRW
 		, public RenderTriangleIndexListTexturePerspectiveLPZBufferRW
 		, public RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
@@ -1664,6 +1670,136 @@ namespace t3d
 		const VertexIndexList & vertexIndexList,
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color);
+
+	void lightTriangleListAtWorld(
+		const VertexList & vertexList,
+		const VertexList & normalList,
+		const ClipStateList & clipStateList,
+		const LightList & lightList,
+		const MATERIAL & material,
+		ColorList & retColorList);
+
+	void lightTriangleIndexListAtWorld(
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const VertexList & normalList,
+		const ClipStateList & clipStateList,
+		const LightList & lightList,
+		const MATERIAL & material,
+		ColorList & retColorList);
+
+	CLIP_STATE clipTriangleVertexColorAtCameraNearZDouble(
+		Vec4<real> v0,
+		Vec4<real> v1,
+		Vec4<real> v2,
+		Vec4<real> c0,
+		Vec4<real> c1,
+		Vec4<real> c2,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ColorList & retColorList,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleVertexColorAtCameraNearZSingle(
+		Vec4<real> v0,
+		Vec4<real> v1,
+		Vec4<real> v2,
+		Vec4<real> c0,
+		Vec4<real> c1,
+		Vec4<real> c2,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ColorList & retColorList,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleVertexColorAtCamera(
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2,
+		const CAMERA & camera,
+		VertexList & retVertexList,
+		ColorList & retColorList,
+		ClipStateList & retClipStateList);
+
+	void clipTriangleListVertexColorAtCamera(
+		VertexList & vertexList,
+		ClipStateList & clipStateList,
+		ColorList & colorList,
+		const CAMERA & camera);
+
+	CLIP_STATE clipTriangleIndexVertexColorAtCameraNearZDouble(
+		VertexList & vertexList,
+		ColorList & colorList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleIndexVertexColorAtCameraNearZSingle(
+		VertexList & vertexList,
+		ColorList & colorList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
+		ClipStateList & retClipStateList);
+
+	CLIP_STATE clipTriangleIndexVertexColorAtCamera(
+		VertexList & vertexList,
+		ColorList & colorList,
+		size_t v0_i,
+		size_t v1_i,
+		size_t v2_i,
+		const CAMERA & camera,
+		VertexIndexList & retVertexIndexList,
+		ClipStateList & retClipStateList);
+
+	void clipTriangleIndexListVertexColorAtCamera(
+		VertexList & vertexList,
+		VertexIndexList & vertexIndexList,
+		ColorList & colorList,
+		ClipStateList & clipStateList,
+		const CAMERA & camera);
+
+	void drawTriangleListGouraudZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ColorList & colorList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleListGouraudZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const ColorList & colorList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleIndexListGouraudZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ColorList & colorList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleIndexListGouraudZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ColorList & colorList,
+		const ClipStateList & clipStateList);
 }
 
 #endif // __T3DLIB6_H__
