@@ -2075,6 +2075,14 @@ namespace t3d
 	}
 
 	template <typename elem_t>
+	inline Vec2<elem_t> vec2Intersect(const Vec2<elem_t> & v0, const Vec2<elem_t> & v1, elem_t a0, elem_t a1, elem_t ca)
+	{
+		return Vec2<elem_t>(
+			LINE2D_INTERSECT(ca, a0, a1, v0.x, v1.x),
+			LINE2D_INTERSECT(ca, a0, a1, v0.y, v1.y));
+	}
+
+	template <typename elem_t>
 	inline Vec4<elem_t> vec3Intersect(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t a0, elem_t a1, elem_t ca)
 	{
 		return Vec4<elem_t>(
