@@ -877,99 +877,99 @@ namespace t3d
 	//	void drawTriangleIndexList32(void);
 	//};
 
-	class RenderTriangleListTextureZBufferRW
-		: public TriangleContext
-	{
-	protected:
-		void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
+	//class RenderTriangleListTextureZBufferRW
+	//	: public TriangleContext
+	//{
+	//protected:
+	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
 
-		void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
+	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
 
-		TRI_STATE zClipTriangleAtCamera(const size_t index);
+	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
 
-		TRI_STATE sClipTriangleAtScreen(const size_t index);
+	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
 
-	public:
-		void reset(void);
+	//public:
+	//	void reset(void);
 
-		void removeBackfaceAtWorld(void);
+	//	void removeBackfaceAtWorld(void);
 
-		void worldToCamera(void);
+	//	void worldToCamera(void);
 
-		void zClipAtCamera(void);
+	//	void zClipAtCamera(void);
 
-		void cameraToScreen(void);
+	//	void cameraToScreen(void);
 
-		void sClipAtScreen(void);
+	//	void sClipAtScreen(void);
 
-		void drawTriangleListZBufferW16(void);
+	//	void drawTriangleListZBufferW16(void);
 
-		void drawTriangleListZBufferW32(void);
+	//	void drawTriangleListZBufferW32(void);
 
-		void drawTriangleList16(void);
+	//	void drawTriangleList16(void);
 
-		void drawTriangleList32(void);
-	};
+	//	void drawTriangleList32(void);
+	//};
 
-	class RenderTriangleIndexListTextureZBufferRW
-		: public TriangleContext
-	{
-	protected:
-		void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
+	//class RenderTriangleIndexListTextureZBufferRW
+	//	: public TriangleContext
+	//{
+	//protected:
+	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
 
-		void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
+	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
 
-		TRI_STATE zClipTriangleAtCamera(const size_t index);
+	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
 
-		TRI_STATE sClipTriangleAtScreen(const size_t index);
+	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
 
-	public:
-		void reset(void);
+	//public:
+	//	void reset(void);
 
-		void removeBackfaceAtWorld(void);
+	//	void removeBackfaceAtWorld(void);
 
-		void worldToCamera(void);
+	//	void worldToCamera(void);
 
-		void zClipAtCamera(void);
+	//	void zClipAtCamera(void);
 
-		void cameraToScreen(void);
+	//	void cameraToScreen(void);
 
-		void sClipAtScreen(void);
+	//	void sClipAtScreen(void);
 
-		void drawTriangleIndexListZBufferW16(void);
+	//	void drawTriangleIndexListZBufferW16(void);
 
-		void drawTriangleIndexListZBufferW32(void);
+	//	void drawTriangleIndexListZBufferW32(void);
 
-		void drawTriangleIndexList16(void);
+	//	void drawTriangleIndexList16(void);
 
-		void drawTriangleIndexList32(void);
-	};
+	//	void drawTriangleIndexList32(void);
+	//};
 
-	class RenderTriangleListTexturePerspectiveLPZBufferRW
-		: public RenderTriangleListTextureZBufferRW
-	{
-	public:
-		void drawTriangleListZBufferW16(void);
+	//class RenderTriangleListTexturePerspectiveLPZBufferRW
+	//	: public RenderTriangleListTextureZBufferRW
+	//{
+	//public:
+	//	void drawTriangleListZBufferW16(void);
 
-		void drawTriangleListZBufferW32(void);
+	//	void drawTriangleListZBufferW32(void);
 
-		void drawTriangleList16(void);
+	//	void drawTriangleList16(void);
 
-		void drawTriangleList32(void);
-	};
+	//	void drawTriangleList32(void);
+	//};
 
-	class RenderTriangleIndexListTexturePerspectiveLPZBufferRW
-		: public RenderTriangleIndexListTextureZBufferRW
-	{
-	public:
-		void drawTriangleIndexListZBufferW16(void);
+	//class RenderTriangleIndexListTexturePerspectiveLPZBufferRW
+	//	: public RenderTriangleIndexListTextureZBufferRW
+	//{
+	//public:
+	//	void drawTriangleIndexListZBufferW16(void);
 
-		void drawTriangleIndexListZBufferW32(void);
+	//	void drawTriangleIndexListZBufferW32(void);
 
-		void drawTriangleIndexList16(void);
+	//	void drawTriangleIndexList16(void);
 
-		void drawTriangleIndexList32(void);
-	};
+	//	void drawTriangleIndexList32(void);
+	//};
 
 	class RenderTriangleListGouraudTextureZBufferRW
 		: public TriangleContext
@@ -1065,8 +1065,8 @@ namespace t3d
 		//, public RenderTriangleIndexListZBufferRW
 		//, public RenderTriangleListGouraudZBufferRW
 		//, public RenderTriangleIndexListGouraudZBufferRW
-		, public RenderTriangleListTexturePerspectiveLPZBufferRW
-		, public RenderTriangleIndexListTexturePerspectiveLPZBufferRW
+		//, public RenderTriangleListTexturePerspectiveLPZBufferRW
+		//, public RenderTriangleIndexListTexturePerspectiveLPZBufferRW
 		, public RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
 		, public RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW
 	{
@@ -1922,6 +1922,48 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList);
 
+	void drawTriangleListTexturePerspectiveLPZBufferW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint16> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleListTexturePerspectiveLPZBufferW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint32> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleIndexListTexturePerspectiveLPZBufferW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint16> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleIndexListTexturePerspectiveLPZBufferW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint32> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
 	void drawTriangleListTextureZBufferRW16(
 		SurfaceRef<uint16> surface,
 		const RECT & clipper,
@@ -1954,6 +1996,48 @@ namespace t3d
 		const ClipStateList & clipStateList);
 
 	void drawTriangleIndexListTextureZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint32> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleListTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint16> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleListTexturePerspectiveLPZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint32> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleIndexListTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		SurfaceRef<uint16> texture,
+		const Vec2<real> & texture_expend,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const UVList & uvList,
+		const ClipStateList & clipStateList);
+
+	void drawTriangleIndexListTexturePerspectiveLPZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
