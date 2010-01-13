@@ -272,7 +272,8 @@ public:
 		//m_obj->drawZBufferRW(m_rc.get(), my::Color::BLUE);
 		//m_obj->drawZBufferRWWithBackface(m_rc.get(), my::Color::BLUE);
 		//m_obj->drawGouraudZBufferRWWithBackface(m_rc.get());
-		m_obj->drawTextureZBufferRWWithBackface(m_rc.get());
+		//m_obj->drawTextureZBufferRWWithBackface(m_rc.get());
+		m_obj->drawTexturePerspectiveLPZBufferRWWithBackface(m_rc.get());
 
 		// ======================================== TODO: END   ========================================
 
