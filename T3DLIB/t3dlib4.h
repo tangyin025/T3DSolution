@@ -2093,6 +2093,33 @@ namespace t3d
 	}
 
 	template <typename elem_t>
+	inline Vec4<elem_t> vec3ClipX(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipx)
+	{
+		return vec3Build(
+			clipx,
+			LINE2D_INTERSECT(clipx, v0.x, v1.x, v0.y, v1.y),
+			LINE2D_INTERSECT(clipx, v0.x, v1.x, v0.z, v1.z));
+	}
+
+	template <typename elem_t>
+	inline Vec4<elem_t> vec3ClipY(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipy)
+	{
+		return vec3Build(
+			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.x, v1.x),
+			clipy,
+			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.z, v1.z));
+	}
+
+	template <typename elem_t>
+	inline Vec4<elem_t> vec3ClipZ(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipz)
+	{
+		return vec3Build(
+			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.x, v1.x),
+			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.y, v1.y),
+			clipz);
+	}
+
+	template <typename elem_t>
 	inline Mat4<elem_t> mat4Intersect(const Mat4<elem_t> & m0, const Mat4<elem_t> & m1, elem_t a0, elem_t a1, elem_t ca)
 	{
 		return Mat4<elem_t>(
@@ -2125,33 +2152,6 @@ namespace t3d
 			LINE2D_INTERSECT(ca, a0, a1, q0.x, q1.x),
 			LINE2D_INTERSECT(ca, a0, a1, q0.y, q1.y),
 			LINE2D_INTERSECT(ca, a0, a1, q0.z, q1.z));
-	}
-
-	template <typename elem_t>
-	inline Vec4<elem_t> lineClipX(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipx)
-	{
-		return vec3Build(
-			clipx,
-			LINE2D_INTERSECT(clipx, v0.x, v1.x, v0.y, v1.y),
-			LINE2D_INTERSECT(clipx, v0.x, v1.x, v0.z, v1.z));
-	}
-
-	template <typename elem_t>
-	inline Vec4<elem_t> lineClipY(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipy)
-	{
-		return vec3Build(
-			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.x, v1.x),
-			clipy,
-			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.z, v1.z));
-	}
-
-	template <typename elem_t>
-	inline Vec4<elem_t> lineClipZ(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipz)
-	{
-		return vec3Build(
-			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.x, v1.x),
-			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.y, v1.y),
-			clipz);
 	}
 
 	template <typename elem_t>
