@@ -227,7 +227,7 @@ namespace t3d
 
 		BOOL findDIJoystick(LPCDIDEVICEINSTANCE lpddi)
 		{
-			if(lpddi->dwDevType & DI8DEVTYPEJOYSTICK_STANDARD)
+			if(lpddi->dwDevType & DI8DEVTYPE_JOYSTICK)
 			{
 				if(m_DeviceName.empty() || lpddi->tszInstanceName == m_DeviceName)
 				{

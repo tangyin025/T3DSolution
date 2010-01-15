@@ -1,20 +1,13 @@
-
-// °üº¬ c++ ¿âÎÄ¼ş
-
-#define _CRTDBG_MAP_ALLOC
-
+ï»¿
+// åŒ…å« c++ åº“æ–‡ä»¶
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <crtdbg.h>
 #include <boost/shared_array.hpp>
 
-#include <crtdbg.h>
-#ifdef _DEBUG
-#define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
-#endif
-
-// °üº¬ 3d Í¼ĞÎ¿â
+// åŒ…å« 3d å›¾å½¢åº“
 #include "t3dlib1.h"
 #include "t3dlib2.h"
 #include "t3dlib3.h"
@@ -22,265 +15,533 @@
 #include "t3dlib5.h"
 #include "t3dlib6.h"
 
-// °üº¬ my µÄ·â×°
-#include "libc.h"				// c ÑùÊ½ string º¯Êı
-#include "myGame.h"				// Ó¦ÓÃ³ÌĞò·â×°
-#include "myUtility.h"			// ¿ìËÙÄ£ĞÍ»æÖÆ
-#include "myPhysics.h"			// ÎïÀíÒıÇæ
-#include "myCollision.h"		// Åö×²ÏµÍ³
+// åŒ…å« my çš„å°è£…
+#include "libc.h"				// c æ ·å¼ string å‡½æ•°
+#include "myGame.h"				// åº”ç”¨ç¨‹åºå°è£…
+#include "myUtility.h"			// å¿«é€Ÿæ¨¡å‹ç»˜åˆ¶
+#include "myPhysics.h"			// ç‰©ç†å¼•æ“
+#include "myCollision.h"		// ç¢°æ’ç³»ç»Ÿ
 #include "myScene.h"
-//
-//// ¸½¼Ó windows ¶àÃ½Ìå¿â
-//#pragma comment(lib, "winmm.lib")
 
-using t3d::charT;				// unicode Ö§³Ö
-using t3d::real;				// ÊµĞÍ
+// é™„åŠ  windows å¤šåª’ä½“åº“
+#pragma comment(lib, "winmm.lib")
+
+using t3d::charT;				// unicode æ”¯æŒ
+using t3d::real;				// å®å‹
+
+// ======================================== TODO: BEGIN ========================================
+
+class CharacterTracker
+{
+public:
+	t3d::Vec4<real> distance;
+
+	t3d::Vec4<real> rotation;
+};
+
+class MyWorld
+	: public my::World			// ç”¨ä»¥æ”¯æŒç‰©ç†å¼•æ“çš„åŸºæœ¬æ¡†æ¶
+{
+public:
+	my::CollisionSphere m_characterSphere;	// ç”¨ä»¥æ§åˆ¶è§’è‰²çš„ç¢°æ’çƒ
+	my::RigidBody * m_characterBody;		// è¡¨ç¤ºè§’è‰²è¿åŠ¨çŠ¶æ€çš„ rigid body
+	my::Object * m_scene;					// åœºæ™¯çš„å¤šè¾¹å½¢å®¹å™¨ï¼Œè¿™ä¸ªåœºæ™¯åªæ˜¯ç‰©ç†åœºæ™¯ï¼Œå¯èƒ½ä¸å‚ä¸ç»˜åˆ¶ï¼
+	CharacterTracker m_characterTracker;	// ç”¨ä»¥è·Ÿè¸ªè§’è‰²çš„ç›¸æœºå·¥å…·
+	my::Vec4<real> m_characterRotation;		// ç”¨ä»¥è·Ÿè¸ªè§’è‰²é¢å‘çš„å‘é‡
+
+protected:
+	/** é‡å†™ my::World::integrate æ¥å£
+		integrate æ˜¯æŒ‡æŸä¸ªç‰©ä½“åœ¨æŸä¸ªæ—¶é—´æ®µä¹‹é—´æ‰€å‘ç”Ÿçš„å¾®ç¬‘å˜åŒ–ï¼Œè¿™é‡Œå®è´¨å°±æ˜¯å°† character rigid body è¿›è¡Œä¸€æ¬¡å¾®ç§¯åˆ†è®¡ç®—
+	*/
+	virtual void integrate(t3d::real duration)
+	{
+		// ç”±äº m_characterBody å·²ç»äº¤äº my::World æ¡†æ¶æ¥ç®¡ï¼Œæ‰€ä»¥åªéœ€è°ƒç”¨ my::World::integrate å³å¯
+		// æ¯‹éœ€è°ƒç”¨ m_characterBody.integrate
+		my::World::integrate(duration);
+
+		// æ­¤æ—¶ m_characterBody çš„æ•°æ®å·²ç»æ›´æ–°ï¼Œæ‰€ä»¥éœ€è¦åŒæ—¶æ›´æ–°å¯¹åº”çš„ m_characterSphere
+		m_characterSphere.calculateInternals();
+	}
+
+	/** å®ç° my::World::generateContacts æ¥å£
+		åœ¨è¿™é‡Œè¿›è¡Œç¢°æ’æ£€æµ‹ï¼Œå¹¶ç”Ÿæˆ contacts
+	*/
+	virtual unsigned generateContacts(my::Contact * contacts, unsigned limits)
+	{
+		unsigned used = 0;
+
+		// å¯¹åœºæ™¯ä¸­çš„æ¯ä¸€ä¸ªä¸‰è§’å½¢è¿›è¡Œç¢°æ’æ£€æµ‹ï¼Œå¹¶ç”Ÿæˆ contacts
+		for(size_t i = 0; i < m_scene->getTriangleCount() && used < limits; i++)
+		{
+			used += my::CollisionDetector::sphereAndTriangle(
+				m_characterSphere,
+				m_scene->getTriangleVertex0(i),
+				m_scene->getTriangleVertex1(i),
+				m_scene->getTriangleVertex2(i),
+				NULL,
+				&contacts[used],
+				limits - used); // *** è¿™ä¸ªåœ°æ–¹è¦å…šæ€§è¶Šç•Œ
+		}
+
+		// ç”±äºç›®å‰ my::CollisionDetector ä¸ä¼šè®¾ç½® frictionã€restitutionï¼Œæ‰€ä»¥ä¸€å®šè¦æ‰‹åŠ¨è®¾ç½®
+		for(unsigned i = 0; i < used; i++)
+		{
+			contacts[i].friction = 10.0f; //0.9f;
+			contacts[i].restitution = 0; //0.6f;
+		}
+
+		return used;
+	}
+
+public:
+	MyWorld(real characterSphereRadius, real characterSphereMass, my::Object * scene)
+		: my::World(32) // ç”±äºåªè¿›è¡Œè§’è‰²ç¢°æ’æ£€æµ‹ï¼Œæ‰€ä»¥æœ€å¤šä¹Ÿåªä¼šç”Ÿæˆä¸€ä¸¤ä¸ªç¢°æ’ç‚¹è€Œå·²ï¼Œä¹Ÿå°±è¦é‚£ä¹ˆå¤šçš„ contacts
+	{
+		// ç”±æ¡†æ¶åˆ›å»ºä¸€ä¸ª rigid body
+		bodyList.push_back(my::RigidBodyPtr(new my::RigidBody()));
+		m_characterBody = bodyList.back().get();
+
+		// è®¾ç½®è§’è‰²çƒçš„åç§»é‡ã€åŠå¾„ç­‰
+		m_characterSphere.offset = my::Mat4<real>::IDENTITY;
+		m_characterSphere.rotationOffset = my::Mat4<real>::IDENTITY;
+		m_characterSphere.radius = characterSphereRadius;
+		m_characterSphere.body = m_characterBody;
+
+		// è®¾ç½® body çš„è´¨é‡åŠä¸€äº›å‚ã€ç³»æ•°
+		m_characterSphere.body->setMass(characterSphereMass);
+		real coeff = 0.4f * m_characterSphere.body->getMass() * m_characterSphere.radius * m_characterSphere.radius;
+		m_characterSphere.body->setInertialTensor(my::calculateInertiaTensor(coeff, coeff, coeff));
+		m_characterSphere.body->setDamping(0.95f);
+		//m_characterSphere.body->setAngularDamping(0.8f);
+		m_characterSphere.body->setAngularDamping(0); // è¿™æ ·å¯ä»¥ä¸è®©è§’è‰²çƒæ—‹è½¬
+		m_characterSphere.body->setAcceleration(my::Vec4<real>(0, -10.0f, 0));
+
+		// åˆå§‹åŒ–è§’è‰²çš„ä½ç½®
+		m_characterSphere.body->setPosition(my::Vec4<real>(0, 30, 0));
+		m_characterSphere.body->setOrientation(my::Quat<real>::IDENTITY);
+		m_characterSphere.body->setVelocity(my::Vec4<real>::ZERO);
+		m_characterSphere.body->setRotation(my::Vec4<real>::ZERO);
+		m_characterSphere.body->setCanSleep();
+		m_characterSphere.body->setAwake();
+
+		// ä¸è¦å¿˜è®°æ›´æ–°è§’è‰²çƒçš„ transform
+		m_characterSphere.body->calculateDerivedData();
+
+		// ä¿å­˜åœºæ™¯ï¼ˆæŒ‡é’ˆï¼‰
+		assert(NULL != scene);
+		m_scene = scene;
+
+		// åˆå§‹åŒ–è·Ÿè¸ªå™¨
+		m_characterTracker.distance = my::Vec4<real>(0, 0, -20);
+		m_characterTracker.rotation = my::Vec4<real>::ZERO;
+
+		// åˆå§‹åŒ–è§’è‰²é¢å‘
+		m_characterRotation = my::Vec4<real>(0, DEG_TO_RAD(180), 0);
+	}
+
+	void updateCharacter(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time)
+	{
+		// æ§åˆ¶è·Ÿè¸ªå™¨çš„æ–¹ä½
+		t3d::vec3AddSelf(m_characterTracker.rotation, my::EularCamera::buildRotOffset(mouse));
+
+		// æ§åˆ¶è§’è‰²ç§»åŠ¨
+		t3d::Vec4<real> movOffset = my::EularCamera::buildMovOffset(keyboard, m_characterTracker.rotation.y, 20 /** step_time*/);
+		if(!IS_ZERO_FLOAT(movOffset.x) || !IS_ZERO_FLOAT(movOffset.y) || !IS_ZERO_FLOAT(movOffset.z))
+		{
+			// åŠ ä¸ªé€Ÿåº¦å°±å¯ä»¥äº†ï¼Œè®©æ¡†æ¶æ¥ç§»åŠ¨è§’è‰²
+			m_characterBody->setVelocity(movOffset);
+
+			// ä¿®æ­£è§’è‰²é¢éƒ¨æœå‘
+			m_characterRotation.y =
+				acos(t3d::vec3CosTheta(my::Vec4<real>(movOffset.x, 0, movOffset.z), my::Vec4<real>::UNIT_Z)) * (movOffset.x > 0 ? 1 : -1) + DEG_TO_RAD(180);
+
+			// å”¤é†’ body
+			m_characterBody->setAwake();
+		}
+
+		// é™åˆ¶ x è½´æ—‹è½¬é‡ï¼Œç”¨ä»¥é¿å¼€ uvn å‚ç›´æ­»è§’
+		m_characterTracker.rotation.x = std::min(DEG_TO_RAD(80), std::max(DEG_TO_RAD(-80), m_characterTracker.rotation.x));
+	}
+};
+
+// ======================================== TODO: END   ========================================
+
+typedef boost::shared_ptr<MyWorld> MyWorldPtr;
 
 class MyGame
-	: public my::Game			// ÓÃÒÔÊµÏÖ»ùÓÚÖ¡Ñ­»·µÄ»ù±¾Ó¦ÓÃ³ÌĞò¿ò¼Ü£¬²¢ÒÑ¾­ÊµÏÖÁË³£¼ûµÄ primary¡¢back surface ½á¹¹
-	, public my::DrawnHelper			// ÓÃÒÔ»æÖÆ³£¼û¶à±ßĞÎ£¬Èç sphere¡¢box¡¢plane µÈ
-	, public my::ErrorListener	// ÊµÏÖ½ÓÊÜ´íÎóĞÅÏ¢µÄ½Ó¿Ú£¬ÕâĞ©´íÎóĞÅÏ¢Í¨³£À´×ÔÓÚ my µÄ·â×°£¬Ò²¿ÉÒÔÊ¹ÓÃ REPORT_ERROR ºê¶ÔÕâ¸ö½Ó¿Ú±¨´í
-	, public my::Window::MessageListener
+	: public my::Game						// ç”¨ä»¥å®ç°åŸºäºå¸§å¾ªç¯çš„åŸºæœ¬åº”ç”¨ç¨‹åºæ¡†æ¶ï¼Œå¹¶å·²ç»å®ç°äº†å¸¸è§çš„ primaryã€back surface ç»“æ„
+	, public my::DrawnHelper				// ç”¨ä»¥ç»˜åˆ¶å¸¸è§å¤šè¾¹å½¢ï¼Œå¦‚ sphereã€boxã€plane ç­‰
+	, public my::ErrorListener				// å®ç°æ¥å—é”™è¯¯ä¿¡æ¯çš„æ¥å£ï¼Œè¿™äº›é”™è¯¯ä¿¡æ¯é€šå¸¸æ¥è‡ªäº my çš„å°è£…ï¼Œä¹Ÿå¯ä»¥ä½¿ç”¨ REPORT_ERROR å®å¯¹è¿™ä¸ªæ¥å£æŠ¥é”™
+	, public my::Window::MessageListener	// ç”¨æ¥æ¥æ”¶ windows æ¶ˆæ¯çš„æ¥å£
 {
 protected:
-	my::ConsoleSimulatorPtr m_consoleSim;	// Ò»¸öÀàËÆ¿ØÖÆÌ¨µÄÄ£ÄâÆ÷£¬¿ÉÒÔÔÚ surface ÉÏÊä³ö¿ØÖÆÌ¨ĞÅÏ¢
-	my::TimerPtr m_timer;					// ¹ÜÀíÊ±¼äµÄ¹¤¾ß£¬Ö÷ÒªÓÃÒÔ¾«È·Ö¡ËÙÂÊ¼ÆËã
-	my::FPSManagerPtr m_fpsMgr;				// ¹ÜÀí fps µÄ¹¤¾ß£¬Ä£ºıÖ¡ËÙÂÊ¼ÆËã
-	my::GridPtr m_grid;						// »æÖÆÍø¸ñµÄ¹¤¾ß
-	my::EularCameraPtr m_eularCam;			// Å·À­Ïà»ú
-	my::ImagePtr m_defaultTexture;			// Ä¬ÈÏÌùÍ¼
+	my::ConsoleSimulatorPtr m_consoleSim;	// ä¸€ä¸ªç±»ä¼¼æ§åˆ¶å°çš„æ¨¡æ‹Ÿå™¨ï¼Œå¯ä»¥åœ¨ surface ä¸Šè¾“å‡ºæ§åˆ¶å°ä¿¡æ¯
+	my::TimerPtr m_timer;					// ç®¡ç†æ—¶é—´çš„å·¥å…·ï¼Œä¸»è¦ç”¨ä»¥ç²¾ç¡®å¸§é€Ÿç‡è®¡ç®—
+	my::FPSManagerPtr m_fpsMgr;				// ç®¡ç† fps çš„å·¥å…·ï¼Œæ¨¡ç³Šå¸§é€Ÿç‡è®¡ç®—
+	my::GridPtr m_grid;						// ç»˜åˆ¶ç½‘æ ¼çš„å·¥å…·
+	my::EularCameraPtr m_eularCam;			// æ¬§æ‹‰ç›¸æœº
+	my::ImagePtr m_defaultTexture;			// é»˜è®¤è´´å›¾
 
-	/** ÎªÊ²Ã´ÒªÊ¹ÓÃ ptr£¬¶ø²»Ö±½Ó¹¹Ôìº¯Êı£¿
-	Ó¦ÎªÄ³Ğ©¶ÔÏóÔÚ½¨Á¢Ê±£¬»áÓÃÓĞÏÈ¾öÌõ¼ş£¬¶ø my::Game ÔÚ¹¹Ôìº¯ÊıÊ±£¬»¹Ã»ÓĞ³õÊ¼»¯Ò»Ğ©¶ÔÏó£¬Èç SingleTon ¶ÔÏó
-	Ö»ÓĞÔÚ my::Game::onInit(...) Ö®ºó£¬ÕâĞ©Ç°ÌáÌõ¼ş²Å³ÉÊì£¬
-	ËùÒÔÍ¨³£ÊÇÊ¹ÓÃ ptr£¬ÔÚ onInit(...) Àï±ßÔÙ¹¹Ôì
+	/** ä¸ºä»€ä¹ˆè¦ä½¿ç”¨ ptrï¼Œè€Œä¸ç›´æ¥æ„é€ å‡½æ•°ï¼Ÿ
+	åº”ä¸ºæŸäº›å¯¹è±¡åœ¨å»ºç«‹æ—¶ï¼Œä¼šç”¨æœ‰å…ˆå†³æ¡ä»¶ï¼Œè€Œ my::Game åœ¨æ„é€ å‡½æ•°æ—¶ï¼Œè¿˜æ²¡æœ‰åˆå§‹åŒ–ä¸€äº›å¯¹è±¡ï¼Œå¦‚ SingleTon å¯¹è±¡
+	åªæœ‰åœ¨ my::Game::onInit(...) ä¹‹åï¼Œè¿™äº›å‰ææ¡ä»¶æ‰æˆç†Ÿï¼Œ
+	æ‰€ä»¥é€šå¸¸æ˜¯ä½¿ç”¨ ptrï¼Œåœ¨ onInit(...) é‡Œè¾¹å†æ„é€ 
 	*/
 
 	// ======================================== TODO: BEGIN ========================================
 
-	// ×Ô¶¨Òå³ÉÔ±
-	my::BoneAssignmentIndexObjectPtr m_jackModel;
+	my::ObjectPtr m_scene;							// éœ€è¦ä¸€ä¸ªç”¨æ¥å­˜å‚¨åœºæ™¯çš„å®¹å™¨
+	my::BSPNodePtr m_scene_bsp;						// åŸºäº BSP çš„åœºæ™¯ï¼Œå¼ºå§ ^O^ï¼
+	my::ImagePtr m_scene_t;							// åœºæ™¯çš„è´´å›¾
+	MyWorldPtr m_world;								// ç‰©ç†å¼•æ“ç®¡ç†å™¨
+	my::BoneAssignmentIndexObjectPtr m_character;	// è§’è‰²çš„èº«ä½“æ¨¡å‹
+	my::BoneAssignmentIndexObjectPtr m_character_h;	// è§’è‰²çš„å¤´å‘æ¨¡å‹ï¼Œç”±äºå¤´å‘ä½¿ç”¨åŒé¢æ¸²æŸ“ï¼ˆå°†æ¥è¿˜è¦å¸¦ color keyï¼‰ï¼Œæ‰€ä»¥è¦å¦å¤–å¼€ä¸ª obj
+	my::ImagePtr m_character_t;						// è§’è‰²çš„æ•´ä¸ªè´´å›¾
 
-	my::ImagePtr m_jackTexture;
+	my::SkeletonAnimationsFromOgreSkeletonPtr m_character_skel; // è§’è‰²çš„éª¨éª¼åŠ¨ç”»é›†ï¼Œé‡Œè¾¹å¯ä»¥è—æœ‰ä¸€æ•´å¥—åŠ¨ç”»ï¼Œæ˜¯ä¸€ä¸ªä»¥åŠ¨ç”»åä¸º key çš„ map
+	t3d::BoneNodeList m_character_bone_node_list;				// ç”¨ä»¥æš‚å­˜ bone node list
+	t3d::BoneTransformList m_character_bone_transform_list;		// ç”¨ä»¥æš‚å­˜ bone transform list
 
-	my::SkeletonAnimationsFromOgreSkeletonPtr m_jackSkeleton;
+	my::IndexSphereObjectPtr m_skySphere;			// å¤©ç©ºçƒ
+	my::ImagePtr m_skySphere_t;						// å¤©ç©ºçƒçš„è´´å›¾
+	t3d::DSBufferPtr m_dsbuffer;					// èƒŒæ™¯éŸ³ä¹
 
-	t3d::BoneNodeList m_jackBoneNodeList;
-
-	t3d::BoneTransformList m_jackBoneTransformList;
-
-	t3d::DSBufferPtr m_dsbuffer;
-
-	my::ObjectBasePtr m_obj;
+	std::vector<DIDEVICEINSTANCE> m_DIDeviceInstList; // æ‰‹æŸ„çš„ instance
+	t3d::DIJoystickPtr m_joy;						// dinput joystickï¼Œç›®å‰ä»…ç”¨äºæµ‹è¯•
 
 	// ======================================== TODO: END   ========================================
 
 public:
-	/** ÊµÏÖ my::Game::onInit ½Ó¿Ú
-	Í¨³£ÔÚÓ¦ÓÃ³ÌĞò³õÊ¼»¯Ê±£¬¿ò¼Ü»áµôÓÃÕâ¸ö½Ó¿Ú£¬ËùÒÔÓ¦µ±ÔÚÕâÀïÊµÏÖ×Ô¶¨ÒåµÄ³õÊ¼»¯²Ù×÷
+	/** å®ç° my::Game::onInit æ¥å£
+		é€šå¸¸åœ¨åº”ç”¨ç¨‹åºåˆå§‹åŒ–æ—¶ï¼Œæ¡†æ¶ä¼šæ‰ç”¨è¿™ä¸ªæ¥å£ï¼Œæ‰€ä»¥åº”å½“åœ¨è¿™é‡Œå®ç°è‡ªå®šä¹‰çš„åˆå§‹åŒ–æ“ä½œ
 	*/
 	virtual bool onInit(void)
 	{
-		// ³õÊ¼»¯¿ØÖÆÌ¨Ä£ÄâÆ÷
+		// åˆå§‹åŒ–æ§åˆ¶å°æ¨¡æ‹Ÿå™¨
 		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
 
-		// ½«×Ô¼º×¢²áÎª my::ErrorReporter µÄ¼àÌıÕß
+		// å°†è‡ªå·±æ³¨å†Œä¸º my::ErrorReporter çš„ç›‘å¬è€…
 		my::ErrorReporter::getSingleton().addErrorListener(this);
 
-		// ³õÊ¼»¯²¢¿ªÊ¼ timer
+		// åˆå§‹åŒ–å¹¶å¼€å§‹ timer
 		m_timer = my::TimerPtr(new my::Timer());
 		m_timer->start();
 
-		// ³õÊ¼»¯ fps ¹ÜÀíÆ÷
+		// åˆå§‹åŒ– fps ç®¡ç†å™¨
 		m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
 		m_fpsMgr->start();
 
-		// ³õÊ¼»¯Íø¸ñ
+		// åˆå§‹åŒ–ç½‘æ ¼
 		m_grid = my::GridPtr(new my::Grid());
 
-		// ¹¹ÔìÅ·À­Ïà»ú
+		// æ„é€ æ¬§æ‹‰ç›¸æœº
 		m_eularCam = my::EularCameraPtr(new my::EularCamera());
-		m_eularCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
-		m_eularCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
+		m_eularCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
+		m_eularCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
 		m_eularCam->reset();
 
-		// Ìí¼ÓÃ½ÌåËÑË÷Â·¾¶£¬½¨Á¢¿ì½İ·½Ê½Ê±Òª×¢Òâµ±Ç°Â·¾¶µÄÎ»ÖÃ
+		// æ·»åŠ åª’ä½“æœç´¢è·¯å¾„ï¼Œå»ºç«‹å¿«æ·æ–¹å¼æ—¶è¦æ³¨æ„å½“å‰è·¯å¾„çš„ä½ç½®
 		m_resourceMgr->registerDir(_T("../../common/medias"));
-
-		// load µÚÒ»¸öÌùÍ¼
-		my::ImagePtr tmpImage;
-		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
-		m_defaultTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
-
-		// tmp stream
 		my::IOStreamPtr tmpStream;
+		my::ImagePtr tmpImage;
+
+		//// load ç¬¬ä¸€ä¸ªè´´å›¾
+		//tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
+		//m_defaultTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
 
 		// ======================================== TODO: BEGIN ========================================
 
-		//// ×Ô¶¨Òå³õÊ¼»¯
-		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml")));
-		//m_jackModel = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		// load åœºæ™¯
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("office_tri_list.mesh.xml")));
+		m_scene = my::ObjectFromOgreMeshPtr(new my::ObjectFromOgreMesh(tmpStream.get()));
 
-		//tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png"))));
-		//m_jackTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png"))));
+		m_scene_t = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
 
-		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_anim_stand.skeleton.xml")));
-		//m_jackSkeleton = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(tmpStream.get()));
-		//m_jackSkeleton->getSkeletonAnimation("clip1").setNextAnimationName("clip2");
-		//m_jackSkeleton->getSkeletonAnimation("clip2").setNextAnimationName("clip1");
-		//m_jackSkeleton->getSkeletonAnimation("clip3").setNextAnimationName("clip4");
-		//m_jackSkeleton->getSkeletonAnimation("clip4").setNextAnimationName("clip3");
-		//m_jackSkeleton->setCurrentAnimationName("clip3");
-		//m_jackSkeleton->setCurrentAnimationTime(0);
+		// åˆ›å»º bsp åœºæ™¯
+		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
 
-		//m_jackBoneNodeList = m_jackSkeleton->getOrigBoneNodeList();
+		// æ„é€ ç‰©ç†å¼•æ“ç®¡ç†å™¨
+		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
 
-		//m_jackBoneTransformList.resize(m_jackSkeleton->getOrigBoneNodeListSize());
+		// load è§’è‰²æ¨¡å‹
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml")));
+		m_character = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
-		////// load ±³¾°ÒôÀÖ
-		////my::WavPtr tmpWav = my::WavPtr(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
-		////m_dsbuffer = t3d::DSBufferPtr(my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get()));
-		////my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
-		////m_dsbuffer->play();
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres_hair.mesh.xml")));
+		m_character_h = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene.mesh.xml")));
-		m_obj = my::ObjectBasePtr(new my::ObjectFromOgreMesh(tmpStream.get()));
+		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png"))));
+		m_character_t = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
 
-		//tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("bsp_test_scene (shared gemetry).mesh.xml")));
-		//m_obj = my::ObjectBasePtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		// load è§’è‰²éª¨éª¼åŠ¨ç”»
+		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_anim_stand.skeleton.xml")));
+		m_character_skel = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(tmpStream.get()));
+		m_character_skel->getSkeletonAnimation("clip1").setNextAnimationName("clip2");
+		m_character_skel->getSkeletonAnimation("clip2").setNextAnimationName("clip1");
+		m_character_skel->getSkeletonAnimation("clip3").setNextAnimationName("clip4");
+		m_character_skel->getSkeletonAnimation("clip4").setNextAnimationName("clip3");
+		m_character_skel->setCurrentAnimationName("clip1");
+		m_character_skel->setCurrentAnimationTime(0);
+
+		m_character_bone_node_list = m_character_skel->getOrigBoneNodeList();
+		m_character_bone_transform_list.resize(m_character_skel->getOrigBoneNodeListSize());
+
+		// load å¤©ç©ºçƒ
+		m_skySphere = my::IndexSphereObjectPtr(new my::IndexSphereObject(50000.0f, 20, 20, true));
+		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("1316532925.jpg"))));
+		m_skySphere_t = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+
+		//// load èƒŒæ™¯éŸ³ä¹
+		//my::WavPtr tmpWav(my::ResourceMgr::getSingleton().openWav(_T("stationthrob.wav")));
+		//m_dsbuffer = my::DSoundBufferPtr(my::createDSoundBufferForWholeWav(*m_dsound.get(), *tmpWav.get()));
+		//my::copyWholeWavBufferToDSoundBuffer(*m_dsbuffer.get(), *tmpWav.get());
+		//m_dsbuffer->play();
+
+		// æŸ¥è¯¢å¹¶åˆ›å»ºæ‰‹æŸ„ï¼ˆä»…æµ‹è¯•ï¼‰
+		m_DIDeviceInstList.clear();
+		m_dinput->findJoystickList(m_DIDeviceInstList);
+		if(!m_DIDeviceInstList.empty())
+		{
+			m_joy = t3d::DIJoystickPtr(m_dinput->createJoystick(m_DIDeviceInstList.front().guidInstance));
+			m_joy->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+			m_joy->acquire();
+		}
+
+		// æ³¨å†Œä¸»çª—å£æ¶ˆæ¯ç›‘å¬
+		m_pwnd->setMessageListener(this);
 
 		// ======================================== TODO: END   ========================================
-
-		m_pwnd->setMessageListener(this);
 
 		return true;
 	}
 
-	/** ÊµÏÖ my::Game::onShutdown ½Ó¿Ú
-	ÔÚÕâÀïÏú»Ù×Ô¼º´´½¨µÄ¶«Î÷£¬ÓÉÓÚ»ù²ã¿ò¼ÜÈ«²¿Ê¹ÓÃ smart_ptr£¬ËùÒÔ¿ò¼Ü²»ĞèÒª shutdown
-	µ«¿ò¼Ü»¹ÊÇ»áÔÚÍË³öÓ¦ÓÃ³ÌĞòÊ±£¬µ÷ÓÃÕâ¸ö½Ó¿Ú£¬ÓÃÓÚ×Ô¶¨ÒåµÄÏú»Ù
+	/** å®ç° my::Game::onShutdown æ¥å£
+		æ¡†æ¶ä¼šåœ¨é€€å‡ºåº”ç”¨ç¨‹åºæ—¶ï¼Œè°ƒç”¨è¿™ä¸ªæ¥å£ï¼Œç”¨äºè‡ªå®šä¹‰çš„é”€æ¯ï¼Œç”±äºåŸºå±‚æ¡†æ¶å…¨éƒ¨ä½¿ç”¨ smart_ptrï¼Œæ‰€ä»¥ä¸éœ€è¦ delete
 	*/
 	virtual void onShutdown(void)
 	{
 	}
 
-	/** ÊµÏÖ my::Game::onFrame ½Ó¿Ú
+	/** å®ç° my::Game::onFrame æ¥å£
+		æ¡†æ¶ä¼šåœ¨ä¸»çº¿ç¨‹æ²¡æœ‰æ¶ˆæ¯å¤„ç†çš„æ—¶å€™è°ƒç”¨è¿™ä¸ªæ¥å£ï¼Œåº”å½“åœ¨è¿™é‡Œè¿›è¡Œå¸§æ“ä½œï¼Œå¦‚æ¸²æŸ“ï¼Œstep ç‰©ç†å¼•æ“ç­‰
 	*/
 	virtual bool onFrame(void)
 	{
-		// Èç¹ûÓÃ»§ÊäÈë space Ôò return false ½áÊøÓ¦ÓÃ³ÌĞò
+		// å¦‚æœç”¨æˆ·è¾“å…¥ space åˆ™ return false ç»“æŸåº”ç”¨ç¨‹åº
 		if(m_keyboard->isKeyDown(DIK_ESCAPE))
 			return false;
 
-		// »ñµÃ¾«È·Ö¡Ê±¼ä£¬¼´ÉÏÒ»´Î getElapsedTime µ½Õâ´ÎÖ®¼äµÄÊ±¼ä
-		// ×¢Òâ£ºÎª·ÀÖ¹ÓÉÓÚÁ½Ö¡Ê±¼ä¼ä¸ôÌ«³¤£¬µ¼ÖÂÎïÀíÒıÇæ±ÀÀ££¬ËùÒÔÉèÖÃ³É×î²î²»µÃĞ¡ÓÚ 30 Ö¡ / Ãë
+		// è·å¾—ç²¾ç¡®å¸§æ—¶é—´ï¼Œå³ä¸Šä¸€æ¬¡ getElapsedTime åˆ°è¿™æ¬¡ä¹‹é—´çš„æ—¶é—´
+		// æ³¨æ„ï¼šä¸ºé˜²æ­¢ç”±äºä¸¤å¸§æ—¶é—´é—´éš”å¤ªé•¿ï¼Œå¯¼è‡´ç‰©ç†å¼•æ“å´©æºƒï¼Œæ‰€ä»¥è®¾ç½®æˆæœ€å·®ä¸å¾—å°äº 30 å¸§ / ç§’
 		const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
-		// ÀÛ¼Æ fps ¹ÜÀíÆ÷
-		// fps ¹ÜÀíÆ÷ÊÇÍ¨¹ı²»¶Ï²ÉÑùÀ´»ñµÃÖ¡ËÙÂÊµÄ£¬ËùÒÔÃ»ÓĞ timer ÁéÃô£¬µ«ÆÕÍ¨Ó¦ÓÃÒÑ¾­×ã¹»ÁË
+		// ç´¯è®¡ fps ç®¡ç†å™¨
+		// fps ç®¡ç†å™¨æ˜¯é€šè¿‡ä¸æ–­é‡‡æ ·æ¥è·å¾—å¸§é€Ÿç‡çš„ï¼Œæ‰€ä»¥æ²¡æœ‰ timer çµæ•ï¼Œä½†æ™®é€šåº”ç”¨å·²ç»è¶³å¤Ÿäº†
 		m_fpsMgr->addFrame();
 
-		// ´ÓÓÃ»§ÊäÈëÀ´¸üĞÂÅ·À­Ïà»úµÄ×ø±êºÍ·½Î»
-		m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
-
-		// ÇåÀí zbuffer
-		m_rc->setClipperRect(m_rback);
-
-		m_rc->fillZbuffer(m_rback, 0);
-
-		// ÕâÀï´´½¨Ò»¸ö±È´°¿ÚĞ¡µÄ clipper ÇøÓò£¬½öÓÃÓÚ²âÊÔ 3d äÖÈ¾µÃ clipper bug
-		// ÓÉÓÚÈí¼şäÖÈ¾Æ÷£¬Æä clipper ÊÇÍ¨¹ıËã·¨ÊµÏÖµÄ£¬ËùÒÔÈôËã·¨²»Ç¿½¡£¬»Øµ½Ö®»æÍ¼Ê±Ô½¹ı clipper ÇøÓò
-		// ÉõÖÁÔ½¹ı´°¿ÚÇøÓò£¬ËùÒÔ½«»æÍ¼ÇøÓòËõĞ¡Ò»²¿·Ö¿ÉÒÔÉÔÎ¢±ÜÃâ£¬ÒòÔ½½çµ¼ÖÂÏµÍ³±ÀÀ£µÄÏÖÏó
-		CRect clipper(m_rback.left + 10, m_rback.top + 10, m_rback.right - 10, m_rback.bottom - 10);
-
+		// è¿™é‡Œåˆ›å»ºä¸€ä¸ªæ¯”çª—å£å°çš„ clipper åŒºåŸŸï¼Œä»…ç”¨äºæµ‹è¯• 3d æ¸²æŸ“å¾— clipper bug
+		// ç”±äºè½¯ä»¶æ¸²æŸ“å™¨ï¼Œå…¶ clipper æ˜¯é€šè¿‡ç®—æ³•å®ç°çš„ï¼Œæ‰€ä»¥è‹¥ç®—æ³•ä¸å¼ºå¥ï¼Œå›åˆ°ä¹‹ç»˜å›¾æ—¶è¶Šè¿‡ clipper åŒºåŸŸ
+		// ç”šè‡³è¶Šè¿‡çª—å£åŒºåŸŸï¼Œæ‰€ä»¥å°†ç»˜å›¾åŒºåŸŸç¼©å°ä¸€éƒ¨åˆ†å¯ä»¥ç¨å¾®é¿å…ï¼Œå› è¶Šç•Œå¯¼è‡´ç³»ç»Ÿå´©æºƒçš„ç°è±¡
+		RECT clipper = {m_rback.left + 10, m_rback.top + 10, m_rback.right - 10, m_rback.bottom - 10};
 		m_rc->setClipperRect(clipper);
 
-		// ÇåÀí back surface
-		m_rc->fillSurface(m_rback, my::Color(0.8f, 0.8f, 0.8f));
+		//// æ¸…ç† back surface
+		//m_rc->fillSurface(clipper, my::Color(0.8f, 0.8f, 0.8f));
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ camera
-		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
-		m_rc->setViewport(clipper);
-		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(90), clipper.right - clipper.left, clipper.bottom - clipper.top));
+		//// æ¸…ç† zbuffer
+		//m_rc->fillZbuffer(clipper, 0);
+
+		//// ä»ç”¨æˆ·è¾“å…¥æ¥æ›´æ–°æ¬§æ‹‰ç›¸æœºçš„åæ ‡å’Œæ–¹ä½
+		//m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
+
+		//// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ camera
+		//m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
+		m_rc->setViewport(m_rc->getClipperRect());
+		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVHeight(DEG_TO_RAD(90), m_rc->getClipperRect().right - m_rc->getClipperRect().left, m_rc->getClipperRect().bottom - m_rc->getClipperRect().top));
 		m_rc->setCameraNearZ(1);
 		m_rc->setCameraFarZ(10000);
 
-		// äÖÈ¾Íø¸ñ
-		m_grid->drawZBufferRW(m_rc.get());
+		//// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ light
+		//my::Vec4<real> l_pos(-30, 30, -30);
+		//l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
+		//m_rc->clearLightList();
+		//m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
+		//m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ light
-		my::Vec4<real> l_pos(-30, 30, -30);
-		l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
-		m_rc->clearLightList();
-		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
-		m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
-
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ material
+		// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ material
 		m_rc->setAmbient(my::Color::WHITE);
 		m_rc->setDiffuse(my::Color::WHITE);
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ texture
-		m_rc->setTextureBuffer(m_defaultTexture->getBits(), m_defaultTexture->getPitch(), m_defaultTexture->getWidth(), m_defaultTexture->getHeight());
+		//// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ texture
+		//m_rc->setTextureBuffer(m_defaultTexture->getBits(), m_defaultTexture->getPitch(), m_defaultTexture->getWidth(), m_defaultTexture->getHeight());
 
 		// ======================================== TODO: BEGIN ========================================
 
-		//// ×Ô¶¨ÒåäÖÈ¾
-		//const t3d::BoneNodeList & boneNodeList =
-		//	m_jackSkeleton->gotoAnimation(m_jackSkeleton->getCurrentAnimationName(), m_jackSkeleton->getCurrentAnimationTime() + elapsedTime);
+		// æ›´æ–°è§’è‰²çŠ¶æ€
+		m_world->updateCharacter(m_keyboard.get(), m_mouse.get(), elapsedTime);
 
-		//t3d::STreeNode::IndexList::const_iterator root_iter = m_jackSkeleton->getRootIndexListBegin();
-		//for(; root_iter != m_jackSkeleton->getRootIndexListEnd(); root_iter++)
-		//{
-		//	// ºÍ banding position µş¼Ó
-		//	t3d::incrementBoneNodeList(
-		//		m_jackBoneNodeList,
-		//		m_jackSkeleton->getOrigBoneNodeList(),
-		//		boneNodeList,
-		//		*root_iter);
+		// ä»¥åå€çš„é€Ÿåº¦è¿è¡Œç‰©ç†å¼•æ“
+		int count = 10;
+		while(count--)
+		{
+			m_world->runPhysics(elapsedTime / 10);
+		}
 
-		//	// »ñÈ¡µ±Ç°¶¯×÷µÄ transform matrix
-		//	t3d::updateBoneTransformListFromBoneNodeList(
-		//		m_jackBoneTransformList,
-		//		m_jackBoneNodeList,
-		//		*root_iter,
-		//		my::Mat4<real>::IDENTITY,
-		//		my::Mat4<real>::IDENTITY);
-		//}
+		// é‡æ–°è®¾å®šç›¸æœºä¸º uvn ç›¸æœº
+		real cameraHeight = 20;
+		t3d::Mat4<real> cameraOffset = t3d::CameraContext::buildCameraTransformEular(t3d::vec3Add(m_world->m_characterBody->getPosition(), my::Vec4<real>(0, cameraHeight, 0)), m_world->m_characterTracker.rotation);
+		t3d::Vec4<real> cameraPos = m_world->m_characterTracker.distance * cameraOffset;
+		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformUVN(cameraPos, t3d::vec3Add(m_world->m_characterBody->getPosition(), my::Vec4<real>(0, cameraHeight, 0)), my::Vec4<real>::UNIT_Y));
 
-		//// »ñÈ¡×îÖÕ transform matrix
-		//t3d::combineVertexNormalBoneTransformList(
-		//	m_jackBoneTransformList,
-		//	m_jackSkeleton->getOrigBoneInverseTransformList(),
-		//	m_jackBoneTransformList);
+		// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ light
+		my::Vec4<real> l_pos(-30, 30, -30);
+		l_pos *= cameraOffset;
+		m_rc->clearLightList();
+		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
+		m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos);
 
-		//t3d::bindVertexListNormalListFromBoneTransformList(
-		//	m_jackModel->getVertexList(),
-		//	m_jackModel->getNormalList(),
-		//	m_jackModel->getOriginalVertexList(),
-		//	m_jackModel->getOriginalNormalList(),
-		//	m_jackModel->getBoneAssignmentList(),
-		//	m_jackBoneTransformList);
+		// ä½¿ç”¨å¤©ç©ºçƒæ¥æ¸…ç† surface å’Œ zbuffer
+		m_rc->setCameraFarZ(100000);
+		m_rc->setTextureBuffer(
+			m_skySphere_t->getBits(),
+			m_skySphere_t->getPitch(),
+			m_skySphere_t->getWidth(),
+			m_skySphere_t->getHeight());
+		m_skySphere->drawTextureZBufferW(m_rc.get());
+		m_rc->setCameraFarZ(10000);
 
-		//m_rc->setTextureBuffer(m_jackTexture->getBits(), m_jackTexture->getPitch(), m_jackTexture->getWidth(), m_jackTexture->getHeight());
-		////m_jackModel->drawGouraudTextureZBufferRW(m_rc.get());
-		////m_jackModel->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
-		////m_jackModel->drawGouraudZBufferRW(m_rc.get());
-		//m_jackModel->drawTextureZBufferRWWithBackface(m_rc.get());
+		// ç»˜åˆ¶ BSP åœºæ™¯
+		m_rc->setTextureBuffer(
+			m_scene_t->getBits(),
+			m_scene_t->getPitch(),
+			m_scene_t->getWidth(),
+			m_scene_t->getHeight());
+		//m_scene->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
+		m_scene_bsp->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
 
-		//m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
-		//m_obj->drawWireZBufferRWWithBackface(m_rc.get(), my::Color::BLUE);
-		//m_obj->drawZBufferRW(m_rc.get(), my::Color::BLUE);
-		//m_obj->drawZBufferRWWithBackface(m_rc.get(), my::Color::BLUE);
-		//m_obj->drawGouraudZBufferRWWithBackface(m_rc.get());
-		//m_obj->drawTextureZBufferRWWithBackface(m_rc.get());
-		m_obj->drawTexturePerspectiveLPZBufferRWWithBackface(m_rc.get());
+		//// ç»˜åˆ¶è§’è‰²çƒ
+		//drawSphereWireZBufferRW(
+		//	m_rc.get(),
+		//	m_world->m_characterSphere.radius,
+		//	m_world->m_characterBody->getAwake() ? my::Color::RED : t3d::rgbaSaturate(t3d::vec3Sub(my::Color::RED, my::Vec4<real>(0.1f, 0.1f, 0.1f))),
+		//	m_world->m_characterSphere.getTransform());
+
+		// æ³¨æ„ï¼šç”±äº 2009å¹´12æœˆ12æ—¥ ä¿®æ”¹äº†éª¨éª¼ç³»ç»Ÿçš„åº•å±‚ï¼Œæ‰€ä»¥åŸå…ˆæ”¯æŒå„ä¸ªåŠ¨ä½œé—´è¿‡æ¸¡çš„åŠŸèƒ½ç›®å‰ä¸èƒ½ä½¿ç”¨
+		std::string current_anim_name = m_character_skel->getCurrentAnimationName();
+		if (t3d::vec3Length(m_world->m_characterBody->getVelocity()) > 1)
+		{
+			// æ›´æ–°åŠ¨ç”»
+			if(current_anim_name != "clip3" && current_anim_name != "clip4")
+			{
+				m_character_skel->setCurrentAnimationName("clip3");
+				m_character_skel->setCurrentAnimationTime(0);
+			}
+		}
+		else
+		{
+			// æ›´æ–°åŠ¨ç”»
+			if(current_anim_name != "clip1" && current_anim_name != "clip2")
+			{
+				m_character_skel->setCurrentAnimationName("clip1");
+				m_character_skel->setCurrentAnimationTime(0);
+			}
+		}
+
+		// ç»‘å®šè§’è‰²éª¨éª¼ç³»ç»Ÿ
+		const t3d::BoneNodeList & boneNodeList =
+			m_character_skel->gotoAnimation(m_character_skel->getCurrentAnimationName(), m_character_skel->getCurrentAnimationTime() + elapsedTime);
+
+		t3d::STreeNode::IndexList::const_iterator root_iter = m_character_skel->getRootIndexListBegin();
+		for(; root_iter != m_character_skel->getRootIndexListEnd(); root_iter++)
+		{
+			// å’Œ banding position å åŠ 
+			t3d::incrementBoneNodeList(
+				m_character_bone_node_list,
+				m_character_skel->getOrigBoneNodeList(),
+				boneNodeList,
+				*root_iter);
+
+			// è·å–å½“å‰åŠ¨ä½œçš„ transform matrix
+			t3d::updateBoneTransformListFromBoneNodeList(
+				m_character_bone_transform_list,
+				m_character_bone_node_list,
+				*root_iter,
+				my::Mat4<real>::IDENTITY,
+				my::Mat4<real>::IDENTITY);
+		}
+
+		// è·å–æœ€ç»ˆ bone transform list
+		t3d::combineVertexNormalBoneTransformList(
+			m_character_bone_transform_list,
+			m_character_skel->getOrigBoneInverseTransformList(),
+			m_character_bone_transform_list);
+
+		// å°†éª¨éª¼åº”ç”¨åˆ°åŸå§‹æ¨¡å‹
+		t3d::bindVertexListNormalListFromBoneTransformList(
+			m_character->getVertexList(),
+			m_character->getNormalList(),
+			m_character->getOriginalVertexList(),
+			m_character->getOriginalNormalList(),
+			m_character->getBoneAssignmentList(),
+			m_character_bone_transform_list);
+
+		t3d::bindVertexListNormalListFromBoneTransformList(
+			m_character_h->getVertexList(),
+			m_character_h->getNormalList(),
+			m_character_h->getOriginalVertexList(),
+			m_character_h->getOriginalNormalList(),
+			m_character_h->getBoneAssignmentList(),
+			m_character_bone_transform_list);
+
+		// è·å¾—è§’è‰²çƒçš„ç›¸å…³å˜æ¢ä¿¡æ¯
+		t3d::Mat4<real> mrot = t3d::mat3RotY(m_world->m_characterRotation.y);
+		t3d::Mat4<real> mmat = mrot * t3d::mat3Mov(my::Vec4<real>(0, -5.0f, 0)) * m_world->m_characterSphere.getTransform();
+
+		// è®¾ç½®è§’è‰²è´´å›¾
+		m_rc->setTextureBuffer(
+			m_character_t->getBits(),
+			m_character_t->getPitch(),
+			m_character_t->getWidth(),
+			m_character_t->getHeight());
+
+		// ç»˜åˆ¶è§’è‰²
+		m_character->drawGouraudTextureZBufferRW(m_rc.get(), mmat, mrot);
+		m_character_h->drawGouraudTextureZBufferRWWithBackface(m_rc.get(), mmat, mrot);
+
+		// ç»˜åˆ¶è§’è‰²é˜´å½±ï¼Œhack æ‰‹æ³•
+		m_rc->clearVertexList();
+		m_rc->clearVertexIndexList();
+		my::pushVertexByPointProject(
+			m_rc.get(),
+			l_pos,
+			my::Vec4<real>(0, 0.5f, 0),
+			my::Vec4<real>::UNIT_Y,
+			m_character->getVertexListBegin(),
+			m_character->getVertexListEnd(),
+			mmat);
+		m_rc->pushVertexIndexList(m_character->getVertexIndexListBegin(), m_character->getVertexIndexListEnd());
+		m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+
+		m_rc->clearVertexList();
+		m_rc->clearVertexIndexList();
+		my::pushVertexByPointProject(
+			m_rc.get(),
+			l_pos,
+			my::Vec4<real>(0, 0.5f, 0),
+			my::Vec4<real>::UNIT_Y,
+			m_character_h->getVertexListBegin(),
+			m_character_h->getVertexListEnd(),
+			mmat);
+		m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
+		m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
 
 		// ======================================== TODO: END   ========================================
 
-		//// ½âËø back surface
-		//m_sback->unlock();
+		//// æ¸²æŸ“ç½‘æ ¼
+		//m_grid->drawZBufferRW(m_rc.get());
 
-		// Êä³ö³£ÓÃĞÅÏ¢£¬ÈçÖ¡ËÙÂÊ¡¢Ïà»ú·½Î»µÈ
+		// è¾“å‡ºå¸¸ç”¨ä¿¡æ¯ï¼Œå¦‚å¸§é€Ÿç‡ã€ç›¸æœºæ–¹ä½ç­‰
 		std::basic_string<charT> strTmp;
 		HDC hdc = m_sback->getDC();
 
@@ -291,16 +552,30 @@ public:
 		::TextOut(hdc, 10, 30, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("cam.pos: %f, %f, %f"),
-			m_eularCam->getPosition().x, m_eularCam->getPosition().y, m_eularCam->getPosition().z);
+			m_rc->getCameraPosition().x, m_rc->getCameraPosition().y, m_rc->getCameraPosition().z);
 		::TextOut(hdc, 10, 50, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
 			RAD_TO_DEG(m_eularCam->getRotation().x), RAD_TO_DEG(m_eularCam->getRotation().y), RAD_TO_DEG(m_eularCam->getRotation().z));
 		::TextOut(hdc, 10, 70, strTmp.c_str(), (int)strTmp.length());
 
+		// è¾“å‡ºæ‰‹æŸ„ä¿¡æ¯
+		if(m_joy.get())
+		{
+			m_joy->update();
+
+			strTmp = str_printf(_T("%s lstick: %ld, %ld"),
+				m_DIDeviceInstList.front().tszInstanceName, m_joy->getX(), m_joy->getY());
+			::TextOut(hdc, 10, 90, strTmp.c_str(), (int)strTmp.length());
+
+			strTmp = str_printf(_T("%s rstick: %ld, %ld"),
+				m_DIDeviceInstList.front().tszInstanceName, m_joy->getRz(), m_joy->getZ());
+			::TextOut(hdc, 10, 110, strTmp.c_str(), (int)strTmp.length());
+		}
+
 		m_sback->releaseDC(hdc);
 
-		// »æÖÆ¿ØÖÆÌ¨Ä£ÄâÆ÷
+		// ç»˜åˆ¶æ§åˆ¶å°æ¨¡æ‹Ÿå™¨
 		m_consoleSim->draw(m_sback.get(), 10, 10);
 
 		return true;
@@ -308,7 +583,7 @@ public:
 
 	void onReport(const std::basic_string<charT> & info)
 	{
-		// ½«´íÎóĞÅÏ¢´òÓ¡µ½¿ØÖÆÌ¨Ä£ÄâÆ÷£¬ÕâÀïÉÔÎ¢×÷ÁËÅĞ¶ÏÒÔ·ÀÖ¹´ğÓ¦ÖØ¸´ĞÅÏ¢
+		// å°†é”™è¯¯ä¿¡æ¯æ‰“å°åˆ°æ§åˆ¶å°æ¨¡æ‹Ÿå™¨ï¼Œè¿™é‡Œç¨å¾®ä½œäº†åˆ¤æ–­ä»¥é˜²æ­¢ç­”åº”é‡å¤ä¿¡æ¯
 		if(m_consoleSim->m_lines.empty() || info != m_consoleSim->m_lines.back())
 		{
 			m_consoleSim->report(info);
@@ -352,11 +627,14 @@ int APIENTRY WinMain(
 	LPSTR		/*lpCmdLine*/,
 	int			/*nCmdShow*/)
 {
+	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF & _CRTDBG_ALLOC_MEM_DF);
+
 	try
 	{
-		// ½¨Á¢Ò»¸öÓ¦ÓÃ³ÌĞò£¬ÒÔ 800 x 600 ´°¿ÚÄ£Ê½ÔËĞĞ
+		// å»ºç«‹ä¸€ä¸ªåº”ç”¨ç¨‹åºï¼Œä»¥ 800 x 600 çª—å£æ¨¡å¼è¿è¡Œ
 		MyGame game;
 		return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
+		//return game.run(my::Game::CONFIG_DESC(1680, 1050, my::Game::SM_FULLSCREEN32)); // ä¸è¦ä½¿ç”¨ SM_FULLSCREEN16ï¼Œå› ä¸ºè¿˜æ²¡å®ç° ^_^b
 	}
 	catch(t3d::Exception & e)
 	{
