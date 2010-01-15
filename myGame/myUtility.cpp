@@ -1761,7 +1761,7 @@ namespace my
 							T3D_CUSEXCEPT(_T("invalid texcoord.u"));
 					}
 
-					uvList.push_back(my::Vec2<real>((real)u, (real)(1 - v))); // ***
+					uvList.push_back(my::Vec2<real>((real)u, (real)(/*1 -*/ v))); // ***
 				}
 
 				if((int)uvList.size() != vertexcount)
@@ -3382,7 +3382,7 @@ namespace my
 						T3D_CUSEXCEPT(_T("invalid texcoord.u"));
 				}
 
-				pushUV((real)u, (real)(/*1 - */v)); // ***
+				pushUV((real)u, (real)(/*1 -*/ v)); // ***
 			}
 
 			if((int)getUVListSize() != vertexcount)

@@ -1242,7 +1242,7 @@ namespace my
 	//					T3D_CUSEXCEPT(_T("invalid texcoord.u"));
 	//			}
 
-	//			tmpObj.pushUV((real)u, (real)(1 - v)); // ***
+	//			tmpObj.pushUV((real)u, (real)(/*1 -*/ v)); // ***
 	//		}
 
 	//		if((int)tmpObj.getUVListSize() != vertexcount)
@@ -1368,44 +1368,44 @@ namespace my
 	//	return objPtrList;
 	//}
 
-	//void pushVertexByDirectionProject(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & dir,
-	//	const t3d::Vec4<real> & planePoint,
-	//	const t3d::Vec4<real> & planeNormal,
-	//	t3d::VertexList::const_iterator begin,
-	//	t3d::VertexList::const_iterator end,
-	//	const t3d::Mat4<real> & mmat)
-	//{
-	//	t3d::VertexList::const_iterator vert_iter = begin;
-	//	for(; vert_iter != end; vert_iter++)
-	//	{
-	//		rc->pushVertex(calculateLinePlaneIntersectionPoint(
-	//			*vert_iter * mmat,
-	//			dir,
-	//			planePoint,
-	//			planeNormal));
-	//	}
-	//}
+	void pushVertexByDirectionProject(
+		t3d::RenderContext * rc,
+		const t3d::Vec4<real> & dir,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal,
+		t3d::VertexList::const_iterator begin,
+		t3d::VertexList::const_iterator end,
+		const t3d::Mat4<real> & mmat)
+	{
+		t3d::VertexList::const_iterator vert_iter = begin;
+		for(; vert_iter != end; vert_iter++)
+		{
+			rc->pushVertex(calculateLinePlaneIntersectionPoint(
+				*vert_iter * mmat,
+				dir,
+				planePoint,
+				planeNormal));
+		}
+	}
 
-	//void pushVertexByPointProject(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & point,
-	//	const t3d::Vec4<real> & planePoint,
-	//	const t3d::Vec4<real> & planeNormal,
-	//	t3d::VertexList::const_iterator begin,
-	//	t3d::VertexList::const_iterator end,
-	//	const t3d::Mat4<real> & mmat)
-	//{
-	//	t3d::VertexList::const_iterator vert_iter = begin;
-	//	for(; vert_iter != end; vert_iter++)
-	//	{
-	//		t3d::Vec4<real> tmpVert = *vert_iter * mmat;
-	//		rc->pushVertex(calculateLinePlaneIntersectionPoint(
-	//			tmpVert,
-	//			t3d::vec3Sub(tmpVert, point),
-	//			planePoint,
-	//			planeNormal));
-	//	}
-	//}
+	void pushVertexByPointProject(
+		t3d::RenderContext * rc,
+		const t3d::Vec4<real> & point,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal,
+		t3d::VertexList::const_iterator begin,
+		t3d::VertexList::const_iterator end,
+		const t3d::Mat4<real> & mmat)
+	{
+		t3d::VertexList::const_iterator vert_iter = begin;
+		for(; vert_iter != end; vert_iter++)
+		{
+			t3d::Vec4<real> tmpVert = *vert_iter * mmat;
+			rc->pushVertex(calculateLinePlaneIntersectionPoint(
+				tmpVert,
+				t3d::vec3Sub(tmpVert, point),
+				planePoint,
+				planeNormal));
+		}
+	}
 }

@@ -348,23 +348,23 @@ namespace my
 	//ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
 	//	IOStream * meshStream);
 
-	//void pushVertexByDirectionProject(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & dir,
-	//	const t3d::Vec4<real> & planePoint,
-	//	const t3d::Vec4<real> & planeNormal,
-	//	t3d::VertexList::const_iterator begin,
-	//	t3d::VertexList::const_iterator end,
-	//	const t3d::Mat4<real> & mmat);
+	void pushVertexByDirectionProject(
+		t3d::RenderContext * rc,
+		const t3d::Vec4<real> & dir,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal,
+		t3d::VertexList::const_iterator begin,
+		t3d::VertexList::const_iterator end,
+		const t3d::Mat4<real> & mmat);
 
-	//void pushVertexByPointProject(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & point,
-	//	const t3d::Vec4<real> & planePoint,
-	//	const t3d::Vec4<real> & planeNormal,
-	//	t3d::VertexList::const_iterator begin,
-	//	t3d::VertexList::const_iterator end,
-	//	const t3d::Mat4<real> & mmat);
+	void pushVertexByPointProject(
+		t3d::RenderContext * rc,
+		const t3d::Vec4<real> & point,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal,
+		t3d::VertexList::const_iterator begin,
+		t3d::VertexList::const_iterator end,
+		const t3d::Mat4<real> & mmat);
 }
 
 #endif // __MYSCENE_H__
