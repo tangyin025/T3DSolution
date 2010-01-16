@@ -82,7 +82,7 @@ namespace my
 	public:
 		void registerDir(const std::basic_string<charT> & dir);
 
-		IOStream * openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode = _T("rb"));
+		IOStreamPtr openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode = _T("rb"));
 
 		std::basic_string<charT> findFile(const std::basic_string<charT> & fname);
 
