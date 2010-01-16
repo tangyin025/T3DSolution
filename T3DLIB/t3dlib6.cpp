@@ -7542,7 +7542,7 @@ namespace t3d
 		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
 		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
 	}
-#pragma warning(disable: 4100)
+//#pragma warning(disable: 4100)
 	void transformVertexList(
 		VertexList & vertexList,
 		const Mat4<real> & mmat)

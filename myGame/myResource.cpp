@@ -69,7 +69,7 @@ namespace my
 		m_dirList.push_back(dir);
 	}
 
-	IOStream * ResourceMgr::openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode /*= _T("rb")*/)
+	IOStreamPtr ResourceMgr::openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode /*= _T("rb")*/)
 	{
 		DirList::const_iterator iter = m_dirList.begin();
 		for(; iter != m_dirList.end(); iter++)
@@ -78,7 +78,7 @@ namespace my
 			FILE * handle;
 			if(NULL != (handle = fopen(full_path.c_str(), fmode.c_str())))
 			{
-				return new FileIOStream(handle);
+				return IOStreamPtr(new FileIOStream(handle));
 			}
 		}
 

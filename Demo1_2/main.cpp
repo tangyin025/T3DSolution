@@ -252,11 +252,11 @@ public:
 		// ======================================== TODO: BEGIN ========================================
 
 		// load 场景
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("office_tri_list.mesh.xml")));
+		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("office_tri_list.mesh.xml"));
 		m_scene = my::ObjectFromOgreMeshPtr(new my::ObjectFromOgreMesh(tmpStream.get()));
 
 		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png"))));
-		m_scene_t = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+		m_scene_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
 
 		// 创建 bsp 场景
 		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
@@ -265,14 +265,14 @@ public:
 		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
 
 		// load 角色模型
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml")));
+		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml"));
 		m_character = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres_hair.mesh.xml")));
+		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres_hair.mesh.xml"));
 		m_character_h = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
 
 		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png"))));
-		m_character_t = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+		m_character_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
 
 		// load 角色骨骼动画
 		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_anim_stand.skeleton.xml")));
@@ -290,7 +290,7 @@ public:
 		// load 天空球
 		m_skySphere = my::IndexSphereObjectPtr(new my::IndexSphereObject(50000.0f, 20, 20, true));
 		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("1316532925.jpg"))));
-		m_skySphere_t = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+		m_skySphere_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
 
 		//// load 背景音乐
 		//my::WavPtr tmpWav(my::ResourceMgr::getSingleton().openWav(_T("stationthrob.wav")));
