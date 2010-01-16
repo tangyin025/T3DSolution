@@ -8,632 +8,632 @@
 
 namespace t3d
 {
-	const VertexList & VertexListContext::getVertexList(void) const
-	{
-		return m_vertexList;
-	}
-
-	VertexList & VertexListContext::getVertexList(void)
-	{
-		return m_vertexList;
-	}
-
-	void VertexListContext::pushVertex(real x, real y, real z)
-	{
-		pushVertex(vec3Build(x, y, z));
-	}
-
-	void VertexListContext::pushVertex(real x, real y, real z, const Mat4<real> & mmat)
-	{
-		pushVertex(vec3Build(x, y, z), mmat);
-	}
-
-	void VertexListContext::pushVertex(VertexList::const_reference vertex)
-	{
-		getVertexList().push_back(vertex);
-	}
-
-	void VertexListContext::pushVertex(VertexList::const_reference vertex, const Mat4<real> & mmat)
-	{
-		getVertexList().push_back(vertex * mmat);
-	}
-
-	void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end)
-	{
-		getVertexList().insert(getVertexListEnd(), begin, end);
-	}
-
-	void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat)
-	{
-		assert(std::distance(begin, end) >= 0);
-
-		const VertexList::size_type previous_size = getVertexListSize();
-		const VertexList::difference_type inserted_size = previous_size + std::distance(begin, end);
-
-		resizeVertexList(inserted_size);
-		for(VertexList::difference_type i = previous_size; i < inserted_size; i++)
-		{
-			vertexAt(i) = *(begin + i) * mmat;
-		}
-	}
-
-	void VertexListContext::clearVertexList(void)
-	{
-		getVertexList().clear();
-	}
-
-	void VertexListContext::resizeVertexList(VertexList::size_type size)
-	{
-		getVertexList().resize(size);
-	}
-
-	VertexList::size_type VertexListContext::getVertexListSize(void) const
-	{
-		return getVertexList().size();
-	}
-
-	VertexList::reference VertexListContext::vertexAt(VertexList::size_type i)
-	{
-		assert(i < getVertexListSize());
-
-		return getVertexList()[i];
-	}
-
-	VertexList::const_reference VertexListContext::vertexAt(VertexList::size_type i) const
-	{
-		assert(i < getVertexListSize());
-
-		return getVertexList()[i];
-	}
-
-	VertexList::iterator VertexListContext::getVertexListBegin()
-	{
-		return getVertexList().begin();
-	}
-
-	VertexList::const_iterator VertexListContext::getVertexListBegin() const
-	{
-		return getVertexList().begin();
-	}
-
-	VertexList::iterator VertexListContext::getVertexListEnd()
-	{
-		return getVertexList().end();
-	}
-
-	VertexList::const_iterator VertexListContext::getVertexListEnd() const
-	{
-		return getVertexList().end();
-	}
-
-	const VertexIndexList & VertexIndexListContext::getVertexIndexList(void) const
-	{
-		return m_vertexIndexList;
-	}
-
-	VertexIndexList & VertexIndexListContext::getVertexIndexList(void)
-	{
-		return m_vertexIndexList;
-	}
-
-	void VertexIndexListContext::pushVertexIndex(VertexIndexList::const_reference index)
-	{
-		getVertexIndexList().push_back(index);
-	}
-
-	void VertexIndexListContext::pushVertexIndexList(VertexIndexList::const_iterator begin, VertexIndexList::const_iterator end)
-	{
-		getVertexIndexList().insert(getVertexIndexListEnd(), begin, end);
-	}
-
-	void VertexIndexListContext::clearVertexIndexList(void)
-	{
-		getVertexIndexList().clear();
-	}
-
-	void VertexIndexListContext::resizeVertexIndexList(VertexIndexList::size_type size)
-	{
-		getVertexIndexList().resize(size);
-	}
-
-	VertexIndexList::size_type VertexIndexListContext::getVertexIndexListSize(void) const
-	{
-		return getVertexIndexList().size();
-	}
-
-	VertexIndexList::reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i)
-	{
-		assert(i < getVertexIndexListSize());
-
-		return getVertexIndexList()[i];
-	}
-
-	VertexIndexList::const_reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i) const
-	{
-		assert(i < getVertexIndexListSize());
-
-		return getVertexIndexList()[i];
-	}
-
-	VertexIndexList::iterator VertexIndexListContext::getVertexIndexListBegin()
-	{
-		return getVertexIndexList().begin();
-	}
-
-	VertexIndexList::const_iterator VertexIndexListContext::getVertexIndexListBegin() const
-	{
-		return getVertexIndexList().begin();
-	}
-
-	VertexIndexList::iterator VertexIndexListContext::getVertexIndexListEnd()
-	{
-		return getVertexIndexList().end();
-	}
-
-	VertexIndexList::const_iterator VertexIndexListContext::getVertexIndexListEnd() const
-	{
-		return getVertexIndexList().end();
-	}
-
-	const NormalList & NormalListContext::getNormalList(void) const
-	{
-		return m_normalList;
-	}
-
-	NormalList & NormalListContext::getNormalList(void)
-	{
-		return m_normalList;
-	}
-
-	void NormalListContext::pushNormal(real x, real y, real z)
-	{
-		pushNormal(vec3Build(x, y, z));
-	}
-
-	void NormalListContext::pushNormal(real x, real y, real z, const Mat4<real> & mmat)
-	{
-		pushNormal(vec3Build(x, y, z), mmat);
-	}
-
-	void NormalListContext::pushNormal(NormalList::const_reference normal)
-	{
-		getNormalList().push_back(normal);
-	}
-
-	void NormalListContext::pushNormal(NormalList::const_reference normal, const Mat4<real> & mmat)
-	{
-		getNormalList().push_back(normal * mmat);
-	}
-
-	void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end)
-	{
-		getNormalList().insert(getNormalListEnd(), begin, end);
-	}
-
-	void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat)
-	{
-		assert(std::distance(begin, end) >= 0);
-
-		const NormalList::size_type previous_size = getNormalListSize();
-		const NormalList::difference_type inserted_size = previous_size + std::distance(begin, end);
-
-		resizeNormalList(inserted_size);
-		for(NormalList::difference_type i = previous_size; i < inserted_size; i++)
-		{
-			normalAt(i) = *(begin + i) * mmat;
-		}
-	}
-
-	void NormalListContext::clearNormalList(void)
-	{
-		getNormalList().clear();
-	}
-
-	void NormalListContext::resizeNormalList(NormalList::size_type size)
-	{
-		getNormalList().resize(size);
-	}
-
-	NormalList::size_type NormalListContext::getNormalListSize(void) const
-	{
-		return getNormalList().size();
-	}
-
-	NormalList::reference NormalListContext::normalAt(NormalList::size_type i)
-	{
-		assert(i < getNormalListSize());
-
-		return getNormalList()[i];
-	}
-
-	NormalList::const_reference NormalListContext::normalAt(NormalList::size_type i) const
-	{
-		assert(i < getNormalListSize());
-
-		return getNormalList()[i];
-	}
-
-	NormalList::iterator NormalListContext::getNormalListBegin()
-	{
-		return getNormalList().begin();
-	}
-
-	NormalList::const_iterator NormalListContext::getNormalListBegin() const
-	{
-		return getNormalList().begin();
-	}
-
-	NormalList::iterator NormalListContext::getNormalListEnd()
-	{
-		return getNormalList().end();
-	}
-
-	NormalList::const_iterator NormalListContext::getNormalListEnd() const
-	{
-		return getNormalList().end();
-	}
-
-	const UVList & UVListContext::getUVList(void) const
-	{
-		return m_uvList;
-	}
-
-	UVList & UVListContext::getUVList(void)
-	{
-		return m_uvList;
-	}
-
-	void UVListContext::pushUV(real u, real v)
-	{
-		pushUV(Vec2<real>(u, v));
-	}
-
-	void UVListContext::pushUV(UVList::const_reference uv)
-	{
-		getUVList().push_back(uv);
-	}
-
-	void UVListContext::pushUVList(UVList::const_iterator begin, UVList::const_iterator end)
-	{
-		getUVList().insert(getUVListEnd(), begin, end);
-	}
-
-	void UVListContext::clearUVList(void)
-	{
-		getUVList().clear();
-	}
-
-	void UVListContext::resizeUVList(UVList::size_type size)
-	{
-		getUVList().resize(size);
-	}
-
-	UVList::size_type UVListContext::getUVListSize(void) const
-	{
-		return getUVList().size();
-	}
-
-	UVList::reference UVListContext::uvAt(UVList::size_type i)
-	{
-		assert(i < getUVListSize());
-
-		return getUVList()[i];
-	}
-
-	UVList::const_reference UVListContext::uvAt(UVList::size_type i) const
-	{
-		assert(i < getUVListSize());
-
-		return getUVList()[i];
-	}
-
-	UVList::iterator UVListContext::getUVListBegin()
-	{
-		return getUVList().begin();
-	}
-
-	UVList::const_iterator UVListContext::getUVListBegin() const
-	{
-		return getUVList().begin();
-	}
-
-	UVList::iterator UVListContext::getUVListEnd()
-	{
-		return getUVList().end();
-	}
-
-	UVList::const_iterator UVListContext::getUVListEnd() const
-	{
-		return getUVList().end();
-	}
-
-	const ColorList & ColorListContext::getColorList(void) const
-	{
-		return m_colorList;
-	}
-
-	ColorList & ColorListContext::getColorList(void)
-	{
-		return m_colorList;
-	}
-
-	void ColorListContext::pushColor(real r, real g, real b, real a)
-	{
-		pushColor(Vec4<real>(r, g, b, a));
-	}
-
-	void ColorListContext::pushColor(ColorList::const_reference color)
-	{
-		m_colorList.push_back(color);
-	}
-
-	void ColorListContext::pushColorList(ColorList::const_iterator begin, ColorList::const_iterator end)
-	{
-		m_colorList.insert(getColorListEnd(), begin, end);
-	}
-
-	void ColorListContext::clearColorList(void)
-	{
-		m_colorList.clear();
-	}
-
-	void ColorListContext::resizeColorList(ColorList::size_type size)
-	{
-		m_colorList.resize(size);
-	}
-
-	void ColorListContext::resizeColorList(ColorList::size_type size, ColorList::const_reference color)
-	{
-		m_colorList.resize(size, color);
-	}
-
-	ColorList::size_type ColorListContext::getColorListSize(void) const
-	{
-		return m_colorList.size();
-	}
-
-	ColorList::reference ColorListContext::colorAt(ColorList::size_type i)
-	{
-		assert(i < getColorListSize());
-
-		return m_colorList[i];
-	}
-
-	ColorList::const_reference ColorListContext::colorAt(ColorList::size_type i) const
-	{
-		assert(i < getColorListSize());
-
-		return m_colorList[i];
-	}
-
-	ColorList::iterator ColorListContext::getColorListBegin()
-	{
-		return m_colorList.begin();
-	}
-
-	ColorList::const_iterator ColorListContext::getColorListBegin() const
-	{
-		return m_colorList.begin();
-	}
-
-	ColorList::iterator ColorListContext::getColorListEnd()
-	{
-		return m_colorList.end();
-	}
-
-	ColorList::const_iterator ColorListContext::getColorListEnd() const
-	{
-		return m_colorList.end();
-	}
-
-	void SurfaceContext::setSurfaceBuffer(void * pbuffer)
-	{
-		m_surfaceBuffer = pbuffer;
-	}
-
-	void SurfaceContext::setSurfaceBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
-	{
-		setSurfaceBuffer(pbuffer);
-		setSurfacePitch(pitch);
-		setSurfaceWidth(width);
-		setSurfaceHeight(height);
-	}
-
-	void * SurfaceContext::getSurfaceBuffer(void) const
-	{
-		return m_surfaceBuffer;
-	}
-
-	void SurfaceContext::setSurfacePitch(LONG pitch)
-	{
-		m_surfacePitch = pitch;
-	}
-
-	LONG SurfaceContext::getSurfacePitch(void) const
-	{
-		return m_surfacePitch;
-	}
-
-	void SurfaceContext::setSurfaceWidth(DWORD width)
-	{
-		m_surfaceWidth = width;
-	}
-
-	DWORD SurfaceContext::getSurfaceWidth(void) const
-	{
-		return m_surfaceWidth;
-	}
-
-	void SurfaceContext::setSurfaceHeight(DWORD height)
-	{
-		m_surfaceHeight = height;
-	}
-
-	DWORD SurfaceContext::getSurfaceHeight(void) const
-	{
-		return m_surfaceHeight;
-	}
-
-	SurfaceRef<uint16> SurfaceContext::getSurfaceRef16(void) const
-	{
-		return SurfaceRef<uint16>(static_cast<uint16*>(m_surfaceBuffer), m_surfacePitch);
-	}
-
-	SurfaceRef<uint32> SurfaceContext::getSurfaceRef32(void) const
-	{
-		return SurfaceRef<uint32>(static_cast<uint32*>(m_surfaceBuffer), m_surfacePitch);
-	}
-
-	void ZBufferContext::setZBufferBuffer(void * pbuffer)
-	{
-		m_zbufferBuffer = pbuffer;
-	}
-
-	void ZBufferContext::setZBufferBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
-	{
-		setZBufferBuffer(pbuffer);
-		setZBufferPitch(pitch);
-		setZBufferWidth(width);
-		setZBufferHeight(height);
-	}
-
-	void * ZBufferContext::getZBufferBuffer(void) const
-	{
-		return m_zbufferBuffer;
-	}
-
-	void ZBufferContext::setZBufferPitch(LONG pitch)
-	{
-		m_zbufferPitch = pitch;
-	}
-
-	LONG ZBufferContext::getZBufferPitch(void) const
-	{
-		return m_zbufferPitch;
-	}
-
-	void ZBufferContext::setZBufferWidth(DWORD width)
-	{
-		m_zbufferWidth = width;
-	}
-
-	DWORD ZBufferContext::getZBufferWidth(void) const
-	{
-		return m_zbufferWidth;
-	}
-
-	void ZBufferContext::setZBufferHeight(DWORD height)
-	{
-		m_zbufferHeight = height;
-	}
-
-	DWORD ZBufferContext::getZBufferHeight(void) const
-	{
-		return m_zbufferHeight;
-	}
-
-	SurfaceRef<fixp28> ZBufferContext::getZBufferRef28(void) const
-	{
-		return SurfaceRef<fixp28>(static_cast<fixp28*>(m_zbufferBuffer), m_zbufferPitch);
-	}
-
-	void TextureContext::setTextureBuffer(void * pbuffer)
-	{
-		m_textureBuffer = pbuffer;
-	}
-
-	void TextureContext::setTextureBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
-	{
-		setTextureBuffer(pbuffer);
-		setTexturePitch(pitch);
-		setTextureWidth(width);
-		setTextureHeight(height);
-	}
-
-	void * TextureContext::getTextureBuffer(void) const
-	{
-		return m_textureBuffer;
-	}
-
-	void TextureContext::setTexturePitch(LONG pitch)
-	{
-		m_texturePitch = pitch;
-	}
-
-	LONG TextureContext::getTexturePitch(void) const
-	{
-		return m_texturePitch;
-	}
-
-	void TextureContext::setTextureWidth(DWORD width)
-	{
-		m_textureWidth = width;
-	}
-
-	DWORD TextureContext::getTextureWidth(void) const
-	{
-		return m_textureWidth;
-	}
-
-	void TextureContext::setTextureHeight(DWORD height)
-	{
-		m_textureHeight = height;
-	}
-
-	DWORD TextureContext::getTextureHeight(void) const
-	{
-		return m_textureHeight;
-	}
-
-	SurfaceRef<uint16> TextureContext::getTextureRef16(void) const
-	{
-		return SurfaceRef<uint16>(static_cast<uint16*>(m_textureBuffer), m_texturePitch);
-	}
-
-	SurfaceRef<uint32> TextureContext::getTextureRef32(void) const
-	{
-		return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
-	}
-
-	void ClipperContext::setClipperRect(const CRect & clipper)
-	{
-		m_clipper = clipper;
-	}
-
-	const CRect & ClipperContext::getClipperRect(void) const
-	{
-		return m_clipper;
-	}
-
-	void MaterialContext::setMaterial(const MATERIAL & material)
-	{
-		m_material = material;
-	}
-
-	const MATERIAL & MaterialContext::getMaterial(void) const
-	{
-		return m_material;
-	}
-
-	void MaterialContext::setAmbient(const Vec4<real> & ambient)
-	{
-		m_material.ambient = ambient;
-	}
-
-	void MaterialContext::setDiffuse(const Vec4<real> & diffuse)
-	{
-		m_material.diffuse = diffuse;
-	}
-
-	void MaterialContext::setSpecular(const Vec4<real> & specular)
-	{
-		m_material.specular = specular;
-	}
-
-	void MaterialContext::setEmissive(const Vec4<real> & emissive)
-	{
-		m_material.emissive = emissive;
-	}
+	//const VertexList & VertexListContext::getVertexList(void) const
+	//{
+	//	return m_vertexList;
+	//}
+
+	//VertexList & VertexListContext::getVertexList(void)
+	//{
+	//	return m_vertexList;
+	//}
+
+	//void VertexListContext::pushVertex(real x, real y, real z)
+	//{
+	//	pushVertex(vec3Build(x, y, z));
+	//}
+
+	//void VertexListContext::pushVertex(real x, real y, real z, const Mat4<real> & mmat)
+	//{
+	//	pushVertex(vec3Build(x, y, z), mmat);
+	//}
+
+	//void VertexListContext::pushVertex(VertexList::const_reference vertex)
+	//{
+	//	getVertexList().push_back(vertex);
+	//}
+
+	//void VertexListContext::pushVertex(VertexList::const_reference vertex, const Mat4<real> & mmat)
+	//{
+	//	getVertexList().push_back(vertex * mmat);
+	//}
+
+	//void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end)
+	//{
+	//	getVertexList().insert(getVertexListEnd(), begin, end);
+	//}
+
+	//void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat)
+	//{
+	//	assert(std::distance(begin, end) >= 0);
+
+	//	const VertexList::size_type previous_size = getVertexListSize();
+	//	const VertexList::difference_type inserted_size = previous_size + std::distance(begin, end);
+
+	//	resizeVertexList(inserted_size);
+	//	for(VertexList::difference_type i = previous_size; i < inserted_size; i++)
+	//	{
+	//		vertexAt(i) = *(begin + i) * mmat;
+	//	}
+	//}
+
+	//void VertexListContext::clearVertexList(void)
+	//{
+	//	getVertexList().clear();
+	//}
+
+	//void VertexListContext::resizeVertexList(VertexList::size_type size)
+	//{
+	//	getVertexList().resize(size);
+	//}
+
+	//VertexList::size_type VertexListContext::getVertexListSize(void) const
+	//{
+	//	return getVertexList().size();
+	//}
+
+	//VertexList::reference VertexListContext::vertexAt(VertexList::size_type i)
+	//{
+	//	assert(i < getVertexListSize());
+
+	//	return getVertexList()[i];
+	//}
+
+	//VertexList::const_reference VertexListContext::vertexAt(VertexList::size_type i) const
+	//{
+	//	assert(i < getVertexListSize());
+
+	//	return getVertexList()[i];
+	//}
+
+	//VertexList::iterator VertexListContext::getVertexListBegin()
+	//{
+	//	return getVertexList().begin();
+	//}
+
+	//VertexList::const_iterator VertexListContext::getVertexListBegin() const
+	//{
+	//	return getVertexList().begin();
+	//}
+
+	//VertexList::iterator VertexListContext::getVertexListEnd()
+	//{
+	//	return getVertexList().end();
+	//}
+
+	//VertexList::const_iterator VertexListContext::getVertexListEnd() const
+	//{
+	//	return getVertexList().end();
+	//}
+
+	//const VertexIndexList & VertexIndexListContext::getVertexIndexList(void) const
+	//{
+	//	return m_vertexIndexList;
+	//}
+
+	//VertexIndexList & VertexIndexListContext::getVertexIndexList(void)
+	//{
+	//	return m_vertexIndexList;
+	//}
+
+	//void VertexIndexListContext::pushVertexIndex(VertexIndexList::const_reference index)
+	//{
+	//	getVertexIndexList().push_back(index);
+	//}
+
+	//void VertexIndexListContext::pushVertexIndexList(VertexIndexList::const_iterator begin, VertexIndexList::const_iterator end)
+	//{
+	//	getVertexIndexList().insert(getVertexIndexListEnd(), begin, end);
+	//}
+
+	//void VertexIndexListContext::clearVertexIndexList(void)
+	//{
+	//	getVertexIndexList().clear();
+	//}
+
+	//void VertexIndexListContext::resizeVertexIndexList(VertexIndexList::size_type size)
+	//{
+	//	getVertexIndexList().resize(size);
+	//}
+
+	//VertexIndexList::size_type VertexIndexListContext::getVertexIndexListSize(void) const
+	//{
+	//	return getVertexIndexList().size();
+	//}
+
+	//VertexIndexList::reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i)
+	//{
+	//	assert(i < getVertexIndexListSize());
+
+	//	return getVertexIndexList()[i];
+	//}
+
+	//VertexIndexList::const_reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i) const
+	//{
+	//	assert(i < getVertexIndexListSize());
+
+	//	return getVertexIndexList()[i];
+	//}
+
+	//VertexIndexList::iterator VertexIndexListContext::getVertexIndexListBegin()
+	//{
+	//	return getVertexIndexList().begin();
+	//}
+
+	//VertexIndexList::const_iterator VertexIndexListContext::getVertexIndexListBegin() const
+	//{
+	//	return getVertexIndexList().begin();
+	//}
+
+	//VertexIndexList::iterator VertexIndexListContext::getVertexIndexListEnd()
+	//{
+	//	return getVertexIndexList().end();
+	//}
+
+	//VertexIndexList::const_iterator VertexIndexListContext::getVertexIndexListEnd() const
+	//{
+	//	return getVertexIndexList().end();
+	//}
+
+	//const NormalList & NormalListContext::getNormalList(void) const
+	//{
+	//	return m_normalList;
+	//}
+
+	//NormalList & NormalListContext::getNormalList(void)
+	//{
+	//	return m_normalList;
+	//}
+
+	//void NormalListContext::pushNormal(real x, real y, real z)
+	//{
+	//	pushNormal(vec3Build(x, y, z));
+	//}
+
+	//void NormalListContext::pushNormal(real x, real y, real z, const Mat4<real> & mmat)
+	//{
+	//	pushNormal(vec3Build(x, y, z), mmat);
+	//}
+
+	//void NormalListContext::pushNormal(NormalList::const_reference normal)
+	//{
+	//	getNormalList().push_back(normal);
+	//}
+
+	//void NormalListContext::pushNormal(NormalList::const_reference normal, const Mat4<real> & mmat)
+	//{
+	//	getNormalList().push_back(normal * mmat);
+	//}
+
+	//void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end)
+	//{
+	//	getNormalList().insert(getNormalListEnd(), begin, end);
+	//}
+
+	//void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat)
+	//{
+	//	assert(std::distance(begin, end) >= 0);
+
+	//	const NormalList::size_type previous_size = getNormalListSize();
+	//	const NormalList::difference_type inserted_size = previous_size + std::distance(begin, end);
+
+	//	resizeNormalList(inserted_size);
+	//	for(NormalList::difference_type i = previous_size; i < inserted_size; i++)
+	//	{
+	//		normalAt(i) = *(begin + i) * mmat;
+	//	}
+	//}
+
+	//void NormalListContext::clearNormalList(void)
+	//{
+	//	getNormalList().clear();
+	//}
+
+	//void NormalListContext::resizeNormalList(NormalList::size_type size)
+	//{
+	//	getNormalList().resize(size);
+	//}
+
+	//NormalList::size_type NormalListContext::getNormalListSize(void) const
+	//{
+	//	return getNormalList().size();
+	//}
+
+	//NormalList::reference NormalListContext::normalAt(NormalList::size_type i)
+	//{
+	//	assert(i < getNormalListSize());
+
+	//	return getNormalList()[i];
+	//}
+
+	//NormalList::const_reference NormalListContext::normalAt(NormalList::size_type i) const
+	//{
+	//	assert(i < getNormalListSize());
+
+	//	return getNormalList()[i];
+	//}
+
+	//NormalList::iterator NormalListContext::getNormalListBegin()
+	//{
+	//	return getNormalList().begin();
+	//}
+
+	//NormalList::const_iterator NormalListContext::getNormalListBegin() const
+	//{
+	//	return getNormalList().begin();
+	//}
+
+	//NormalList::iterator NormalListContext::getNormalListEnd()
+	//{
+	//	return getNormalList().end();
+	//}
+
+	//NormalList::const_iterator NormalListContext::getNormalListEnd() const
+	//{
+	//	return getNormalList().end();
+	//}
+
+	//const UVList & UVListContext::getUVList(void) const
+	//{
+	//	return m_uvList;
+	//}
+
+	//UVList & UVListContext::getUVList(void)
+	//{
+	//	return m_uvList;
+	//}
+
+	//void UVListContext::pushUV(real u, real v)
+	//{
+	//	pushUV(Vec2<real>(u, v));
+	//}
+
+	//void UVListContext::pushUV(UVList::const_reference uv)
+	//{
+	//	getUVList().push_back(uv);
+	//}
+
+	//void UVListContext::pushUVList(UVList::const_iterator begin, UVList::const_iterator end)
+	//{
+	//	getUVList().insert(getUVListEnd(), begin, end);
+	//}
+
+	//void UVListContext::clearUVList(void)
+	//{
+	//	getUVList().clear();
+	//}
+
+	//void UVListContext::resizeUVList(UVList::size_type size)
+	//{
+	//	getUVList().resize(size);
+	//}
+
+	//UVList::size_type UVListContext::getUVListSize(void) const
+	//{
+	//	return getUVList().size();
+	//}
+
+	//UVList::reference UVListContext::uvAt(UVList::size_type i)
+	//{
+	//	assert(i < getUVListSize());
+
+	//	return getUVList()[i];
+	//}
+
+	//UVList::const_reference UVListContext::uvAt(UVList::size_type i) const
+	//{
+	//	assert(i < getUVListSize());
+
+	//	return getUVList()[i];
+	//}
+
+	//UVList::iterator UVListContext::getUVListBegin()
+	//{
+	//	return getUVList().begin();
+	//}
+
+	//UVList::const_iterator UVListContext::getUVListBegin() const
+	//{
+	//	return getUVList().begin();
+	//}
+
+	//UVList::iterator UVListContext::getUVListEnd()
+	//{
+	//	return getUVList().end();
+	//}
+
+	//UVList::const_iterator UVListContext::getUVListEnd() const
+	//{
+	//	return getUVList().end();
+	//}
+
+	//const ColorList & ColorListContext::getColorList(void) const
+	//{
+	//	return m_colorList;
+	//}
+
+	//ColorList & ColorListContext::getColorList(void)
+	//{
+	//	return m_colorList;
+	//}
+
+	//void ColorListContext::pushColor(real r, real g, real b, real a)
+	//{
+	//	pushColor(Vec4<real>(r, g, b, a));
+	//}
+
+	//void ColorListContext::pushColor(ColorList::const_reference color)
+	//{
+	//	m_colorList.push_back(color);
+	//}
+
+	//void ColorListContext::pushColorList(ColorList::const_iterator begin, ColorList::const_iterator end)
+	//{
+	//	m_colorList.insert(getColorListEnd(), begin, end);
+	//}
+
+	//void ColorListContext::clearColorList(void)
+	//{
+	//	m_colorList.clear();
+	//}
+
+	//void ColorListContext::resizeColorList(ColorList::size_type size)
+	//{
+	//	m_colorList.resize(size);
+	//}
+
+	//void ColorListContext::resizeColorList(ColorList::size_type size, ColorList::const_reference color)
+	//{
+	//	m_colorList.resize(size, color);
+	//}
+
+	//ColorList::size_type ColorListContext::getColorListSize(void) const
+	//{
+	//	return m_colorList.size();
+	//}
+
+	//ColorList::reference ColorListContext::colorAt(ColorList::size_type i)
+	//{
+	//	assert(i < getColorListSize());
+
+	//	return m_colorList[i];
+	//}
+
+	//ColorList::const_reference ColorListContext::colorAt(ColorList::size_type i) const
+	//{
+	//	assert(i < getColorListSize());
+
+	//	return m_colorList[i];
+	//}
+
+	//ColorList::iterator ColorListContext::getColorListBegin()
+	//{
+	//	return m_colorList.begin();
+	//}
+
+	//ColorList::const_iterator ColorListContext::getColorListBegin() const
+	//{
+	//	return m_colorList.begin();
+	//}
+
+	//ColorList::iterator ColorListContext::getColorListEnd()
+	//{
+	//	return m_colorList.end();
+	//}
+
+	//ColorList::const_iterator ColorListContext::getColorListEnd() const
+	//{
+	//	return m_colorList.end();
+	//}
+
+	//void SurfaceContext::setSurfaceBuffer(void * pbuffer)
+	//{
+	//	m_surfaceBuffer = pbuffer;
+	//}
+
+	//void SurfaceContext::setSurfaceBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+	//{
+	//	setSurfaceBuffer(pbuffer);
+	//	setSurfacePitch(pitch);
+	//	setSurfaceWidth(width);
+	//	setSurfaceHeight(height);
+	//}
+
+	//void * SurfaceContext::getSurfaceBuffer(void) const
+	//{
+	//	return m_surfaceBuffer;
+	//}
+
+	//void SurfaceContext::setSurfacePitch(LONG pitch)
+	//{
+	//	m_surfacePitch = pitch;
+	//}
+
+	//LONG SurfaceContext::getSurfacePitch(void) const
+	//{
+	//	return m_surfacePitch;
+	//}
+
+	//void SurfaceContext::setSurfaceWidth(DWORD width)
+	//{
+	//	m_surfaceWidth = width;
+	//}
+
+	//DWORD SurfaceContext::getSurfaceWidth(void) const
+	//{
+	//	return m_surfaceWidth;
+	//}
+
+	//void SurfaceContext::setSurfaceHeight(DWORD height)
+	//{
+	//	m_surfaceHeight = height;
+	//}
+
+	//DWORD SurfaceContext::getSurfaceHeight(void) const
+	//{
+	//	return m_surfaceHeight;
+	//}
+
+	//SurfaceRef<uint16> SurfaceContext::getSurfaceRef16(void) const
+	//{
+	//	return SurfaceRef<uint16>(static_cast<uint16*>(m_surfaceBuffer), m_surfacePitch);
+	//}
+
+	//SurfaceRef<uint32> SurfaceContext::getSurfaceRef32(void) const
+	//{
+	//	return SurfaceRef<uint32>(static_cast<uint32*>(m_surfaceBuffer), m_surfacePitch);
+	//}
+
+	//void ZBufferContext::setZBufferBuffer(void * pbuffer)
+	//{
+	//	m_zbufferBuffer = pbuffer;
+	//}
+
+	//void ZBufferContext::setZBufferBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+	//{
+	//	setZBufferBuffer(pbuffer);
+	//	setZBufferPitch(pitch);
+	//	setZBufferWidth(width);
+	//	setZBufferHeight(height);
+	//}
+
+	//void * ZBufferContext::getZBufferBuffer(void) const
+	//{
+	//	return m_zbufferBuffer;
+	//}
+
+	//void ZBufferContext::setZBufferPitch(LONG pitch)
+	//{
+	//	m_zbufferPitch = pitch;
+	//}
+
+	//LONG ZBufferContext::getZBufferPitch(void) const
+	//{
+	//	return m_zbufferPitch;
+	//}
+
+	//void ZBufferContext::setZBufferWidth(DWORD width)
+	//{
+	//	m_zbufferWidth = width;
+	//}
+
+	//DWORD ZBufferContext::getZBufferWidth(void) const
+	//{
+	//	return m_zbufferWidth;
+	//}
+
+	//void ZBufferContext::setZBufferHeight(DWORD height)
+	//{
+	//	m_zbufferHeight = height;
+	//}
+
+	//DWORD ZBufferContext::getZBufferHeight(void) const
+	//{
+	//	return m_zbufferHeight;
+	//}
+
+	//SurfaceRef<fixp28> ZBufferContext::getZBufferRef28(void) const
+	//{
+	//	return SurfaceRef<fixp28>(static_cast<fixp28*>(m_zbufferBuffer), m_zbufferPitch);
+	//}
+
+	//void TextureContext::setTextureBuffer(void * pbuffer)
+	//{
+	//	m_textureBuffer = pbuffer;
+	//}
+
+	//void TextureContext::setTextureBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+	//{
+	//	setTextureBuffer(pbuffer);
+	//	setTexturePitch(pitch);
+	//	setTextureWidth(width);
+	//	setTextureHeight(height);
+	//}
+
+	//void * TextureContext::getTextureBuffer(void) const
+	//{
+	//	return m_textureBuffer;
+	//}
+
+	//void TextureContext::setTexturePitch(LONG pitch)
+	//{
+	//	m_texturePitch = pitch;
+	//}
+
+	//LONG TextureContext::getTexturePitch(void) const
+	//{
+	//	return m_texturePitch;
+	//}
+
+	//void TextureContext::setTextureWidth(DWORD width)
+	//{
+	//	m_textureWidth = width;
+	//}
+
+	//DWORD TextureContext::getTextureWidth(void) const
+	//{
+	//	return m_textureWidth;
+	//}
+
+	//void TextureContext::setTextureHeight(DWORD height)
+	//{
+	//	m_textureHeight = height;
+	//}
+
+	//DWORD TextureContext::getTextureHeight(void) const
+	//{
+	//	return m_textureHeight;
+	//}
+
+	//SurfaceRef<uint16> TextureContext::getTextureRef16(void) const
+	//{
+	//	return SurfaceRef<uint16>(static_cast<uint16*>(m_textureBuffer), m_texturePitch);
+	//}
+
+	//SurfaceRef<uint32> TextureContext::getTextureRef32(void) const
+	//{
+	//	return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
+	//}
+
+	//void ClipperContext::setClipperRect(const CRect & clipper)
+	//{
+	//	m_clipper = clipper;
+	//}
+
+	//const CRect & ClipperContext::getClipperRect(void) const
+	//{
+	//	return m_clipper;
+	//}
+
+	//void MaterialContext::setMaterial(const MATERIAL & material)
+	//{
+	//	m_material = material;
+	//}
+
+	//const MATERIAL & MaterialContext::getMaterial(void) const
+	//{
+	//	return m_material;
+	//}
+
+	//void MaterialContext::setAmbient(const Vec4<real> & ambient)
+	//{
+	//	m_material.ambient = ambient;
+	//}
+
+	//void MaterialContext::setDiffuse(const Vec4<real> & diffuse)
+	//{
+	//	m_material.diffuse = diffuse;
+	//}
+
+	//void MaterialContext::setSpecular(const Vec4<real> & specular)
+	//{
+	//	m_material.specular = specular;
+	//}
+
+	//void MaterialContext::setEmissive(const Vec4<real> & emissive)
+	//{
+	//	m_material.emissive = emissive;
+	//}
 
 	LIGHT LightListContext::buildLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
 	{
@@ -724,85 +724,85 @@ namespace t3d
 		return Vec4<real>(0, 0, 0, 0);
 	}
 
-	const LightList & LightListContext::getLightList(void) const
-	{
-		return m_lightList;
-	}
+	//const LightList & LightListContext::getLightList(void) const
+	//{
+	//	return m_lightList;
+	//}
 
-	LightList & LightListContext::getLightList(void)
-	{
-		return m_lightList;
-	}
+	//LightList & LightListContext::getLightList(void)
+	//{
+	//	return m_lightList;
+	//}
 
-	size_t LightListContext::pushLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
-	{
-		m_lightList.push_back(buildLightAmbient(ambient, state));
+	//size_t LightListContext::pushLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
+	//{
+	//	m_lightList.push_back(buildLightAmbient(ambient, state));
 
-		return getLightListSize() - 1;
-	};
+	//	return getLightListSize() - 1;
+	//};
 
-	size_t LightListContext::pushLightDirectional(const Vec4<real> & diffuse, const Vec4<real> dir, LIGHT_STATE state /*= LS_ON*/)
-	{
-		m_lightList.push_back(buildLightDirectional(diffuse, dir, state));
+	//size_t LightListContext::pushLightDirectional(const Vec4<real> & diffuse, const Vec4<real> dir, LIGHT_STATE state /*= LS_ON*/)
+	//{
+	//	m_lightList.push_back(buildLightDirectional(diffuse, dir, state));
 
-		return getLightListSize() - 1;
-	};
+	//	return getLightListSize() - 1;
+	//};
 
-	size_t LightListContext::pushLightPoint(const Vec4<real> & diffuse, const Vec4<real> pos, real kc /*= 1.0f*/, real kl /*= 0.001f*/, real kq /*= 0.00001f*/, LIGHT_STATE state /*= LS_ON*/)
-	{
-		m_lightList.push_back(buildLightPoint(diffuse, pos, kc, kl, kq, state));
+	//size_t LightListContext::pushLightPoint(const Vec4<real> & diffuse, const Vec4<real> pos, real kc /*= 1.0f*/, real kl /*= 0.001f*/, real kq /*= 0.00001f*/, LIGHT_STATE state /*= LS_ON*/)
+	//{
+	//	m_lightList.push_back(buildLightPoint(diffuse, pos, kc, kl, kq, state));
 
-		return getLightListSize() - 1;
-	};
+	//	return getLightListSize() - 1;
+	//};
 
-	void LightListContext::clearLightList(void)
-	{
-		m_lightList.clear();
-	}
+	//void LightListContext::clearLightList(void)
+	//{
+	//	m_lightList.clear();
+	//}
 
-	void LightListContext::resizeLightList(LightList::size_type size)
-	{
-		m_lightList.resize(size);
-	}
+	//void LightListContext::resizeLightList(LightList::size_type size)
+	//{
+	//	m_lightList.resize(size);
+	//}
 
-	LightList::size_type LightListContext::getLightListSize(void) const
-	{
-		return m_lightList.size();
-	}
+	//LightList::size_type LightListContext::getLightListSize(void) const
+	//{
+	//	return m_lightList.size();
+	//}
 
-	LightList::reference LightListContext::lightAt(LightList::size_type i)
-	{
-		assert(i < getLightListSize());
+	//LightList::reference LightListContext::lightAt(LightList::size_type i)
+	//{
+	//	assert(i < getLightListSize());
 
-		return m_lightList[i];
-	}
+	//	return m_lightList[i];
+	//}
 
-	LightList::const_reference LightListContext::lightAt(LightList::size_type i) const
-	{
-		assert(i < getLightListSize());
+	//LightList::const_reference LightListContext::lightAt(LightList::size_type i) const
+	//{
+	//	assert(i < getLightListSize());
 
-		return m_lightList[i];
-	}
+	//	return m_lightList[i];
+	//}
 
-	LightList::iterator LightListContext::getLightListBegin()
-	{
-		return m_lightList.begin();
-	}
+	//LightList::iterator LightListContext::getLightListBegin()
+	//{
+	//	return m_lightList.begin();
+	//}
 
-	LightList::const_iterator LightListContext::getLightListBegin() const
-	{
-		return m_lightList.begin();
-	}
+	//LightList::const_iterator LightListContext::getLightListBegin() const
+	//{
+	//	return m_lightList.begin();
+	//}
 
-	LightList::iterator LightListContext::getLightListEnd()
-	{
-		return m_lightList.end();
-	}
+	//LightList::iterator LightListContext::getLightListEnd()
+	//{
+	//	return m_lightList.end();
+	//}
 
-	LightList::const_iterator LightListContext::getLightListEnd() const
-	{
-		return m_lightList.end();
-	}
+	//LightList::const_iterator LightListContext::getLightListEnd() const
+	//{
+	//	return m_lightList.end();
+	//}
 
 	Mat4<real> CameraContext::buildCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
 	{
@@ -886,159 +886,159 @@ namespace t3d
 			return buildCameraProjectionFOVHeight(fov, width, height);
 	}
 
-	real CameraContext::calculateCameraHalfFovX(const Vec2<real> & proj)
-	{
-		return atan(1 / proj.x);
-	}
+	//real CameraContext::calculateCameraHalfFovX(const Vec2<real> & proj)
+	//{
+	//	return atan(1 / proj.x);
+	//}
 
-	real CameraContext::calculateCameraHalfFovY(const Vec2<real> & proj)
-	{
-		return atan(1 / proj.y);
-	}
+	//real CameraContext::calculateCameraHalfFovY(const Vec2<real> & proj)
+	//{
+	//	return atan(1 / proj.y);
+	//}
 
-	real CameraContext::calculateCameraMaxHalfFov(const Vec2<real> & proj)
-	{
-		return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
-	}
+	//real CameraContext::calculateCameraMaxHalfFov(const Vec2<real> & proj)
+	//{
+	//	return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
+	//}
 
-	Vec4<real> CameraContext::calculateCameraDirection(const Mat4<real> & mcam)
-	{
-		return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
-	}
+	//Vec4<real> CameraContext::calculateCameraDirection(const Mat4<real> & mcam)
+	//{
+	//	return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
+	//}
 
-	void CameraContext::setCameraMatrix(const Mat4<real> & mcam)
-	{
-		m_camera.mcam = mcam;
-	}
+	//void CameraContext::setCameraMatrix(const Mat4<real> & mcam)
+	//{
+	//	m_camera.mcam = mcam;
+	//}
 
-	const Mat4<real> & CameraContext::getCameraMatrix(void) const
-	{
-		return m_camera.mcam;
-	}
+	//const Mat4<real> & CameraContext::getCameraMatrix(void) const
+	//{
+	//	return m_camera.mcam;
+	//}
 
-	void CameraContext::setCameraProjection(const Vec2<real> & proj)
-	{
-		m_camera.proj = proj;
-	}
+	//void CameraContext::setCameraProjection(const Vec2<real> & proj)
+	//{
+	//	m_camera.proj = proj;
+	//}
 
-	const Vec2<real> & CameraContext::getCameraProjection(void) const
-	{
-		return m_camera.proj;
-	}
+	//const Vec2<real> & CameraContext::getCameraProjection(void) const
+	//{
+	//	return m_camera.proj;
+	//}
 
-	void CameraContext::setCameraNearZ(real nz)
-	{
-		m_camera.nz = nz;
-	}
+	//void CameraContext::setCameraNearZ(real nz)
+	//{
+	//	m_camera.nz = nz;
+	//}
 
-	real CameraContext::getCameraNearZ(void) const
-	{
-		return m_camera.nz;
-	}
+	//real CameraContext::getCameraNearZ(void) const
+	//{
+	//	return m_camera.nz;
+	//}
 
-	void CameraContext::setCameraFarZ(real fz)
-	{
-		m_camera.fz = fz;
-	}
+	//void CameraContext::setCameraFarZ(real fz)
+	//{
+	//	m_camera.fz = fz;
+	//}
 
-	real CameraContext::getCameraFarZ(void) const
-	{
-		return m_camera.fz;
-	}
+	//real CameraContext::getCameraFarZ(void) const
+	//{
+	//	return m_camera.fz;
+	//}
 
-	void CameraContext::setViewport(const CRect & viewport)
-	{
-		m_camera.viewport = viewport;
-	}
+	//void CameraContext::setViewport(const CRect & viewport)
+	//{
+	//	m_camera.viewport = viewport;
+	//}
 
-	const CRect & CameraContext::getViewport(void) const
-	{
-		return m_camera.viewport;
-	}
+	//const CRect & CameraContext::getViewport(void) const
+	//{
+	//	return m_camera.viewport;
+	//}
 
-	Vec4<real> CameraContext::getCameraPosition(void) const
-	{
-		return mat3GetRow3(getCameraMatrix().inverse());
-	}
+	//Vec4<real> CameraContext::getCameraPosition(void) const
+	//{
+	//	return mat3GetRow3(getCameraMatrix().inverse());
+	//}
 
-	bool TriangleStateListContext::isTriVisible(TRI_STATE state)
-	{
-		return state == TS_ACTIVE || state == TS_CLIPPED; //|| state == TS_LARGE_CLIPPED;
-	}
+	//bool TriangleStateListContext::isTriVisible(TRI_STATE state)
+	//{
+	//	return state == TS_ACTIVE || state == TS_CLIPPED; //|| state == TS_LARGE_CLIPPED;
+	//}
 
-	const TriStateList & TriangleStateListContext::getTriStateList(void) const
-	{
-		return m_triStateList;
-	}
+	//const TriStateList & TriangleStateListContext::getTriStateList(void) const
+	//{
+	//	return m_triStateList;
+	//}
 
-	TriStateList & TriangleStateListContext::getTriStateList(void)
-	{
-		return m_triStateList;
-	}
+	//TriStateList & TriangleStateListContext::getTriStateList(void)
+	//{
+	//	return m_triStateList;
+	//}
 
-	void TriangleStateListContext::pushTriState(TRI_STATE state)
-	{
-		m_triStateList.push_back(state);
-	}
+	//void TriangleStateListContext::pushTriState(TRI_STATE state)
+	//{
+	//	m_triStateList.push_back(state);
+	//}
 
-	void TriangleStateListContext::pushTriStateList(TriStateList::const_iterator begin, TriStateList::const_iterator end)
-	{
-		m_triStateList.insert(getTriStateListEnd(), begin, end);
-	}
+	//void TriangleStateListContext::pushTriStateList(TriStateList::const_iterator begin, TriStateList::const_iterator end)
+	//{
+	//	m_triStateList.insert(getTriStateListEnd(), begin, end);
+	//}
 
-	void TriangleStateListContext::clearTriStateList(void)
-	{
-		m_triStateList.clear();
-	}
+	//void TriangleStateListContext::clearTriStateList(void)
+	//{
+	//	m_triStateList.clear();
+	//}
 
-	void TriangleStateListContext::resizeTriStateList(TriStateList::size_type size)
-	{
-		m_triStateList.resize(size);
-	}
+	//void TriangleStateListContext::resizeTriStateList(TriStateList::size_type size)
+	//{
+	//	m_triStateList.resize(size);
+	//}
 
-	void TriangleStateListContext::resizeTriStateList(TriStateList::size_type size, TriStateList::const_reference state)
-	{
-		m_triStateList.resize(size, state);
-	}
+	//void TriangleStateListContext::resizeTriStateList(TriStateList::size_type size, TriStateList::const_reference state)
+	//{
+	//	m_triStateList.resize(size, state);
+	//}
 
-	TriStateList::size_type TriangleStateListContext::getTriStateListSize(void) const
-	{
-		return m_triStateList.size();
-	}
+	//TriStateList::size_type TriangleStateListContext::getTriStateListSize(void) const
+	//{
+	//	return m_triStateList.size();
+	//}
 
-	TriStateList::reference TriangleStateListContext::triStateAt(TriStateList::size_type i)
-	{
-		assert(i < getTriStateListSize());
+	//TriStateList::reference TriangleStateListContext::triStateAt(TriStateList::size_type i)
+	//{
+	//	assert(i < getTriStateListSize());
 
-		return m_triStateList[i];
-	}
+	//	return m_triStateList[i];
+	//}
 
-	TriStateList::const_reference TriangleStateListContext::triStateAt(TriStateList::size_type i) const
-	{
-		assert(i < getTriStateListSize());
+	//TriStateList::const_reference TriangleStateListContext::triStateAt(TriStateList::size_type i) const
+	//{
+	//	assert(i < getTriStateListSize());
 
-		return m_triStateList[i];
-	}
+	//	return m_triStateList[i];
+	//}
 
-	TriStateList::iterator TriangleStateListContext::getTriStateListBegin()
-	{
-		return m_triStateList.begin();
-	}
+	//TriStateList::iterator TriangleStateListContext::getTriStateListBegin()
+	//{
+	//	return m_triStateList.begin();
+	//}
 
-	TriStateList::const_iterator TriangleStateListContext::getTriStateListBegin() const
-	{
-		return m_triStateList.begin();
-	}
+	//TriStateList::const_iterator TriangleStateListContext::getTriStateListBegin() const
+	//{
+	//	return m_triStateList.begin();
+	//}
 
-	TriStateList::iterator TriangleStateListContext::getTriStateListEnd()
-	{
-		return m_triStateList.end();
-	}
+	//TriStateList::iterator TriangleStateListContext::getTriStateListEnd()
+	//{
+	//	return m_triStateList.end();
+	//}
 
-	TriStateList::const_iterator TriangleStateListContext::getTriStateListEnd() const
-	{
-		return m_triStateList.end();
-	}
+	//TriStateList::const_iterator TriangleStateListContext::getTriStateListEnd() const
+	//{
+	//	return m_triStateList.end();
+	//}
 
 	//TRI_STATE RenderLineListZBufferRW::zClipLineAtCamera(const size_t index)
 	//{

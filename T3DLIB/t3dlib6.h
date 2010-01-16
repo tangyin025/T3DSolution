@@ -28,39 +28,103 @@ namespace t3d
 		VertexList m_vertexList;
 
 	public:
-		const VertexList & getVertexList(void) const;
+		const VertexList & getVertexList(void) const
+		{
+			return m_vertexList;
+		}
 
-		VertexList & getVertexList(void);
+		VertexList & getVertexList(void)
+		{
+			return m_vertexList;
+		}
 
-		void pushVertex(real x, real y, real z);
+		void pushVertex(real x, real y, real z)
+		{
+			pushVertex(vec3Build(x, y, z));
+		}
 
-		void pushVertex(real x, real y, real z, const Mat4<real> & mmat);
+		void pushVertex(real x, real y, real z, const Mat4<real> & mmat)
+		{
+			pushVertex(vec3Build(x, y, z), mmat);
+		}
 
-		void pushVertex(VertexList::const_reference vertex);
+		void pushVertex(VertexList::const_reference vertex)
+		{
+			m_vertexList.push_back(vertex);
+		}
 
-		void pushVertex(VertexList::const_reference vertex, const Mat4<real> & mmat);
+		void pushVertex(VertexList::const_reference vertex, const Mat4<real> & mmat)
+		{
+			m_vertexList.push_back(vertex * mmat);
+		}
 
-		void pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end);
+		void pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end)
+		{
+			m_vertexList.insert(getVertexListEnd(), begin, end);
+		}
 
-		void pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat);
+		void pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat)
+		{
+			assert(std::distance(begin, end) >= 0);
 
-		void clearVertexList(void);
+			const VertexList::size_type previous_size = getVertexListSize();
+			const VertexList::difference_type inserted_size = previous_size + std::distance(begin, end);
 
-		void resizeVertexList(VertexList::size_type size);
+			resizeVertexList(inserted_size);
+			for(VertexList::difference_type i = previous_size; i < inserted_size; i++)
+			{
+				vertexAt(i) = *(begin + i) * mmat;
+			}
+		}
 
-		VertexList::size_type getVertexListSize(void) const;
+		void clearVertexList(void)
+		{
+			m_vertexList.clear();
+		}
 
-		VertexList::reference vertexAt(VertexList::size_type i);
+		void resizeVertexList(VertexList::size_type size)
+		{
+			m_vertexList.resize(size);
+		}
 
-		VertexList::const_reference vertexAt(VertexList::size_type i) const;
+		VertexList::size_type getVertexListSize(void) const
+		{
+			return m_vertexList.size();
+		}
 
-		VertexList::iterator getVertexListBegin();
+		VertexList::reference vertexAt(VertexList::size_type i)
+		{
+			assert(i < getVertexListSize());
 
-		VertexList::const_iterator getVertexListBegin() const;
+			return m_vertexList[i];
+		}
 
-		VertexList::iterator getVertexListEnd();
+		VertexList::const_reference vertexAt(VertexList::size_type i) const
+		{
+			assert(i < getVertexListSize());
 
-		VertexList::const_iterator getVertexListEnd() const;
+			return m_vertexList[i];
+		}
+
+		VertexList::iterator getVertexListBegin()
+		{
+			return m_vertexList.begin();
+		}
+
+		VertexList::const_iterator getVertexListBegin() const
+		{
+			return m_vertexList.begin();
+		}
+
+		VertexList::iterator getVertexListEnd()
+		{
+			return m_vertexList.end();
+		}
+
+		VertexList::const_iterator getVertexListEnd() const
+		{
+			return m_vertexList.end();
+		}
 	};
 
 	class VertexIndexListContext
@@ -69,31 +133,74 @@ namespace t3d
 		VertexIndexList m_vertexIndexList;
 
 	public:
-		const VertexIndexList & getVertexIndexList(void) const;
+		const VertexIndexList & getVertexIndexList(void) const
+		{
+			return m_vertexIndexList;
+		}
 
-		VertexIndexList & getVertexIndexList(void);
+		VertexIndexList & getVertexIndexList(void)
+		{
+			return m_vertexIndexList;
+		}
 
-		void pushVertexIndex(VertexIndexList::const_reference index);
+		void pushVertexIndex(VertexIndexList::const_reference index)
+		{
+			m_vertexIndexList.push_back(index);
+		}
 
-		void pushVertexIndexList(VertexIndexList::const_iterator begin, VertexIndexList::const_iterator end);
+		void pushVertexIndexList(VertexIndexList::const_iterator begin, VertexIndexList::const_iterator end)
+		{
+			m_vertexIndexList.insert(getVertexIndexListEnd(), begin, end);
+		}
 
-		void clearVertexIndexList(void);
+		void clearVertexIndexList(void)
+		{
+			m_vertexIndexList.clear();
+		}
 
-		void resizeVertexIndexList(VertexIndexList::size_type size);
+		void resizeVertexIndexList(VertexIndexList::size_type size)
+		{
+			m_vertexIndexList.resize(size);
+		}
 
-		VertexIndexList::size_type getVertexIndexListSize(void) const;
+		VertexIndexList::size_type getVertexIndexListSize(void) const
+		{
+			return m_vertexIndexList.size();
+		}
 
-		VertexIndexList::reference vertexIndexAt(VertexIndexList::size_type i);
+		VertexIndexList::reference vertexIndexAt(VertexIndexList::size_type i)
+		{
+			assert(i < getVertexIndexListSize());
 
-		VertexIndexList::const_reference vertexIndexAt(VertexIndexList::size_type i) const;
+			return m_vertexIndexList[i];
+		}
 
-		VertexIndexList::iterator getVertexIndexListBegin();
+		VertexIndexList::const_reference vertexIndexAt(VertexIndexList::size_type i) const
+		{
+			assert(i < getVertexIndexListSize());
 
-		VertexIndexList::const_iterator getVertexIndexListBegin() const;
+			return m_vertexIndexList[i];
+		}
 
-		VertexIndexList::iterator getVertexIndexListEnd();
+		VertexIndexList::iterator getVertexIndexListBegin()
+		{
+			return m_vertexIndexList.begin();
+		}
 
-		VertexIndexList::const_iterator getVertexIndexListEnd() const;
+		VertexIndexList::const_iterator getVertexIndexListBegin() const
+		{
+			return m_vertexIndexList.begin();
+		}
+
+		VertexIndexList::iterator getVertexIndexListEnd()
+		{
+			return m_vertexIndexList.end();
+		}
+
+		VertexIndexList::const_iterator getVertexIndexListEnd() const
+		{
+			return m_vertexIndexList.end();
+		}
 	};
 
 	class NormalListContext
@@ -102,39 +209,103 @@ namespace t3d
 		NormalList m_normalList;
 
 	public:
-		const NormalList & getNormalList(void) const;
+		const NormalList & getNormalList(void) const
+		{
+			return m_normalList;
+		}
 
-		NormalList & getNormalList(void);
+		NormalList & getNormalList(void)
+		{
+			return m_normalList;
+		}
 
-		void pushNormal(real x, real y, real z);
+		void pushNormal(real x, real y, real z)
+		{
+			pushNormal(vec3Build(x, y, z));
+		}
 
-		void pushNormal(real x, real y, real z, const Mat4<real> & mmat);
+		void pushNormal(real x, real y, real z, const Mat4<real> & mmat)
+		{
+			pushNormal(vec3Build(x, y, z), mmat);
+		}
 
-		void pushNormal(NormalList::const_reference normal);
+		void pushNormal(NormalList::const_reference normal)
+		{
+			m_normalList.push_back(normal);
+		}
 
-		void pushNormal(NormalList::const_reference normal, const Mat4<real> & mmat);
+		void pushNormal(NormalList::const_reference normal, const Mat4<real> & mmat)
+		{
+			m_normalList.push_back(normal * mmat);
+		}
 
-		void pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end);
+		void pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end)
+		{
+			m_normalList.insert(getNormalListEnd(), begin, end);
+		}
 
-		void pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat);
+		void pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat)
+		{
+			assert(std::distance(begin, end) >= 0);
 
-		void clearNormalList(void);
+			const NormalList::size_type previous_size = getNormalListSize();
+			const NormalList::difference_type inserted_size = previous_size + std::distance(begin, end);
 
-		void resizeNormalList(NormalList::size_type size);
+			resizeNormalList(inserted_size);
+			for(NormalList::difference_type i = previous_size; i < inserted_size; i++)
+			{
+				normalAt(i) = *(begin + i) * mmat;
+			}
+		}
 
-		NormalList::size_type getNormalListSize(void) const;
+		void clearNormalList(void)
+		{
+			m_normalList.clear();
+		}
 
-		NormalList::reference normalAt(NormalList::size_type i);
+		void resizeNormalList(NormalList::size_type size)
+		{
+			m_normalList.resize(size);
+		}
 
-		NormalList::const_reference normalAt(NormalList::size_type i) const;
+		NormalList::size_type getNormalListSize(void) const
+		{
+			return m_normalList.size();
+		}
 
-		NormalList::iterator getNormalListBegin();
+		NormalList::reference normalAt(NormalList::size_type i)
+		{
+			assert(i < getNormalListSize());
 
-		NormalList::const_iterator getNormalListBegin() const;
+			return m_normalList[i];
+		}
 
-		NormalList::iterator getNormalListEnd();
+		NormalList::const_reference normalAt(NormalList::size_type i) const
+		{
+			assert(i < getNormalListSize());
 
-		NormalList::const_iterator getNormalListEnd() const;
+			return m_normalList[i];
+		}
+
+		NormalList::iterator getNormalListBegin()
+		{
+			return m_normalList.begin();
+		}
+
+		NormalList::const_iterator getNormalListBegin() const
+		{
+			return m_normalList.begin();
+		}
+
+		NormalList::iterator getNormalListEnd()
+		{
+			return m_normalList.end();
+		}
+
+		NormalList::const_iterator getNormalListEnd() const
+		{
+			return m_normalList.end();
+		}
 	};
 
 	class UVListContext
@@ -143,33 +314,79 @@ namespace t3d
 		UVList m_uvList;
 
 	public:
-		const UVList & getUVList(void) const;
+		const UVList & getUVList(void) const
+		{
+			return m_uvList;
+		}
 
-		UVList & getUVList(void);
+		UVList & getUVList(void)
+		{
+			return m_uvList;
+		}
 
-		void pushUV(real u, real v);
+		void pushUV(real u, real v)
+		{
+			pushUV(Vec2<real>(u, v));
+		}
 
-		void pushUV(UVList::const_reference uv);
+		void pushUV(UVList::const_reference uv)
+		{
+			m_uvList.push_back(uv);
+		}
 
-		void pushUVList(UVList::const_iterator begin, UVList::const_iterator end);
+		void pushUVList(UVList::const_iterator begin, UVList::const_iterator end)
+		{
+			m_uvList.insert(getUVListEnd(), begin, end);
+		}
 
-		void clearUVList(void);
+		void clearUVList(void)
+		{
+			m_uvList.clear();
+		}
 
-		void resizeUVList(UVList::size_type size);
+		void resizeUVList(UVList::size_type size)
+		{
+			m_uvList.resize(size);
+		}
 
-		UVList::size_type getUVListSize(void) const;
+		UVList::size_type getUVListSize(void) const
+		{
+			return m_uvList.size();
+		}
 
-		UVList::reference uvAt(UVList::size_type i);
+		UVList::reference uvAt(UVList::size_type i)
+		{
+			assert(i < getUVListSize());
 
-		UVList::const_reference uvAt(UVList::size_type i) const;
+			return m_uvList[i];
+		}
 
-		UVList::iterator getUVListBegin();
+		UVList::const_reference uvAt(UVList::size_type i) const
+		{
+			assert(i < getUVListSize());
 
-		UVList::const_iterator getUVListBegin() const;
+			return m_uvList[i];
+		}
 
-		UVList::iterator getUVListEnd();
+		UVList::iterator getUVListBegin()
+		{
+			return m_uvList.begin();
+		}
 
-		UVList::const_iterator getUVListEnd() const;
+		UVList::const_iterator getUVListBegin() const
+		{
+			return m_uvList.begin();
+		}
+
+		UVList::iterator getUVListEnd()
+		{
+			return m_uvList.end();
+		}
+
+		UVList::const_iterator getUVListEnd() const
+		{
+			return m_uvList.end();
+		}
 	};
 
 	class ColorListContext
@@ -178,35 +395,84 @@ namespace t3d
 		ColorList m_colorList;
 
 	public:
-		const ColorList & getColorList(void) const;
+		const ColorList & getColorList(void) const
+		{
+			return m_colorList;
+		}
 
-		ColorList & getColorList(void);
+		ColorList & getColorList(void)
+		{
+			return m_colorList;
+		}
 
-		void pushColor(real r, real g, real b, real a);
+		void pushColor(real r, real g, real b, real a)
+		{
+			pushColor(Vec4<real>(r, g, b, a));
+		}
 
-		void pushColor(ColorList::const_reference color);
+		void pushColor(ColorList::const_reference color)
+		{
+			m_colorList.push_back(color);
+		}
 
-		void pushColorList(ColorList::const_iterator begin, ColorList::const_iterator end);
+		void pushColorList(ColorList::const_iterator begin, ColorList::const_iterator end)
+		{
+			m_colorList.insert(getColorListEnd(), begin, end);
+		}
 
-		void clearColorList(void);
+		void clearColorList(void)
+		{
+			m_colorList.clear();
+		}
 
-		void resizeColorList(ColorList::size_type size);
+		void resizeColorList(ColorList::size_type size)
+		{
+			m_colorList.resize(size);
+		}
 
-		void resizeColorList(ColorList::size_type size, ColorList::const_reference color);
+		void resizeColorList(ColorList::size_type size, ColorList::const_reference color)
+		{
+			m_colorList.resize(size, color);
+		}
 
-		ColorList::size_type getColorListSize(void) const;
+		ColorList::size_type getColorListSize(void) const
+		{
+			return m_colorList.size();
+		}
 
-		ColorList::reference colorAt(ColorList::size_type i);
+		ColorList::reference colorAt(ColorList::size_type i)
+		{
+			assert(i < getColorListSize());
 
-		ColorList::const_reference colorAt(ColorList::size_type i) const;
+			return m_colorList[i];
+		}
 
-		ColorList::iterator getColorListBegin();
+		ColorList::const_reference colorAt(ColorList::size_type i) const
+		{
+			assert(i < getColorListSize());
 
-		ColorList::const_iterator getColorListBegin() const;
+			return m_colorList[i];
+		}
 
-		ColorList::iterator getColorListEnd();
+		ColorList::iterator getColorListBegin()
+		{
+			return m_colorList.begin();
+		}
 
-		ColorList::const_iterator getColorListEnd() const;
+		ColorList::const_iterator getColorListBegin() const
+		{
+			return m_colorList.begin();
+		}
+
+		ColorList::iterator getColorListEnd()
+		{
+			return m_colorList.end();
+		}
+
+		ColorList::const_iterator getColorListEnd() const
+		{
+			return m_colorList.end();
+		}
 	};
 
 	inline void resetColorList(ColorList & colorList, size_t size, const Vec4<real> & color = Vec4<real>(0, 0, 0, 0))
@@ -227,28 +493,64 @@ namespace t3d
 		DWORD m_surfaceHeight;
 
 	public:
-		void setSurfaceBuffer(void * pbuffer);
+		void setSurfaceBuffer(void * pbuffer)
+		{
+			m_surfaceBuffer = pbuffer;
+		}
 
-		void setSurfaceBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height);
+		void setSurfaceBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+		{
+			setSurfaceBuffer(pbuffer);
+			setSurfacePitch(pitch);
+			setSurfaceWidth(width);
+			setSurfaceHeight(height);
+		}
 
-		void * getSurfaceBuffer(void) const;
+		void * getSurfaceBuffer(void) const
+		{
+			return m_surfaceBuffer;
+		}
 
-		void setSurfacePitch(LONG pitch);
+		void setSurfacePitch(LONG pitch)
+		{
+			m_surfacePitch = pitch;
+		}
 
-		LONG getSurfacePitch(void) const;
+		LONG getSurfacePitch(void) const
+		{
+			return m_surfacePitch;
+		}
 
-		void setSurfaceWidth(DWORD width);
+		void setSurfaceWidth(DWORD width)
+		{
+			m_surfaceWidth = width;
+		}
 
-		DWORD getSurfaceWidth(void) const;
+		DWORD getSurfaceWidth(void) const
+		{
+			return m_surfaceWidth;
+		}
 
-		void setSurfaceHeight(DWORD height);
+		void setSurfaceHeight(DWORD height)
+		{
+			m_surfaceHeight = height;
+		}
 
-		DWORD getSurfaceHeight(void) const;
+		DWORD getSurfaceHeight(void) const
+		{
+			return m_surfaceHeight;
+		}
 
 	public:
-		SurfaceRef<uint16> getSurfaceRef16(void) const;
+		SurfaceRef<uint16> getSurfaceRef16(void) const
+		{
+			return SurfaceRef<uint16>(static_cast<uint16*>(m_surfaceBuffer), m_surfacePitch);
+		}
 
-		SurfaceRef<uint32> getSurfaceRef32(void) const;
+		SurfaceRef<uint32> getSurfaceRef32(void) const
+		{
+			return SurfaceRef<uint32>(static_cast<uint32*>(m_surfaceBuffer), m_surfacePitch);
+		}
 	};
 
 	class ZBufferContext
@@ -263,26 +565,59 @@ namespace t3d
 		DWORD m_zbufferHeight;
 
 	public:
-		void setZBufferBuffer(void * pbuffer);
+		void setZBufferBuffer(void * pbuffer)
+		{
+			m_zbufferBuffer = pbuffer;
+		}
 
-		void setZBufferBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height);
+		void setZBufferBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+		{
+			setZBufferBuffer(pbuffer);
+			setZBufferPitch(pitch);
+			setZBufferWidth(width);
+			setZBufferHeight(height);
+		}
 
-		void * getZBufferBuffer(void) const;
+		void * getZBufferBuffer(void) const
+		{
+			return m_zbufferBuffer;
+		}
 
-		void setZBufferPitch(LONG pitch);
+		void setZBufferPitch(LONG pitch)
+		{
+			m_zbufferPitch = pitch;
+		}
 
-		LONG getZBufferPitch(void) const;
+		LONG getZBufferPitch(void) const
+		{
+			return m_zbufferPitch;
+		}
 
-		void setZBufferWidth(DWORD width);
+		void setZBufferWidth(DWORD width)
+		{
+			m_zbufferWidth = width;
+		}
 
-		DWORD getZBufferWidth(void) const;
+		DWORD getZBufferWidth(void) const
+		{
+			return m_zbufferWidth;
+		}
 
-		void setZBufferHeight(DWORD height);
+		void setZBufferHeight(DWORD height)
+		{
+			m_zbufferHeight = height;
+		}
 
-		DWORD getZBufferHeight(void) const;
+		DWORD getZBufferHeight(void) const
+		{
+			return m_zbufferHeight;
+		}
 
 	public:
-		SurfaceRef<fixp28> getZBufferRef28(void) const;
+		SurfaceRef<fixp28> getZBufferRef28(void) const
+		{
+			return SurfaceRef<fixp28>(static_cast<fixp28*>(m_zbufferBuffer), m_zbufferPitch);
+		}
 	};
 
 	class TextureContext
@@ -297,28 +632,64 @@ namespace t3d
 		DWORD m_textureHeight;
 
 	public:
-		void setTextureBuffer(void * pbuffer);
+		void setTextureBuffer(void * pbuffer)
+		{
+			m_textureBuffer = pbuffer;
+		}
 
-		void setTextureBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height);
+		void setTextureBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+		{
+			setTextureBuffer(pbuffer);
+			setTexturePitch(pitch);
+			setTextureWidth(width);
+			setTextureHeight(height);
+		}
 
-		void * getTextureBuffer(void) const;
+		void * getTextureBuffer(void) const
+		{
+			return m_textureBuffer;
+		}
 
-		void setTexturePitch(LONG pitch);
+		void setTexturePitch(LONG pitch)
+		{
+			m_texturePitch = pitch;
+		}
 
-		LONG getTexturePitch(void) const;
+		LONG getTexturePitch(void) const
+		{
+			return m_texturePitch;
+		}
 
-		void setTextureWidth(DWORD width);
+		void setTextureWidth(DWORD width)
+		{
+			m_textureWidth = width;
+		}
 
-		DWORD getTextureWidth(void) const;
+		DWORD getTextureWidth(void) const
+		{
+			return m_textureWidth;
+		}
 
-		void setTextureHeight(DWORD height);
+		void setTextureHeight(DWORD height)
+		{
+			m_textureHeight = height;
+		}
 
-		DWORD getTextureHeight(void) const;
+		DWORD getTextureHeight(void) const
+		{
+			return m_textureHeight;
+		}
 
 	public:
-		SurfaceRef<uint16> getTextureRef16(void) const;
+		SurfaceRef<uint16> getTextureRef16(void) const
+		{
+			return SurfaceRef<uint16>(static_cast<uint16*>(m_textureBuffer), m_texturePitch);
+		}
 
-		SurfaceRef<uint32> getTextureRef32(void) const;
+		SurfaceRef<uint32> getTextureRef32(void) const
+		{
+			return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
+		}
 	};
 
 	class ClipperContext
@@ -327,9 +698,15 @@ namespace t3d
 		CRect m_clipper;
 
 	public:
-		void setClipperRect(const CRect & clipper);
+		void setClipperRect(const CRect & clipper)
+		{
+			m_clipper = clipper;
+		}
 
-		const CRect & getClipperRect(void) const;
+		const CRect & getClipperRect(void) const
+		{
+			return m_clipper;
+		}
 	};
 
 	struct MATERIAL
@@ -346,18 +723,36 @@ namespace t3d
 		MATERIAL m_material;
 
 	public:
-		void setMaterial(const MATERIAL & material);
+		void setMaterial(const MATERIAL & material)
+		{
+			m_material = material;
+		}
 
-		const MATERIAL & getMaterial(void) const;
+		const MATERIAL & getMaterial(void) const
+		{
+			return m_material;
+		}
 
 	public:
-		void setAmbient(const Vec4<real> & ambient);
+		void setAmbient(const Vec4<real> & ambient)
+		{
+			m_material.ambient = ambient;
+		}
 
-		void setDiffuse(const Vec4<real> & diffuse);
+		void setDiffuse(const Vec4<real> & diffuse)
+		{
+			m_material.diffuse = diffuse;
+		}
 
-		void setSpecular(const Vec4<real> & specular);
+		void setSpecular(const Vec4<real> & specular)
+		{
+			m_material.specular = specular;
+		}
 
-		void setEmissive(const Vec4<real> & emissive);
+		void setEmissive(const Vec4<real> & emissive)
+		{
+			m_material.emissive = emissive;
+		}
 	};
 
 	enum LIGHT_TYPE
@@ -410,33 +805,85 @@ namespace t3d
 		static Vec4<real> lightVertexPoint(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal);
 
 	public:
-		const LightList & getLightList(void) const;
+		const LightList & getLightList(void) const
+		{
+			return m_lightList;
+		}
 
-		LightList & getLightList(void);
+		LightList & getLightList(void)
+		{
+			return m_lightList;
+		}
 
-		size_t pushLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state = LS_ON);
+		size_t pushLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state = LS_ON)
+		{
+			m_lightList.push_back(buildLightAmbient(ambient, state));
 
-		size_t pushLightDirectional(const Vec4<real> & diffuse, const Vec4<real> dir, LIGHT_STATE state = LS_ON);
+			return getLightListSize() - 1;
+		};
 
-		size_t pushLightPoint(const Vec4<real> & diffuse, const Vec4<real> pos, real kc = 1.0f, real kl = 0.001f, real kq = 0.00001f, LIGHT_STATE state = LS_ON);
+		size_t pushLightDirectional(const Vec4<real> & diffuse, const Vec4<real> dir, LIGHT_STATE state = LS_ON)
+		{
+			m_lightList.push_back(buildLightDirectional(diffuse, dir, state));
 
-		void clearLightList(void);
+			return getLightListSize() - 1;
+		};
 
-		void resizeLightList(LightList::size_type size);
+		size_t pushLightPoint(const Vec4<real> & diffuse, const Vec4<real> pos, real kc = 1.0f, real kl = 0.001f, real kq = 0.00001f, LIGHT_STATE state = LS_ON)
+		{
+			m_lightList.push_back(buildLightPoint(diffuse, pos, kc, kl, kq, state));
 
-		LightList::size_type getLightListSize(void) const;
+			return getLightListSize() - 1;
+		};
 
-		LightList::reference lightAt(LightList::size_type i);
+		void clearLightList(void)
+		{
+			m_lightList.clear();
+		}
 
-		LightList::const_reference lightAt(LightList::size_type i) const;
+		void resizeLightList(LightList::size_type size)
+		{
+			m_lightList.resize(size);
+		}
 
-		LightList::iterator getLightListBegin();
+		LightList::size_type getLightListSize(void) const
+		{
+			return m_lightList.size();
+		}
 
-		LightList::const_iterator getLightListBegin() const;
+		LightList::reference lightAt(LightList::size_type i)
+		{
+			assert(i < getLightListSize());
 
-		LightList::iterator getLightListEnd();
+			return m_lightList[i];
+		}
 
-		LightList::const_iterator getLightListEnd() const;
+		LightList::const_reference lightAt(LightList::size_type i) const
+		{
+			assert(i < getLightListSize());
+
+			return m_lightList[i];
+		}
+
+		LightList::iterator getLightListBegin()
+		{
+			return m_lightList.begin();
+		}
+
+		LightList::const_iterator getLightListBegin() const
+		{
+			return m_lightList.begin();
+		}
+
+		LightList::iterator getLightListEnd()
+		{
+			return m_lightList.end();
+		}
+
+		LightList::const_iterator getLightListEnd() const
+		{
+			return m_lightList.end();
+		}
 	};
 
 	enum ROTATION_SEQ
@@ -478,34 +925,82 @@ namespace t3d
 
 		static Vec2<real> buildCameraProjectionFOVAuto(real fov, DWORD width, DWORD height);
 
-		static real calculateCameraHalfFovX(const Vec2<real> & proj);
+	public:
+		static real calculateCameraHalfFovX(const Vec2<real> & proj)
+		{
+			return atan(1 / proj.x);
+		}
 
-		static real calculateCameraHalfFovY(const Vec2<real> & proj);
+		static real calculateCameraHalfFovY(const Vec2<real> & proj)
+		{
+			return atan(1 / proj.y);
+		}
 
-		static real calculateCameraMaxHalfFov(const Vec2<real> & proj);
+		static real calculateCameraMaxHalfFov(const Vec2<real> & proj)
+		{
+			return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
+		}
 
-		static Vec4<real> calculateCameraDirection(const Mat4<real> & mcam);
+		static Vec4<real> calculateCameraDirection(const Mat4<real> & mcam)
+		{
+			return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
+		}
 
 	public:
-		void setCameraMatrix(const Mat4<real> & mcam);
+		void setCameraMatrix(const Mat4<real> & mcam)
+		{
+			m_camera.mcam = mcam;
+		}
 
-		const Mat4<real> & getCameraMatrix(void) const;
+		const Mat4<real> & getCameraMatrix(void) const
+		{
+			return m_camera.mcam;
+		}
 
-		void setCameraProjection(const Vec2<real> & proj);
+		void setCameraProjection(const Vec2<real> & proj)
+		{
+			m_camera.proj = proj;
+		}
 
-		const Vec2<real> & getCameraProjection(void) const;
+		const Vec2<real> & getCameraProjection(void) const
+		{
+			return m_camera.proj;
+		}
 
-		void setCameraNearZ(real nz);
+		void setCameraNearZ(real nz)
+		{
+			m_camera.nz = nz;
+		}
 
-		real getCameraNearZ(void) const;
+		real getCameraNearZ(void) const
+		{
+			return m_camera.nz;
+		}
 
-		void setCameraFarZ(real fz);
+		void setCameraFarZ(real fz)
+		{
+			m_camera.fz = fz;
+		}
 
-		real getCameraFarZ(void) const;
+		real getCameraFarZ(void) const
+		{
+			return m_camera.fz;
+		}
 
-		void setViewport(const CRect & viewport);
+		void setViewport(const CRect & viewport)
+		{
+			m_camera.viewport = viewport;
+		}
 
-		const CRect & getViewport(void) const;
+		const CRect & getViewport(void) const
+		{
+			return m_camera.viewport;
+		}
+
+		Vec4<real> getCameraPosition(void) const
+		{
+			return mat3GetRow3(getCameraMatrix().inverse());
+		}
 
 		const CAMERA & getCamera(void) const
 		{
@@ -516,59 +1011,56 @@ namespace t3d
 		{
 			return m_camera;
 		}
-
-	public:
-		Vec4<real> getCameraPosition(void) const;
 	};
 
-	enum TRI_STATE
-	{
-		TS_ACTIVE,
-		TS_CULLED,
-		TS_CLIPPED,
-		//TS_LARGE_CLIPPED,
-		TS_BACKFACE,
-	};
+	//enum TRI_STATE
+	//{
+	//	TS_ACTIVE,
+	//	TS_CULLED,
+	//	TS_CLIPPED,
+	//	//TS_LARGE_CLIPPED,
+	//	TS_BACKFACE,
+	//};
 
-	typedef std::vector<TRI_STATE> TriStateList;
+	//typedef std::vector<TRI_STATE> TriStateList;
 
-	class TriangleStateListContext
-	{
-	protected:
-		TriStateList m_triStateList;
+	//class TriangleStateListContext
+	//{
+	//protected:
+	//	TriStateList m_triStateList;
 
-	public:
-		static bool isTriVisible(TRI_STATE state);
+	//public:
+	//	static bool isTriVisible(TRI_STATE state);
 
-	public:
-		const TriStateList & getTriStateList(void) const;
+	//public:
+	//	const TriStateList & getTriStateList(void) const;
 
-		TriStateList & getTriStateList(void);
+	//	TriStateList & getTriStateList(void);
 
-		void pushTriState(TRI_STATE state);
+	//	void pushTriState(TRI_STATE state);
 
-		void pushTriStateList(TriStateList::const_iterator begin, TriStateList::const_iterator end);
+	//	void pushTriStateList(TriStateList::const_iterator begin, TriStateList::const_iterator end);
 
-		void clearTriStateList(void);
+	//	void clearTriStateList(void);
 
-		void resizeTriStateList(TriStateList::size_type size);
+	//	void resizeTriStateList(TriStateList::size_type size);
 
-		void resizeTriStateList(TriStateList::size_type size, TriStateList::const_reference state);
+	//	void resizeTriStateList(TriStateList::size_type size, TriStateList::const_reference state);
 
-		TriStateList::size_type getTriStateListSize(void) const;
+	//	TriStateList::size_type getTriStateListSize(void) const;
 
-		TriStateList::reference triStateAt(TriStateList::size_type i);
+	//	TriStateList::reference triStateAt(TriStateList::size_type i);
 
-		TriStateList::const_reference triStateAt(TriStateList::size_type i) const;
+	//	TriStateList::const_reference triStateAt(TriStateList::size_type i) const;
 
-		TriStateList::iterator getTriStateListBegin();
+	//	TriStateList::iterator getTriStateListBegin();
 
-		TriStateList::const_iterator getTriStateListBegin() const;
+	//	TriStateList::const_iterator getTriStateListBegin() const;
 
-		TriStateList::iterator getTriStateListEnd();
+	//	TriStateList::iterator getTriStateListEnd();
 
-		TriStateList::const_iterator getTriStateListEnd() const;
-	};
+	//	TriStateList::const_iterator getTriStateListEnd() const;
+	//};
 
 	enum CLIP_STATE
 	{
@@ -674,7 +1166,7 @@ namespace t3d
 		, public MaterialContext
 		, public LightListContext
 		, public CameraContext
-		, public TriangleStateListContext
+		//, public TriangleStateListContext
 		, public ClipStateListContext
 	{
 	};

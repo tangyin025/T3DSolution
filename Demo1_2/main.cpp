@@ -172,7 +172,7 @@ class MyGame
 	: public my::Game						// 用以实现基于帧循环的基本应用程序框架，并已经实现了常见的 primary、back surface 结构
 	, public my::DrawnHelper				// 用以绘制常见多边形，如 sphere、box、plane 等
 	, public my::ErrorListener				// 实现接受错误信息的接口，这些错误信息通常来自于 my 的封装，也可以使用 REPORT_ERROR 宏对这个接口报错
-	, public my::Window::MessageListener	// 用来接收 windows 消息的接口
+	//, public my::Window::MessageListener	// 用来接收 windows 消息的接口
 {
 protected:
 	my::ConsoleSimulatorPtr m_consoleSim;	// 一个类似控制台的模拟器，可以在 surface 上输出控制台信息
@@ -298,18 +298,18 @@ public:
 		//my::copyWholeWavBufferToDSoundBuffer(*m_dsbuffer.get(), *tmpWav.get());
 		//m_dsbuffer->play();
 
-		// 查询并创建手柄（仅测试）
-		m_DIDeviceInstList.clear();
-		m_dinput->findJoystickList(m_DIDeviceInstList);
-		if(!m_DIDeviceInstList.empty())
-		{
-			m_joy = t3d::DIJoystickPtr(m_dinput->createJoystick(m_DIDeviceInstList.front().guidInstance));
-			m_joy->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
-			m_joy->acquire();
-		}
+		//// 查询并创建手柄（仅测试）
+		//m_DIDeviceInstList.clear();
+		//m_dinput->findJoystickList(m_DIDeviceInstList);
+		//if(!m_DIDeviceInstList.empty())
+		//{
+		//	m_joy = t3d::DIJoystickPtr(m_dinput->createJoystick(m_DIDeviceInstList.front().guidInstance));
+		//	m_joy->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+		//	m_joy->acquire();
+		//}
 
-		// 注册主窗口消息监听
-		m_pwnd->setMessageListener(this);
+		//// 注册主窗口消息监听
+		//m_pwnd->setMessageListener(this);
 
 		// ======================================== TODO: END   ========================================
 
@@ -559,19 +559,19 @@ public:
 			RAD_TO_DEG(m_eularCam->getRotation().x), RAD_TO_DEG(m_eularCam->getRotation().y), RAD_TO_DEG(m_eularCam->getRotation().z));
 		::TextOut(hdc, 10, 70, strTmp.c_str(), (int)strTmp.length());
 
-		// 输出手柄信息
-		if(m_joy.get())
-		{
-			m_joy->update();
+		//// 输出手柄信息
+		//if(m_joy.get())
+		//{
+		//	m_joy->update();
 
-			strTmp = str_printf(_T("%s lstick: %ld, %ld"),
-				m_DIDeviceInstList.front().tszInstanceName, m_joy->getX(), m_joy->getY());
-			::TextOut(hdc, 10, 90, strTmp.c_str(), (int)strTmp.length());
+		//	strTmp = str_printf(_T("%s lstick: %ld, %ld"),
+		//		m_DIDeviceInstList.front().tszInstanceName, m_joy->getX(), m_joy->getY());
+		//	::TextOut(hdc, 10, 90, strTmp.c_str(), (int)strTmp.length());
 
-			strTmp = str_printf(_T("%s rstick: %ld, %ld"),
-				m_DIDeviceInstList.front().tszInstanceName, m_joy->getRz(), m_joy->getZ());
-			::TextOut(hdc, 10, 110, strTmp.c_str(), (int)strTmp.length());
-		}
+		//	strTmp = str_printf(_T("%s rstick: %ld, %ld"),
+		//		m_DIDeviceInstList.front().tszInstanceName, m_joy->getRz(), m_joy->getZ());
+		//	::TextOut(hdc, 10, 110, strTmp.c_str(), (int)strTmp.length());
+		//}
 
 		m_sback->releaseDC(hdc);
 
@@ -590,35 +590,35 @@ public:
 		}
 	}
 
-	BOOL notifyMessage(LRESULT & lResult, my::Window * win, UINT message, WPARAM wparam, LPARAM lparam)
-	{
-		switch(message)
-		{
-		case WM_KEYDOWN:
-			switch(wparam)
-			{
-			case VK_F1:
-				prepareConfig(my::GameBase::CONFIG_DESC(640, 480, SM_WINDOWED));
-				break;
+	//BOOL notifyMessage(LRESULT & lResult, my::Window * win, UINT message, WPARAM wparam, LPARAM lparam)
+	//{
+	//	switch(message)
+	//	{
+	//	case WM_KEYDOWN:
+	//		switch(wparam)
+	//		{
+	//		case VK_F1:
+	//			prepareConfig(my::GameBase::CONFIG_DESC(640, 480, SM_WINDOWED));
+	//			break;
 
-			case VK_F2:
-				prepareConfig(my::GameBase::CONFIG_DESC(800, 600, SM_WINDOWED));
-				break;
+	//		case VK_F2:
+	//			prepareConfig(my::GameBase::CONFIG_DESC(800, 600, SM_WINDOWED));
+	//			break;
 
-			case VK_F3:
-				prepareConfig(my::GameBase::CONFIG_DESC(1024, 768, SM_WINDOWED));
-				break;
+	//		case VK_F3:
+	//			prepareConfig(my::GameBase::CONFIG_DESC(1024, 768, SM_WINDOWED));
+	//			break;
 
-			case VK_F4:
-				prepareConfig(my::GameBase::CONFIG_DESC(1280, 1024, SM_WINDOWED));
-				break;
-			}
-			lResult = 0;
-			return TRUE;
-		}
+	//		case VK_F4:
+	//			prepareConfig(my::GameBase::CONFIG_DESC(1280, 1024, SM_WINDOWED));
+	//			break;
+	//		}
+	//		lResult = 0;
+	//		return TRUE;
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 };
 
 int APIENTRY WinMain(
