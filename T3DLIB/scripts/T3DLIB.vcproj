@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;"
+				AdditionalIncludeDirectories="..\include;&quot;D:\Program Files (2)\boost_1_34_1&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;"
+				AdditionalIncludeDirectories="..\include;&quot;D:\Program Files (2)\boost_1_34_1&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -151,7 +151,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath="..\src\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -171,43 +171,43 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\t3dcommon.cpp"
+				RelativePath="..\src\t3dcommon.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib1.cpp"
+				RelativePath="..\src\t3dlib1.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib2.cpp"
+				RelativePath="..\src\t3dlib2.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib3.cpp"
+				RelativePath="..\src\t3dlib3.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib4.cpp"
+				RelativePath="..\src\t3dlib4.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib5.cpp"
+				RelativePath="..\src\t3dlib5.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib6.cpp"
+				RelativePath="..\src\t3dlib6.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib7.cpp"
+				RelativePath="..\src\t3dlib7.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib8.cpp"
+				RelativePath="..\src\t3dlib8.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib9.cpp"
+				RelativePath="..\src\t3dlib9.cpp"
 				>
 			</File>
 		</Filter>
@@ -217,47 +217,47 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\stdafx.h"
+				RelativePath="..\include\stdafx.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dcommon.h"
+				RelativePath="..\include\t3dcommon.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib1.h"
+				RelativePath="..\include\t3dlib1.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib2.h"
+				RelativePath="..\include\t3dlib2.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib3.h"
+				RelativePath="..\include\t3dlib3.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib4.h"
+				RelativePath="..\include\t3dlib4.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib5.h"
+				RelativePath="..\include\t3dlib5.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib6.h"
+				RelativePath="..\include\t3dlib6.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib7.h"
+				RelativePath="..\include\t3dlib7.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib8.h"
+				RelativePath="..\include\t3dlib8.h"
 				>
 			</File>
 			<File
-				RelativePath=".\t3dlib9.h"
+				RelativePath="..\include\t3dlib9.h"
 				>
 			</File>
 		</Filter>
