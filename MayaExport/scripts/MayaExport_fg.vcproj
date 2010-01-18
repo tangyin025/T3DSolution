@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="myGame"
-	ProjectGUID="{2F061483-C206-43E8-89ED-AC2013209309}"
-	RootNamespace="myGame"
+	Name="MayaExport_fg"
+	ProjectGUID="{8E3B81E9-5088-4A35-AECF-9F11368F97FD}"
+	RootNamespace="MayaExport_fg"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -20,8 +20,8 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			CharacterSet="1"
+			ConfigurationType="2"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,13 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;;&quot;$(SolutionDir)\tinyxml&quot;;&quot;$(SolutionDir)\T3DLIB&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="..\include;&quot;C:\Program Files\Alias\Maya7.0\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;NT_PLUGIN"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
-				WarningLevel="4"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -60,10 +60,21 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				AdditionalOptions="/export:initializePlugin /export:uninitializePlugin"
+				AdditionalDependencies="Foundation.lib OpenMaya.lib OpenMayaAnim.lib OpenMayaRender.lib"
+				OutputFile="$(OutDir)\ogreExporter.mll"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Alias\Maya7.0\lib&quot;"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -75,6 +86,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -82,8 +96,8 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			CharacterSet="1"
+			ConfigurationType="2"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -105,12 +119,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;D:\Program Files (2)\boost_1_34_1&quot;;&quot;$(SolutionDir)\tinyxml&quot;;&quot;$(SolutionDir)\T3DLIB&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="..\include;&quot;C:\Program Files\Alias\Maya7.0\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NT_PLUGIN"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="4"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -123,10 +137,23 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				AdditionalOptions="/export:initializePlugin /export:uninitializePlugin"
+				AdditionalDependencies="Foundation.lib OpenMaya.lib OpenMayaAnim.lib OpenMayaRender.lib"
+				OutputFile="$(OutDir)\ogreExporter.mll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Alias\Maya7.0\lib&quot;"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -136,6 +163,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -151,72 +181,36 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\libc.cpp"
+				RelativePath="..\src\material.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myCollision.cpp"
+				RelativePath="..\src\mesh.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myCommon.cpp"
+				RelativePath="..\src\ogreExporter.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myGame.cpp"
+				RelativePath="..\src\paramlist.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myImage.cpp"
+				RelativePath="..\src\particles.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myMath.cpp"
+				RelativePath="..\src\singleton.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myPhysics.cpp"
+				RelativePath="..\src\skeleton.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\myResource.cpp"
+				RelativePath="..\src\submesh.cpp"
 				>
-			</File>
-			<File
-				RelativePath=".\myScene.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mySkeleton.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\myUtility.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\myWindow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -225,55 +219,43 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\libc.h"
+				RelativePath="..\include\material.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myCollision.h"
+				RelativePath="..\include\materialSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myCommon.h"
+				RelativePath="..\include\mayaExportLayer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myGame.h"
+				RelativePath="..\include\mesh.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myImage.h"
+				RelativePath="..\include\ogreExporter.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myMath.h"
+				RelativePath="..\include\paramlist.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myPhysics.h"
+				RelativePath="..\include\particles.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myResource.h"
+				RelativePath="..\include\singleton.h"
 				>
 			</File>
 			<File
-				RelativePath=".\myScene.h"
+				RelativePath="..\include\skeleton.h"
 				>
 			</File>
 			<File
-				RelativePath=".\mySkeleton.h"
-				>
-			</File>
-			<File
-				RelativePath=".\myUtility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\myWindow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.h"
+				RelativePath="..\include\submesh.h"
 				>
 			</File>
 		</Filter>

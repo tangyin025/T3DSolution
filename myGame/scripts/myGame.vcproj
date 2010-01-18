@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="tinyxml"
-	ProjectGUID="{C607BB7F-2BA8-43BA-BBF4-3CFF325F62D7}"
-	RootNamespace="tinyxml"
+	Name="myGame"
+	ProjectGUID="{2F061483-C206-43E8-89ED-AC2013209309}"
+	RootNamespace="myGame"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,12 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="..\include;&quot;D:\Program Files (2)\boost_1_34_1&quot;;&quot;$(SolutionDir)\tinyxml\include&quot;;&quot;$(SolutionDir)\T3DLIB\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				UsePrecompiledHeader="2"
+				WarningLevel="4"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -104,11 +105,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="..\include;&quot;D:\Program Files (2)\boost_1_34_1&quot;;&quot;$(SolutionDir)\tinyxml\include&quot;;&quot;$(SolutionDir)\T3DLIB\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				UsePrecompiledHeader="2"
+				WarningLevel="4"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -149,20 +151,72 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\tinystr.cpp"
+				RelativePath="..\src\libc.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\tinyxml.cpp"
+				RelativePath="..\src\myCollision.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\tinyxmlerror.cpp"
+				RelativePath="..\src\myCommon.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\tinyxmlparser.cpp"
+				RelativePath="..\src\myGame.cpp"
 				>
+			</File>
+			<File
+				RelativePath="..\src\myImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\myMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\myPhysics.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\myResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\myScene.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\mySkeleton.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\myUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\myWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\stdafx.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -171,11 +225,55 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\tinystr.h"
+				RelativePath="..\include\libc.h"
 				>
 			</File>
 			<File
-				RelativePath=".\tinyxml.h"
+				RelativePath="..\include\myCollision.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myCommon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myGame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myMath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myPhysics.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myResource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myScene.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\mySkeleton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myUtility.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\myWindow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\stdafx.h"
 				>
 			</File>
 		</Filter>
