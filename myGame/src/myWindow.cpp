@@ -33,7 +33,7 @@ namespace my
 		return GetErrorCodeStr(m_code);
 	}
 
-	std::basic_string<charT> WindowBase::getWindowMessageStr(UINT message)
+	std::basic_string<charT> Window::getWindowMessageStr(UINT message)
 	{
 		switch(message)
 		{
@@ -564,151 +564,6 @@ namespace my
 		return std::basic_string<charT>(_T("unknown window message"));
 	}
 
-	WindowBase::WindowBase(HWND hwnd /*= NULL*/)
-		: m_hwnd(hwnd)
-	{
-	}
-
-	WindowBase::~WindowBase(void)
-	{
-	}
-
-	void WindowBase::showWindow(int nShow /*= SW_NORMAL*/)
-	{
-		::ShowWindow(m_hwnd, nShow);
-
-		VERIFY(::UpdateWindow(m_hwnd));
-	}
-
-	std::basic_string<charT> WindowBase::getWindowText(void) const
-	{
-		static const size_t def_size = 512;
-		static const size_t inc_size = 512;
-
-		assert(inc_size <= def_size);
-		size_t new_size = def_size - inc_size;
-		size_t ret_size = def_size;
-		charT * buffer = NULL;
-
-		while(ret_size >= new_size)
-		{
-			new_size += inc_size;
-			buffer = (charT *)realloc(buffer, new_size * sizeof(charT));
-			if(NULL == buffer)
-				T3D_CUSEXCEPT(_T("realloc buffer failed"));
-
-			ret_size = ::GetWindowText(m_hwnd, buffer, (int)new_size);
-		}
-
-		return std::basic_string<charT>(buffer);
-	}
-
-	void WindowBase::setWindowText(const std::basic_string<charT> winTitle)
-	{
-		if(!::SetWindowText(m_hwnd, winTitle.c_str()))
-			T3D_WINEXCEPT(::GetLastError());
-	}
-
-	DWORD WindowBase::getWindowStyle(void) const
-	{
-		return ::GetWindowLong(m_hwnd, GWL_STYLE);
-	}
-
-	void WindowBase::setWindowStyle(DWORD dwStyle)
-	{
-		::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)dwStyle);
-
-		VERIFY(NULL != ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER));
-	}
-
-	DWORD WindowBase::getWindowExStyle(void) const
-	{
-		return ::GetWindowLong(m_hwnd, GWL_EXSTYLE);
-	}
-
-	void WindowBase::setWindowExtansionStyle(DWORD dwExStyle)
-	{
-		::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)dwExStyle);
-
-		VERIFY(NULL != ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER));
-	}
-
-	CRect WindowBase::getWindowRect(void) const
-	{
-		CRect rect;
-		VERIFY(::GetWindowRect(m_hwnd, &rect));
-		return rect;
-	}
-
-	void WindowBase::setWindowRect(const CRect & rect)
-	{
-		VERIFY(::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top, rect.Width(), rect.Height(), 0));
-	}
-
-	CRect WindowBase::getClientRect(void) const
-	{
-		CRect clientRect;
-		VERIFY(::GetClientRect(m_hwnd, &clientRect));
-
-		//CRect adjustRect = clientRect;
-		//if(!::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExStyle()))
-		//	T3D_WINEXCEPT(::GetLastError());
-
-		//CRect windowRect = getWindowRect();
-		//clientRect.OffsetRect(windowRect.left - adjustRect.left, windowRect.top - adjustRect.top);
-		return clientRect;
-	}
-
-	void WindowBase::adjustClientRect(const CRect & rect)
-	{
-		CRect adjustRect = rect;
-		VERIFY(::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExStyle()));
-
-		setWindowRect(adjustRect);
-	}
-
-	CRect & WindowBase::screenToClientSelf(CRect & rect)
-	{
-		VERIFY(::ScreenToClient(m_hwnd, &rect.TopLeft()));
-		VERIFY(::ScreenToClient(m_hwnd, &rect.BottomRight()));
-		return rect;
-	}
-
-	CRect & WindowBase::clientToScreenSelf(CRect & rect)
-	{
-		VERIFY(::ClientToScreen(m_hwnd, &rect.TopLeft()));
-		VERIFY(::ClientToScreen(m_hwnd, &rect.BottomRight()));
-		return rect;
-	}
-
-	void WindowBase::centerWindow(void)
-	{
-		CRect desktopRect;
-		if(!::GetWindowRect(::GetDesktopWindow(), &desktopRect))
-			T3D_WINEXCEPT(::GetLastError());
-
-		CRect windowRect = getWindowRect();
-		int x = ((desktopRect.Width()) - (windowRect.Width())) / 2;
-		int y = ((desktopRect.Height()) - (windowRect.Height())) / 2;
-
-		VERIFY(NULL != ::SetWindowPos(m_hwnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE));
-	}
-
-	void WindowBase::destroyWindow(void)
-	{
-		::DestroyWindow(m_hwnd);
-	}
-
-	HDC WindowBase::getDC(void)
-	{
-		return ::GetDC(m_hwnd);
-	}
-
-	void WindowBase::releaseDC(HDC hdc)
-	{
-		VERIFY(1 == ::ReleaseDC(m_hwnd, hdc));
-	}
-
 	BOOL Window::isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle)
 	{
 		WNDCLASSEX wcex;
@@ -737,42 +592,26 @@ namespace my
 		}
 	}
 
-	Window::Window(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle, const Application * app)
-		: m_pMessageListener(NULL)
+	Window::Window(HWND hwnd /*= NULL*/)
+		: m_hwnd(hwnd)
 	{
-		if(NULL == (m_hwnd = ::CreateWindowEx(0, winClass.c_str(), winTitle.c_str(),
-			WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, app->getHandle(), NULL)))
-		{
-			T3D_WINEXCEPT(::GetLastError());
-		}
 	}
 
 	Window::~Window(void)
 	{
 	}
 
-	void Window::setMessageListener(MessageListener * pMessageListener)
-	{
-		m_pMessageListener = pMessageListener;
-	}
-
-	HWND Window::getHandle(void) const
-	{
-		return m_hwnd;
-	}
-
 	LRESULT Window::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
 		assert(hwnd == m_hwnd);
 
-		HRESULT lres;
-		if(NULL != m_pMessageListener && m_pMessageListener->notifyMessage(lres, this, message, wparam, lparam))
-		{
-			assert(WM_NCDESTROY != message); return lres;
-		}
-
 		switch(message)
 		{
+		case WM_CREATE:
+			{
+				return 0;
+			}
+
 		case WM_NCDESTROY:
 			{
 				WindowPtrMap & wndMap = Application::getSingleton().m_wndMap;
@@ -795,6 +634,131 @@ namespace my
 		return ::DefWindowProc(hwnd, message, wparam, lparam);
 	}
 
+	HWND Window::getHandle(void) const
+	{
+		return m_hwnd;
+	}
+
+	void Window::showWindow(int nShow /*= SW_NORMAL*/)
+	{
+		::ShowWindow(m_hwnd, nShow);
+	}
+
+	void Window::updateWindow(void)
+	{
+		VERIFY(::UpdateWindow(m_hwnd));
+	}
+
+	std::basic_string<charT> Window::getWindowText(void) const
+	{
+		std::basic_string<charT> ret;
+		ret.resize(MAX_PATH);
+		ret.resize(::GetWindowText(m_hwnd, &ret[0], ret.size()));
+
+		return ret;
+	}
+
+	void Window::setWindowText(const std::basic_string<charT> winTitle)
+	{
+		VERIFY(::SetWindowText(m_hwnd, winTitle.c_str()));
+	}
+
+	DWORD Window::getWindowStyle(void) const
+	{
+		return ::GetWindowLong(m_hwnd, GWL_STYLE);
+	}
+
+	void Window::setWindowStyle(DWORD dwStyle)
+	{
+		::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)dwStyle);
+
+		//VERIFY(NULL != ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER));
+	}
+
+	DWORD Window::getWindowExStyle(void) const
+	{
+		return ::GetWindowLong(m_hwnd, GWL_EXSTYLE);
+	}
+
+	void Window::setWindowExtansionStyle(DWORD dwExStyle)
+	{
+		::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)dwExStyle);
+
+		//VERIFY(NULL != ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER));
+	}
+
+	CRect Window::getWindowRect(void) const
+	{
+		CRect rect;
+		VERIFY(::GetWindowRect(m_hwnd, &rect));
+		return rect;
+	}
+
+	void Window::setWindowRect(const CRect & rect)
+	{
+		VERIFY(::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top, rect.Width(), rect.Height(), 0));
+	}
+
+	CRect Window::getClientRect(void) const
+	{
+		CRect rect;
+		VERIFY(::GetClientRect(m_hwnd, &rect));
+		return rect;
+	}
+
+	void Window::adjustClientRect(const CRect & rect)
+	{
+		CRect adjustRect = rect;
+		VERIFY(::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExStyle()));
+		setWindowRect(adjustRect);
+	}
+
+	CRect & Window::screenToClientSelf(CRect & rect)
+	{
+		VERIFY(::ScreenToClient(m_hwnd, &rect.TopLeft()));
+		VERIFY(::ScreenToClient(m_hwnd, &rect.BottomRight()));
+		return rect;
+	}
+
+	CRect & Window::clientToScreenSelf(CRect & rect)
+	{
+		VERIFY(::ClientToScreen(m_hwnd, &rect.TopLeft()));
+		VERIFY(::ClientToScreen(m_hwnd, &rect.BottomRight()));
+		return rect;
+	}
+
+	void Window::setWindowPos(HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags)
+	{
+		VERIFY(NULL != ::SetWindowPos(m_hwnd, hWndInsertAfter, x, y, cx, cy, uFlags));
+	}
+
+	void Window::centerWindow(void)
+	{
+		CRect desktopRect;
+		VERIFY(::GetWindowRect(::GetDesktopWindow(), &desktopRect));
+
+		CRect windowRect = getWindowRect();
+		int x = ((desktopRect.Width()) - (windowRect.Width())) / 2;
+		int y = ((desktopRect.Height()) - (windowRect.Height())) / 2;
+
+		setWindowPos(NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	}
+
+	void Window::destroyWindow(void)
+	{
+		::DestroyWindow(m_hwnd);
+	}
+
+	HDC Window::getDC(void)
+	{
+		return ::GetDC(m_hwnd);
+	}
+
+	void Window::releaseDC(HDC hdc)
+	{
+		VERIFY(1 == ::ReleaseDC(m_hwnd, hdc));
+	}
+
 	Application * Application::s_ptr = NULL;
 
 	LRESULT CALLBACK Application::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
@@ -802,6 +766,18 @@ namespace my
 		if(NULL != s_ptr)
 		{
 			WindowPtrMap & wndMap = getSingleton().m_wndMap;
+
+			if(WM_CREATE == message)
+			{
+				WindowPtr winPtr(getSingleton().newWindow(hwnd));
+
+				LRESULT lres = winPtr->onProc(hwnd, WM_CREATE, wparam, lparam);
+				if(0 == lres)
+				{
+					wndMap.insert(WindowPtrMap::value_type(hwnd, winPtr));
+				}
+				return lres;
+			}
 
 			WindowPtrMap::iterator iter = wndMap.find(hwnd);
 
@@ -813,51 +789,52 @@ namespace my
 		return ::DefWindowProc(hwnd, message, wparam, lparam);
 	}
 
-	Application::Application(HINSTANCE hinst /*= NULL*/)
-		: m_hinst(hinst)
-		, m_pIdleListener(NULL)
+	Application::Application(void)
+		: m_hinst(::GetModuleHandle(NULL))
 	{
 		_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
-		if(NULL == m_hinst)
-			m_hinst = ::GetModuleHandle(NULL);
-
-		if(NULL == m_hinst)
-			T3D_WINEXCEPT(::GetLastError());
+		assert(NULL != m_hinst);
 
 		s_ptr = this;
 	}
 
 	Application::~Application(void)
 	{
-		//while(!m_wndMap.empty())
-		//{
-		//	WindowPtrMap::iterator iter = m_wndMap.begin();
-
-		//	assert(m_wndMap.end() != iter);
-
-		//	WindowPtr win = iter->second;
-
-		//	win->destroyWindow();
-		//}
+		while(!m_wndMap.empty())
+		{
+			m_wndMap.begin()->second->destroyWindow();
+		}
 
 		s_ptr = NULL;
 	}
 
-	Window * Application::createWindow(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle)
+	Window * Application::newWindow(HWND hwnd)
+	{
+		return new Window(hwnd);
+	}
+
+	void Application::onIdle(void)
+	{
+		::WaitMessage();
+	}
+
+	Window * Application::createWindow(const std::basic_string<charT> winTitle, const std::basic_string<charT> winClass)
 	{
 		if(!Window::isRegisteredWindowClass(winClass, getHandle()))
 		{
 			Window::registerWindowClass(winClass, getHandle());
 		}
 
-		WindowPtr ptr(new Window(winClass, winTitle, this));
+		HWND hwnd = ::CreateWindowEx(
+			0, winClass.c_str(), winTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, getHandle(), NULL);
 
-		assert(m_wndMap.end() == m_wndMap.find(ptr->getHandle()));
+		if(NULL == hwnd)
+			return NULL;
 
-		m_wndMap[ptr->getHandle()] = ptr;
+		assert(m_wndMap.end() != m_wndMap.find(hwnd));
 
-		return ptr.get();
+		return m_wndMap[hwnd].get();
 	}
 
 	HINSTANCE Application::getHandle(void) const
@@ -867,14 +844,11 @@ namespace my
 
 	std::basic_string<charT> Application::getModuleFileName(void) const
 	{
-		TCHAR buffer[MAX_PATH];
-		VERIFY(0 != ::GetModuleFileName(getHandle(), buffer, sizeof(buffer) / sizeof(TCHAR)));
-		return std::basic_string<charT>(buffer);
-	}
+		std::basic_string<charT> ret;
+		ret.resize(MAX_PATH);
+		ret.resize(::GetModuleFileName(getHandle(), &ret[0], ret.size()));
 
-	void Application::setIdleListener(IdleListener * pIdleListener)
-	{
-		m_pIdleListener = pIdleListener;
+		return ret;
 	}
 
 	int Application::run(void)
@@ -891,10 +865,7 @@ namespace my
 			}
 			else
 			{
-				if(NULL != m_pIdleListener && !m_pIdleListener->nodifyIdle())
-				{
-					::WaitMessage();
-				}
+				onIdle();
 			}
 		}
 

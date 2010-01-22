@@ -9,7 +9,6 @@
 #include <t3dlib6.h>
 #include "myWindow.h"
 #include "myMath.h"
-#include "myImage.h"
 #include "myResource.h"
 #include <list>
 #include <atltypes.h>
@@ -106,7 +105,7 @@ namespace my
 		my::ImagePtr convertImage(const my::Image * image);
 	};
 
-	class GameBase : public Application
+	class Game : public Application
 	{
 	public:
 		enum SCREEN_MODE
@@ -119,7 +118,7 @@ namespace my
 		struct CONFIG_DESC
 		{
 		public:
-			CONFIG_DESC(DWORD _width = 800, DWORD _height = 600, int _smode = SM_WINDOWED);
+			CONFIG_DESC(DWORD _width, DWORD _height, int _smode);
 
 		public:
 			DWORD width;
@@ -150,21 +149,6 @@ namespace my
 
 		t3d::ZBufferPtr m_zbuff;
 
-	public:
-		GameBase(HINSTANCE hinst);
-
-		~GameBase(void);
-
-	public:
-		void prepare(const CONFIG_DESC & cfg);
-
-		void prepareConfig(const CONFIG_DESC & cfg);
-
-		void bltBackSurfaceToPrimary(void);
-	};
-
-	class Game : public GameBase, public Application::IdleListener
-	{
 	protected:
 		t3d::DInputPtr m_dinput;
 
@@ -175,23 +159,29 @@ namespace my
 		t3d::DIMousePtr m_mouse;
 
 	public:
-		Game(HINSTANCE hinst = NULL);
+		Game(void);
 
 		~Game(void);
 
 	public:
-		virtual bool onInit(void) = 0;
+		void prepare(const CONFIG_DESC & cfg);
 
-		virtual bool onFrame(void) = 0;
+		void prepareConfig(const CONFIG_DESC & cfg);
 
-		virtual void onShutdown(void) = 0;
+		void bltBackSurfaceToPrimary(void);
 
-	public:
 		//int run(LPTSTR lpCmdLine);
 
-		int run(const CONFIG_DESC & cfg = Game::CONFIG_DESC());
+		int run(const CONFIG_DESC & cfg = CONFIG_DESC(800, 600, SM_WINDOWED));
 
-		BOOL nodifyIdle(void);
+		void onIdle(void);
+
+	public:
+		virtual bool onInit(void) { return true; }
+
+		virtual bool onFrame(void) { return true; }
+
+		virtual void onShutdown(void) {}
 	};
 }
 

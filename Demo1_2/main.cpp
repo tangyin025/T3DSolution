@@ -172,7 +172,6 @@ class MyGame
 	: public my::Game						// 用以实现基于帧循环的基本应用程序框架，并已经实现了常见的 primary、back surface 结构
 	, public my::DrawnHelper				// 用以绘制常见多边形，如 sphere、box、plane 等
 	, public my::ErrorListener				// 实现接受错误信息的接口，这些错误信息通常来自于 my 的封装，也可以使用 REPORT_ERROR 宏对这个接口报错
-	//, public my::Window::MessageListener	// 用来接收 windows 消息的接口
 {
 protected:
 	my::ConsoleSimulatorPtr m_consoleSim;	// 一个类似控制台的模拟器，可以在 surface 上输出控制台信息
@@ -245,9 +244,9 @@ public:
 		my::IOStreamPtr tmpStream;
 		my::ImagePtr tmpImage;
 
-		//// load 第一个贴图
-		//tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
-		//m_defaultTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
+		// load 第一个贴图
+		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
+		m_defaultTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
 
 		// ======================================== TODO: BEGIN ========================================
 
@@ -293,9 +292,9 @@ public:
 		m_skySphere_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
 
 		//// load 背景音乐
-		//my::WavPtr tmpWav(my::ResourceMgr::getSingleton().openWav(_T("stationthrob.wav")));
-		//m_dsbuffer = my::DSoundBufferPtr(my::createDSoundBufferForWholeWav(*m_dsound.get(), *tmpWav.get()));
-		//my::copyWholeWavBufferToDSoundBuffer(*m_dsbuffer.get(), *tmpWav.get());
+		//my::WavPtr tmpWav(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
+		//m_dsbuffer = my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get());
+		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		//m_dsbuffer->play();
 
 		//// 查询并创建手柄（仅测试）
@@ -307,9 +306,6 @@ public:
 		//	m_joy->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
 		//	m_joy->acquire();
 		//}
-
-		//// 注册主窗口消息监听
-		//m_pwnd->setMessageListener(this);
 
 		// ======================================== TODO: END   ========================================
 
@@ -352,29 +348,29 @@ public:
 		//// 清理 zbuffer
 		//m_rc->fillZbuffer(clipper, 0);
 
-		//// 从用户输入来更新欧拉相机的坐标和方位
-		//m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
-
-		//// 设置渲染上下文的 camera
-		//m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
+		// 设置渲染上下文的 camera
 		m_rc->setViewport(m_rc->getClipperRect());
 		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVHeight(DEG_TO_RAD(90), m_rc->getClipperRect().right - m_rc->getClipperRect().left, m_rc->getClipperRect().bottom - m_rc->getClipperRect().top));
 		m_rc->setCameraNearZ(1);
 		m_rc->setCameraFarZ(10000);
 
-		//// 设置渲染上下文的 light
-		//my::Vec4<real> l_pos(-30, 30, -30);
-		//l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
-		//m_rc->clearLightList();
-		//m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
-		//m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
+		//// 从用户输入来更新欧拉相机的坐标和方位
+		//m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
+		//m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
+
+		// 设置渲染上下文的 light
+		my::Vec4<real> l_pos(-30, 30, -30);
+		l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
+		m_rc->clearLightList();
+		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
+		m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
 
 		// 设置渲染上下文的 material
 		m_rc->setAmbient(my::Color::WHITE);
 		m_rc->setDiffuse(my::Color::WHITE);
 
-		//// 设置渲染上下文的 texture
-		//m_rc->setTextureBuffer(m_defaultTexture->getBits(), m_defaultTexture->getPitch(), m_defaultTexture->getWidth(), m_defaultTexture->getHeight());
+		// 设置渲染上下文的 texture
+		m_rc->setTextureBuffer(m_defaultTexture->getBits(), m_defaultTexture->getPitch(), m_defaultTexture->getWidth(), m_defaultTexture->getHeight());
 
 		// ======================================== TODO: BEGIN ========================================
 
@@ -395,7 +391,7 @@ public:
 		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformUVN(cameraPos, t3d::vec3Add(m_world->m_characterBody->getPosition(), my::Vec4<real>(0, cameraHeight, 0)), my::Vec4<real>::UNIT_Y));
 
 		// 设置渲染上下文的 light
-		my::Vec4<real> l_pos(-30, 30, -30);
+		l_pos = my::Vec4<real>(-30, 30, -30);
 		l_pos *= cameraOffset;
 		m_rc->clearLightList();
 		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
@@ -627,19 +623,6 @@ int APIENTRY WinMain(
 	LPSTR		/*lpCmdLine*/,
 	int			/*nCmdShow*/)
 {
-	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF & _CRTDBG_ALLOC_MEM_DF);
-
-	try
-	{
-		// 建立一个应用程序，以 800 x 600 窗口模式运行
-		MyGame game;
-		return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
-		//return game.run(my::Game::CONFIG_DESC(1680, 1050, my::Game::SM_FULLSCREEN32)); // 不要使用 SM_FULLSCREEN16，因为还没实现 ^_^b
-	}
-	catch(t3d::Exception & e)
-	{
-		::MessageBox(NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
-	}
-
-	return -1;
+	MyGame game;
+	return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
 }

@@ -30,21 +30,36 @@ namespace my
 
 #define T3D_WINEXCEPT(code) { throw my::WinException( _T(__FILE__), __LINE__, (code) ); }
 
-	class WindowBase
+	class Application;
+
+	class Window
 	{
+		friend Application;
+
 	public:
 		static std::basic_string<charT> getWindowMessageStr(UINT message);
+
+		static BOOL isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
+
+		static void registerWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
 
 	protected:
 		HWND m_hwnd;
 
 	public:
-		WindowBase(HWND hwnd = NULL);
+		Window(HWND hwnd = NULL);
 
-		virtual ~WindowBase(void);
+		virtual ~Window(void);
 
 	public:
+		virtual LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+
+	public:
+		HWND getHandle(void) const;
+
 		void showWindow(int nShow = SW_NORMAL);
+
+		void updateWindow(void);
 
 		std::basic_string<charT> getWindowText(void) const;
 
@@ -70,6 +85,8 @@ namespace my
 
 		CRect & clientToScreenSelf(CRect & rect);
 
+		void setWindowPos(HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags);
+
 		void centerWindow(void);
 
 		void destroyWindow(void);
@@ -77,41 +94,6 @@ namespace my
 		HDC getDC(void);
 
 		void releaseDC(HDC hdc);
-	};
-
-	class Application;
-
-	class Window : public WindowBase
-	{
-		friend Application;
-
-	public:
-		static BOOL isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
-
-		static void registerWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
-
-	public:
-		class MessageListener
-		{
-		public:
-			virtual BOOL notifyMessage(LRESULT & lResult, Window * win, UINT message, WPARAM wparam, LPARAM lparam) = 0;
-		};
-
-	protected:
-		MessageListener * m_pMessageListener;
-
-	protected:
-		Window(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle, const Application * app);
-
-	public:
-		~Window(void);
-
-	public:
-		void setMessageListener(MessageListener * pMessageListener);
-
-		HWND getHandle(void) const;
-
-		LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 	};
 
 	typedef boost::shared_ptr<Window> WindowPtr;
@@ -131,33 +113,26 @@ namespace my
 		static LRESULT CALLBACK onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 	public:
-		class IdleListener
-		{
-		public:
-			virtual BOOL nodifyIdle(void) = 0;
-		};
-
-	protected:
-		IdleListener * m_pIdleListener;
-
-	public:
 		WindowPtrMap m_wndMap;
 
 		HINSTANCE m_hinst;
 
 	public:
-		Application(HINSTANCE hinst = NULL);
+		Application(void);
 
 		virtual ~Application(void);
 
 	public:
-		Window * createWindow(const std::basic_string<charT> winClass, const std::basic_string<charT> winTitle);
+		virtual Window * newWindow(HWND hwnd);
+
+		virtual void onIdle(void);
+
+	public:
+		Window * createWindow(const std::basic_string<charT> winTitle, const std::basic_string<charT> winClass = _T("MY_WINDOW"));
 
 		HINSTANCE getHandle(void) const;
 
 		std::basic_string<charT> getModuleFileName(void) const;
-
-		void setIdleListener(IdleListener * pIdleListener);
 
 		int run(void);
 	};
