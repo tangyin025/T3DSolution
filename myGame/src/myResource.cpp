@@ -3,6 +3,7 @@
 #include "myResource.h"
 #include <sstream>
 #include <mmsystem.h>
+#include "libc.h"
 
 #ifdef _UNICODE
 #define fopen _wfopen
@@ -226,11 +227,49 @@ namespace my
 		assert(audioBytes1 + audioBytes2 <= wav->child.cksize);
 
 		if(audioPtr1 != NULL)
+		{
 			memcpy(audioPtr1, wav->buffer.get(), audioBytes1);
+		}
 
 		if(audioPtr2 != NULL)
+		{
 			memcpy(audioPtr2, wav->buffer.get() + audioBytes1, audioBytes2);
+		}
 
 		dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+	}
+
+#define FAILED_CUSEXCEPT(expr) { if( !(expr) ) T3D_CUSEXCEPT( _T(#expr) ) }
+
+	Image::Image(const std::basic_string<charT> & strFileName)
+	{
+		FAILED_CUSEXCEPT(SUCCEEDED(m_image.Load(strFileName.c_str())));
+	}
+
+	Image::Image(int nWidth, int nHeight, int nBPP, DWORD dwFlags /*= 0*/)
+	{
+		FAILED_CUSEXCEPT(m_image.Create(nWidth, nHeight, nBPP, dwFlags));
+	}
+
+	ImagePtr Image::convertTo16Bits565(void) const
+	{
+		ImagePtr image(new Image(getWidth(), getHeight(), 16, 0));
+
+		HDC hdc = image->getDC();
+		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
+		image->releaseDC();
+
+		return image;
+	}
+
+	ImagePtr Image::convertTo32Bits(void) const
+	{
+		ImagePtr image(new Image(getWidth(), getHeight(), 32, 0));
+
+		HDC hdc = image->getDC();
+		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
+		image->releaseDC();
+
+		return image;
 	}
 }

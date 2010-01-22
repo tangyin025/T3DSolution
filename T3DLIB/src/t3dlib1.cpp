@@ -187,8 +187,7 @@ namespace t3d
 
 	DDPIXELFORMAT DDSurface::getPixelFormat(void)
 	{
-		DDPIXELFORMAT ddpf;
-		ddpf.dwSize = sizeof(ddpf);
+		DDPIXELFORMAT ddpf = {sizeof(ddpf)};
 		SUCCEEDED_VERIFY(m_ddsurface->GetPixelFormat(&ddpf));
 
 		return ddpf;
@@ -196,8 +195,7 @@ namespace t3d
 
 	DDSURFACEDESC2 DDSurface::lock(LPRECT lpDestRect /*= NULL*/, DWORD dwFlags /*= DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR*/)
 	{
-		DDSURFACEDESC2 ddsd;
-		ddsd.dwSize = sizeof(ddsd);
+		DDSURFACEDESC2 ddsd = {sizeof(ddsd)};
 		FAILED_DDEXCEPT(m_ddsurface->Lock(lpDestRect, &ddsd, dwFlags, NULL));
 
 		return ddsd;
@@ -224,9 +222,7 @@ namespace t3d
 
 	void DDSurface::fill(LPRECT lpDestRect, DWORD color)
 	{
-		DDBLTFX ddbf;
-		memset(&ddbf, 0, sizeof(ddbf));
-		ddbf.dwSize = sizeof(ddbf);
+		DDBLTFX ddbf = {sizeof(ddbf)};
 		ddbf.dwFillColor = color;
 
 		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbf));
@@ -270,8 +266,7 @@ namespace t3d
 
 	DDSURFACEDESC2 DDraw::getDisplayMode(void)
 	{
-		DDSURFACEDESC2 ddsd;
-		ddsd.dwSize = sizeof(ddsd);
+		DDSURFACEDESC2 ddsd = {sizeof(ddsd)};
 		FAILED_DDEXCEPT(m_ddraw->GetDisplayMode(&ddsd));
 		return ddsd;
 	}
@@ -331,9 +326,7 @@ namespace t3d
 
 	DDSurfacePtr DDraw::createWindowSurface(void)
 	{
-		DDSURFACEDESC2 ddsd;
-		memset(&ddsd, 0, sizeof(ddsd));
-		ddsd.dwSize				= sizeof(ddsd);
+		DDSURFACEDESC2 ddsd = {sizeof(ddsd)};
 		ddsd.dwFlags			= DDSD_CAPS;
 		ddsd.ddsCaps.dwCaps		= DDSCAPS_PRIMARYSURFACE;
 		ddsd.dwBackBufferCount	= 0;
@@ -344,9 +337,7 @@ namespace t3d
 
 	DDSurfacePtr DDraw::createMemorySurface(DWORD dwWidth, DWORD dwHeight)
 	{
-		DDSURFACEDESC2 ddsd;
-		memset(&ddsd, 0, sizeof(ddsd));
-		ddsd.dwSize				= sizeof(ddsd);
+		DDSURFACEDESC2 ddsd = {sizeof(ddsd)};
 		ddsd.dwFlags			= DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps		= DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 		ddsd.dwWidth			= dwWidth;

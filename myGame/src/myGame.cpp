@@ -111,22 +111,21 @@ namespace my
 		return image->convertTo32Bits();
 	}
 
-	GameBase::CONFIG_DESC::CONFIG_DESC(DWORD _width /*= 800*/, DWORD _height /*= 600*/, int _smode /*= SM_WINDOWED*/)
+	Game::CONFIG_DESC::CONFIG_DESC(DWORD _width, DWORD _height, int _smode)
 		: width(_width), height(_height), smode(_smode)
 	{
 	}
 
-	GameBase::GameBase(HINSTANCE hinst)
-		: Application(hinst)
-		, m_pwnd(NULL)
+	Game::Game(void)
+		: m_pwnd(NULL)
 	{
 	}
 
-	GameBase::~GameBase(void)
+	Game::~Game(void)
 	{
 	}
 
-	void GameBase::prepare(const CONFIG_DESC & cfg)
+	void Game::prepare(const CONFIG_DESC & cfg)
 	{
 		// create error reporter
 		m_errorRpt = ErrorReporterPtr(new ErrorReporter());
@@ -135,7 +134,7 @@ namespace my
 		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
 
 		// create main window
-		m_pwnd = createWindow(_T("T3DLIB_WINDOW"), getModuleFileName());
+		m_pwnd = createWindow(getModuleFileName());
 
 		// create ddraw object
 		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
@@ -146,7 +145,7 @@ namespace my
 		prepareConfig(cfg);
 	}
 
-	void GameBase::prepareConfig(const CONFIG_DESC & cfg)
+	void Game::prepareConfig(const CONFIG_DESC & cfg)
 	{
 		assert(m_ddraw != NULL);
 
@@ -160,7 +159,7 @@ namespace my
 		// set ddraw and main window with config
 		switch(cfg.smode)
 		{
-		case my::GameBase::SM_WINDOWED:
+		case my::Game::SM_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 			//m_ddraw->RestoreDisplayMode();
 			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
@@ -168,14 +167,14 @@ namespace my
 			m_pwnd->centerWindow();
 			break;
 
-		case my::GameBase::SM_FULLSCREEN16:
+		case my::Game::SM_FULLSCREEN16:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(clientRect);
 			break;
 
-		case my::GameBase::SM_FULLSCREEN32:
+		case my::Game::SM_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
@@ -256,10 +255,14 @@ namespace my
 
 		// show main window
 		m_pwnd->showWindow();
+
+		m_pwnd->updateWindow();
 	}
 
-	void GameBase::bltBackSurfaceToPrimary(void)
+	void Game::bltBackSurfaceToPrimary(void)
 	{
+		assert(NULL != m_pwnd);
+
 		// commit back surface to primary surface within corrected rectangle
 		//m_rprim = m_pwnd->getClientRect();
 		//m_pwnd->clientToScreenSelf(m_rprim);
@@ -274,15 +277,6 @@ namespace my
 		::BitBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), hdcSrc, m_rback.left, m_rback.top, SRCCOPY);
 		m_pwnd->releaseDC(hdc);
 		m_sback->releaseDC(hdcSrc);
-	}
-
-	Game::Game(HINSTANCE hinst /*= NULL*/)
-		: GameBase(hinst)
-	{
-	}
-
-	Game::~Game(void)
-	{
 	}
 
 	//int Game::run(LPTSTR lpCmdLine)
@@ -310,43 +304,50 @@ namespace my
 	{
 		int res = -1;
 
-		// prepare game base
-		prepare(cfg);
-
-		// create dinput and keyboard & mouse
-		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
-
-		m_keyboard = m_dinput->createSysKeyboard();
-		m_keyboard->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
-		m_keyboard->acquire();
-
-		m_mouse = m_dinput->createSysMouse();
-		m_mouse->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
-		m_mouse->acquire();
-
-		m_dsound = t3d::DSoundPtr(new t3d::DSound());
-		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
-
-		// register this to idle listener
-		setIdleListener(this);
-
-		// register current directory input source dir
-		m_resourceMgr->registerDir(_T("."));
-
-		// do initialize
-		if(onInit())
+		try
 		{
-			// run main application
-			res = Application::run();
-		}
+			// prepare game base
+			prepare(cfg);
 
-		// do shutdown
-		onShutdown();
+			// create dinput
+			m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
+
+			// create sys keyboard
+			m_keyboard = m_dinput->createSysKeyboard();
+			m_keyboard->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+			m_keyboard->acquire();
+
+			// create sys mouse
+			m_mouse = m_dinput->createSysMouse();
+			m_mouse->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+			m_mouse->acquire();
+
+			// create dsound
+			m_dsound = t3d::DSoundPtr(new t3d::DSound());
+			m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
+
+			// register current directory input source dir
+			m_resourceMgr->registerDir(_T("."));
+
+			// do initialize
+			if(onInit())
+			{
+				// run main application
+				res = Application::run();
+			}
+
+			// do shutdown
+			onShutdown();
+		}
+		catch(t3d::Exception & e)
+		{
+			::MessageBox(m_pwnd ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+		}
 
 		return res;
 	}
 
-	BOOL Game::nodifyIdle(void)
+	void Game::onIdle(void)
 	{
 		// update keyboard
 		m_keyboard->update();
@@ -361,13 +362,10 @@ namespace my
 			m_pwnd->destroyWindow();
 
 			m_pwnd = NULL;
-
-			return TRUE;
+			return;
 		}
 
 		// swap the backup and primary surface
 		bltBackSurfaceToPrimary();
-
-		return TRUE;
 	}
 }

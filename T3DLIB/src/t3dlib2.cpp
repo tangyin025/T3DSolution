@@ -136,11 +136,7 @@ namespace t3d
 
 		assert(min_x <= max_x && min_y <= max_y);
 
-		DIPROPRANGE dipr;
-		memset(&dipr, 0, sizeof(dipr));
-		dipr.diph.dwSize = sizeof(dipr);
-		dipr.diph.dwHeaderSize = sizeof(dipr.diph);
-
+		DIPROPRANGE dipr = {sizeof(dipr), sizeof(dipr.diph)};
 		dipr.diph.dwObj = DIJOFS_X;
 		dipr.diph.dwHow = DIPH_BYOFFSET;
 		dipr.lMin = min_x;
@@ -167,11 +163,7 @@ namespace t3d
 
 		assert(dead_zone >= 0 && dead_zone <= 100);
 
-		DIPROPDWORD dipd;
-		memset(&dipd, 0, sizeof(dipd));
-		dipd.diph.dwSize = sizeof(dipd);
-		dipd.diph.dwHeaderSize = sizeof(dipd.diph);
-
+		DIPROPDWORD dipd  = {sizeof(dipd), sizeof(dipd.diph)};
 		dipd.diph.dwObj = DIJOFS_X;
 		dipd.diph.dwHow = DIPH_BYOFFSET;
 		dipd.dwData = real_to_int(dead_zone * 100);

@@ -23,8 +23,20 @@ std::basic_string<char> str_printf(const char * format, ...);
 
 std::basic_string<wchar_t> str_printf(const wchar_t * format, ...);
 
-std::basic_string<wchar_t> mstringToWstring(const char * str);
+std::basic_string<wchar_t> mstringToWString(const std::basic_string<char> & mstr);
 
-std::basic_string<char> wstringToMstring(const wchar_t * str);
+std::basic_string<char> wstringToMString(const std::basic_string<wchar_t> & wstr);
+
+#ifdef _UNICODE
+#define mstringToTString(str) mstringToWString(str)
+#define wstringToTString(str) (str)
+#define tstringToMString(str) wstringToMString(str)
+#define tstringToWString(str) (str)
+#else
+#define mstringToTString(str) (str)
+#define wstringToTString(str) wstringToMString(str)
+#define tstringToMString(str) (str)
+#define tstringToWString(str) mstringToWString(str)
+#endif
 
 #endif // __LIBC_H__
