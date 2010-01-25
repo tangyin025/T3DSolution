@@ -36,14 +36,14 @@ namespace t3d
 
 	STreeNode::IndexList::reference STreeNode::childAt(IndexList::size_type i)
 	{
-		assert(i < getChildListSize());
+		_ASSERT(i < getChildListSize());
 
 		return m_childs[i];
 	}
 
 	STreeNode::IndexList::const_reference STreeNode::childAt(IndexList::size_type i) const
 	{
-		assert(i < getChildListSize());
+		_ASSERT(i < getChildListSize());
 
 		return m_childs[i];
 	}
@@ -175,8 +175,8 @@ namespace t3d
 		const BoneNodeList & boneNodeList1,
 		size_t root_i)
 	{
-		assert(boneNodeList.size() == boneNodeList0.size());
-		assert(boneNodeList.size() == boneNodeList1.size());
+		_ASSERT(boneNodeList.size() == boneNodeList0.size());
+		_ASSERT(boneNodeList.size() == boneNodeList1.size());
 
 		incrementBone(
 			boneNodeList[root_i],
@@ -205,8 +205,8 @@ namespace t3d
 		real value1,
 		real clipper)
 	{
-		assert(boneNodeList.size() == boneNodeList0.size());
-		assert(boneNodeList.size() == boneNodeList1.size());
+		_ASSERT(boneNodeList.size() == boneNodeList0.size());
+		_ASSERT(boneNodeList.size() == boneNodeList1.size());
 
 		intersectBone(
 			boneNodeList[root_i],
@@ -272,14 +272,14 @@ namespace t3d
 
 	real getBoneKeyFrameListMinTime(const BoneKeyFrameList & boneKeyFrameList)
 	{
-		assert(boneKeyFrameList.size() > 0);
+		_ASSERT(boneKeyFrameList.size() > 0);
 
 		return boneKeyFrameList.front().getTime();
 	}
 
 	real getBoneKeyFrameListMaxTime(const BoneKeyFrameList & boneKeyFrameList)
 	{
-		assert(boneKeyFrameList.size() > 0);
+		_ASSERT(boneKeyFrameList.size() > 0);
 
 		return boneKeyFrameList.back().getTime();
 	}
@@ -307,7 +307,7 @@ namespace t3d
 			}
 		}
 
-		assert(time > getBoneKeyFrameListMaxTime(boneKeyFrameList));
+		_ASSERT(time > getBoneKeyFrameListMaxTime(boneKeyFrameList));
 
 		return bone = boneKeyFrameList.back();
 	}
@@ -339,14 +339,14 @@ namespace t3d
 
 	t3d::BoneKeyFrameList::reference BoneAnimation::boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i)
 	{
-		assert(i < getBoneKeyFrameListSize());
+		_ASSERT(i < getBoneKeyFrameListSize());
 
 		return m_boneKeyFrameList[i];
 	}
 
 	t3d::BoneKeyFrameList::const_reference BoneAnimation::boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i) const
 	{
-		assert(i < getBoneKeyFrameListSize());
+		_ASSERT(i < getBoneKeyFrameListSize());
 
 		return m_boneKeyFrameList[i];
 	}
@@ -408,7 +408,7 @@ namespace t3d
 		size_t bone_i,
 		real time)
 	{
-		assert(boneNodeList.size() == boneAnimationNodeList.size());
+		_ASSERT(boneNodeList.size() == boneAnimationNodeList.size());
 
 		intersectBoneKeyFrameList(
 			boneNodeList[bone_i],
@@ -482,9 +482,9 @@ namespace t3d
 		const Mat4<real> & mrot,
 		const Mat4<real> & mmat)
 	{
-		assert(root_i < boneNodeList.size());
+		_ASSERT(root_i < boneNodeList.size());
 
-		assert(boneTransformList.size() == boneNodeList.size());
+		_ASSERT(boneTransformList.size() == boneNodeList.size());
 
 		updateBoneTransformFromBone(
 			boneTransformList[root_i],
@@ -572,8 +572,8 @@ namespace t3d
 		const BoneTransformList & lhs,
 		const BoneTransformList & rhs)
 	{
-		assert(res.size() == lhs.size());
-		assert(res.size() == rhs.size());
+		_ASSERT(res.size() == lhs.size());
+		_ASSERT(res.size() == rhs.size());
 
 		for(size_t i = 0; i < lhs.size(); i++)
 		{
@@ -587,8 +587,8 @@ namespace t3d
 		const BoneTransformList & lhs,
 		const BoneTransformList & rhs)
 	{
-		assert(res.size() == lhs.size());
-		assert(res.size() == rhs.size());
+		_ASSERT(res.size() == lhs.size());
+		_ASSERT(res.size() == rhs.size());
 
 		for(size_t i = 0; i < lhs.size(); i++)
 		{
@@ -612,7 +612,7 @@ namespace t3d
 		const BoneTransform & boneTransform,
 		real weight)
 	{
-		assert(weight <= 1);
+		_ASSERT(weight <= 1);
 
 		return vertex * boneTransform.getTransform() * weight;
 	}
@@ -622,7 +622,7 @@ namespace t3d
 		const BoneTransform & boneTransform,
 		real weight)
 	{
-		assert(weight <= 1);
+		_ASSERT(weight <= 1);
 
 		return normal * boneTransform.getRotationTransform() * weight;
 	}
@@ -639,9 +639,9 @@ namespace t3d
 		BoneAssignmentList::const_iterator assignment_iter = boneAssignmentList.begin();
 		for(; assignment_iter != boneAssignmentList.end(); assignment_iter++)
 		{
-			assert(assignment_iter->vertex_i < origVertexList.size());
+			_ASSERT(assignment_iter->vertex_i < origVertexList.size());
 
-			assert(assignment_iter->bone_i < boneTransformList.size());
+			_ASSERT(assignment_iter->bone_i < boneTransformList.size());
 
 			vec3AddSelf(vertexList[assignment_iter->vertex_i],
 				buildVertexFromBoneTransform(
@@ -657,7 +657,7 @@ namespace t3d
 		const BoneAssignmentList & boneAssignmentList,
 		const BoneTransformList & boneTransformList)
 	{
-		assert(origVertexList.size() == origNormalList.size());
+		_ASSERT(origVertexList.size() == origNormalList.size());
 
 		vertexList.clear();
 		vertexList.resize(origVertexList.size(), Vec4<real>(0, 0, 0, 1));
@@ -668,9 +668,9 @@ namespace t3d
 		BoneAssignmentList::const_iterator assignment_iter = boneAssignmentList.begin();
 		for(; assignment_iter != boneAssignmentList.end(); assignment_iter++)
 		{
-			assert(assignment_iter->vertex_i < origVertexList.size());
+			_ASSERT(assignment_iter->vertex_i < origVertexList.size());
 
-			assert(assignment_iter->bone_i < boneTransformList.size());
+			_ASSERT(assignment_iter->bone_i < boneTransformList.size());
 
 			vec3AddSelf(vertexList[assignment_iter->vertex_i],
 				buildVertexFromBoneTransform(

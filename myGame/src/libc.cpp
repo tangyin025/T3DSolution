@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include <cstdio>
-#include <cassert>
+#include <crtdbg.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
 #include "libc.h"
@@ -14,7 +14,7 @@ char * asprintf(const char * format, ...)
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
 
-	assert(inc_size <= def_size);
+	_ASSERT(inc_size <= def_size);
 	size_t new_size = def_size - inc_size;
 	size_t ret_size = def_size;
 	char * buffer = NULL;
@@ -38,7 +38,7 @@ wchar_t * aswprintf(const wchar_t * format, ...)
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
 
-	assert(inc_size <= def_size);
+	_ASSERT(inc_size <= def_size);
 	size_t new_size = def_size - inc_size;
 	size_t ret_size = def_size;
 	wchar_t * buffer = NULL;
@@ -62,7 +62,7 @@ char * avsprintf(const char * format, va_list args)
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
 
-	assert(inc_size <= def_size);
+	_ASSERT(inc_size <= def_size);
 	size_t new_size = def_size - inc_size;
 	size_t ret_size = def_size;
 	char * buffer = NULL;
@@ -83,7 +83,7 @@ wchar_t * avswprintf(const wchar_t * format, va_list args)
 	static const size_t def_size = 512;
 	static const size_t inc_size = 512;
 
-	assert(inc_size <= def_size);
+	_ASSERT(inc_size <= def_size);
 	size_t new_size = def_size - inc_size;
 	size_t ret_size = def_size;
 	wchar_t * buffer = NULL;

@@ -6,7 +6,7 @@
 
 #ifndef VERIFY
 #ifdef _DEBUG
-#define VERIFY(expr) assert( expr )
+#define VERIFY(expr) _ASSERT( expr )
 #else
 #define VERIFY(expr) expr
 #endif

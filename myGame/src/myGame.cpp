@@ -15,19 +15,19 @@ namespace my
 
 	ErrorReporter::ErrorReporter(void)
 	{
-		assert(NULL == s_ptr);
+		_ASSERT(NULL == s_ptr);
 		s_ptr = this;
 	}
 
 	ErrorReporter::~ErrorReporter(void)
 	{
-		assert(this == s_ptr);
+		_ASSERT(this == s_ptr);
 		s_ptr = NULL;
 	}
 
 	void ErrorReporter::addErrorListener(ErrorListener * listener)
 	{
-		assert(NULL != listener);
+		_ASSERT(NULL != listener);
 
 		m_listenerList.push_back(listener);
 	}
@@ -37,7 +37,7 @@ namespace my
 		ErrorListenerPList::iterator l_iter = m_listenerList.begin();
 		for(; l_iter != m_listenerList.end(); l_iter++)
 		{
-			assert(NULL != *l_iter);
+			_ASSERT(NULL != *l_iter);
 
 			(*l_iter)->onReport(info);
 		}
@@ -47,21 +47,21 @@ namespace my
 
 	ColorConversion::ColorConversion(void)
 	{
-		assert(NULL == s_ptr);
+		_ASSERT(NULL == s_ptr);
 		s_ptr = this;
 	}
 
 	ColorConversion::~ColorConversion(void)
 	{
-		assert(NULL != s_ptr);
+		_ASSERT(NULL != s_ptr);
 		s_ptr = NULL;
 	}
 
 	uint32 ColorConversion16::convertColor(const my::Color & color)
 	{
-		assert(0 <= color.x && color.x <= 1);
-		assert(0 <= color.y && color.y <= 1);
-		assert(0 <= color.z && color.z <= 1);
+		_ASSERT(0 <= color.x && color.x <= 1);
+		_ASSERT(0 <= color.y && color.y <= 1);
+		_ASSERT(0 <= color.z && color.z <= 1);
 
 		return _RGB16BIT(
 			t3d::real_to_int(color.x * 255),
@@ -71,9 +71,9 @@ namespace my
 
 	uint32 ColorConversion16::convertColor(const t3d::Vec4<int> & color)
 	{
-		assert(0 <= color.x && color.x <= 255);
-		assert(0 <= color.y && color.y <= 255);
-		assert(0 <= color.z && color.z <= 255);
+		_ASSERT(0 <= color.x && color.x <= 255);
+		_ASSERT(0 <= color.y && color.y <= 255);
+		_ASSERT(0 <= color.z && color.z <= 255);
 
 		return _RGB16BIT(
 			color.x, color.y, color.z);
@@ -86,9 +86,9 @@ namespace my
 
 	uint32 ColorConversion32::convertColor(const my::Color & color)
 	{
-		assert(0 <= color.x && color.x <= 1);
-		assert(0 <= color.y && color.y <= 1);
-		assert(0 <= color.z && color.z <= 1);
+		_ASSERT(0 <= color.x && color.x <= 1);
+		_ASSERT(0 <= color.y && color.y <= 1);
+		_ASSERT(0 <= color.z && color.z <= 1);
 
 		return _RGB32BIT(
 			t3d::real_to_int(color.x * 255),
@@ -98,9 +98,9 @@ namespace my
 
 	uint32 ColorConversion32::convertColor(const t3d::Vec4<int> & color)
 	{
-		assert(0 <= color.x && color.x <= 255);
-		assert(0 <= color.y && color.y <= 255);
-		assert(0 <= color.z && color.z <= 255);
+		_ASSERT(0 <= color.x && color.x <= 255);
+		_ASSERT(0 <= color.y && color.y <= 255);
+		_ASSERT(0 <= color.z && color.z <= 255);
 
 		return _RGB32BIT(
 			color.x, color.y, color.z);
@@ -147,9 +147,9 @@ namespace my
 
 	void Game::prepareConfig(const CONFIG_DESC & cfg)
 	{
-		assert(m_ddraw != NULL);
+		_ASSERT(m_ddraw != NULL);
 
-		assert(NULL != m_pwnd);
+		_ASSERT(NULL != m_pwnd);
 
 		//// NOTE: destory previous primary surface before re-create it
 		//m_sprim = t3d::DDSurfacePtr();
@@ -261,7 +261,7 @@ namespace my
 
 	void Game::bltBackSurfaceToPrimary(void)
 	{
-		assert(NULL != m_pwnd);
+		_ASSERT(NULL != m_pwnd);
 
 		// commit back surface to primary surface within corrected rectangle
 		//m_rprim = m_pwnd->getClientRect();
@@ -269,12 +269,15 @@ namespace my
 		CRect rect = m_pwnd->getClientRect();
 
 		// NOTE: for some reason, if the window size is greater than the desktop size, will lead these assert abort
-		assert(rect == m_rback);
+		_ASSERT(rect == m_rback);
 
 		//m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
 		HDC hdcSrc = m_sback->getDC();
 		HDC hdc = m_pwnd->getDC();
-		::BitBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), hdcSrc, m_rback.left, m_rback.top, SRCCOPY);
+		if(!::BitBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), hdcSrc, m_rback.left, m_rback.top, SRCCOPY))
+		{
+			T3D_WINEXCEPT(::GetLastError());
+		}
 		m_pwnd->releaseDC(hdc);
 		m_sback->releaseDC(hdcSrc);
 	}
@@ -300,9 +303,9 @@ namespace my
 	//	return run(CONFIG_DESC(vmap["width"].as<int>(), vmap["height"].as<int>(), vmap["fullscreen-mode"].as<int>()));
 	//}
 
-	int Game::run(const CONFIG_DESC & cfg)
+	int Game::run(const CONFIG_DESC & cfg /*= CONFIG_DESC(800, 600, SM_WINDOWED)*/)
 	{
-		int res = -1;
+		int res = 1;
 
 		try
 		{
@@ -342,6 +345,7 @@ namespace my
 		catch(t3d::Exception & e)
 		{
 			::MessageBox(m_pwnd ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+			exit(1);
 		}
 
 		return res;

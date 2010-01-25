@@ -4,7 +4,7 @@
 
 #include "t3dcommon.h"
 #include <string>
-#include <cassert>
+#include <crtdbg.h>
 #include <dsound.h>
 #include <atlbase.h>
 #include <boost/shared_ptr.hpp>

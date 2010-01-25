@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "t3dlib1.h"
-#include <cassert>
+#include <crtdbg.h>
 #include <boost/scoped_array.hpp>
 
 #pragma comment(lib, "DDraw.lib")
@@ -208,14 +208,14 @@ namespace t3d
 
 	void DDSurface::blt(LPRECT lpDestRect, DDSurface * srcSurface, LPRECT lpSrcRect, DWORD dwFlags /*= DDBLT_DONOTWAIT*/, LPDDBLTFX lpDDBltFx /*= NULL*/)
 	{
-		assert(NULL != srcSurface);
+		_ASSERT(NULL != srcSurface);
 
 		FAILED_DDEXCEPT(m_ddsurface->Blt(lpDestRect, srcSurface->m_ddsurface, lpSrcRect, dwFlags, lpDDBltFx));
 	}
 
 	void DDSurface::bltFast(DWORD dwX, DWORD dwY, DDSurface * srcSurface, LPRECT lpSrcRect, DWORD dwTrans /*= DDBLTFAST_NOCOLORKEY*/)
 	{
-		assert(NULL != srcSurface);
+		_ASSERT(NULL != srcSurface);
 
 		FAILED_DDEXCEPT(m_ddsurface->BltFast(dwX, dwY, srcSurface->m_ddsurface, lpSrcRect, dwTrans));
 	}
@@ -290,7 +290,7 @@ namespace t3d
 
 	DDClipperPtr DDraw::createMemoryClipper(LPRECT lpRect, DWORD dwCount)
 	{
-		assert(dwCount > 0);
+		_ASSERT(dwCount > 0);
 
 		boost::scoped_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
 

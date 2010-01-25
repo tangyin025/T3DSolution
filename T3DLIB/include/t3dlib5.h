@@ -78,7 +78,7 @@ namespace t3d
 		inline ConstSurfaceRef(elem_t * p, LONG pitch)
 			: _p(p), _pitch(pitch)
 		{
-			assert(NULL != _p);
+			_ASSERT(NULL != _p);
 		}
 
 	public:

@@ -134,7 +134,7 @@ namespace t3d
 	{
 		setDataFormat(&c_dfDIJoystick);
 
-		assert(min_x <= max_x && min_y <= max_y);
+		_ASSERT(min_x <= max_x && min_y <= max_y);
 
 		DIPROPRANGE dipr = {sizeof(dipr), sizeof(dipr.diph)};
 		dipr.diph.dwObj = DIJOFS_X;
@@ -161,7 +161,7 @@ namespace t3d
 		dipr.lMax = max_z;
 		setProperty(DIPROP_RANGE, &dipr.diph);
 
-		assert(dead_zone >= 0 && dead_zone <= 100);
+		_ASSERT(dead_zone >= 0 && dead_zone <= 100);
 
 		DIPROPDWORD dipd  = {sizeof(dipd), sizeof(dipd.diph)};
 		dipd.diph.dwObj = DIJOFS_X;

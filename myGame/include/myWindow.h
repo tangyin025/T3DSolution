@@ -3,7 +3,7 @@
 #define __MYWINDOW_H__
 
 #include "myCommon.h"
-#include <cassert>
+#include <crtdbg.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -107,7 +107,7 @@ namespace my
 
 		static Application & getSingleton(void)
 		{
-			assert(NULL != s_ptr); return *s_ptr;
+			_ASSERT(NULL != s_ptr); return *s_ptr;
 		}
 
 		static LRESULT CALLBACK onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);

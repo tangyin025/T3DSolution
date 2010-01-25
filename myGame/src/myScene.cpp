@@ -46,14 +46,14 @@ namespace my
 
 	CustomShaderObjectPtrList::reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i)
 	{
-		assert(i < getCustomShaderObjListSize());
+		_ASSERT(i < getCustomShaderObjListSize());
 
 		return getCustomShaderObjList()[i];
 	}
 
 	CustomShaderObjectPtrList::const_reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i) const
 	{
-		assert(i < getCustomShaderObjListSize());
+		_ASSERT(i < getCustomShaderObjListSize());
 
 		return getCustomShaderObjList()[i];
 	}
@@ -89,60 +89,60 @@ namespace my
 
 	size_t BSPNode::getTriangleCount(void) const
 	{
-		assert(false); return 0;
+		_ASSERT(false); return 0;
 	}
 
 	const t3d::Vec4<real> & BSPNode::getTriangleVertex0(size_t i) const
 	{
-		assert(false); return my::Vec4<real>::ZERO;
+		_ASSERT(false); return my::Vec4<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec4<real> & BSPNode::getTriangleVertex1(size_t i) const
 	{
-		assert(false); return my::Vec4<real>::ZERO;
+		_ASSERT(false); return my::Vec4<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec4<real> & BSPNode::getTriangleVertex2(size_t i) const
 	{
-		assert(false); return my::Vec4<real>::ZERO;
+		_ASSERT(false); return my::Vec4<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec4<real> & BSPNode::getTriangleNormal0(size_t i) const
 	{
-		assert(false); return my::Vec4<real>::ZERO;
+		_ASSERT(false); return my::Vec4<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec4<real> & BSPNode::getTriangleNormal1(size_t i) const
 	{
-		assert(false); return my::Vec4<real>::ZERO;
+		_ASSERT(false); return my::Vec4<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec4<real> & BSPNode::getTriangleNormal2(size_t i) const
 	{
-		assert(false); return my::Vec4<real>::ZERO;
+		_ASSERT(false); return my::Vec4<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec2<real> & BSPNode::getTriangleUV0(size_t i) const
 	{
-		assert(false); return my::Vec2<real>::ZERO;
+		_ASSERT(false); return my::Vec2<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec2<real> & BSPNode::getTriangleUV1(size_t i) const
 	{
-		assert(false); return my::Vec2<real>::ZERO;
+		_ASSERT(false); return my::Vec2<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
 	const t3d::Vec2<real> & BSPNode::getTriangleUV2(size_t i) const
 	{
-		assert(false); return my::Vec2<real>::ZERO;
+		_ASSERT(false); return my::Vec2<real>::ZERO;
 		UNREFERENCED_PARAMETER(i);
 	}
 
@@ -153,7 +153,7 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRW(
@@ -161,14 +161,14 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithoutThird(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithoutThird(
@@ -176,14 +176,14 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
@@ -191,14 +191,14 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
@@ -206,13 +206,13 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
@@ -220,13 +220,13 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
@@ -234,7 +234,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferW(
@@ -320,104 +320,104 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
@@ -425,13 +425,13 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
@@ -439,7 +439,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
@@ -526,7 +526,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(false);
+		_ASSERT(false);
 	}
 #pragma warning(default: 4100)
 
@@ -581,8 +581,8 @@ namespace my
 		real intersection1 = calculateLinePlaneIntersection(v0, dir1, planePoint, planeNormal);
 		real intersection2 = calculateLinePlaneIntersection(v0, dir2, planePoint, planeNormal);
 
-		assert(intersection1 > 0 && intersection1 < 1);
-		assert(intersection2 > 0 && intersection2 < 1);
+		_ASSERT(intersection1 > 0 && intersection1 < 1);
+		_ASSERT(intersection2 > 0 && intersection2 < 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v0, t3d::vec3Mul(dir1, intersection1));
 		t3d::Vec4<real> v4 = t3d::vec3Add(v0, t3d::vec3Mul(dir2, intersection2));
@@ -625,8 +625,8 @@ namespace my
 		real intersection1 = calculateLinePlaneIntersection(v0, dir1, planePoint, planeNormal);
 		real intersection2 = calculateLinePlaneIntersection(v0, dir2, planePoint, planeNormal);
 
-		assert(intersection1 > 0 && intersection1 < 1);
-		assert(intersection2 > 0 && intersection2 < 1);
+		_ASSERT(intersection1 > 0 && intersection1 < 1);
+		_ASSERT(intersection2 > 0 && intersection2 < 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v0, t3d::vec3Mul(dir1, intersection1));
 		t3d::Vec4<real> v4 = t3d::vec3Add(v0, t3d::vec3Mul(dir2, intersection2));
@@ -667,7 +667,7 @@ namespace my
 
 		real intersection1 = calculateLinePlaneIntersection(v1, dir1, planePoint, planeNormal);
 
-		assert(intersection1 > 0 && intersection1 < 1);
+		_ASSERT(intersection1 > 0 && intersection1 < 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v1, t3d::vec3Mul(dir1, intersection1));
 
@@ -703,7 +703,7 @@ namespace my
 
 		real intersection1 = calculateLinePlaneIntersection(v1, dir1, planePoint, planeNormal);
 
-		assert(intersection1 > 0 && intersection1 < 1);
+		_ASSERT(intersection1 > 0 && intersection1 < 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v1, t3d::vec3Mul(dir1, intersection1));
 
@@ -953,9 +953,9 @@ namespace my
 
 		BSPNodePtr node = BSPNodePtr(new BSPNode());
 
-		assert(vertexList.size() == normalList.size());
-		assert(vertexList.size() == uvList.size());
-		assert(0 == vertexList.size() % 3);
+		_ASSERT(vertexList.size() == normalList.size());
+		_ASSERT(vertexList.size() == uvList.size());
+		_ASSERT(0 == vertexList.size() % 3);
 
 		t3d::VertexList lVertexList;
 		t3d::NormalList lNormalList;
@@ -1004,7 +1004,7 @@ namespace my
 			}
 		}
 
-		assert(!node->getVertexList().empty());
+		_ASSERT(!node->getVertexList().empty());
 
 		node->front = buildBSPScene(lVertexList, lNormalList, lUVList);
 
@@ -1020,14 +1020,14 @@ namespace my
 	{
 		if(node->getVertexList().empty())
 		{
-			assert(NULL == node->front);
-			assert(NULL == node->back);
+			_ASSERT(NULL == node->front);
+			_ASSERT(NULL == node->back);
 
 			node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
 		}
 		else
 		{
-			assert(!node->getVertexList().empty());
+			_ASSERT(!node->getVertexList().empty());
 
 			bool haveFrontVertex = false;
 			bool haveBackVertex = false;
@@ -1335,8 +1335,8 @@ namespace my
 	//						objPtr->pushOriginalNormal(tmpNormal);
 	//						objPtr->pushUV(tmpUV);
 
-	//						assert(objPtr->getOriginalVertexList().size() == objPtr->getOriginalNormalList().size());
-	//						assert(objPtr->getOriginalVertexList().size() == objPtr->getUVListSize());
+	//						_ASSERT(objPtr->getOriginalVertexList().size() == objPtr->getOriginalNormalList().size());
+	//						_ASSERT(objPtr->getOriginalVertexList().size() == objPtr->getUVListSize());
 
 	//						newIndex = objPtr->getOriginalVertexList().size() - 1;
 

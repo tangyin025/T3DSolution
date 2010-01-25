@@ -16,7 +16,7 @@
 
 
 #ifdef __draw_clipped
-		assert(y0 >= clipper.top && y0 < clipper.bottom);
+		_ASSERT(y0 >= clipper.top && y0 < clipper.bottom);
 #endif
 
 		int x0 = fixp16_to_int(lx);

@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "t3dcommon.h"
 
-#include <cassert>
 #include <sstream>
 
 namespace t3d

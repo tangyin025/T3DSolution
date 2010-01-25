@@ -264,7 +264,7 @@ namespace my
 		const t3d::Vec4<elem_t> & planeNormal,
 		elem_t planeDistance)
 	{
-		assert(t3d::vec3IsNormalized(planeNormal));
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
 		return t3d::vec3Dot(point, planeNormal) - planeDistance;
 	}
@@ -275,7 +275,7 @@ namespace my
 		const t3d::Vec4<elem_t> & planePoint,
 		const t3d::Vec4<elem_t> & planeNormal)
 	{
-		assert(t3d::vec3IsNormalized(planeNormal));
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
 		return t3d::vec3Dot(t3d::vec3Sub(point, planePoint), planeNormal);
 	}
@@ -286,7 +286,7 @@ namespace my
 		const t3d::Vec4<elem_t> & planePoint,
 		const t3d::Vec4<elem_t> & planeNormal)
 	{
-		assert(t3d::vec3IsNormalized(planeNormal));
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
 		return t3d::vec3Sub(point, t3d::vec3Mul(planeNormal, calculatePointPlaneDistance(point, planePoint, planeNormal)));
 	}
@@ -298,9 +298,9 @@ namespace my
 		const t3d::Vec4<elem_t> & planePoint,
 		const t3d::Vec4<elem_t> & planeNormal)
 	{
-		assert(t3d::vec3IsNormalized(planeNormal));
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
-		assert(!IS_ZERO_FLOAT(t3d::vec3Dot(lineDirection, planeNormal)));
+		_ASSERT(!IS_ZERO_FLOAT(t3d::vec3Dot(lineDirection, planeNormal)));
 
 		return -(t3d::vec3Dot(linePoint, planeNormal) - t3d::vec3Dot(planePoint, planeNormal)) / t3d::vec3Dot(lineDirection, planeNormal);
 	}
@@ -341,7 +341,7 @@ namespace my
 		const t3d::Vec4<elem_t> & v1,
 		const t3d::Vec4<elem_t> & v2)
 	{
-		assert(isValidTriangle(v0, v1, v2));
+		_ASSERT(isValidTriangle(v0, v1, v2));
 
 		return t3d::vec3Normalize(calculateTriangleDirection(v0, v1, v2));
 	}
@@ -353,7 +353,7 @@ namespace my
 		const t3d::Vec4<elem_t> & v1,
 		const t3d::Vec4<elem_t> & v2)
 	{
-		assert(isValidTriangle(v0, v1, v2));
+		_ASSERT(isValidTriangle(v0, v1, v2));
 
 		t3d::Vec4<elem_t> planeDir = calculateTriangleDirection(v0, v1, v2);
 

@@ -18,7 +18,7 @@ namespace my
 	FileIOStream::FileIOStream(FILE * handle)
 		: m_handle(handle)
 	{
-		assert(NULL != m_handle);
+		_ASSERT(NULL != m_handle);
 	}
 
 	FileIOStream::~FileIOStream(void)
@@ -55,13 +55,13 @@ namespace my
 
 	ResourceMgr::ResourceMgr(void)
 	{
-		assert(NULL == s_ptr);
+		_ASSERT(NULL == s_ptr);
 		s_ptr = this;
 	}
 
 	ResourceMgr::~ResourceMgr(void)
 	{
-		assert(this == s_ptr);
+		_ASSERT(this == s_ptr);
 		s_ptr = NULL;
 	}
 
@@ -224,7 +224,7 @@ namespace my
 		DWORD audioBytes2;
 		dsbuffer->lock(0, wav->child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER);
 
-		assert(audioBytes1 + audioBytes2 <= wav->child.cksize);
+		_ASSERT(audioBytes1 + audioBytes2 <= wav->child.cksize);
 
 		if(audioPtr1 != NULL)
 		{

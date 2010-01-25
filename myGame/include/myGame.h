@@ -32,7 +32,7 @@ namespace my
 	public:
 		static ErrorReporter & getSingleton(void)
 		{
-			assert(NULL != s_ptr); return * s_ptr;
+			_ASSERT(NULL != s_ptr); return * s_ptr;
 		}
 
 	public:
@@ -67,7 +67,7 @@ namespace my
 	public:
 		static ColorConversion & getSingleton(void)
 		{
-			assert(NULL != s_ptr); return * s_ptr;
+			_ASSERT(NULL != s_ptr); return * s_ptr;
 		}
 
 	public:
