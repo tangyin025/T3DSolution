@@ -89,7 +89,7 @@ namespace my
 
 	void Particle::setMass(real mass)
 	{
-		assert(!IS_ZERO_FLOAT(mass));
+		_ASSERT(!IS_ZERO_FLOAT(mass));
 
 		inverseMass = 1 / mass;
 	}
@@ -111,7 +111,7 @@ namespace my
 
 	void Particle::integrate(real duration)
 	{
-		assert(duration >= 0);
+		_ASSERT(duration >= 0);
 
 		t3d::Vec4<real> resultingAcc = t3d::vec3Add(acceleration, t3d::vec3Mul(forceAccum, inverseMass));
 
@@ -388,7 +388,7 @@ namespace my
 
 	real ParticleContact::calculateSeparatingVelocity(void) const
 	{
-		assert(NULL != particles[0]);
+		_ASSERT(NULL != particles[0]);
 
 		t3d::Vec4<real> relativeVelocity = particles[0]->getVelocity();
 
@@ -402,7 +402,7 @@ namespace my
 
 	void ParticleContact::resolveVelocity(real duration) // ***
 	{
-		assert(NULL != particles[0]);
+		_ASSERT(NULL != particles[0]);
 
 		real separatingVelocity = calculateSeparatingVelocity();
 
@@ -566,14 +566,14 @@ namespace my
 		particles[0] = particle0;
 		particles[1] = particle1;
 
-		assert(NULL != particles[0]);
-		assert(NULL != particles[1]);
+		_ASSERT(NULL != particles[0]);
+		_ASSERT(NULL != particles[1]);
 	}
 
 	real ParticleLink::currentLength() const
 	{
-		assert(NULL != particles[0]);
-		assert(NULL != particles[1]);
+		_ASSERT(NULL != particles[0]);
+		_ASSERT(NULL != particles[1]);
 
 		return t3d::vec3Length(t3d::vec3Sub(particles[0]->getPosition(), particles[1]->getPosition()));
 	}
@@ -659,12 +659,12 @@ namespace my
 		: particle(_particle)
 		, anchor(_anchor)
 	{
-		assert(NULL != particle);
+		_ASSERT(NULL != particle);
 	}
 
 	real ParticleConstraint::currentLength(void) const
 	{
-		assert(NULL != particle);
+		_ASSERT(NULL != particle);
 
 		return t3d::vec3Length(t3d::vec3Sub(particle->getPosition(), anchor));
 	}
@@ -762,7 +762,7 @@ namespace my
 		ParticlePtrList::iterator p_iter = particleList.begin();
 		for(; p_iter != particleList.end(); p_iter++)
 		{
-			assert((*p_iter != NULL));
+			_ASSERT((*p_iter != NULL));
 
 			(*p_iter)->clearAccumulator();
 		}
@@ -777,7 +777,7 @@ namespace my
 		ParticleContactGeneratorPtrList::const_iterator c_iter = particleContactGeneratorList.begin();
 		for(; c_iter != particleContactGeneratorList.end(); c_iter++)
 		{
-			assert((*c_iter) != NULL);
+			_ASSERT((*c_iter) != NULL);
 
 			unsigned used = (*c_iter)->addContact(nextContact, limit);
 
@@ -785,7 +785,7 @@ namespace my
 
 			nextContact += used;
 
-			assert(limit >= 0);
+			_ASSERT(limit >= 0);
 
 			if(limit <= 0)
 			{
@@ -801,7 +801,7 @@ namespace my
 		ParticlePtrList::iterator p_iter = particleList.begin();
 		for(; p_iter != particleList.end(); p_iter++)
 		{
-			assert((*p_iter != NULL));
+			_ASSERT((*p_iter != NULL));
 
 			(*p_iter)->integrate(duration);
 		}
@@ -897,7 +897,7 @@ namespace my
 
 	void RigidBody::setMass(real mass)
 	{
-		assert(!IS_ZERO_FLOAT(mass));
+		_ASSERT(!IS_ZERO_FLOAT(mass));
 
 		inverseMass = 1 / mass;
 	}
@@ -1004,14 +1004,14 @@ namespace my
 
 	void RigidBody::setInertialTensor(const t3d::Mat4<real> & inertialTensor)
 	{
-		assert(!IS_ZERO_FLOAT(inertialTensor.determinant()));
+		_ASSERT(!IS_ZERO_FLOAT(inertialTensor.determinant()));
 
 		inverseInertiaTensor = inertialTensor.inverse();
 	}
 
 	t3d::Mat4<real> RigidBody::getInertialTensor(void) const
 	{
-		assert(!IS_ZERO_FLOAT(inverseInertiaTensor.determinant()));
+		_ASSERT(!IS_ZERO_FLOAT(inverseInertiaTensor.determinant()));
 
 		return inverseInertiaTensor.inverse();
 	}
@@ -1145,7 +1145,7 @@ namespace my
 
 	void RigidBody::integrate(real duration)
 	{
-		assert(duration >= 0);
+		_ASSERT(duration >= 0);
 
 		if(!getAwake())
 		{
@@ -1371,7 +1371,7 @@ namespace my
 
 	void AeroControl::updateForceFromControl(RigidBody * body, real duration, real _controlSetting)
 	{
-		assert(_controlSetting >= -1 && _controlSetting <= 1);
+		_ASSERT(_controlSetting >= -1 && _controlSetting <= 1);
 
 		if(_controlSetting < 0)
 		{
@@ -1399,7 +1399,7 @@ namespace my
 
 	void AngledAero::updateForce(RigidBody * body, real duration)
 	{
-		assert(false);
+		_ASSERT(false);
 
 		UNREFERENCED_PARAMETER(body);
 		UNREFERENCED_PARAMETER(duration);
@@ -1425,7 +1425,7 @@ namespace my
 
 	void Buoyancy::updateForce(RigidBody * body, real duration)
 	{
-		assert(false);
+		_ASSERT(false);
 
 		UNREFERENCED_PARAMETER(body);
 		UNREFERENCED_PARAMETER(duration);
@@ -1469,7 +1469,7 @@ namespace my
 
 	void Contact::calculateContactBasis(void)
 	{
-		assert(IS_ZERO_FLOAT(t3d::vec3Length(contactNormal) - 1));
+		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(contactNormal) - 1));
 
 		t3d::Vec4<real> contantTangents[2];
 
@@ -1531,7 +1531,7 @@ namespace my
 
 	void Contact::calculateDesiredDeltaVelocity(real duration) // ***
 	{
-		assert(NULL != bodys[0]);
+		_ASSERT(NULL != bodys[0]);
 
 		const real velocityLimit = (real)0.25f;
 
@@ -1564,7 +1564,7 @@ namespace my
 			swapBodies();
 		}
 
-		assert(NULL != bodys[0]);
+		_ASSERT(NULL != bodys[0]);
 
 		// Calculate an set of axis at the contact point.
 		calculateContactBasis();
@@ -1591,7 +1591,7 @@ namespace my
 
 	t3d::Vec4<real> Contact::calculateFrictionlessImpulse(const t3d::Mat4<real> inverseInertialTensors[]) const
 	{
-		assert(NULL != bodys[0]);
+		_ASSERT(NULL != bodys[0]);
 
 		// Build a vector that shows the change in velocity in
 		// world space for a unit impulse in the direction of the contact
@@ -1623,7 +1623,7 @@ namespace my
 
 	t3d::Vec4<real> Contact::calculateFrictionImpulse(const t3d::Mat4<real> inverseInertialTensors[]) const // ***
 	{
-		assert(NULL != bodys[0]);
+		_ASSERT(NULL != bodys[0]);
 
 		// The equivalent of a cross product in matrices is multiplication
 		// by a skew symmetric matrix - we build the matrix for converting
@@ -1789,7 +1789,7 @@ namespace my
 
 	void Contact::applyPositionChange(t3d::Vec4<real> linearChanges[2], t3d::Vec4<real> angularChanges[2])
 	{
-		assert(NULL != bodys[0]);
+		_ASSERT(NULL != bodys[0]);
 
 		real linearInertias[2];
 		real angularInertias[2];
@@ -1830,7 +1830,7 @@ namespace my
 
 	void Contact::applyVelocityChange(t3d::Vec4<real> velocityChanges[2], t3d::Vec4<real> rotationChanges[2])
 	{
-		assert(NULL != bodys[0]);
+		_ASSERT(NULL != bodys[0]);
 
 		// Get hold of the inverse mass and inverse inertia tensor, both in
 		// world coordinates.
@@ -1961,7 +1961,7 @@ namespace my
 	{
 		t3d::Vec4<real> deltaPosition = t3d::vec3Add(linearChange, t3d::vec3Cross(angularChange, relativeContactPosition));
 
-		assert(IS_ZERO_FLOAT(vec3Length(contact.contactNormal) - 1));
+		_ASSERT(IS_ZERO_FLOAT(vec3Length(contact.contactNormal) - 1));
 
 		if(0 == bodyIndex)
 		{
@@ -1973,7 +1973,7 @@ namespace my
 			// dealing with the second body in a contact
 			// and negative otherwise (because we're
 			// subtracting the resolution)..
-			assert(1 == bodyIndex);
+			_ASSERT(1 == bodyIndex);
 			contact.penetration += t3d::vec3Dot(deltaPosition, contact.contactNormal);
 		}
 	}
@@ -2071,7 +2071,7 @@ namespace my
 		{
 			// The sign of the change is negative if we're dealing
 			// with the second body in a contact.
-			assert(1 == bodyIndex);
+			_ASSERT(1 == bodyIndex);
 			t3d::vec3SubSelf(contact.contactVelocity, deltaVelocity.transformTranspose(contact.contactToWorld));
 		}
 
@@ -2195,7 +2195,7 @@ namespace my
 		RigidBodyPtrList::iterator b_iter = bodyList.begin();
 		for(; b_iter != bodyList.end(); b_iter++)
 		{
-			assert((*b_iter != NULL));
+			_ASSERT((*b_iter != NULL));
 
 			(*b_iter)->clearAccumulator();
 		}
@@ -2206,7 +2206,7 @@ namespace my
 		RigidBodyPtrList::iterator b_iter = bodyList.begin();
 		for(; b_iter != bodyList.end(); b_iter++)
 		{
-			assert((*b_iter != NULL));
+			_ASSERT((*b_iter != NULL));
 
 			(*b_iter)->integrate(duration);
 		}

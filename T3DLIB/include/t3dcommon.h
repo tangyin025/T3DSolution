@@ -50,7 +50,7 @@
 #define SAFE_RELEASE(p)		if(p != NULL) { p->Release();	p = NULL; }
 
 #ifdef _DEBUG
-#define SUCCEEDED_VERIFY(expr) assert( SUCCEEDED( expr ) )
+#define SUCCEEDED_VERIFY(expr) _ASSERT( SUCCEEDED( expr ) )
 #else
 #define SUCCEEDED_VERIFY(expr) expr
 #endif

@@ -3,7 +3,7 @@
 #define __T3DLIB4_H__
 
 #include "t3dcommon.h"
-#include <cassert>
+#include <crtdbg.h>
 #include <cmath>
 #include <iostream>
 
@@ -438,7 +438,7 @@ namespace t3d
 
 		inline Mat4 inverse(void) const
 		{
-			//assert(!IS_ZERO_FLOAT(determinant()));
+			//_ASSERT(!IS_ZERO_FLOAT(determinant()));
 
 			return adjoint() * (1 / determinant());
 		}
@@ -1092,7 +1092,7 @@ namespace t3d
 
 		inline Quat inverse(void) const
 		{
-			assert(!IS_ZERO_FLOAT(norm()));
+			_ASSERT(!IS_ZERO_FLOAT(norm()));
 
 			return conjugate().scale(1 / norm());
 		}
@@ -1104,21 +1104,21 @@ namespace t3d
 
 		inline Quat unitInverse(void) const
 		{
-			assert(IS_ZERO_FLOAT(norm() - 1));
+			_ASSERT(IS_ZERO_FLOAT(norm() - 1));
 
 			return conjugate();
 		}
 
 		inline Quat & unitInverseSelf(void)
 		{
-			assert(IS_ZERO_FLOAT(norm() - 1));
+			_ASSERT(IS_ZERO_FLOAT(norm() - 1));
 
 			return conjugateSelf();
 		}
 
 		inline Quat normalize(void) const
 		{
-			assert(!IS_ZERO_FLOAT(norm()));
+			_ASSERT(!IS_ZERO_FLOAT(norm()));
 
 			elem_t length_inv = 1 / norm();
 			return Quat(
@@ -1130,7 +1130,7 @@ namespace t3d
 
 		inline Quat & normalizeSelf(void)
 		{
-			assert(!IS_ZERO_FLOAT(norm()));
+			_ASSERT(!IS_ZERO_FLOAT(norm()));
 
 			elem_t length = norm();
 			w /= length;
@@ -1382,7 +1382,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3NegSelf(Vec4<elem_t> & res)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x = -res.x;
 		res.y = -res.y;
@@ -1403,7 +1403,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3InverseSelf(Vec4<elem_t> & res)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x = 1 / res.x;
 		res.y = 1 / res.y;
@@ -1424,7 +1424,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3AddSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x += rhs.x;
 		res.y += rhs.y;
@@ -1445,7 +1445,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3AddSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x += scaler;
 		res.y += scaler;
@@ -1466,7 +1466,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3SubSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x -= rhs.x;
 		res.y -= rhs.y;
@@ -1487,7 +1487,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3SubSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x -= scaler;
 		res.y -= scaler;
@@ -1508,7 +1508,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3MulSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x *= rhs.x;
 		res.y *= rhs.y;
@@ -1529,7 +1529,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3MulSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x *= scaler;
 		res.y *= scaler;
@@ -1550,7 +1550,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3DivSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x /= rhs.x;
 		res.y /= rhs.y;
@@ -1571,7 +1571,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3DivSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		res.x /= scaler;
 		res.y /= scaler;
@@ -1600,7 +1600,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> vec3Normalize(const Vec4<elem_t> & rhs)
 	{
-		assert(!IS_ZERO_FLOAT(vec3Length(rhs)));
+		_ASSERT(!IS_ZERO_FLOAT(vec3Length(rhs)));
 
 		elem_t len = vec3Length(rhs);
 		return Vec4<elem_t>(
@@ -1613,7 +1613,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Vec4<elem_t> & vec3NormalizeSelf(Vec4<elem_t> & res)
 	{
-		assert(1 == res.w);
+		_ASSERT(1 == res.w);
 
 		elem_t len = vec3Length(res);
 		res.x /= len;
@@ -1641,7 +1641,7 @@ namespace t3d
 	template <typename elem_t>
 	inline elem_t vec3CosTheta(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
-		assert(!IS_ZERO_FLOAT(vec3Length(lhs) * vec3Length(rhs)));
+		_ASSERT(!IS_ZERO_FLOAT(vec3Length(lhs) * vec3Length(rhs)));
 
 		return vec3Dot(lhs, rhs) / (vec3Length(lhs) * vec3Length(rhs));
 	}
@@ -1701,7 +1701,7 @@ namespace t3d
 			return mat3GetRow3(rhs);
 		}
 
-		assert(false); return Vec4<elem_t>();
+		_ASSERT(false); return Vec4<elem_t>();
 	}
 
 	template <typename elem_t>
@@ -1746,7 +1746,7 @@ namespace t3d
 			return mat3GetColumn3(rhs);
 		}
 
-		assert(false); return Vec4<elem_t>();
+		_ASSERT(false); return Vec4<elem_t>();
 	}
 
 	template <typename elem_t>
@@ -1904,9 +1904,9 @@ namespace t3d
 	template <typename elem_t>
 	inline Mat4<elem_t> mat3Uvn(const Vec4<elem_t> & u, const Vec4<elem_t> & v, const Vec4<elem_t> & n)
 	{
-		assert(IS_ZERO_FLOAT(vec3Dot(u, v)));
-		assert(IS_ZERO_FLOAT(vec3Dot(u, n)));
-		assert(IS_ZERO_FLOAT(vec3Dot(v, n)));
+		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, v)));
+		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, n)));
+		_ASSERT(IS_ZERO_FLOAT(vec3Dot(v, n)));
 
 		return Mat4<elem_t>(
 			u.x,			v.x,			n.x,			0,
@@ -1918,9 +1918,9 @@ namespace t3d
 	template <typename elem_t>
 	inline Mat4<elem_t> mat3TransposUvn(const Vec4<elem_t> & u, const Vec4<elem_t> & v, const Vec4<elem_t> & n)
 	{
-		assert(IS_ZERO_FLOAT(vec3Dot(u, v)));
-		assert(IS_ZERO_FLOAT(vec3Dot(u, n)));
-		assert(IS_ZERO_FLOAT(vec3Dot(v, n)));
+		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, v)));
+		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, n)));
+		_ASSERT(IS_ZERO_FLOAT(vec3Dot(v, n)));
 
 		return Mat4<elem_t>(
 			u.x,			u.y,			u.z,			0,
@@ -1980,7 +1980,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Quat<elem_t> buildQuatFromAngleAxis(elem_t angle, const Vec4<elem_t> & axis)
 	{
-		assert(IS_ZERO_FLOAT(vec3Length(axis) - 1));
+		_ASSERT(IS_ZERO_FLOAT(vec3Length(axis) - 1));
 
 		return Quat<elem_t>(
 			cos(angle / 2),
@@ -1992,7 +1992,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Mat4<elem_t> buildRotationMatrixFromQuatLH(const Quat<elem_t> & quat)
 	{
-		assert(IS_ZERO_FLOAT(quat.norm() - 1));
+		_ASSERT(IS_ZERO_FLOAT(quat.norm() - 1));
 
 		return Mat4<elem_t>(
 			1 - (2 * quat.y * quat.y + 2 * quat.z * quat.z),	2 * quat.x * quat.y + 2 * quat.w * quat.z,			2 * quat.x * quat.z - 2 * quat.w * quat.y,			0,
@@ -2004,7 +2004,7 @@ namespace t3d
 	template <typename elem_t>
 	inline Mat4<elem_t> buildInverseRotationMatrixFromQuatLH(const Quat<elem_t> & quat)
 	{
-		assert(IS_ZERO_FLOAT(quat.norm() - 1));
+		_ASSERT(IS_ZERO_FLOAT(quat.norm() - 1));
 
 		return buildRotationMatrixFromQuatLH(quat.unitInverse());
 	}

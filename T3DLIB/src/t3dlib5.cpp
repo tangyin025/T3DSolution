@@ -68,7 +68,7 @@ namespace t3d
 		int width,
 		const Vec4<real> & color)
 	{
-		assert(width >= 0);
+		_ASSERT(width >= 0);
 
 		int x0 = real_to_int(v0.x);
 		int y0 = real_to_int(v0.y);
@@ -84,7 +84,7 @@ namespace t3d
 		int width,
 		const Vec4<real> & color)
 	{
-		assert(width >= 0);
+		_ASSERT(width >= 0);
 
 		if(v0.y >= clipper.top && v0.y < clipper.bottom)
 		{
@@ -115,7 +115,7 @@ namespace t3d
 		int height,
 		const Vec4<real> & color)
 	{
-		assert(height >= 0);
+		_ASSERT(height >= 0);
 
 		int x0 = real_to_int(v0.x);
 		int y0 = real_to_int(v0.y);
@@ -134,7 +134,7 @@ namespace t3d
 		int height,
 		const Vec4<real> & color)
 	{
-		assert(height >= 0);
+		_ASSERT(height >= 0);
 
 		if(v0.x >= clipper.left && v0.x < clipper.right)
 		{
@@ -492,7 +492,7 @@ namespace t3d
 			{
 				if(0 == dy) // ***
 				{
-					assert(0 == dx); return;
+					_ASSERT(0 == dx); return;
 				}
 
 				fixp28 dz = (z1 - z0) / dy;

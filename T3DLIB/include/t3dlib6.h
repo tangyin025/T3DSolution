@@ -65,7 +65,7 @@ namespace t3d
 
 		void pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat)
 		{
-			assert(std::distance(begin, end) >= 0);
+			_ASSERT(std::distance(begin, end) >= 0);
 
 			const VertexList::size_type previous_size = getVertexListSize();
 			const VertexList::difference_type inserted_size = previous_size + std::distance(begin, end);
@@ -94,14 +94,14 @@ namespace t3d
 
 		VertexList::reference vertexAt(VertexList::size_type i)
 		{
-			assert(i < getVertexListSize());
+			_ASSERT(i < getVertexListSize());
 
 			return m_vertexList[i];
 		}
 
 		VertexList::const_reference vertexAt(VertexList::size_type i) const
 		{
-			assert(i < getVertexListSize());
+			_ASSERT(i < getVertexListSize());
 
 			return m_vertexList[i];
 		}
@@ -170,14 +170,14 @@ namespace t3d
 
 		VertexIndexList::reference vertexIndexAt(VertexIndexList::size_type i)
 		{
-			assert(i < getVertexIndexListSize());
+			_ASSERT(i < getVertexIndexListSize());
 
 			return m_vertexIndexList[i];
 		}
 
 		VertexIndexList::const_reference vertexIndexAt(VertexIndexList::size_type i) const
 		{
-			assert(i < getVertexIndexListSize());
+			_ASSERT(i < getVertexIndexListSize());
 
 			return m_vertexIndexList[i];
 		}
@@ -246,7 +246,7 @@ namespace t3d
 
 		void pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat)
 		{
-			assert(std::distance(begin, end) >= 0);
+			_ASSERT(std::distance(begin, end) >= 0);
 
 			const NormalList::size_type previous_size = getNormalListSize();
 			const NormalList::difference_type inserted_size = previous_size + std::distance(begin, end);
@@ -275,14 +275,14 @@ namespace t3d
 
 		NormalList::reference normalAt(NormalList::size_type i)
 		{
-			assert(i < getNormalListSize());
+			_ASSERT(i < getNormalListSize());
 
 			return m_normalList[i];
 		}
 
 		NormalList::const_reference normalAt(NormalList::size_type i) const
 		{
-			assert(i < getNormalListSize());
+			_ASSERT(i < getNormalListSize());
 
 			return m_normalList[i];
 		}
@@ -356,14 +356,14 @@ namespace t3d
 
 		UVList::reference uvAt(UVList::size_type i)
 		{
-			assert(i < getUVListSize());
+			_ASSERT(i < getUVListSize());
 
 			return m_uvList[i];
 		}
 
 		UVList::const_reference uvAt(UVList::size_type i) const
 		{
-			assert(i < getUVListSize());
+			_ASSERT(i < getUVListSize());
 
 			return m_uvList[i];
 		}
@@ -442,14 +442,14 @@ namespace t3d
 
 		ColorList::reference colorAt(ColorList::size_type i)
 		{
-			assert(i < getColorListSize());
+			_ASSERT(i < getColorListSize());
 
 			return m_colorList[i];
 		}
 
 		ColorList::const_reference colorAt(ColorList::size_type i) const
 		{
-			assert(i < getColorListSize());
+			_ASSERT(i < getColorListSize());
 
 			return m_colorList[i];
 		}
@@ -853,14 +853,14 @@ namespace t3d
 
 		LightList::reference lightAt(LightList::size_type i)
 		{
-			assert(i < getLightListSize());
+			_ASSERT(i < getLightListSize());
 
 			return m_lightList[i];
 		}
 
 		LightList::const_reference lightAt(LightList::size_type i) const
 		{
-			assert(i < getLightListSize());
+			_ASSERT(i < getLightListSize());
 
 			return m_lightList[i];
 		}
@@ -1114,14 +1114,14 @@ namespace t3d
 
 		ClipStateList::const_reference clipStateAt(ClipStateList::size_type i) const
 		{
-			assert(i < getClipStateListSize());
+			_ASSERT(i < getClipStateListSize());
 
 			return m_clipStateList[i];
 		}
 
 		ClipStateList::reference clipStateAt(ClipStateList::size_type i)
 		{
-			assert(i < getClipStateListSize());
+			_ASSERT(i < getClipStateListSize());
 
 			return m_clipStateList[i];
 		}

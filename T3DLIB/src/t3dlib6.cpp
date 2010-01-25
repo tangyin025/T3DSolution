@@ -45,7 +45,7 @@ namespace t3d
 
 	//void VertexListContext::pushVertexList(VertexList::const_iterator begin, VertexList::const_iterator end, const Mat4<real> & mmat)
 	//{
-	//	assert(std::distance(begin, end) >= 0);
+	//	_ASSERT(std::distance(begin, end) >= 0);
 
 	//	const VertexList::size_type previous_size = getVertexListSize();
 	//	const VertexList::difference_type inserted_size = previous_size + std::distance(begin, end);
@@ -74,14 +74,14 @@ namespace t3d
 
 	//VertexList::reference VertexListContext::vertexAt(VertexList::size_type i)
 	//{
-	//	assert(i < getVertexListSize());
+	//	_ASSERT(i < getVertexListSize());
 
 	//	return getVertexList()[i];
 	//}
 
 	//VertexList::const_reference VertexListContext::vertexAt(VertexList::size_type i) const
 	//{
-	//	assert(i < getVertexListSize());
+	//	_ASSERT(i < getVertexListSize());
 
 	//	return getVertexList()[i];
 	//}
@@ -143,14 +143,14 @@ namespace t3d
 
 	//VertexIndexList::reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i)
 	//{
-	//	assert(i < getVertexIndexListSize());
+	//	_ASSERT(i < getVertexIndexListSize());
 
 	//	return getVertexIndexList()[i];
 	//}
 
 	//VertexIndexList::const_reference VertexIndexListContext::vertexIndexAt(VertexIndexList::size_type i) const
 	//{
-	//	assert(i < getVertexIndexListSize());
+	//	_ASSERT(i < getVertexIndexListSize());
 
 	//	return getVertexIndexList()[i];
 	//}
@@ -212,7 +212,7 @@ namespace t3d
 
 	//void NormalListContext::pushNormalList(NormalList::const_iterator begin, NormalList::const_iterator end, const Mat4<real> & mmat)
 	//{
-	//	assert(std::distance(begin, end) >= 0);
+	//	_ASSERT(std::distance(begin, end) >= 0);
 
 	//	const NormalList::size_type previous_size = getNormalListSize();
 	//	const NormalList::difference_type inserted_size = previous_size + std::distance(begin, end);
@@ -241,14 +241,14 @@ namespace t3d
 
 	//NormalList::reference NormalListContext::normalAt(NormalList::size_type i)
 	//{
-	//	assert(i < getNormalListSize());
+	//	_ASSERT(i < getNormalListSize());
 
 	//	return getNormalList()[i];
 	//}
 
 	//NormalList::const_reference NormalListContext::normalAt(NormalList::size_type i) const
 	//{
-	//	assert(i < getNormalListSize());
+	//	_ASSERT(i < getNormalListSize());
 
 	//	return getNormalList()[i];
 	//}
@@ -315,14 +315,14 @@ namespace t3d
 
 	//UVList::reference UVListContext::uvAt(UVList::size_type i)
 	//{
-	//	assert(i < getUVListSize());
+	//	_ASSERT(i < getUVListSize());
 
 	//	return getUVList()[i];
 	//}
 
 	//UVList::const_reference UVListContext::uvAt(UVList::size_type i) const
 	//{
-	//	assert(i < getUVListSize());
+	//	_ASSERT(i < getUVListSize());
 
 	//	return getUVList()[i];
 	//}
@@ -394,14 +394,14 @@ namespace t3d
 
 	//ColorList::reference ColorListContext::colorAt(ColorList::size_type i)
 	//{
-	//	assert(i < getColorListSize());
+	//	_ASSERT(i < getColorListSize());
 
 	//	return m_colorList[i];
 	//}
 
 	//ColorList::const_reference ColorListContext::colorAt(ColorList::size_type i) const
 	//{
-	//	assert(i < getColorListSize());
+	//	_ASSERT(i < getColorListSize());
 
 	//	return m_colorList[i];
 	//}
@@ -637,7 +637,7 @@ namespace t3d
 
 	LIGHT LightListContext::buildLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
 	{
-		assert(rgbaIsValid(ambient, real(0), real(1)));
+		_ASSERT(rgbaIsValid(ambient, real(0), real(1)));
 
 		LIGHT light;
 		light.type = LT_AMBIENT;
@@ -648,7 +648,7 @@ namespace t3d
 
 	LIGHT LightListContext::buildLightDirectional(const Vec4<real> & diffuse, const Vec4<real> & dir, LIGHT_STATE state /*= LS_ON*/)
 	{
-		assert(rgbaIsValid(diffuse, real(0), real(1)));
+		_ASSERT(rgbaIsValid(diffuse, real(0), real(1)));
 
 		LIGHT light;
 		light.type = LT_DIRECTIONAL;
@@ -660,7 +660,7 @@ namespace t3d
 
 	LIGHT LightListContext::buildLightPoint(const Vec4<real> & diffuse, const Vec4<real> & pos, real kc /*= 1.0f*/, real kl /*= 0.001f*/, real kq /*= 0.00001f*/, LIGHT_STATE state /*= LS_ON*/)
 	{
-		assert(rgbaIsValid(diffuse, real(0), real(1)));
+		_ASSERT(rgbaIsValid(diffuse, real(0), real(1)));
 
 		LIGHT light;
 		light.type = LT_POINT;
@@ -675,8 +675,8 @@ namespace t3d
 
 	Vec4<real> LightListContext::lightVertexAmbient(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
 	{
-		assert(LT_AMBIENT == light.type);
-		assert(LS_ON == light.state);
+		_ASSERT(LT_AMBIENT == light.type);
+		_ASSERT(LS_ON == light.state);
 
 		// I(d)ambient = I0ambient * Clambient
 
@@ -687,8 +687,8 @@ namespace t3d
 
 	Vec4<real> LightListContext::lightVertexDirectional(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
 	{
-		assert(LT_DIRECTIONAL == light.type);
-		assert(LS_ON == light.state);
+		_ASSERT(LT_DIRECTIONAL == light.type);
+		_ASSERT(LS_ON == light.state);
 
 		// I(d)dir = I0dir * Cldir (n . l)
 
@@ -705,8 +705,8 @@ namespace t3d
 
 	Vec4<real> LightListContext::lightVertexPoint(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
 	{
-		assert(LT_POINT == light.type);
-		assert(LS_ON == light.state);
+		_ASSERT(LT_POINT == light.type);
+		_ASSERT(LS_ON == light.state);
 
 		//               I0point * Clpoint
 		// I(d)point = --------------------- (n . l)
@@ -772,14 +772,14 @@ namespace t3d
 
 	//LightList::reference LightListContext::lightAt(LightList::size_type i)
 	//{
-	//	assert(i < getLightListSize());
+	//	_ASSERT(i < getLightListSize());
 
 	//	return m_lightList[i];
 	//}
 
 	//LightList::const_reference LightListContext::lightAt(LightList::size_type i) const
 	//{
-	//	assert(i < getLightListSize());
+	//	_ASSERT(i < getLightListSize());
 
 	//	return m_lightList[i];
 	//}
@@ -821,7 +821,7 @@ namespace t3d
 		case RS_ZYX:
 			return mat3RotZYX(rot) * mat3Mov(pos);
 		default:
-			assert(false); return Mat4<real>();
+			_ASSERT(false); return Mat4<real>();
 		};
 	}
 
@@ -842,7 +842,7 @@ namespace t3d
 		case RS_ZYX:
 			return mat3InverseMov(pos) * mat3InverseRotZYX(rot);
 		default:
-			assert(false); return Mat4<real>();
+			_ASSERT(false); return Mat4<real>();
 		};
 	}
 
@@ -1008,14 +1008,14 @@ namespace t3d
 
 	//TriStateList::reference TriangleStateListContext::triStateAt(TriStateList::size_type i)
 	//{
-	//	assert(i < getTriStateListSize());
+	//	_ASSERT(i < getTriStateListSize());
 
 	//	return m_triStateList[i];
 	//}
 
 	//TriStateList::const_reference TriangleStateListContext::triStateAt(TriStateList::size_type i) const
 	//{
-	//	assert(i < getTriStateListSize());
+	//	_ASSERT(i < getTriStateListSize());
 
 	//	return m_triStateList[i];
 	//}
@@ -1042,8 +1042,8 @@ namespace t3d
 
 	//TRI_STATE RenderLineListZBufferRW::zClipLineAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t v0_i = index * 2 + 0;
 	//	const size_t v1_i = index * 2 + 1;
@@ -1101,7 +1101,7 @@ namespace t3d
 
 	//TRI_STATE RenderLineListZBufferRW::sClipLineAtScreen(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
+	//	_ASSERT(index < getTriStateListSize());
 
 	//	const size_t ti = index * 2;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -1153,13 +1153,13 @@ namespace t3d
 
 	//void RenderLineListZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 2);
 
 	//	const size_t orig_size = getTriStateListSize();
 
 	//	for(size_t i = 0; i < orig_size; i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		TRI_STATE state = zClipLineAtCamera(i); triStateAt(i) = state; // ***
 	//	}
@@ -1167,7 +1167,7 @@ namespace t3d
 
 	//void RenderLineListZBufferRW::cameraToScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 2);
 
 	//	const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
 	//	const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
@@ -1199,7 +1199,7 @@ namespace t3d
 
 	//void RenderLineListZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 2);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -1212,14 +1212,14 @@ namespace t3d
 
 	//void RenderLineListZBufferRW::drawLineList16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderLineListZBufferRW::drawLineList32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 2);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -1254,8 +1254,8 @@ namespace t3d
 
 	//TRI_STATE RenderLineIndexListZBufferRW::zClipLineAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t v0_i = vertexIndexAt(index * 2 + 0);
 	//	const size_t v1_i = vertexIndexAt(index * 2 + 1);
@@ -1313,7 +1313,7 @@ namespace t3d
 
 	//TRI_STATE RenderLineIndexListZBufferRW::sClipLineAtScreen(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
+	//	_ASSERT(index < getTriStateListSize());
 
 	//	const size_t ti = index * 2;
 	//	const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
@@ -1365,13 +1365,13 @@ namespace t3d
 
 	//void RenderLineIndexListZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 2);
 
 	//	const size_t orig_size = getTriStateListSize();
 
 	//	for(size_t i = 0; i < orig_size; i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		TRI_STATE state = zClipLineAtCamera(i); triStateAt(i) = state; // ***
 	//	}
@@ -1379,7 +1379,7 @@ namespace t3d
 
 	//void RenderLineIndexListZBufferRW::cameraToScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 2);
 
 	//	const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
 	//	const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
@@ -1403,7 +1403,7 @@ namespace t3d
 
 	//void RenderLineIndexListZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 2);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -1416,14 +1416,14 @@ namespace t3d
 
 	//void RenderLineIndexListZBufferRW::drawLineIndexList16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderLineIndexListZBufferRW::drawLineIndexList32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 2);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 2);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -1458,9 +1458,9 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -1485,7 +1485,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -1553,9 +1553,9 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -1580,7 +1580,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -1674,8 +1674,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListWireZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -1741,7 +1741,7 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListWireZBufferRW::sClipTriangleAtScreen(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
+	//	_ASSERT(index < getTriStateListSize());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -1777,8 +1777,8 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::reset(void)
 	//{
-	//	//assert(getVertexListSize() == getNormalListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getNormalListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
@@ -1790,11 +1790,11 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vi + 0);
@@ -1825,7 +1825,7 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -1840,7 +1840,7 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::cameraToScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
 	//	const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
@@ -1875,7 +1875,7 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -1888,16 +1888,16 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::drawTriangleList16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderTriangleListWireZBufferRW::drawTriangleList32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -1929,16 +1929,16 @@ namespace t3d
 
 	//void RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderTriangleListWireZBufferRW::drawTriangleListWithoutThird32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -1970,9 +1970,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -1997,7 +1997,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -2062,9 +2062,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -2089,7 +2089,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -2160,8 +2160,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleIndexListWireZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
@@ -2261,8 +2261,8 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::reset(void)
 	//{
-	//	//assert(getVertexListSize() == getNormalListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getNormalListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
@@ -2272,11 +2272,11 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
@@ -2302,7 +2302,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -2339,7 +2339,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -2352,16 +2352,16 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexList32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -2393,16 +2393,16 @@ namespace t3d
 
 	//void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderTriangleIndexListWireZBufferRW::drawTriangleIndexListWithoutThird32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -2434,16 +2434,16 @@ namespace t3d
 
 	//void RenderTriangleListZBufferRW::drawTriangleList16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderTriangleListZBufferRW::drawTriangleList32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -2473,16 +2473,16 @@ namespace t3d
 
 	//void RenderTriangleIndexListZBufferRW::drawTriangleIndexList16(const Vec4<real> & color)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 
 	//	UNREFERENCED_PARAMETER(color);
 	//}
 
 	//void RenderTriangleIndexListZBufferRW::drawTriangleIndexList32(const Vec4<real> & color)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -2512,9 +2512,9 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -2539,7 +2539,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -2607,9 +2607,9 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -2634,7 +2634,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -2728,8 +2728,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListGouraudZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -2795,7 +2795,7 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListGouraudZBufferRW::sClipTriangleAtScreen(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
+	//	_ASSERT(index < getTriStateListSize());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -2831,8 +2831,8 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::reset(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
@@ -2844,11 +2844,11 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vi + 0);
@@ -2865,7 +2865,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::lightAtWorld(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
 
 	//	clearColorList();
 	//	resizeColorList(getTriStateListSize() * 3, Vec4<real>(0, 0, 0, 0));
@@ -2936,7 +2936,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -2951,7 +2951,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::cameraToScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
 	//	const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
@@ -2986,7 +2986,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -2999,14 +2999,14 @@ namespace t3d
 
 	//void RenderTriangleListGouraudZBufferRW::drawTriangleList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListGouraudZBufferRW::drawTriangleList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -3057,9 +3057,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -3084,7 +3084,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -3149,9 +3149,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -3176,7 +3176,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -3247,8 +3247,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleIndexListGouraudZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
@@ -3348,8 +3348,8 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::reset(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
-	//	//assert(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
@@ -3359,11 +3359,11 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
@@ -3380,7 +3380,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::lightAtWorld(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
 
 	//	clearColorList();
 	//	resizeColorList(getVertexListSize(), Vec4<real>(0, 0, 0, 0));
@@ -3428,7 +3428,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -3465,7 +3465,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -3478,14 +3478,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListGouraudZBufferRW::drawTriangleIndexList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	//assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	//_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	//const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -3538,9 +3538,9 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -3565,7 +3565,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -3633,9 +3633,9 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -3660,7 +3660,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -3754,8 +3754,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -3821,7 +3821,7 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListTextureZBufferRW::sClipTriangleAtScreen(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
+	//	_ASSERT(index < getTriStateListSize());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -3857,8 +3857,8 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::reset(void)
 	//{
-	//	//assert(getVertexListSize() == getNormalListSize());
-	//	assert(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
@@ -3870,11 +3870,11 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vi + 0);
@@ -3905,7 +3905,7 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -3920,7 +3920,7 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::cameraToScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
 	//	const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
@@ -3955,7 +3955,7 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -3968,14 +3968,14 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListTextureZBufferRW::drawTriangleListZBufferW32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4026,14 +4026,14 @@ namespace t3d
 
 	//void RenderTriangleListTextureZBufferRW::drawTriangleList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListTextureZBufferRW::drawTriangleList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4084,9 +4084,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -4111,7 +4111,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -4176,9 +4176,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -4203,7 +4203,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -4274,8 +4274,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleIndexListTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
@@ -4375,8 +4375,8 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::reset(void)
 	//{
-	//	//assert(getVertexListSize() == getNormalListSize());
-	//	assert(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
@@ -4386,11 +4386,11 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
@@ -4416,7 +4416,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -4453,7 +4453,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -4466,14 +4466,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexListZBufferW32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4526,14 +4526,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListTextureZBufferRW::drawTriangleIndexList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4586,14 +4586,14 @@ namespace t3d
 
 	//void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleListZBufferW32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4644,14 +4644,14 @@ namespace t3d
 
 	//void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListTexturePerspectiveLPZBufferRW::drawTriangleList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4702,14 +4702,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexListZBufferW32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4762,14 +4762,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListTexturePerspectiveLPZBufferRW::drawTriangleIndexList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	//assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	//_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -4822,9 +4822,9 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -4849,7 +4849,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -4917,9 +4917,9 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -4944,7 +4944,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -5038,8 +5038,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListGouraudTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -5105,7 +5105,7 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleListGouraudTextureZBufferRW::sClipTriangleAtScreen(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
+	//	_ASSERT(index < getTriStateListSize());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(ti + 0);
@@ -5141,8 +5141,8 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::reset(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
-	//	assert(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexListSize() / 3, TS_ACTIVE);
@@ -5154,11 +5154,11 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vi + 0);
@@ -5175,7 +5175,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::lightAtWorld(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
 
 	//	clearColorList();
 	//	resizeColorList(getTriStateListSize() * 3, Vec4<real>(0, 0, 0, 0));
@@ -5246,7 +5246,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -5261,7 +5261,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::cameraToScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	const real halfWidth = (real)(getViewport().right - getViewport().left) / 2;
 	//	const real halfHeight = (real)(getViewport().bottom - getViewport().top) / 2;
@@ -5296,7 +5296,7 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -5309,14 +5309,14 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTextureZBufferRW::drawTriangleList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListGouraudTextureZBufferRW::drawTriangleList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -5367,9 +5367,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -5394,7 +5394,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -5459,9 +5459,9 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz)
 	//{
-	//	assert(getTriStateListSize() * 3 == getVertexIndexListSize());
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() * 3 == getVertexIndexListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	size_t v0_i, v1_i, v2_i;
 
@@ -5486,7 +5486,7 @@ namespace t3d
 	//		break;
 
 	//	default:
-	//		assert(false);
+	//		_ASSERT(false);
 	//		return;
 	//	}
 
@@ -5557,8 +5557,8 @@ namespace t3d
 
 	//TRI_STATE RenderTriangleIndexListGouraudTextureZBufferRW::zClipTriangleAtCamera(const size_t index)
 	//{
-	//	assert(index < getTriStateListSize());
-	//	assert(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
+	//	_ASSERT(index < getTriStateListSize());
+	//	_ASSERT(getCameraNearZ() >= 1 && getCameraNearZ() < getCameraFarZ());
 
 	//	const size_t ti = index * 3;
 	//	const Vec4<real> & v0 = vertexAt(vertexIndexAt(ti + 0));
@@ -5658,8 +5658,8 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::reset(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
-	//	assert(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getUVListSize());
 
 	//	clearTriStateList();
 	//	resizeTriStateList(getVertexIndexListSize() / 3, TS_ACTIVE);
@@ -5669,11 +5669,11 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::removeBackfaceAtWorld(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
-	//		assert(TS_ACTIVE == triStateAt(i));
+	//		_ASSERT(TS_ACTIVE == triStateAt(i));
 
 	//		const size_t vi = i * 3;
 	//		const Vec4<real> & v0 = vertexAt(vertexIndexAt(vi + 0));
@@ -5690,7 +5690,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::lightAtWorld(void)
 	//{
-	//	assert(getVertexListSize() == getNormalListSize());
+	//	_ASSERT(getVertexListSize() == getNormalListSize());
 
 	//	clearColorList();
 	//	resizeColorList(getVertexListSize(), Vec4<real>(0, 0, 0, 0));
@@ -5738,7 +5738,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::zClipAtCamera(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	const size_t orig_size = getTriStateListSize();
 
@@ -5775,7 +5775,7 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::sClipAtScreen(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
 
 	//	for(size_t i = 0; i < getTriStateListSize(); i++)
 	//	{
@@ -5788,14 +5788,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListGouraudTextureZBufferRW::drawTriangleIndexList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -5848,14 +5848,14 @@ namespace t3d
 
 	//void RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleListGouraudTexturePerspectiveLPZBufferRW::drawTriangleList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -5906,14 +5906,14 @@ namespace t3d
 
 	//void RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList16(void)
 	//{
-	//	assert(false);
+	//	_ASSERT(false);
 	//}
 
 	//void RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW::drawTriangleIndexList32(void)
 	//{
-	//	assert(getTriStateListSize() == getVertexIndexListSize() / 3);
-	//	assert(getVertexListSize() == getUVListSize());
-	//	assert(getVertexListSize() == getColorListSize());
+	//	_ASSERT(getTriStateListSize() == getVertexIndexListSize() / 3);
+	//	_ASSERT(getVertexListSize() == getUVListSize());
+	//	_ASSERT(getVertexListSize() == getColorListSize());
 
 	//	const Vec2<real> texture_expend(real(getTextureWidth() - 1), real(getTextureHeight() - 1));
 
@@ -5979,7 +5979,7 @@ namespace t3d
 
 	void RenderContext16::fillSurface(const CRect & rect, const Vec4<real> & color)
 	{
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		fillSurface16(getSurfaceRef16(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
 	}
@@ -6762,7 +6762,7 @@ namespace t3d
 
 	void RenderContext32::fillSurface(const CRect & rect, const Vec4<real> & color)
 	{
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		fillSurface32(getSurfaceRef32(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
 	}
@@ -7571,12 +7571,12 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat)
 	{
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -7592,7 +7592,7 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 
 		transformVertexList(vertexList, mmat);
 	}
@@ -7662,13 +7662,13 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 
 		const size_t orig_size = clipStateList.size();
 
 		for(size_t i = 0; i < orig_size; i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -7681,7 +7681,7 @@ namespace t3d
 			}
 		}
 
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 	}
 
 	CLIP_STATE clipLineIndexAtCamera(
@@ -7753,13 +7753,13 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 
 		const size_t orig_size = clipStateList.size();
 
 		for(size_t i = 0; i < orig_size; i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -7770,7 +7770,7 @@ namespace t3d
 			}
 		}
 
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 	}
 
 	void cameraToScreenVertexSelf(
@@ -7789,7 +7789,7 @@ namespace t3d
 		const Vec2<real> & projection,
 		const CRect & viewport)
 	{
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 
 		CSize halfSize(viewport.Width() / 2, viewport.Height() / 2);
 
@@ -7798,7 +7798,7 @@ namespace t3d
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -7815,7 +7815,7 @@ namespace t3d
 		const Vec2<real> & projection,
 		const CRect & viewport)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 
 		CSize halfSize(viewport.Width() / 2, viewport.Height() / 2);
 
@@ -7868,12 +7868,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CRect & viewport)
 	{
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -7891,12 +7891,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CRect & viewport)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -7916,9 +7916,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -7955,9 +7955,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -7995,9 +7995,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8035,9 +8035,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 2);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 2);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8080,12 +8080,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const Vec4<real> & cameraPosition)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8104,12 +8104,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const Vec4<real> & cameraPosition)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8127,12 +8127,12 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8149,7 +8149,7 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
 		transformVertexList(vertexList, mmat);
 	}
@@ -8384,12 +8384,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8405,7 +8405,7 @@ namespace t3d
 			}
 		}
 
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 	}
 
 	CLIP_STATE clipTriangleIndexAtCameraNearZDouble(
@@ -8417,9 +8417,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*		0
@@ -8450,9 +8450,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*	1       2
@@ -8654,12 +8654,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8676,7 +8676,7 @@ namespace t3d
 			}
 		}
 
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 	}
 
 	void cameraToScreenTriangleList(
@@ -8685,7 +8685,7 @@ namespace t3d
 		const Vec2<real> & projection,
 		const CRect & viewport)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
 		CSize halfSize(viewport.Width() / 2, viewport.Height() / 2);
 
@@ -8694,7 +8694,7 @@ namespace t3d
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8712,7 +8712,7 @@ namespace t3d
 		const Vec2<real> & projection,
 		const CRect & viewport)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
 		CSize halfSize(viewport.Width() / 2, viewport.Height() / 2);
 
@@ -8766,12 +8766,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CRect & viewport)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8790,12 +8790,12 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CRect & viewport)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -8816,9 +8816,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8848,9 +8848,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8881,9 +8881,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8914,9 +8914,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8946,9 +8946,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -8987,9 +8987,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -9029,9 +9029,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -9071,9 +9071,9 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
-		assert(rgbaIsValid<real>(color, 0, 1));
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -9112,9 +9112,9 @@ namespace t3d
 		const MATERIAL & material,
 		ColorList & retColorList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(normalList.size() == clipStateList.size() * 3);
-		assert(retColorList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(normalList.size() == clipStateList.size() * 3);
+		_ASSERT(retColorList.size() == clipStateList.size() * 3);
 
 		LightList::const_iterator light_iter = lightList.begin();
 		for(; light_iter != lightList.end(); light_iter++)
@@ -9172,9 +9172,9 @@ namespace t3d
 		const MATERIAL & material,
 		ColorList & retColorList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == normalList.size());
-		assert(vertexList.size() == retColorList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == normalList.size());
+		_ASSERT(vertexList.size() == retColorList.size());
 
 		LightList::const_iterator light_iter = lightList.begin();
 		for(; light_iter != lightList.end(); light_iter++)
@@ -9455,13 +9455,13 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(colorList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(colorList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -9481,8 +9481,8 @@ namespace t3d
 			}
 		}
 
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(colorList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(colorList.size() == clipStateList.size() * 3);
 	}
 
 	CLIP_STATE clipTriangleIndexGouraudAtCameraNearZDouble(
@@ -9495,9 +9495,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*		0
@@ -9531,9 +9531,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*	1       2
@@ -9730,13 +9730,13 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == colorList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == colorList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -9754,8 +9754,8 @@ namespace t3d
 			}
 		}
 
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == colorList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == colorList.size());
 	}
 
 	void drawTriangleListGouraudZBufferRW16(
@@ -9766,8 +9766,8 @@ namespace t3d
 		const ColorList & colorList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(colorList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(colorList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -9810,8 +9810,8 @@ namespace t3d
 		const ColorList & colorList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(colorList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(colorList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -9855,8 +9855,8 @@ namespace t3d
 		const ColorList & colorList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == colorList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == colorList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -9900,8 +9900,8 @@ namespace t3d
 		const ColorList & colorList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == colorList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == colorList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10183,13 +10183,13 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -10209,8 +10209,8 @@ namespace t3d
 			}
 		}
 
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 	}
 
 	CLIP_STATE clipTriangleIndexTextureAtCameraNearZDouble(
@@ -10223,9 +10223,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*		0
@@ -10259,9 +10259,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*	1       2
@@ -10458,13 +10458,13 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -10482,8 +10482,8 @@ namespace t3d
 			}
 		}
 
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 	}
 
 	void drawTriangleListTextureZBufferW16(
@@ -10496,8 +10496,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10544,8 +10544,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10593,8 +10593,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10642,8 +10642,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10690,8 +10690,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10738,8 +10738,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10787,8 +10787,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10836,8 +10836,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10884,8 +10884,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10932,8 +10932,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -10981,8 +10981,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11030,8 +11030,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11078,8 +11078,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11126,8 +11126,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11175,8 +11175,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11224,8 +11224,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11535,14 +11535,14 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(colorList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(colorList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -11566,9 +11566,9 @@ namespace t3d
 			}
 		}
 
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(colorList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(colorList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 	}
 
 	CLIP_STATE clipTriangleIndexGouraudTextureAtCameraNearZDouble(
@@ -11582,9 +11582,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*		0
@@ -11621,9 +11621,9 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		assert(v0_i < vertexList.size());
-		assert(v1_i < vertexList.size());
-		assert(v2_i < vertexList.size());
+		_ASSERT(v0_i < vertexList.size());
+		_ASSERT(v1_i < vertexList.size());
+		_ASSERT(v2_i < vertexList.size());
 
 		/**********************************************************************
 		*	1       2
@@ -11824,14 +11824,14 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == colorList.size());
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == colorList.size());
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
 		{
-			assert(CLIP_STATE_SCLIPPED != clipStateList[i]);
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
@@ -11850,9 +11850,9 @@ namespace t3d
 			}
 		}
 
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == colorList.size());
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == colorList.size());
+		_ASSERT(vertexList.size() == uvList.size());
 	}
 
 	void drawTriangleListGouraudTextureZBufferRW16(
@@ -11866,8 +11866,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11921,8 +11921,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -11977,8 +11977,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -12033,8 +12033,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -12088,8 +12088,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -12143,8 +12143,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexList.size() == clipStateList.size() * 3);
-		assert(uvList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == clipStateList.size() * 3);
+		_ASSERT(uvList.size() == clipStateList.size() * 3);
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -12199,8 +12199,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)
@@ -12255,8 +12255,8 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList)
 	{
-		assert(vertexIndexList.size() == clipStateList.size() * 3);
-		assert(vertexList.size() == uvList.size());
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+		_ASSERT(vertexList.size() == uvList.size());
 
 		size_t i = 0;
 		for(; i < clipStateList.size(); i++)

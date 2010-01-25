@@ -160,7 +160,7 @@ public:
 		}
 
 		// 限制 x 轴旋转量，用以避开 uvn 垂直死角
-		m_characterTracker.rotation.x = std::min(DEG_TO_RAD(80), std::max(DEG_TO_RAD(-80), m_characterTracker.rotation.x));
+		m_characterTracker.rotation.x = t3d::limit(m_characterTracker.rotation.x, DEG_TO_RAD(-80), DEG_TO_RAD(80));
 	}
 };
 

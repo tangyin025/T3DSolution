@@ -114,7 +114,7 @@ namespace my
 
 	double Timer::getElapsedTime(void)
 	{
-		assert(!isPaused());
+		_ASSERT(!isPaused());
 
 		LARGE_INTEGER qwTime;
 		if(!QueryPerformanceCounter(&qwTime))
@@ -640,7 +640,7 @@ namespace my
 			}
 		}
 
-		assert(false);
+		_ASSERT(false);
 
 		return m_items.front();
 	}
@@ -679,9 +679,9 @@ namespace my
 
 	void Menu::singleCheckItemNode(size_t item_i)
 	{
-		assert(item_i < getMenuItemNodeCount());
+		_ASSERT(item_i < getMenuItemNodeCount());
 
-		assert(0 == getMenuItemNode(item_i)->getSubMenu().getMenuItemNodeCount());
+		_ASSERT(0 == getMenuItemNode(item_i)->getSubMenu().getMenuItemNodeCount());
 
 		size_t i = 0;
 		for(; i < getMenuItemNodeCount(); i++)
@@ -744,7 +744,7 @@ namespace my
 
 	void MenuSystem::selectMenuItemNode(size_t item_i)
 	{
-		assert(!m_menuStack.empty());
+		_ASSERT(!m_menuStack.empty());
 
 		if(item_i < m_menuStack.back()->getMenuItemNodeCount())
 		{
@@ -829,8 +829,8 @@ namespace my
 		real lengthAndWidth /*= 100*/,
 		real gridLinesEvery /*= 10*/)
 	{
-		assert(lengthAndWidth >= 0);
-		assert(gridLinesEvery > 0);
+		_ASSERT(lengthAndWidth >= 0);
+		_ASSERT(gridLinesEvery > 0);
 
 		m_axisList.push_back(my::Vec4<real>(0, 0, -lengthAndWidth));
 		m_axisList.push_back(my::Vec4<real>(0, 0,  lengthAndWidth));
@@ -916,7 +916,7 @@ namespace my
 
 	size_t Object::getTriangleCount(void) const
 	{
-		assert(0 == getVertexListSize() % 3);
+		_ASSERT(0 == getVertexListSize() % 3);
 
 		return getVertexListSize() / 3;
 	}
@@ -1095,7 +1095,7 @@ namespace my
 	void Object::drawGouraudZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1111,7 +1111,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1125,7 +1125,7 @@ namespace my
 	void Object::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1141,7 +1141,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1155,8 +1155,8 @@ namespace my
 	void Object::drawTextureZBufferW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1174,8 +1174,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1192,8 +1192,8 @@ namespace my
 	void Object::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1211,8 +1211,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1229,8 +1229,8 @@ namespace my
 	void Object::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1248,8 +1248,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1266,8 +1266,8 @@ namespace my
 	void Object::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1285,8 +1285,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1303,8 +1303,8 @@ namespace my
 	void Object::drawTextureZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1322,8 +1322,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1340,8 +1340,8 @@ namespace my
 	void Object::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1359,8 +1359,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1377,8 +1377,8 @@ namespace my
 	void Object::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1396,8 +1396,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1414,8 +1414,8 @@ namespace my
 	void Object::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1433,8 +1433,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1451,8 +1451,8 @@ namespace my
 	void Object::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1471,8 +1471,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1489,8 +1489,8 @@ namespace my
 	void Object::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1509,8 +1509,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1527,8 +1527,8 @@ namespace my
 	void Object::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1547,8 +1547,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1565,8 +1565,8 @@ namespace my
 	void Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1585,8 +1585,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1838,7 +1838,7 @@ namespace my
 
 	size_t IndexObject::getTriangleCount(void) const
 	{
-		assert(0 == getVertexIndexListSize() % 3);
+		_ASSERT(0 == getVertexIndexListSize() % 3);
 
 		return getVertexIndexListSize() / 3;
 	}
@@ -2053,7 +2053,7 @@ namespace my
 	void IndexObject::drawGouraudZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2072,7 +2072,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2089,7 +2089,7 @@ namespace my
 	void IndexObject::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2108,7 +2108,7 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2125,8 +2125,8 @@ namespace my
 	void IndexObject::drawTextureZBufferW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2147,8 +2147,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2168,8 +2168,8 @@ namespace my
 	void IndexObject::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2190,8 +2190,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2211,8 +2211,8 @@ namespace my
 	void IndexObject::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2233,8 +2233,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2254,8 +2254,8 @@ namespace my
 	void IndexObject::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2276,8 +2276,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2297,8 +2297,8 @@ namespace my
 	void IndexObject::drawTextureZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2319,8 +2319,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2340,8 +2340,8 @@ namespace my
 	void IndexObject::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2362,8 +2362,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2383,8 +2383,8 @@ namespace my
 	void IndexObject::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2405,8 +2405,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2426,8 +2426,8 @@ namespace my
 	void IndexObject::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2448,8 +2448,8 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat)
 	{
-		//assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		//_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2469,8 +2469,8 @@ namespace my
 	void IndexObject::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2492,8 +2492,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2513,8 +2513,8 @@ namespace my
 	void IndexObject::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2536,8 +2536,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2557,8 +2557,8 @@ namespace my
 	void IndexObject::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2580,8 +2580,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2601,8 +2601,8 @@ namespace my
 	void IndexObject::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2624,8 +2624,8 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2648,8 +2648,8 @@ namespace my
 
 	static int inline _calculateVertexIndex(int x_size, int y_size, int x_index, int y_index, int offset = 0)
 	{
-		assert(x_index < x_size);
-		assert(y_index < y_size);
+		_ASSERT(x_index < x_size);
+		_ASSERT(y_index < y_size);
 
 		return y_index * x_size + x_index + offset;
 
@@ -2665,8 +2665,8 @@ namespace my
 		real planeDepth,
 		bool reverse)
 	{
-		assert(getVertexListSize() == getNormalListSize());
-		assert(getVertexListSize() == getUVListSize());
+		_ASSERT(getVertexListSize() == getNormalListSize());
+		_ASSERT(getVertexListSize() == getUVListSize());
 
 		int offset = (int)getVertexListSize();
 
@@ -2743,7 +2743,7 @@ namespace my
 					break;
 
 				default:
-					assert(false);
+					_ASSERT(false);
 				}
 
 				pushUV(i / (real)subdivisionsAlongWidth, 1 - j / (real)subdivisionsAlongHeight);
@@ -2804,8 +2804,8 @@ namespace my
 		int subdivisionsAlongHeight /*= 10*/,
 		bool reverse /*= false*/)
 	{
-		assert(subdivisionsAlongWidth >= 1);
-		assert(subdivisionsAlongHeight >= 1);
+		_ASSERT(subdivisionsAlongWidth >= 1);
+		_ASSERT(subdivisionsAlongHeight >= 1);
 
 		pushSingleIndexPlane(
 			width,
@@ -2820,7 +2820,7 @@ namespace my
 		t3d::VertexIndexList::const_iterator i_iter = getVertexIndexListBegin();
 		for(; i_iter != getVertexIndexListEnd(); i_iter++)
 		{
-			assert(*i_iter < getVertexListSize());
+			_ASSERT(*i_iter < getVertexListSize());
 		}
 #endif
 	}
@@ -2839,9 +2839,9 @@ namespace my
 		int subdivisionsAroundHeight /*= 20*/,
 		bool reverse /*= false*/)
 	{
-		assert(radius >= 0);
-		assert(subdivisionsAroundAxis >= 3);
-		assert(subdivisionsAroundHeight >= 2);
+		_ASSERT(radius >= 0);
+		_ASSERT(subdivisionsAroundAxis >= 3);
+		_ASSERT(subdivisionsAroundHeight >= 2);
 
 		for(int j = 0; j <= subdivisionsAroundHeight; j++)
 		{
@@ -2910,7 +2910,7 @@ namespace my
 		t3d::VertexIndexList::const_iterator i_iter = getVertexIndexListBegin();
 		for(; i_iter != getVertexIndexListEnd(); i_iter++)
 		{
-			assert(*i_iter < getVertexListSize());
+			_ASSERT(*i_iter < getVertexListSize());
 		}
 #endif
 	}
@@ -2932,13 +2932,13 @@ namespace my
 		int subdivisionsAroundDepth /*= 1*/,
 		bool reverse /*= false*/)
 	{
-		assert(width >= 0);
-		assert(height >= 0);
-		assert(depth >= 0);
+		_ASSERT(width >= 0);
+		_ASSERT(height >= 0);
+		_ASSERT(depth >= 0);
 
-		assert(subdivisionsAroundWidth >= 1);
-		assert(subdivisionsAroundHeight >= 1);
-		assert(subdivisionsAroundDepth >= 1);
+		_ASSERT(subdivisionsAroundWidth >= 1);
+		_ASSERT(subdivisionsAroundHeight >= 1);
+		_ASSERT(subdivisionsAroundDepth >= 1);
 
 		pushSingleIndexPlane(
 			height,
@@ -2998,7 +2998,7 @@ namespace my
 		t3d::VertexIndexList::const_iterator i_iter = getVertexIndexListBegin();
 		for(; i_iter != getVertexIndexListEnd(); i_iter++)
 		{
-			assert(*i_iter < getVertexListSize());
+			_ASSERT(*i_iter < getVertexListSize());
 		}
 #endif
 	}
@@ -3018,9 +3018,9 @@ namespace my
 		int subdivisionsAroundHeight /*= 1*/,
 		int subdivisionsOnCaps /*= 1*/)
 	{
-		assert(subdivisionsAroundAxis >= 3);
-		assert(subdivisionsAroundHeight >= 1);
-		assert(subdivisionsOnCaps >= 1);
+		_ASSERT(subdivisionsAroundAxis >= 3);
+		_ASSERT(subdivisionsAroundHeight >= 1);
+		_ASSERT(subdivisionsOnCaps >= 1);
 
 		real halfHeight = height / 2;
 
@@ -3091,7 +3091,7 @@ namespace my
 		t3d::VertexIndexList::const_iterator i_iter = getVertexIndexListBegin();
 		for(; i_iter != getVertexIndexListEnd(); i_iter++)
 		{
-			assert(*i_iter < getVertexListSize());
+			_ASSERT(*i_iter < getVertexListSize());
 		}
 #endif
 	}
@@ -3504,14 +3504,14 @@ namespace my
 
 	t3d::BoneNodeList::reference SkeletonAnimationsFromOgreSkeleton::origBoneNodeAt(t3d::BoneNodeList::size_type i)
 	{
-		assert(i < getOrigBoneNodeListSize());
+		_ASSERT(i < getOrigBoneNodeListSize());
 
 		return m_origBoneNodeList[i];
 	}
 
 	t3d::BoneNodeList::const_reference SkeletonAnimationsFromOgreSkeleton::origBoneNodeAt(t3d::BoneNodeList::size_type i) const
 	{
-		assert(i < getOrigBoneNodeListSize());
+		_ASSERT(i < getOrigBoneNodeListSize());
 
 		return m_origBoneNodeList[i];
 	}
@@ -3573,14 +3573,14 @@ namespace my
 
 	t3d::BoneTransformList::reference SkeletonAnimationsFromOgreSkeleton::origBoneInverseTransformAt(t3d::BoneTransformList::size_type i)
 	{
-		assert(i < getOrigBoneInverseTransformListSize());
+		_ASSERT(i < getOrigBoneInverseTransformListSize());
 
 		return m_origBoneInverseTransformList[i];
 	}
 
 	t3d::BoneTransformList::const_reference SkeletonAnimationsFromOgreSkeleton::origBoneInverseTransformAt(t3d::BoneTransformList::size_type i) const
 	{
-		assert(i < getOrigBoneInverseTransformListSize());
+		_ASSERT(i < getOrigBoneInverseTransformListSize());
 
 		return m_origBoneInverseTransformList[i];
 	}
@@ -3642,14 +3642,14 @@ namespace my
 
 	t3d::STreeNode::IndexList::reference SkeletonAnimationsFromOgreSkeleton::rootIndexAt(t3d::STreeNode::IndexList::size_type i)
 	{
-		assert(i < getRootIndexListSize());
+		_ASSERT(i < getRootIndexListSize());
 
 		return m_rootIndexList[i];
 	}
 
 	t3d::STreeNode::IndexList::const_reference SkeletonAnimationsFromOgreSkeleton::rootIndexAt(t3d::STreeNode::IndexList::size_type i) const
 	{
-		assert(i < getRootIndexListSize());
+		_ASSERT(i < getRootIndexListSize());
 
 		return m_rootIndexList[i];
 	}
@@ -3666,7 +3666,7 @@ namespace my
 
 	void SkeletonAnimationsFromOgreSkeleton::insertBoneIndex(const std::basic_string<char> & boneName, size_t bone_i)
 	{
-		assert(!isBoneIndexExistent(boneName));
+		_ASSERT(!isBoneIndexExistent(boneName));
 
 		m_boneIndexMap.insert(std::map<std::basic_string<char>, size_t>::value_type(boneName, bone_i));
 	}
@@ -3678,7 +3678,7 @@ namespace my
 
 	size_t SkeletonAnimationsFromOgreSkeleton::getBoneIndex(const std::basic_string<char> & boneName) const
 	{
-		assert(isBoneIndexExistent(boneName));
+		_ASSERT(isBoneIndexExistent(boneName));
 
 		return m_boneIndexMap.find(boneName)->second;
 	}

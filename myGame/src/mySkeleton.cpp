@@ -52,14 +52,14 @@ namespace my
 
 	t3d::BoneAnimationNodeList::const_reference SkeletonAnimation::boneAnimationNodeAt(t3d::BoneAnimationNodeList::size_type bone_i) const
 	{
-		assert(bone_i < getBoneAnimationNodeListSize());
+		_ASSERT(bone_i < getBoneAnimationNodeListSize());
 
 		return m_boneAnimationNodeList[bone_i];
 	}
 
 	t3d::BoneAnimationNodeList::reference SkeletonAnimation::boneAnimationNodeAt(t3d::BoneAnimationNodeList::size_type bone_i)
 	{
-		assert(bone_i < getBoneAnimationNodeListSize());
+		_ASSERT(bone_i < getBoneAnimationNodeListSize());
 
 		return m_boneAnimationNodeList[bone_i];
 	}
@@ -141,14 +141,14 @@ namespace my
 
 	t3d::BoneNodeList::const_reference SkeletonAnimationManager::boneNodeAt(t3d::BoneNodeList::size_type bone_i) const
 	{
-		assert(bone_i < getBoneNodeListSize());
+		_ASSERT(bone_i < getBoneNodeListSize());
 
 		return m_boneNodeList[bone_i];
 	}
 
 	t3d::BoneNodeList::reference SkeletonAnimationManager::boneNodeAt(t3d::BoneNodeList::size_type bone_i)
 	{
-		assert(bone_i < getBoneNodeListSize());
+		_ASSERT(bone_i < getBoneNodeListSize());
 
 		return m_boneNodeList[bone_i];
 	}
@@ -165,7 +165,7 @@ namespace my
 
 	void SkeletonAnimationManager::insertSkeletonAnimation(SkeletonAnimationMap::key_type animationName, const SkeletonAnimationMap::referent_type & skeletonAnimation)
 	{
-		assert(!isSkeletonAnimationExistent(animationName));
+		_ASSERT(!isSkeletonAnimationExistent(animationName));
 
 		m_skeletonAnimationMap.insert(SkeletonAnimationMap::value_type(animationName, skeletonAnimation));
 	}
@@ -177,14 +177,14 @@ namespace my
 
 	const SkeletonAnimationMap::referent_type & SkeletonAnimationManager::getSkeletonAnimation(SkeletonAnimationMap::key_type animationName) const
 	{
-		assert(isSkeletonAnimationExistent(animationName));
+		_ASSERT(isSkeletonAnimationExistent(animationName));
 
 		return m_skeletonAnimationMap.find(animationName)->second;
 	}
 
 	SkeletonAnimationMap::referent_type & SkeletonAnimationManager::getSkeletonAnimation(SkeletonAnimationMap::key_type animationName)
 	{
-		assert(isSkeletonAnimationExistent(animationName));
+		_ASSERT(isSkeletonAnimationExistent(animationName));
 
 		return m_skeletonAnimationMap.find(animationName)->second;
 	}
@@ -241,13 +241,13 @@ namespace my
 
 	const t3d::BoneNodeList & SkeletonAnimationManager::gotoAnimation(const std::basic_string<char> & animationName, real time)
 	{
-		assert(isSkeletonAnimationExistent(animationName));
+		_ASSERT(isSkeletonAnimationExistent(animationName));
 
 		SkeletonAnimation & skeletonAnimation = getSkeletonAnimation(animationName);
 
-		assert(getBoneNodeListSize() == skeletonAnimation.getBoneAnimationNodeListSize());
+		_ASSERT(getBoneNodeListSize() == skeletonAnimation.getBoneAnimationNodeListSize());
 
-		assert(time >= skeletonAnimation.getMinTime());
+		_ASSERT(time >= skeletonAnimation.getMinTime());
 
 		if(time >= skeletonAnimation.getMaxTime())
 		{

@@ -88,7 +88,7 @@ namespace my
 
 	void CollisionPrimitive::calculateInternals(void)
 	{
-		assert(NULL != body);
+		_ASSERT(NULL != body);
 
 		transform = body->getTransform() * offset;
 
@@ -148,7 +148,7 @@ namespace my
 		const CollisionSphere & sphere,
 		const CollisionPlane & plane)
 	{
-		assert(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
 
 		return t3d::vec3Dot(plane.direction, sphere.getAxis3()) - sphere.radius <= plane.distance;
 	}
@@ -174,7 +174,7 @@ namespace my
 		const CollisionBox & box,
 		const CollisionPlane & plane)
 	{
-		assert(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
 
 		return t3d::vec3Dot(plane.direction, box.getAxis3()) - _transformToAxis(box, plane.direction) <= plane.distance; // ***
 	}
@@ -311,7 +311,7 @@ namespace my
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2)
 	{
-		assert(IS_ZERO_FLOAT(t3d::vec3Length(dir) - 1));
+		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(dir) - 1));
 
 		t3d::Vec4<real> normal = calculateTriangleNormal(v0, v1, v2);
 
@@ -343,11 +343,11 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> position = sphere.getAxis3();
 
-		assert(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
 
 		real penetration = sphere.radius + plane.distance - t3d::vec3Dot(plane.direction, position);
 
@@ -371,11 +371,11 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> position = sphere.getAxis3();
 
-		assert(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
 
 		real centreDistance = t3d::vec3Dot(plane.direction, position) - plane.distance;
 
@@ -413,7 +413,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> direction = t3d::vec3Sub(sphere.getAxis3(), point);
 
@@ -441,7 +441,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> u = t3d::vec3Sub(v1, v0);
 
@@ -473,7 +473,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		my::Vec4<real> direction = calculateTriangleNormal(v0, v1, v2);
 
@@ -518,7 +518,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> position0 = sphere0.getAxis3();
 
@@ -556,7 +556,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		real penetration = -calculatePointPlaneDistance(point, plane.direction, plane.distance);
 
@@ -634,7 +634,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> centre = sphere.getAxis3();
 
@@ -669,7 +669,7 @@ namespace my
 		{
 			unsigned used = boxAndPointAways(box, centre, sphere.body, contacts, limits);
 
-			assert(1 == used && contacts->penetration >= -EPSILON_E3);
+			_ASSERT(1 == used && contacts->penetration >= -EPSILON_E3);
 
 			contacts->penetration += sphere.radius;
 
@@ -694,7 +694,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> relPoint = point * box.getInverseTransform();
 
@@ -783,7 +783,7 @@ namespace my
 	//	real & smallestPenetration,
 	//	unsigned & smallestIndex)
 	//{
-	//	assert(IS_ZERO_FLOAT(t3d::vec3Length(axis) - 1));
+	//	_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(axis) - 1));
 
 	//	real penetration = _penetrationOnAxis(box0, box1, axis, toCentre);
 
@@ -832,7 +832,7 @@ namespace my
 	//		return box.getAxis2();
 	//	}
 
-	//	assert(false); return my::Vec4<real>::ZERO;
+	//	_ASSERT(false); return my::Vec4<real>::ZERO;
 	//}
 
 	//static inline unsigned _detectorPointFaceBoxAndBox(
@@ -844,9 +844,9 @@ namespace my
 	//	Contact * contacts,
 	//	unsigned limits)
 	//{
-	//	assert(limits > 0);
+	//	_ASSERT(limits > 0);
 
-	//	assert(IS_ZERO_FLOAT(t3d::vec3Length(axis) - 1));
+	//	_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(axis) - 1));
 
 	//	t3d::Vec4<real> normal = t3d::vec3Dot(axis, toCentre) > 0 ? t3d::vec3Neg(axis) : axis;
 
@@ -919,7 +919,7 @@ namespace my
 
 	static inline real calculateBoxAxisHalfProjection(const CollisionBox & box, const t3d::Vec4<real> & axis)
 	{
-		assert(t3d::vec3IsNormalized(axis));
+		_ASSERT(t3d::vec3IsNormalized(axis));
 
 		return
 			box.halfSize.x * abs(t3d::vec3Dot(axis, box.getAxis0())) +
@@ -965,7 +965,7 @@ namespace my
 		real & smallestPenetration,
 		unsigned & smallestIndex)
 	{
-		assert(t3d::vec3IsNormalized(axis));
+		_ASSERT(t3d::vec3IsNormalized(axis));
 
 		real penetration = calculateBoxAxisAndBoxPenetration(box0, axis, box1);
 
@@ -1007,9 +1007,9 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
-		assert(t3d::vec3IsNormalized(axis));
+		_ASSERT(t3d::vec3IsNormalized(axis));
 
 		t3d::Vec4<real> toCentre = t3d::vec3Sub(box1.getAxis3(), box0.getAxis3());
 
@@ -1027,7 +1027,7 @@ namespace my
 		Contact * contacts,
 		unsigned limits)
 	{
-		assert(limits > 0);
+		_ASSERT(limits > 0);
 
 		t3d::Vec4<real> toCentre = t3d::vec3Sub(box1.getAxis3(), box0.getAxis3());
 
@@ -1080,7 +1080,7 @@ namespace my
 			return 0;
 		}
 
-		assert(UINT_MAX != smallestIndex);
+		_ASSERT(UINT_MAX != smallestIndex);
 
 		if(smallestIndex < 3)
 		{
@@ -1143,7 +1143,7 @@ namespace my
 	//	const t3d::Vec4<real> & v1,
 	//	const t3d::Vec4<real> & v2)
 	//{
-	//	assert(t3d::vec3IsNormalized(axis));
+	//	_ASSERT(t3d::vec3IsNormalized(axis));
 
 	//	t3d::Vec4<real> planeNormal = t3d::vec3Neg(axis);
 
@@ -1193,7 +1193,7 @@ namespace my
 	//	real & smallestPenetration,
 	//	unsigned & smallestIndex)
 	//{
-	//	assert(t3d::vec3IsNormalized(axis));
+	//	_ASSERT(t3d::vec3IsNormalized(axis));
 
 	//	real penetration = calculateBoxAxisAndTrianglePenetration(box, axis, v0, v1, v2);
 
@@ -1238,7 +1238,7 @@ namespace my
 	//	Contact * contacts,
 	//	unsigned limits)
 	//{
-	//	assert(limits > 0);
+	//	_ASSERT(limits > 0);
 
 	//	real smallestPenetration = REAL_MAX;
 
@@ -1283,6 +1283,6 @@ namespace my
 	//		return 1;
 	//	}
 
-	//	assert(false); return 0;
+	//	_ASSERT(false); return 0;
 	//}
 }

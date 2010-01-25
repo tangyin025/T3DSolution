@@ -5,7 +5,7 @@
 #include "myCommon.h"
 #include <t3dlib3.h>
 #include <cstdio>
-#include <cassert>
+#include <crtdbg.h>
 #include <list>
 #pragma push_macro("min")
 #pragma push_macro("max")
@@ -78,7 +78,7 @@ namespace my
 	public:
 		static inline ResourceMgr & getSingleton(void)
 		{
-			assert(NULL != s_ptr); return * s_ptr;
+			_ASSERT(NULL != s_ptr); return * s_ptr;
 		}
 
 	public:

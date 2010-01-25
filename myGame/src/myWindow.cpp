@@ -9,17 +9,17 @@ namespace my
 {
 	std::basic_string<charT> WinException::GetErrorCodeStr(DWORD dwCode)
 	{
-		LPVOID lpMsg;
-		if(0 != ::FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-			NULL, dwCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsg, 0, NULL))
+		std::basic_string<charT> ret;
+		ret.resize(MAX_PATH);
+		ret.resize(::FormatMessage(
+			FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwCode, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), &ret[0], ret.size(), NULL));
+
+		if(ret.empty())
 		{
-			std::basic_string<charT> ret((charT *)lpMsg);
-			::LocalFree(lpMsg);
-			return ret;
+			return _T("unknown windows error");
 		}
 
-		return std::basic_string<charT>(_T("unknown windows error"));
+		return ret;
 	}
 
 	WinException::WinException(const std::basic_string<charT> & file, int line, DWORD dwCode)
@@ -603,7 +603,7 @@ namespace my
 
 	LRESULT Window::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		assert(hwnd == m_hwnd);
+		_ASSERT(hwnd == m_hwnd);
 
 		switch(message)
 		{
@@ -618,7 +618,7 @@ namespace my
 
 				WindowPtrMap::iterator iter = wndMap.find(hwnd);
 
-				assert(iter != wndMap.end());
+				_ASSERT(iter != wndMap.end());
 
 				wndMap.erase(iter);
 
@@ -794,7 +794,7 @@ namespace my
 	{
 		_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
-		assert(NULL != m_hinst);
+		_ASSERT(NULL != m_hinst);
 
 		s_ptr = this;
 	}
@@ -832,7 +832,7 @@ namespace my
 		if(NULL == hwnd)
 			return NULL;
 
-		assert(m_wndMap.end() != m_wndMap.find(hwnd));
+		_ASSERT(m_wndMap.end() != m_wndMap.find(hwnd));
 
 		return m_wndMap[hwnd].get();
 	}
@@ -853,8 +853,7 @@ namespace my
 
 	int Application::run(void)
 	{
-		MSG msg;
-		memset(&msg, 0, sizeof(msg));
+		MSG msg = {0};
 
 		while(WM_QUIT != msg.message)
 		{

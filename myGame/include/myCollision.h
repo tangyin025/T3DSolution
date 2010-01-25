@@ -145,7 +145,7 @@ namespace my
 	template <class BoundingVolumeClass>
 	void BVHNode<BoundingVolumeClass>::recalculateBoundingVolume(void)
 	{
-		assert(!childs.empty());
+		_ASSERT(!childs.empty());
 
 		BVHNodeList::const_iterator child_iter = childs.begin();
 		volume = child_iter->volume;
@@ -168,12 +168,12 @@ namespace my
 	{
 		if(NULL == body)
 		{
-			assert(childs.empty());
+			_ASSERT(childs.empty());
 
 			return true;
 		}
 
-		assert(!childs.empty());
+		_ASSERT(!childs.empty());
 
 		return false;
 	}

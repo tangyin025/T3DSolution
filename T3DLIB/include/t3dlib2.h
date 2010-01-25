@@ -6,7 +6,7 @@
 #include <string>
 #include <dinput.h>
 #include <atlbase.h>
-#include <cassert>
+#include <crtdbg.h>
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
@@ -80,7 +80,7 @@ namespace t3d
 
 		BYTE isKeyDown(DWORD dwIndex) const
 		{
-			assert(dwIndex < sizeof(m_state));
+			_ASSERT(dwIndex < _countof(m_state));
 
 			return m_state[dwIndex];
 		}
@@ -124,7 +124,7 @@ namespace t3d
 
 		BYTE isButtonDown(DWORD dwIndex) const
 		{
-			assert(dwIndex < sizeof(m_state.rgbButtons) / sizeof(m_state.rgbButtons[0]));
+			_ASSERT(dwIndex < _countof(m_state.rgbButtons));
 
 			return m_state.rgbButtons[dwIndex];
 		}
@@ -222,7 +222,7 @@ namespace t3d
 
 		BYTE isButtonDown(DWORD dwIndex) const
 		{
-			assert(dwIndex < sizeof(m_state.rgbButtons) / sizeof(m_state.rgbButtons[0]));
+			_ASSERT(dwIndex < _countof(m_state.rgbButtons));
 
 			return m_state.rgbButtons[dwIndex];
 		}
