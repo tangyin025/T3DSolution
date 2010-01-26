@@ -1337,6 +1337,8 @@ namespace my
 
 		IndexPlaneObject plane;
 
+		IndexConeObject cone;
+
 	public:
 		DrawnHelper(void);
 
@@ -1455,6 +1457,27 @@ namespace my
 			t3d::RenderContext * rc,
 			t3d::Vec4<real> direction,
 			real distance,
+			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
+			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
+
+		void drawConeWireZBufferRW(
+			t3d::RenderContext * rc,
+			real radius,
+			real height,
+			const t3d::Vec4<real> & color,
+			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
+
+		void drawConeGouraudZBufferRW(
+			t3d::RenderContext * rc,
+			real radius,
+			real height,
+			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
+			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
+
+		void drawConeGouraudTextureZBufferRW(
+			t3d::RenderContext * rc,
+			real radius,
+			real height,
 			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
 	};
