@@ -5,10 +5,6 @@
 #include <mmsystem.h>
 #include "libc.h"
 
-#ifdef _UNICODE
-#define fopen _wfopen
-#endif
-
 namespace my
 {
 	IOStream::~IOStream(void)
@@ -56,28 +52,54 @@ namespace my
 	ResourceMgr::ResourceMgr(void)
 	{
 		_ASSERT(NULL == s_ptr);
+
 		s_ptr = this;
 	}
 
 	ResourceMgr::~ResourceMgr(void)
 	{
 		_ASSERT(this == s_ptr);
+
 		s_ptr = NULL;
 	}
 
 	void ResourceMgr::registerDir(const std::basic_string<charT> & dir)
 	{
+		_ASSERT(!dir.empty());
+
 		m_dirList.push_back(dir);
+	}
+
+	static std::basic_string<charT> combinPath(const std::basic_string<charT> & dir, const std::basic_string<charT> & fname)
+	{
+		_ASSERT(!fname.empty());
+
+		_ASSERT(_T('/') != *(fname.begin()) || _T('\\') != *(fname.begin()));
+
+		charT back = *(dir.rbegin());
+		if(_T('/') != back || _T('\\') != back)
+		{
+			if(std::basic_string<charT>::npos != dir.rfind(_T('/')))
+			{
+				return dir + _T("/") + fname;
+			}
+
+			return dir + _T("\\") + fname;
+		}
+
+		return dir + fname;
 	}
 
 	IOStreamPtr ResourceMgr::openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode /*= _T("rb")*/)
 	{
-		DirList::const_iterator iter = m_dirList.begin();
-		for(; iter != m_dirList.end(); iter++)
+		_ASSERT(!fname.empty());
+
+		DirList::const_iterator dir_iter = m_dirList.begin();
+		for(; dir_iter != m_dirList.end(); dir_iter++)
 		{
-			std::basic_string<charT> full_path = *iter + _T("/") + fname;
+			std::basic_string<charT> full_path = combinPath(*dir_iter, fname);
 			FILE * handle;
-			if(NULL != (handle = fopen(full_path.c_str(), fmode.c_str())))
+			if(NULL != (handle = _tfopen(full_path.c_str(), fmode.c_str())))
 			{
 				return IOStreamPtr(new FileIOStream(handle));
 			}
@@ -90,14 +112,26 @@ namespace my
 
 	std::basic_string<charT> ResourceMgr::findFile(const std::basic_string<charT> & fname)
 	{
-		DirList::const_iterator iter = m_dirList.begin();
-		for(; iter != m_dirList.end(); iter++)
+		_ASSERT(!fname.empty());
+
+		DirList::const_iterator dir_iter = m_dirList.begin();
+		for(; dir_iter != m_dirList.end(); dir_iter++)
 		{
-			std::basic_string<charT> full_path = *iter + _T("/") + fname;
-			FILE * handle;
-			if(NULL != (handle = fopen(full_path.c_str(), _T("rb"))))
+			std::basic_string<charT> full_path;
+			charT * lpFilePath;
+			DWORD dwLen = MAX_PATH;
+			do
 			{
-				fclose(handle);
+				full_path.resize(dwLen);
+
+				dwLen = SearchPath(dir_iter->c_str(), fname.c_str(), NULL, full_path.size(), &full_path[0], &lpFilePath);
+			}
+			while(dwLen > full_path.size());
+
+			if(dwLen != 0)
+			{
+				full_path.resize(dwLen);
+
 				return full_path;
 			}
 		}
@@ -107,21 +141,18 @@ namespace my
 
 	std::basic_string<charT> ResourceMgr::findFileOrException(const std::basic_string<charT> & fname)
 	{
-		DirList::const_iterator iter = m_dirList.begin();
-		for(; iter != m_dirList.end(); iter++)
+		_ASSERT(!fname.empty());
+
+		std::basic_string<charT> full_path = findFile(fname);
+
+		if(full_path.empty())
 		{
-			std::basic_string<charT> full_path = *iter + _T("/") + fname;
-			FILE * handle;
-			if(NULL != (handle = fopen(full_path.c_str(), _T("rb"))))
-			{
-				fclose(handle);
-				return full_path;
-			}
+			std::basic_ostringstream<charT> osstr;
+			osstr << _T("cannot find \"") << fname << _T("\" in resource dirs");
+			T3D_CUSEXCEPT(osstr.str());
 		}
 
-		std::basic_ostringstream<charT> osstr;
-		osstr << _T("cannot find \"") << fname << _T("\" in resource dirs");
-		T3D_CUSEXCEPT(osstr.str());
+		return full_path;
 	}
 
 	Wav::Wav(const std::basic_string<charT> & wavFilePath)

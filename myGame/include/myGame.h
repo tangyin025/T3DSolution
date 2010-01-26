@@ -164,9 +164,9 @@ namespace my
 		~Game(void);
 
 	public:
-		void prepare(const CONFIG_DESC & cfg);
-
 		void prepareConfig(const CONFIG_DESC & cfg);
+
+		void prepare(const CONFIG_DESC & cfg);
 
 		void bltBackSurfaceToPrimary(void);
 

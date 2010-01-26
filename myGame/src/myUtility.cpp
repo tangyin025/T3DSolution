@@ -2746,7 +2746,7 @@ namespace my
 					_ASSERT(false);
 				}
 
-				pushUV(i / (real)subdivisionsAlongWidth, 1 - j / (real)subdivisionsAlongHeight);
+				pushUV(i / (real)subdivisionsAlongWidth, /*1 -*/ j / (real)subdivisionsAlongHeight);
 			}
 		}
 
@@ -2866,7 +2866,7 @@ namespace my
 					pushNormal(t3d::vec3Normalize(vertex));
 				}
 
-				pushUV(i / (real)subdivisionsAroundAxis, 1 - j / (real)subdivisionsAroundHeight);
+				pushUV(i / (real)subdivisionsAroundAxis, /*1 -*/ j / (real)subdivisionsAroundHeight);
 			}
 		}
 
@@ -3044,6 +3044,7 @@ namespace my
 
 				pushVertex(x, y, z);
 				pushNormal(nor);
+				pushUV(i / (real)subdivisionsAroundAxis, /*1 -*/ j / (real)subdivisionsAroundHeight);
 			}
 
 			for(int j = 0; j <= subdivisionsOnCaps; j++)
@@ -3055,6 +3056,7 @@ namespace my
 
 				pushVertex(x, y, z);
 				pushNormal(0, -1, 0);
+				pushUV(i / (real)subdivisionsAroundAxis, /*1 -*/ j / (real)subdivisionsAroundHeight);
 			}
 
 			for(int j = 0; j < subdivisionsAroundHeight + subdivisionsOnCaps + 1; j++)
@@ -3907,6 +3909,7 @@ namespace my
 		: sphere0(1)
 		, plane(100, 100)
 		, cube(2, 2, 2)
+		, cone(1, 1)
 	{
 	}
 
@@ -4218,5 +4221,41 @@ namespace my
 		t3d::Mat4<real> mTransform = t3d::mat3Mov(my::Vec4<real>(0, distance, 0));
 
 		plane.drawGouraudTexturePerspectiveLPZBufferRW(rc, mTransform * mRotation * mmat, mRotation * mrot);
+	}
+
+	void DrawnHelper::drawConeWireZBufferRW(
+		t3d::RenderContext * rc,
+		real radius,
+		real height,
+		const t3d::Vec4<real> & color,
+		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
+	{
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(radius, height, radius));
+
+		cone.drawWireZBufferRW(rc, color, mScaler * mmat);
+	}
+
+	void DrawnHelper::drawConeGouraudZBufferRW(
+		t3d::RenderContext * rc,
+		real radius,
+		real height,
+		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
+		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
+	{
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(radius, height, radius));
+
+		cone.drawGouraudZBufferRW(rc, mScaler * mmat, mrot);
+	}
+
+	void DrawnHelper::drawConeGouraudTextureZBufferRW(
+		t3d::RenderContext * rc,
+		real radius,
+		real height,
+		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
+		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
+	{
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(radius, height, radius));
+
+		cone.drawGouraudTextureZBufferRW(rc, mScaler * mmat, mrot);
 	}
 }

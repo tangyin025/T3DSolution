@@ -240,6 +240,7 @@ public:
 		m_eularCam->reset();
 
 		// 添加媒体搜索路径，建立快捷方式时要注意当前路径的位置
+		m_resourceMgr->registerDir(_T("."));
 		m_resourceMgr->registerDir(_T("../../common/medias"));
 		my::IOStreamPtr tmpStream;
 		my::ImagePtr tmpImage;
@@ -625,4 +626,5 @@ int APIENTRY WinMain(
 {
 	MyGame game;
 	return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
+	//return game.run(my::Game::CONFIG_DESC(1680, 1050, my::Game::SM_FULLSCREEN32)); // 不要使用 my::Game::SM_FULLSCREEN16，因为还没有实现 ^_^b
 }

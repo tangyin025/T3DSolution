@@ -125,26 +125,6 @@ namespace my
 	{
 	}
 
-	void Game::prepare(const CONFIG_DESC & cfg)
-	{
-		// create error reporter
-		m_errorRpt = ErrorReporterPtr(new ErrorReporter());
-
-		// create resource manager
-		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
-
-		// create main window
-		m_pwnd = createWindow(getModuleFileName());
-
-		// create ddraw object
-		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
-
-		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
-
-		// update video config
-		prepareConfig(cfg);
-	}
-
 	void Game::prepareConfig(const CONFIG_DESC & cfg)
 	{
 		_ASSERT(m_ddraw != NULL);
@@ -259,6 +239,43 @@ namespace my
 		m_pwnd->updateWindow();
 	}
 
+	void Game::prepare(const CONFIG_DESC & cfg)
+	{
+		// create error reporter
+		m_errorRpt = ErrorReporterPtr(new ErrorReporter());
+
+		// create resource manager
+		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
+
+		// create main window
+		m_pwnd = createWindow(getModuleFileName());
+
+		// create ddraw object
+		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
+
+		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
+
+		// create dinput
+		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
+
+		// create sys keyboard
+		m_keyboard = m_dinput->createSysKeyboard();
+
+		m_keyboard->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+
+		// create sys mouse
+		m_mouse = m_dinput->createSysMouse();
+
+		m_mouse->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+
+		// create dsound
+		m_dsound = t3d::DSoundPtr(new t3d::DSound());
+		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
+
+		// update video config
+		prepareConfig(cfg);
+	}
+
 	void Game::bltBackSurfaceToPrimary(void)
 	{
 		_ASSERT(NULL != m_pwnd);
@@ -312,26 +329,6 @@ namespace my
 			// prepare game base
 			prepare(cfg);
 
-			// create dinput
-			m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
-
-			// create sys keyboard
-			m_keyboard = m_dinput->createSysKeyboard();
-			m_keyboard->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
-			m_keyboard->acquire();
-
-			// create sys mouse
-			m_mouse = m_dinput->createSysMouse();
-			m_mouse->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
-			m_mouse->acquire();
-
-			// create dsound
-			m_dsound = t3d::DSoundPtr(new t3d::DSound());
-			m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
-
-			// register current directory input source dir
-			m_resourceMgr->registerDir(_T("."));
-
 			// do initialize
 			if(onInit())
 			{
@@ -344,7 +341,7 @@ namespace my
 		}
 		catch(t3d::Exception & e)
 		{
-			::MessageBox(m_pwnd ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+			::MessageBox(m_pwnd && (cfg.smode == SM_WINDOWED) ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
 			exit(1);
 		}
 
@@ -353,10 +350,14 @@ namespace my
 
 	void Game::onIdle(void)
 	{
-		// update keyboard
+		// update keyboard state
+		m_keyboard->acquire();
+
 		m_keyboard->update();
 
-		// update mouse
+		// update mouse state
+		m_mouse->acquire();
+
 		m_mouse->update();
 
 		// do client's frame, if failed destroy main window
