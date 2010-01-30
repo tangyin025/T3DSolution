@@ -5,6 +5,8 @@
 #include <mmsystem.h>
 #include "libc.h"
 
+#pragma comment(lib, "winmm.lib")
+
 namespace my
 {
 	IOStream::~IOStream(void)
@@ -63,11 +65,16 @@ namespace my
 		s_ptr = NULL;
 	}
 
-	void ResourceMgr::registerDir(const std::basic_string<charT> & dir)
+	void ResourceMgr::addDir(const std::basic_string<charT> & dir)
 	{
 		_ASSERT(!dir.empty());
 
 		m_dirList.push_back(dir);
+	}
+
+	void ResourceMgr::clearDir(void)
+	{
+		m_dirList.clear();
 	}
 
 	static std::basic_string<charT> combinPath(const std::basic_string<charT> & dir, const std::basic_string<charT> & fname)
