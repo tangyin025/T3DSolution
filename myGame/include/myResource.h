@@ -87,7 +87,9 @@ namespace my
 		virtual ~ResourceMgr(void);
 
 	public:
-		void registerDir(const std::basic_string<charT> & dir);
+		void addDir(const std::basic_string<charT> & dir);
+
+		void clearDir(void);
 
 		IOStreamPtr openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode = _T("rb"));
 
