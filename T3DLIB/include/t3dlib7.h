@@ -10,17 +10,17 @@
 
 namespace t3d
 {
+	typedef std::vector<size_t> BoneIndexList;
+
 	class STreeNode
 	{
 	public:
 		static const size_t invalid_i = SIZE_MAX;
 
-		typedef std::vector<size_t> IndexList;
-
 	protected:
 		size_t m_parent;
 
-		IndexList m_childs;
+		BoneIndexList m_childs;
 
 	public:
 		bool isRoot(void) const;
@@ -31,25 +31,25 @@ namespace t3d
 
 		void pushChild(size_t child_i);
 
-		void pushChildList(IndexList::const_iterator begin, IndexList::const_iterator end);
+		void pushChildList(BoneIndexList::const_iterator begin, BoneIndexList::const_iterator end);
 
-		IndexList::size_type getChildListSize(void) const;
+		BoneIndexList::size_type getChildListSize(void) const;
 
-		IndexList::reference childAt(IndexList::size_type i);
+		BoneIndexList::reference childAt(BoneIndexList::size_type i);
 
-		IndexList::const_reference childAt(IndexList::size_type i) const;
+		BoneIndexList::const_reference childAt(BoneIndexList::size_type i) const;
 
-		IndexList::iterator getChildListBegin(void);
+		BoneIndexList::iterator getChildListBegin(void);
 
-		IndexList::const_iterator getChildListBegin(void) const;
+		BoneIndexList::const_iterator getChildListBegin(void) const;
 
-		IndexList::iterator getChildListEnd(void);
+		BoneIndexList::iterator getChildListEnd(void);
 
-		IndexList::const_iterator getChildListEnd(void) const;
+		BoneIndexList::const_iterator getChildListEnd(void) const;
 
-		IndexList & getChildList(void);
+		BoneIndexList & getChildList(void);
 
-		const IndexList & getChildList(void) const;
+		const BoneIndexList & getChildList(void) const;
 
 		STreeNode(size_t parent_i = invalid_i);
 
@@ -67,9 +67,9 @@ namespace t3d
 		}
 
 		template <typename tree_list_type>
-		static IndexList getRootIndexList(tree_list_type list)
+		static BoneIndexList getRootIndexList(tree_list_type list)
 		{
-			IndexList indexList;
+			BoneIndexList indexList;
 			size_t i = 0;
 			for(; i < list.size(); i++)
 			{
@@ -132,19 +132,36 @@ namespace t3d
 	typedef std::vector<BoneNode> BoneNodeList;
 
 	BoneNodeList & incrementBoneNodeList(
-		BoneNodeList & boneNodeList,
-		const BoneNodeList & boneNodeList0,
-		const BoneNodeList & boneNodeList1,
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
+		size_t root_i);
+
+	BoneNodeList & incrementBoneNodeList(
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end);
+
+	BoneNodeList & intersectBoneNodeList(
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
+		real value0,
+		real value1,
+		real clipper,
 		size_t root_i);
 
 	BoneNodeList & intersectBoneNodeList(
-		BoneNodeList & boneNodeList,
-		const BoneNodeList & boneNodeList0,
-		const BoneNodeList & boneNodeList1,
-		size_t root_i,
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
 		real value0,
 		real value1,
-		real clipper);
+		real clipper,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end);
 
 	class BoneKeyFrame : public Bone
 	{
@@ -266,9 +283,17 @@ namespace t3d
 	BoneTransformList & updateBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
-		size_t root_i,
 		const Mat4<real> & mrot,
-		const Mat4<real> & mmat);
+		const Mat4<real> & mmat,
+		size_t root_i);
+
+	BoneTransformList & updateBoneTransformListFromBoneNodeList(
+		BoneTransformList & boneTransformList,
+		const BoneNodeList & boneNodeList,
+		const Mat4<real> & mrot,
+		const Mat4<real> & mmat,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end);
 
 	BoneTransform & updateBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
@@ -279,9 +304,17 @@ namespace t3d
 	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
-		size_t root_i,
 		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat);
+		const Mat4<real> & mInverseMat,
+		size_t root_i);
+
+	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+		BoneTransformList & inverseBoneTransformList,
+		const BoneNodeList & boneNodeList,
+		const Mat4<real> & mInverseRot,
+		const Mat4<real> & mInverseMat,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end);
 
 	BoneTransform & combineVertexBoneTransform(
 		BoneTransform & res,

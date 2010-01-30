@@ -1224,7 +1224,7 @@ namespace my
 
 		t3d::BoneTransformList m_origBoneInverseTransformList;
 
-		t3d::STreeNode::IndexList m_rootIndexList;
+		t3d::BoneIndexList m_rootIndexList;
 
 		typedef std::map<std::basic_string<char>, size_t> BoneIndexMap;
 
@@ -1283,31 +1283,31 @@ namespace my
 
 		const t3d::BoneTransformList & getOrigBoneInverseTransformList(void) const;
 
-		void pushRootIndex(t3d::STreeNode::IndexList::const_reference rootIndex);
+		void pushRootIndex(t3d::BoneIndexList::const_reference rootIndex);
 
-		void pushRootIndexList(t3d::STreeNode::IndexList::const_iterator begin, t3d::STreeNode::IndexList::const_iterator end);
+		void pushRootIndexList(t3d::BoneIndexList::const_iterator begin, t3d::BoneIndexList::const_iterator end);
 
-		t3d::STreeNode::IndexList::const_iterator getRootIndexListBegin(void) const;
+		t3d::BoneIndexList::const_iterator getRootIndexListBegin(void) const;
 
-		t3d::STreeNode::IndexList::iterator getRootIndexListBegin(void);
+		t3d::BoneIndexList::iterator getRootIndexListBegin(void);
 
-		t3d::STreeNode::IndexList::const_iterator getRootIndexListEnd(void) const;
+		t3d::BoneIndexList::const_iterator getRootIndexListEnd(void) const;
 
-		t3d::STreeNode::IndexList::iterator getRootIndexListEnd(void);
+		t3d::BoneIndexList::iterator getRootIndexListEnd(void);
 
-		t3d::STreeNode::IndexList::size_type getRootIndexListSize(void) const;
+		t3d::BoneIndexList::size_type getRootIndexListSize(void) const;
 
-		void resizeRootIndexList(t3d::STreeNode::IndexList::size_type size);
+		void resizeRootIndexList(t3d::BoneIndexList::size_type size);
 
 		void clearRootIndexList(void);
 
-		t3d::STreeNode::IndexList::reference rootIndexAt(t3d::STreeNode::IndexList::size_type i);
+		t3d::BoneIndexList::reference rootIndexAt(t3d::BoneIndexList::size_type i);
 
-		t3d::STreeNode::IndexList::const_reference rootIndexAt(t3d::STreeNode::IndexList::size_type i) const;
+		t3d::BoneIndexList::const_reference rootIndexAt(t3d::BoneIndexList::size_type i) const;
 
-		t3d::STreeNode::IndexList & getRootIndexList(void);
+		t3d::BoneIndexList & getRootIndexList(void);
 
-		const t3d::STreeNode::IndexList & getRootIndexList(void) const;
+		const t3d::BoneIndexList & getRootIndexList(void) const;
 
 		void insertBoneIndex(const std::basic_string<char> & boneName, size_t bone_i);
 

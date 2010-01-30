@@ -3597,42 +3597,42 @@ namespace my
 		return m_origBoneInverseTransformList;
 	}
 
-	void SkeletonAnimationsFromOgreSkeleton::pushRootIndex(t3d::STreeNode::IndexList::const_reference rootIndex)
+	void SkeletonAnimationsFromOgreSkeleton::pushRootIndex(t3d::BoneIndexList::const_reference rootIndex)
 	{
 		m_rootIndexList.push_back(rootIndex);
 	}
 
-	void SkeletonAnimationsFromOgreSkeleton::pushRootIndexList(t3d::STreeNode::IndexList::const_iterator begin, t3d::STreeNode::IndexList::const_iterator end)
+	void SkeletonAnimationsFromOgreSkeleton::pushRootIndexList(t3d::BoneIndexList::const_iterator begin, t3d::BoneIndexList::const_iterator end)
 	{
 		m_rootIndexList.insert(m_rootIndexList.end(), begin, end);
 	}
 
-	t3d::STreeNode::IndexList::const_iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListBegin(void) const
+	t3d::BoneIndexList::const_iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListBegin(void) const
 	{
 		return m_rootIndexList.begin();
 	}
 
-	t3d::STreeNode::IndexList::iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListBegin(void)
+	t3d::BoneIndexList::iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListBegin(void)
 	{
 		return m_rootIndexList.begin();
 	}
 
-	t3d::STreeNode::IndexList::const_iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListEnd(void) const
+	t3d::BoneIndexList::const_iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListEnd(void) const
 	{
 		return m_rootIndexList.end();
 	}
 
-	t3d::STreeNode::IndexList::iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListEnd(void)
+	t3d::BoneIndexList::iterator SkeletonAnimationsFromOgreSkeleton::getRootIndexListEnd(void)
 	{
 		return m_rootIndexList.end();
 	}
 
-	t3d::STreeNode::IndexList::size_type SkeletonAnimationsFromOgreSkeleton::getRootIndexListSize(void) const
+	t3d::BoneIndexList::size_type SkeletonAnimationsFromOgreSkeleton::getRootIndexListSize(void) const
 	{
 		return m_rootIndexList.size();
 	}
 
-	void SkeletonAnimationsFromOgreSkeleton::resizeRootIndexList(t3d::STreeNode::IndexList::size_type size)
+	void SkeletonAnimationsFromOgreSkeleton::resizeRootIndexList(t3d::BoneIndexList::size_type size)
 	{
 		m_rootIndexList.resize(size);
 	}
@@ -3642,26 +3642,26 @@ namespace my
 		m_rootIndexList.clear();
 	}
 
-	t3d::STreeNode::IndexList::reference SkeletonAnimationsFromOgreSkeleton::rootIndexAt(t3d::STreeNode::IndexList::size_type i)
+	t3d::BoneIndexList::reference SkeletonAnimationsFromOgreSkeleton::rootIndexAt(t3d::BoneIndexList::size_type i)
 	{
 		_ASSERT(i < getRootIndexListSize());
 
 		return m_rootIndexList[i];
 	}
 
-	t3d::STreeNode::IndexList::const_reference SkeletonAnimationsFromOgreSkeleton::rootIndexAt(t3d::STreeNode::IndexList::size_type i) const
+	t3d::BoneIndexList::const_reference SkeletonAnimationsFromOgreSkeleton::rootIndexAt(t3d::BoneIndexList::size_type i) const
 	{
 		_ASSERT(i < getRootIndexListSize());
 
 		return m_rootIndexList[i];
 	}
 
-	t3d::STreeNode::IndexList & SkeletonAnimationsFromOgreSkeleton::getRootIndexList(void)
+	t3d::BoneIndexList & SkeletonAnimationsFromOgreSkeleton::getRootIndexList(void)
 	{
 		return m_rootIndexList;
 	}
 
-	const t3d::STreeNode::IndexList & SkeletonAnimationsFromOgreSkeleton::getRootIndexList(void) const
+	const t3d::BoneIndexList & SkeletonAnimationsFromOgreSkeleton::getRootIndexList(void) const
 	{
 		return m_rootIndexList;
 	}
@@ -3865,32 +3865,15 @@ namespace my
 
 		resizeOrigBoneInverseTransformList(getOrigBoneNodeListSize());
 
-		//size_t i = 0;
-		//for(; i < getOrigBoneNodeListSize(); i++)
-		//{
-		//	if(origBoneNodeAt(i).isRoot())
-		//	{
-		//		t3d::updateBoneInverseTransformListFromBoneNodeList(
-		//			getOrigBoneInverseTransformList(),
-		//			getOrigBoneNodeList(),
-		//			(int)i,
-		//			my::Mat4<real>::IDENTITY,
-		//			my::Mat4<real>::IDENTITY);
-		//	}
-		//}
-
 		getRootIndexList() = t3d::STreeNode::getRootIndexList(getOrigBoneNodeList());
 
-		t3d::STreeNode::IndexList::const_iterator root_index_iter = getRootIndexListBegin();
-		for(; root_index_iter != getRootIndexListEnd(); root_index_iter++)
-		{
-			t3d::updateBoneInverseTransformListFromBoneNodeList(
+		t3d::updateBoneInverseTransformListFromBoneNodeList(
 				getOrigBoneInverseTransformList(),
 				getOrigBoneNodeList(),
-				*root_index_iter,
 				my::Mat4<real>::IDENTITY,
-				my::Mat4<real>::IDENTITY);
-		}
+				my::Mat4<real>::IDENTITY,
+				getRootIndexListBegin(),
+				getRootIndexListEnd());
 
 		getBoneNodeList() = getOrigBoneNodeList();
 
