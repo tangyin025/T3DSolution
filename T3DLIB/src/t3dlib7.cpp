@@ -24,56 +24,56 @@ namespace t3d
 		m_childs.push_back(child_i);
 	}
 
-	void STreeNode::pushChildList(IndexList::const_iterator begin, IndexList::const_iterator end)
+	void STreeNode::pushChildList(BoneIndexList::const_iterator begin, BoneIndexList::const_iterator end)
 	{
 		m_childs.insert(m_childs.end(), begin, end);
 	}
 
-	STreeNode::IndexList::size_type STreeNode::getChildListSize(void) const
+	BoneIndexList::size_type STreeNode::getChildListSize(void) const
 	{
 		return m_childs.size();
 	}
 
-	STreeNode::IndexList::reference STreeNode::childAt(IndexList::size_type i)
+	BoneIndexList::reference STreeNode::childAt(BoneIndexList::size_type i)
 	{
 		_ASSERT(i < getChildListSize());
 
 		return m_childs[i];
 	}
 
-	STreeNode::IndexList::const_reference STreeNode::childAt(IndexList::size_type i) const
+	BoneIndexList::const_reference STreeNode::childAt(BoneIndexList::size_type i) const
 	{
 		_ASSERT(i < getChildListSize());
 
 		return m_childs[i];
 	}
 
-	STreeNode::IndexList::iterator STreeNode::getChildListBegin(void)
+	BoneIndexList::iterator STreeNode::getChildListBegin(void)
 	{
 		return m_childs.begin();
 	}
 
-	STreeNode::IndexList::const_iterator STreeNode::getChildListBegin(void) const
+	BoneIndexList::const_iterator STreeNode::getChildListBegin(void) const
 	{
 		return m_childs.begin();
 	}
 
-	STreeNode::IndexList::iterator STreeNode::getChildListEnd(void)
+	BoneIndexList::iterator STreeNode::getChildListEnd(void)
 	{
 		return m_childs.end();
 	}
 
-	STreeNode::IndexList::const_iterator STreeNode::getChildListEnd(void) const
+	BoneIndexList::const_iterator STreeNode::getChildListEnd(void) const
 	{
 		return m_childs.end();
 	}
 
-	STreeNode::IndexList & STreeNode::getChildList(void)
+	BoneIndexList & STreeNode::getChildList(void)
 	{
 		return m_childs;
 	}
 
-	const STreeNode::IndexList & STreeNode::getChildList(void) const
+	const BoneIndexList & STreeNode::getChildList(void) const
 	{
 		return m_childs;
 	}
@@ -170,66 +170,102 @@ namespace t3d
 	}
 
 	BoneNodeList & incrementBoneNodeList(
-		BoneNodeList & boneNodeList,
-		const BoneNodeList & boneNodeList0,
-		const BoneNodeList & boneNodeList1,
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
 		size_t root_i)
 	{
-		_ASSERT(boneNodeList.size() == boneNodeList0.size());
-		_ASSERT(boneNodeList.size() == boneNodeList1.size());
+		_ASSERT(ret.size() == lhs.size());
+		_ASSERT(ret.size() == rhs.size());
 
 		incrementBone(
-			boneNodeList[root_i],
-			boneNodeList0[root_i],
-			boneNodeList1[root_i]);
+			ret[root_i],
+			lhs[root_i],
+			rhs[root_i]);
 
-		STreeNode::IndexList::const_iterator bone_index_iter = boneNodeList[root_i].getChildListBegin();
-		for(; bone_index_iter != boneNodeList[root_i].getChildListEnd(); bone_index_iter++)
+		return incrementBoneNodeList(
+			ret,
+			lhs,
+			rhs,
+			ret[root_i].getChildListBegin(),
+			ret[root_i].getChildListEnd());
+	}
+
+	BoneNodeList & incrementBoneNodeList(
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end)
+	{
+		_ASSERT(ret.size() == lhs.size());
+		_ASSERT(ret.size() == rhs.size());
+
+		BoneIndexList::const_iterator bone_index_iter = begin;
+		for(; bone_index_iter != end; bone_index_iter++)
 		{
 			incrementBoneNodeList(
-				boneNodeList,
-				boneNodeList0,
-				boneNodeList1,
+				ret,
+				lhs,
+				rhs,
 				*bone_index_iter);
 		}
 
-		return boneNodeList;
+		return ret;
 	}
 
 	BoneNodeList & intersectBoneNodeList(
-		BoneNodeList & boneNodeList,
-		const BoneNodeList & boneNodeList0,
-		const BoneNodeList & boneNodeList1,
-		size_t root_i,
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
 		real value0,
 		real value1,
-		real clipper)
+		real clipper,
+		size_t root_i)
 	{
-		_ASSERT(boneNodeList.size() == boneNodeList0.size());
-		_ASSERT(boneNodeList.size() == boneNodeList1.size());
+		_ASSERT(ret.size() == lhs.size());
+		_ASSERT(ret.size() == rhs.size());
 
-		intersectBone(
-			boneNodeList[root_i],
-			boneNodeList0[root_i],
-			boneNodeList1[root_i],
-			value0,
-			value1,
-			clipper);
+		intersectBone(ret[root_i], lhs[root_i], rhs[root_i], value0, value1, clipper);
 
-		STreeNode::IndexList::const_iterator bone_index_iter = boneNodeList[root_i].getChildListBegin();
-		for(; bone_index_iter != boneNodeList[root_i].getChildListEnd(); bone_index_iter++)
-		{
-			intersectBoneNodeList(
-				boneNodeList,
-				boneNodeList0,
-				boneNodeList1,
-				*bone_index_iter,
+		return intersectBoneNodeList(
+				ret,
+				lhs,
+				rhs,
 				value0,
 				value1,
-				clipper);
+				clipper,
+				ret[root_i].getChildListBegin(),
+				ret[root_i].getChildListEnd());
+	}
+
+	BoneNodeList & intersectBoneNodeList(
+		BoneNodeList & ret,
+		const BoneNodeList & lhs,
+		const BoneNodeList & rhs,
+		real value0,
+		real value1,
+		real clipper,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end)
+	{
+		_ASSERT(ret.size() == lhs.size());
+		_ASSERT(ret.size() == rhs.size());
+
+		BoneIndexList::const_iterator bone_index_iter = begin;
+		for(; bone_index_iter != end; bone_index_iter++)
+		{
+			intersectBoneNodeList(
+				ret,
+				lhs,
+				rhs,
+				value0,
+				value1,
+				clipper,
+				*bone_index_iter);
 		}
 
-		return boneNodeList;
+		return ret;
 	}
 
 	void BoneKeyFrame::setTime(real time)
@@ -415,7 +451,7 @@ namespace t3d
 			boneAnimationNodeList[bone_i].getBoneKeyFrameList(),
 			time);
 
-		STreeNode::IndexList::const_iterator bone_index_iter = boneNodeList[bone_i].getChildListBegin();
+		BoneIndexList::const_iterator bone_index_iter = boneNodeList[bone_i].getChildListBegin();
 		for(; bone_index_iter != boneNodeList[bone_i].getChildListEnd(); bone_index_iter++)
 		{
 			updateBoneNodeListFromBoneAnimationNodeList(
@@ -478,9 +514,9 @@ namespace t3d
 	BoneTransformList & updateBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
-		size_t root_i,
 		const Mat4<real> & mrot,
-		const Mat4<real> & mmat)
+		const Mat4<real> & mmat,
+		size_t root_i)
 	{
 		_ASSERT(root_i < boneNodeList.size());
 
@@ -492,15 +528,34 @@ namespace t3d
 			mrot,
 			mmat);
 
-		size_t i = 0;
-		for(; i < boneNodeList[root_i].getChildListSize(); i++)
+		return updateBoneTransformListFromBoneNodeList(
+			boneTransformList,
+			boneNodeList,
+			boneTransformList[root_i].getRotationTransform(),
+			boneTransformList[root_i].getTransform(),
+			boneNodeList[root_i].getChildListBegin(),
+			boneNodeList[root_i].getChildListEnd());
+	}
+
+	BoneTransformList & updateBoneTransformListFromBoneNodeList(
+		BoneTransformList & boneTransformList,
+		const BoneNodeList & boneNodeList,
+		const Mat4<real> & mrot,
+		const Mat4<real> & mmat,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end)
+	{
+		_ASSERT(boneTransformList.size() == boneNodeList.size());
+
+		BoneIndexList::const_iterator bone_index_iter = begin;
+		for(; bone_index_iter != end; bone_index_iter++)
 		{
 			updateBoneTransformListFromBoneNodeList(
 				boneTransformList,
 				boneNodeList,
-				boneNodeList[root_i].childAt(i),
-				boneTransformList[root_i].getRotationTransform(),
-				boneTransformList[root_i].getTransform());
+				mrot,
+				mmat,
+				*bone_index_iter);
 		}
 
 		return boneTransformList;
@@ -524,25 +579,48 @@ namespace t3d
 	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
-		size_t root_i,
 		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat)
+		const Mat4<real> & mInverseMat,
+		size_t root_i)
 	{
+		_ASSERT(root_i < boneNodeList.size());
+
+		_ASSERT(inverseBoneTransformList.size() == boneNodeList.size());
+
 		updateBoneInverseTransformFromBone(
 			inverseBoneTransformList[root_i],
 			boneNodeList[root_i],
 			mInverseRot,
 			mInverseMat);
 
-		size_t i = 0;
-		for(; i < boneNodeList[root_i].getChildListSize(); i++)
+		return updateBoneInverseTransformListFromBoneNodeList(
+			inverseBoneTransformList,
+			boneNodeList,
+			inverseBoneTransformList[root_i].getRotationTransform(),
+			inverseBoneTransformList[root_i].getTransform(),
+			boneNodeList[root_i].getChildListBegin(),
+			boneNodeList[root_i].getChildListEnd());
+	}
+
+	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+		BoneTransformList & inverseBoneTransformList,
+		const BoneNodeList & boneNodeList,
+		const Mat4<real> & mInverseRot,
+		const Mat4<real> & mInverseMat,
+		BoneIndexList::const_iterator begin,
+		BoneIndexList::const_iterator end)
+	{
+		_ASSERT(inverseBoneTransformList.size() == boneNodeList.size());
+
+		BoneIndexList::const_iterator bone_index_iter = begin;
+		for(; bone_index_iter != end; bone_index_iter++)
 		{
 			updateBoneInverseTransformListFromBoneNodeList(
 				inverseBoneTransformList,
 				boneNodeList,
-				boneNodeList[root_i].childAt(i),
-				inverseBoneTransformList[root_i].getRotationTransform(),
-				inverseBoneTransformList[root_i].getTransform());
+				mInverseRot,
+				mInverseMat,
+				*bone_index_iter);
 		}
 
 		return inverseBoneTransformList;
