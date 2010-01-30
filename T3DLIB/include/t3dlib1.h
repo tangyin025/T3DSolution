@@ -125,7 +125,7 @@ namespace t3d
 
 		DDSurfacePtr createWindowSurface(void);
 
-		DDSurfacePtr createMemorySurface(DWORD dwWidth, DWORD dwHeight);
+		DDSurfacePtr createMemorySurface(DWORD dwWidth, DWORD dwHeight, const DDPIXELFORMAT & ddpf);
 	};
 
 	typedef boost::shared_ptr<DDraw> DDrawPtr;

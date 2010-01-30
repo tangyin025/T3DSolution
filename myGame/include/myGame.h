@@ -149,7 +149,6 @@ namespace my
 
 		t3d::ZBufferPtr m_zbuff;
 
-	protected:
 		t3d::DInputPtr m_dinput;
 
 		t3d::DSoundPtr m_dsound;
@@ -164,9 +163,7 @@ namespace my
 		~Game(void);
 
 	public:
-		void prepareConfig(const CONFIG_DESC & cfg);
-
-		void prepare(const CONFIG_DESC & cfg);
+		bool prepare(const CONFIG_DESC & cfg);
 
 		void bltBackSurfaceToPrimary(void);
 

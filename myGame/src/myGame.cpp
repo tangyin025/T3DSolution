@@ -125,95 +125,103 @@ namespace my
 	{
 	}
 
-	void Game::prepareConfig(const CONFIG_DESC & cfg)
+	bool Game::prepare(const CONFIG_DESC & cfg)
 	{
-		_ASSERT(m_ddraw != NULL);
+		// create error reporter
+		m_errorRpt = ErrorReporterPtr(new ErrorReporter());
 
-		_ASSERT(NULL != m_pwnd);
+		// create resource manager
+		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
 
-		//// NOTE: destory previous primary surface before re-create it
-		//m_sprim = t3d::DDSurfacePtr();
+		// create main window
+		m_pwnd = createWindow(getModuleFileName());
 
-		CRect clientRect(0, 0, cfg.width, cfg.height);
+		// create ddraw object
+		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
 
-		// set ddraw and main window with config
+		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
+
+		// set back surface rect
+		m_rback.SetRect(0, 0, cfg.width, cfg.height);
+
+		// create ddraw and adjust main window
 		switch(cfg.smode)
 		{
-		case my::Game::SM_WINDOWED:
+		case SM_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
-			//m_ddraw->RestoreDisplayMode();
 			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
-			m_pwnd->adjustClientRect(clientRect);
+			m_pwnd->adjustClientRect(m_rback);
 			m_pwnd->centerWindow();
 			break;
 
-		case my::Game::SM_FULLSCREEN16:
+		case SM_FULLSCREEN16:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->adjustClientRect(clientRect);
+			m_pwnd->adjustClientRect(m_rback);
 			break;
 
-		case my::Game::SM_FULLSCREEN32:
+		case SM_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->adjustClientRect(clientRect);
+			m_pwnd->adjustClientRect(m_rback);
 			break;
 
 		default:
 			T3D_CUSEXCEPT(_T("unsupported screen mode"));
 		}
 
-		//// create primary surface with main window clipper
+		//// destory previous primary surface
+		//m_sprim = t3d::DDSurfacePtr();
+
+		//// create primary surface
 		//m_sprim = m_ddraw->createWindowSurface();
 
 		//m_sprim->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
 
-		// create back surface with custom rect clipper
-		m_sback = m_ddraw->createMemorySurface(cfg.width, cfg.height);
-
-		m_sback->setClipper(m_ddraw->createMemoryClipper(&clientRect, 1).get());
-
-		// save the back surface rect clipper for blt
-		m_rback = clientRect;
-
-		// get display mode info
-		bool bSupportedPixelFormat = false;
 		//DDPIXELFORMAT ddpf = m_sprim->getPixelFormat();
 		DDPIXELFORMAT ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
-		if(ddpf.dwFlags & DDPF_RGB)
+		if( !(ddpf.dwFlags & DDPF_RGB) )
 		{
-			// create render context
-			switch(ddpf.dwRGBBitCount)
-			{
-			case 16:
-				if(ddpf.dwRBitMask == RGB16_RED_MASK
-					&& ddpf.dwGBitMask == RGB16_GREEN_MASK
-					&& ddpf.dwBBitMask == RGB16_BLUE_MASK)
-				{
-					m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
-					m_cc = ColorConversionPtr(); // Singleton object should be destoryed before create
-					m_cc = ColorConversionPtr(new ColorConversion16());
-					bSupportedPixelFormat = true;
-				}
-				break;
-
-			case 32:
-				if(ddpf.dwRBitMask == RGB32_RED_MASK
-					&& ddpf.dwGBitMask == RGB32_GREEN_MASK
-					&& ddpf.dwBBitMask == RGB32_BLUE_MASK)
-				{
-					m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
-					m_cc = ColorConversionPtr();
-					m_cc = ColorConversionPtr(new ColorConversion32());
-					bSupportedPixelFormat = true;
-				}
-				break;
-			}
+			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
 
-		if(!bSupportedPixelFormat)
+		// create screen compatible back surface
+		m_sback = m_ddraw->createMemorySurface(cfg.width, cfg.height, ddpf);
+
+		m_sback->setClipper(m_ddraw->createMemoryClipper(&m_rback, 1).get());
+
+		// create pixel dependency objects
+		bool bSupportedPixelFormat = false;
+		switch(ddpf.dwRGBBitCount)
+		{
+		case 16:
+			if(ddpf.dwRBitMask == RGB16_RED_MASK
+				&& ddpf.dwGBitMask == RGB16_GREEN_MASK
+				&& ddpf.dwBBitMask == RGB16_BLUE_MASK)
+			{
+				m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
+				m_cc = ColorConversionPtr(); // Singleton object should be destoryed before create
+				m_cc = ColorConversionPtr(new ColorConversion16());
+				bSupportedPixelFormat = true;
+			}
+			break;
+
+		case 32:
+			if(ddpf.dwRBitMask == RGB32_RED_MASK
+				&& ddpf.dwGBitMask == RGB32_GREEN_MASK
+				&& ddpf.dwBBitMask == RGB32_BLUE_MASK)
+			{
+				m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
+				m_cc = ColorConversionPtr();
+				m_cc = ColorConversionPtr(new ColorConversion32());
+				bSupportedPixelFormat = true;
+			}
+			break;
+		}
+
+		if( !bSupportedPixelFormat )
 		{
 			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
@@ -233,28 +241,6 @@ namespace my
 		// set back surface rect to render context clipper
 		m_rc->setClipperRect(m_rback);
 
-		// show main window
-		m_pwnd->showWindow();
-
-		m_pwnd->updateWindow();
-	}
-
-	void Game::prepare(const CONFIG_DESC & cfg)
-	{
-		// create error reporter
-		m_errorRpt = ErrorReporterPtr(new ErrorReporter());
-
-		// create resource manager
-		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
-
-		// create main window
-		m_pwnd = createWindow(getModuleFileName());
-
-		// create ddraw object
-		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
-
-		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
-
 		// create dinput
 		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
 
@@ -270,10 +256,15 @@ namespace my
 
 		// create dsound
 		m_dsound = t3d::DSoundPtr(new t3d::DSound());
+
 		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
 
-		// update video config
-		prepareConfig(cfg);
+		// show main window
+		m_pwnd->showWindow();
+
+		m_pwnd->updateWindow();
+
+		return onInit();
 	}
 
 	void Game::bltBackSurfaceToPrimary(void)
@@ -326,11 +317,8 @@ namespace my
 
 		try
 		{
-			// prepare game base
-			prepare(cfg);
-
-			// do initialize
-			if(onInit())
+			// prepare game initialize
+			if(prepare(cfg))
 			{
 				// run main application
 				res = Application::run();
