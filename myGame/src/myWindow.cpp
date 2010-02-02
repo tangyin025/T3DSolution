@@ -599,6 +599,7 @@ namespace my
 
 	Window::~Window(void)
 	{
+		//_ASSERT(NULL == m_hwnd);
 	}
 
 	LRESULT Window::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
@@ -614,6 +615,8 @@ namespace my
 
 		case WM_NCDESTROY:
 			{
+				m_hwnd = NULL;
+
 				WindowPtrMap & wndMap = Application::getSingleton().m_wndMap;
 
 				WindowPtrMap::iterator iter = wndMap.find(hwnd);
