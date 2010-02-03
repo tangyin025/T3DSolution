@@ -343,7 +343,19 @@ namespace t3d
 		ddsd.dwWidth			= dwWidth;
 		ddsd.dwHeight			= dwHeight;
 
-		memcpy(&ddsd.ddpfPixelFormat, &ddpf, sizeof(ddsd.ddpfPixelFormat));
+		ddsd.ddpfPixelFormat = ddpf;
+
+		DDSurfacePtr surface(new DDSurface(this, ddsd));
+		return surface;
+	}
+
+	DDSurfacePtr DDraw::createMemorySurface(DWORD dwWidth, DWORD dwHeight)
+	{
+		DDSURFACEDESC2 ddsd = {sizeof(ddsd)};
+		ddsd.dwFlags			= DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
+		ddsd.ddsCaps.dwCaps		= DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+		ddsd.dwWidth			= dwWidth;
+		ddsd.dwHeight			= dwHeight;
 
 		DDSurfacePtr surface(new DDSurface(this, ddsd));
 		return surface;
