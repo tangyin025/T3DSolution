@@ -608,11 +608,6 @@ namespace my
 
 		switch(message)
 		{
-		case WM_CREATE:
-			{
-				return 0;
-			}
-
 		case WM_NCDESTROY:
 			{
 				m_hwnd = NULL;
@@ -772,14 +767,9 @@ namespace my
 
 			if(WM_CREATE == message)
 			{
-				WindowPtr winPtr(getSingleton().newWindow(hwnd));
+				_ASSERT(wndMap.end() == wndMap.find(hwnd));
 
-				LRESULT lres = winPtr->onProc(hwnd, WM_CREATE, wparam, lparam);
-				if(0 == lres)
-				{
-					wndMap.insert(WindowPtrMap::value_type(hwnd, winPtr));
-				}
-				return lres;
+				wndMap.insert(WindowPtrMap::value_type(hwnd, WindowPtr(getSingleton().newWindow(hwnd))));
 			}
 
 			WindowPtrMap::iterator iter = wndMap.find(hwnd);
@@ -833,7 +823,9 @@ namespace my
 			0, winClass.c_str(), winTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, getHandle(), NULL);
 
 		if(NULL == hwnd)
+		{
 			return NULL;
+		}
 
 		_ASSERT(m_wndMap.end() != m_wndMap.find(hwnd));
 
