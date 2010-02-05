@@ -136,6 +136,11 @@ namespace my
 		// create main window
 		m_pwnd = createWindow(getModuleFileName());
 
+		if(NULL == m_pwnd)
+		{
+			return false;
+		}
+
 		// create ddraw object
 		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
 
