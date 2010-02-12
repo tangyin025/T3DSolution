@@ -21,64 +21,64 @@ namespace my
 
 	void CustomShaderObjectPtrListContext::pushCustomShaderObj(CustomShaderObjectPtrList::const_reference obj)
 	{
-		getCustomShaderObjList().push_back(obj);
+		m_customShaderObjList.push_back(obj);
 	}
 
 	void CustomShaderObjectPtrListContext::pushCustomShaderObjList(CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end)
 	{
-		getCustomShaderObjList().insert(getCustomShaderObjListBegin(), begin, end);
+		m_customShaderObjList.insert(getCustomShaderObjListBegin(), begin, end);
 	}
 
 	void CustomShaderObjectPtrListContext::clearCustomShaderObjList(void)
 	{
-		getCustomShaderObjList().clear();
+		m_customShaderObjList.clear();
 	}
 
 	void CustomShaderObjectPtrListContext::resizeCustomShaderObjList(CustomShaderObjectPtrList::size_type size)
 	{
-		getCustomShaderObjList().resize(size);
+		m_customShaderObjList.resize(size);
 	}
 
 	CustomShaderObjectPtrList::size_type CustomShaderObjectPtrListContext::getCustomShaderObjListSize(void) const
 	{
-		return getCustomShaderObjList().size();
+		return m_customShaderObjList.size();
 	}
 
 	CustomShaderObjectPtrList::reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i)
 	{
 		_ASSERT(i < getCustomShaderObjListSize());
 
-		return getCustomShaderObjList()[i];
+		return m_customShaderObjList[i];
 	}
 
 	CustomShaderObjectPtrList::const_reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i) const
 	{
 		_ASSERT(i < getCustomShaderObjListSize());
 
-		return getCustomShaderObjList()[i];
+		return m_customShaderObjList[i];
 	}
 
 	CustomShaderObjectPtrList::iterator CustomShaderObjectPtrListContext::getCustomShaderObjListBegin(void)
 	{
-		return getCustomShaderObjList().begin();
+		return m_customShaderObjList.begin();
 	}
 
 	CustomShaderObjectPtrList::const_iterator CustomShaderObjectPtrListContext::getCustomShaderObjListBegin(void) const
 	{
-		return getCustomShaderObjList().begin();
+		return m_customShaderObjList.begin();
 	}
 
 	CustomShaderObjectPtrList::iterator CustomShaderObjectPtrListContext::getCustomShaderObjListEnd(void)
 	{
-		return getCustomShaderObjList().end();
+		return m_customShaderObjList.end();
 	}
 
 	CustomShaderObjectPtrList::const_iterator CustomShaderObjectPtrListContext::getCustomShaderObjListEnd(void) const
 	{
-		return getCustomShaderObjList().end();
+		return m_customShaderObjList.end();
 	}
 
-	void CustomShaderObjectPtrListContext::draw(t3d::RenderContext * rc)
+	void CustomShaderObjectPtrListContext::draw(t3d::RenderContext * rc) const
 	{
 		CustomShaderObjectPtrList::const_iterator obj_iter = getCustomShaderObjListBegin();
 		for(; obj_iter != getCustomShaderObjListEnd(); obj_iter++)
@@ -151,7 +151,7 @@ namespace my
 #pragma warning(disable: 4100)
 	void BSPNode::drawWireZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		_ASSERT(false);
 	}
@@ -159,58 +159,88 @@ namespace my
 	void BSPNode::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
-	void BSPNode::drawWireZBufferRWWithoutThird(
-		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
-	{
-		_ASSERT(false);
-	}
+	//void BSPNode::drawWireZBufferRWWithoutThird(
+	//	t3d::RenderContext * rc,
+	//	const t3d::Vec4<real> & color)
+	//{
+	//	_ASSERT(false);
+	//}
 
-	void BSPNode::drawWireZBufferRWWithoutThird(
+	//void BSPNode::drawWireZBufferRWWithoutThird(
+	//	t3d::RenderContext * rc,
+	//	const t3d::Vec4<real> & color,
+	//	const t3d::Mat4<real> & mmat)
+	//{
+	//	_ASSERT(false);
+	//}
+
+	void BSPNode::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Vec4<real> & color) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color,
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
-	void BSPNode::drawWireZBufferRWWithBackface(
+	//void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
+	//	t3d::RenderContext * rc,
+	//	const t3d::Vec4<real> & color)
+	//{
+	//	_ASSERT(false);
+	//}
+
+	//void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
+	//	t3d::RenderContext * rc,
+	//	const t3d::Vec4<real> & color,
+	//	const t3d::Mat4<real> & mmat)
+	//{
+	//	_ASSERT(false);
+	//}
+
+	void BSPNode::drawZBufferRW(
+		t3d::RenderContext * rc,
+		const t3d::Vec4<real> & color) const
+	{
+		_ASSERT(false);
+	}
+
+	void BSPNode::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
-	void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
+	void BSPNode::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		_ASSERT(false);
 	}
 
-	void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
+	void BSPNode::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
@@ -218,13 +248,13 @@ namespace my
 	void BSPNode::drawGouraudZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
@@ -232,13 +262,13 @@ namespace my
 	void BSPNode::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		if(!getVertexList().empty())
 		{
@@ -318,104 +348,104 @@ namespace my
 
 	void BSPNode::drawTextureZBufferW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
@@ -423,13 +453,13 @@ namespace my
 	void BSPNode::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(false);
 	}
@@ -437,13 +467,13 @@ namespace my
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(false);
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		if(!getVertexList().empty())
 		{
@@ -524,13 +554,27 @@ namespace my
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
+	{
+		_ASSERT(false);
+	}
+
+	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
+		t3d::RenderContext * rc) const
+	{
+		_ASSERT(false);
+	}
+
+	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
+		t3d::RenderContext * rc,
+		const t3d::Mat4<real> & mmat,
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(false);
 	}
 #pragma warning(default: 4100)
 
-#define INSERT_VERTEX_NORMAL_UV_TO_LEFT(index0, index1, index2) \
+#define INSERT_VERTEX_NORMAL_UV_TO_UP(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
 		lVertexList.push_back(v##index0); \
 		lVertexList.push_back(v##index1); \
@@ -543,7 +587,7 @@ namespace my
 		lUVList.push_back(t##index2); \
 	}
 
-#define INSERT_VERTEX_NORMAL_UV_TO_RIGHT(index0, index1, index2) \
+#define INSERT_VERTEX_NORMAL_UV_TO_DOWN(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
 		rVertexList.push_back(v##index0); \
 		rVertexList.push_back(v##index1); \
@@ -581,8 +625,8 @@ namespace my
 		real intersection1 = calculateLinePlaneIntersection(v0, dir1, planePoint, planeNormal);
 		real intersection2 = calculateLinePlaneIntersection(v0, dir2, planePoint, planeNormal);
 
-		_ASSERT(intersection1 > 0 && intersection1 < 1);
-		_ASSERT(intersection2 > 0 && intersection2 < 1);
+		_ASSERT(intersection1 >= 0 && intersection1 <= 1);
+		_ASSERT(intersection2 >= 0 && intersection2 <= 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v0, t3d::vec3Mul(dir1, intersection1));
 		t3d::Vec4<real> v4 = t3d::vec3Add(v0, t3d::vec3Mul(dir2, intersection2));
@@ -593,11 +637,20 @@ namespace my
 		t3d::Vec2<real> t3 = t0 + (t1 - t0) * intersection1;
 		t3d::Vec2<real> t4 = t0 + (t2 - t0) * intersection2;
 
-		INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 3, 4);
+		if(intersection1 > DISTANCE_ZERO_LIMIT && intersection2 > DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_UP(0, 3, 4);
+		}
 
-		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(3, 1, 2);
+		if(intersection1 < 1 - DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_DOWN(3, 1, 2);
+		}
 
-		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(3, 2, 4);
+		if(intersection2 < 1 - DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_DOWN(3, 2, 4);
+		}
 	}
 
 	void splitTriangleVertexNormalUVDown(
@@ -625,8 +678,8 @@ namespace my
 		real intersection1 = calculateLinePlaneIntersection(v0, dir1, planePoint, planeNormal);
 		real intersection2 = calculateLinePlaneIntersection(v0, dir2, planePoint, planeNormal);
 
-		_ASSERT(intersection1 > 0 && intersection1 < 1);
-		_ASSERT(intersection2 > 0 && intersection2 < 1);
+		_ASSERT(intersection1 >= 0 && intersection1 <= 1);
+		_ASSERT(intersection2 >= 0 && intersection2 <= 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v0, t3d::vec3Mul(dir1, intersection1));
 		t3d::Vec4<real> v4 = t3d::vec3Add(v0, t3d::vec3Mul(dir2, intersection2));
@@ -637,11 +690,20 @@ namespace my
 		t3d::Vec2<real> t3 = t0 + (t1 - t0) * intersection1;
 		t3d::Vec2<real> t4 = t0 + (t2 - t0) * intersection2;
 
-		INSERT_VERTEX_NORMAL_UV_TO_LEFT(1, 2, 3);
+		if(intersection1 < 1 - DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_UP(1, 2, 3);
+		}
 
-		INSERT_VERTEX_NORMAL_UV_TO_LEFT(2, 4, 3);
+		if(intersection2 < 1 - DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_UP(2, 4, 3);
+		}
 
-		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(3, 4, 0);
+		if(intersection1 > DISTANCE_ZERO_LIMIT && intersection2 > DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_DOWN(3, 4, 0);
+		}
 	}
 
 	void splitTriangleVertexNormalUVLeft(
@@ -667,7 +729,7 @@ namespace my
 
 		real intersection1 = calculateLinePlaneIntersection(v1, dir1, planePoint, planeNormal);
 
-		_ASSERT(intersection1 > 0 && intersection1 < 1);
+		_ASSERT(intersection1 >= 0 && intersection1 <= 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v1, t3d::vec3Mul(dir1, intersection1));
 
@@ -675,9 +737,15 @@ namespace my
 
 		t3d::Vec2<real> t3 = t1 + (t2 - t1) * intersection1;
 
-		INSERT_VERTEX_NORMAL_UV_TO_LEFT(1, 3, 0);
+		if(intersection1 < 1 - DISTANCE_ZERO_LIMIT && intersection1 > DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_UP(1, 3, 0);
+		}
 
-		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 3, 2);
+		if(intersection1 > DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 3, 2);
+		}
 	}
 
 	void splitTriangleVertexNormalUVRight(
@@ -703,7 +771,7 @@ namespace my
 
 		real intersection1 = calculateLinePlaneIntersection(v1, dir1, planePoint, planeNormal);
 
-		_ASSERT(intersection1 > 0 && intersection1 < 1);
+		_ASSERT(intersection1 >= 0 && intersection1 <= 1);
 
 		t3d::Vec4<real> v3 = t3d::vec3Add(v1, t3d::vec3Mul(dir1, intersection1));
 
@@ -711,9 +779,15 @@ namespace my
 
 		t3d::Vec2<real> t3 = t1 + (t2 - t1) * intersection1;
 
-		INSERT_VERTEX_NORMAL_UV_TO_LEFT(2, 0, 3);
+		if(intersection1 > DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_UP(2, 0, 3);
+		}
 
-		INSERT_VERTEX_NORMAL_UV_TO_RIGHT(3, 0, 1);
+		if(intersection1 > DISTANCE_ZERO_LIMIT && intersection1 < 1 - DISTANCE_ZERO_LIMIT)
+		{
+			INSERT_VERTEX_NORMAL_UV_TO_DOWN(3, 0, 1);
+		}
 	}
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_UV_UP(index0, index1, index2) \
@@ -801,7 +875,7 @@ namespace my
 			{
 				if(d2 > DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
@@ -809,7 +883,7 @@ namespace my
 				}
 				else
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 			}
 			else if(d1 < -DISTANCE_ZERO_LIMIT)
@@ -831,15 +905,15 @@ namespace my
 			{
 				if(d2 > DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_TRIANGLE_VERTEX_NORMAL_UV_LEFT(1, 2, 0);
+					INSERT_TRIANGLE_VERTEX_NORMAL_UV_RIGHT(1, 2, 0);
 				}
 				else
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 			}
 		}
@@ -868,11 +942,11 @@ namespace my
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 				else
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 			}
 			else
@@ -883,11 +957,11 @@ namespace my
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 				else
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 			}
 		}
@@ -897,7 +971,7 @@ namespace my
 			{
 				if(d2 > DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
@@ -905,7 +979,7 @@ namespace my
 				}
 				else
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 			}
 			else if(d1 < -DISTANCE_ZERO_LIMIT)
@@ -916,22 +990,22 @@ namespace my
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 				else
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 			}
 			else
 			{
 				if(d2 > DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_LEFT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_UP(0, 1, 2);
 				}
 				else if(d2 < -DISTANCE_ZERO_LIMIT)
 				{
-					INSERT_VERTEX_NORMAL_UV_TO_RIGHT(0, 1, 2);
+					INSERT_VERTEX_NORMAL_UV_TO_DOWN(0, 1, 2);
 				}
 				else
 				{

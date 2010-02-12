@@ -11,7 +11,7 @@ namespace my
 	class CustomShaderObject
 	{
 	public:
-		virtual void draw(t3d::RenderContext * rc) = 0;
+		virtual void draw(t3d::RenderContext * rc) const = 0;
 
 	public:
 		virtual ~CustomShaderObject(void);
@@ -54,7 +54,7 @@ namespace my
 		CustomShaderObjectPtrList::const_iterator getCustomShaderObjListEnd(void) const;
 
 	public:
-		void draw(t3d::RenderContext * rc);
+		void draw(t3d::RenderContext * rc) const;
 	};
 
 	class BSPNode;
@@ -99,135 +99,161 @@ namespace my
 	public:
 		void drawWireZBufferRW(
 			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & color);
+			const t3d::Vec4<real> & color) const;
 
 		void drawWireZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
-		void drawWireZBufferRWWithoutThird(
-			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & color);
+		//void drawWireZBufferRWWithoutThird(
+		//	t3d::RenderContext * rc,
+		//	const t3d::Vec4<real> & color) const;
 
-		void drawWireZBufferRWWithoutThird(
-			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat);
-
-		void drawWireZBufferRWWithBackface(
-			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & color);
+		//void drawWireZBufferRWWithoutThird(
+		//	t3d::RenderContext * rc,
+		//	const t3d::Vec4<real> & color,
+		//	const t3d::Mat4<real> & mmat) const;
 
 		void drawWireZBufferRWWithBackface(
 			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Vec4<real> & color) const;
 
-		void drawWireZBufferRWWithBackfaceWithoutThird(
-			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & color);
-
-		void drawWireZBufferRWWithBackfaceWithoutThird(
+		void drawWireZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
+
+		//void drawWireZBufferRWWithBackfaceWithoutThird(
+		//	t3d::RenderContext * rc,
+		//	const t3d::Vec4<real> & color) const;
+
+		//void drawWireZBufferRWWithBackfaceWithoutThird(
+		//	t3d::RenderContext * rc,
+		//	const t3d::Vec4<real> & color,
+		//	const t3d::Mat4<real> & mmat) const;
+
+		void drawZBufferRW(
+			t3d::RenderContext * rc,
+			const t3d::Vec4<real> & color) const;
+
+		void drawZBufferRW(
+			t3d::RenderContext * rc,
+			const t3d::Vec4<real> & color,
+			const t3d::Mat4<real> & mmat) const;
+
+		void drawZBufferRWWithBackface(
+			t3d::RenderContext * rc,
+			const t3d::Vec4<real> & color) const;
+
+		void drawZBufferRWWithBackface(
+			t3d::RenderContext * rc,
+			const t3d::Vec4<real> & color,
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawGouraudZBufferRW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawGouraudZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Mat4<real> & mmat,
-			const t3d::Mat4<real> & mrot);
+			const t3d::Mat4<real> & mrot) const;
 
 		void drawGouraudZBufferRWWithBackface(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawGouraudZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Mat4<real> & mmat,
-			const t3d::Mat4<real> & mrot);
+			const t3d::Mat4<real> & mrot) const;
 
 		void drawTextureZBufferW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTextureZBufferW(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTextureZBufferWWithBackface(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTextureZBufferWWithBackface(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTexturePerspectiveLPZBufferW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTexturePerspectiveLPZBufferW(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTexturePerspectiveLPZBufferWWithBackface(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTexturePerspectiveLPZBufferWWithBackface(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTextureZBufferRW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTextureZBufferRW(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTextureZBufferRWWithBackface(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTextureZBufferRWWithBackface(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTexturePerspectiveLPZBufferRW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTexturePerspectiveLPZBufferRW(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawTexturePerspectiveLPZBufferRWWithBackface(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawTexturePerspectiveLPZBufferRWWithBackface(
 			t3d::RenderContext * rc,
-			const t3d::Mat4<real> & mmat);
+			const t3d::Mat4<real> & mmat) const;
 
 		void drawGouraudTextureZBufferRW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawGouraudTextureZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Mat4<real> & mmat,
-			const t3d::Mat4<real> & mrot);
+			const t3d::Mat4<real> & mrot) const;
 
 		void drawGouraudTextureZBufferRWWithBackface(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawGouraudTextureZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Mat4<real> & mmat,
-			const t3d::Mat4<real> & mrot);
+			const t3d::Mat4<real> & mrot) const;
 
 		void drawGouraudTexturePerspectiveLPZBufferRW(
-			t3d::RenderContext * rc);
+			t3d::RenderContext * rc) const;
 
 		void drawGouraudTexturePerspectiveLPZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Mat4<real> & mmat,
-			const t3d::Mat4<real> & mrot);
+			const t3d::Mat4<real> & mrot) const;
+
+		void drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
+			t3d::RenderContext * rc) const;
+
+		void drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
+			t3d::RenderContext * rc,
+			const t3d::Mat4<real> & mmat,
+			const t3d::Mat4<real> & mrot) const;
 	};
 
 	void splitTriangleVertexNormalUVUp(

@@ -968,7 +968,7 @@ namespace my
 
 	void Object::drawWireZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -979,7 +979,7 @@ namespace my
 	void Object::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1010,7 +1010,7 @@ namespace my
 
 	void Object::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1021,7 +1021,7 @@ namespace my
 	void Object::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1052,7 +1052,7 @@ namespace my
 
 	void Object::drawZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1063,7 +1063,7 @@ namespace my
 	void Object::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1073,7 +1073,7 @@ namespace my
 
 	void Object::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1084,7 +1084,7 @@ namespace my
 	void Object::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1093,7 +1093,7 @@ namespace my
 	}
 
 	void Object::drawGouraudZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -1109,7 +1109,7 @@ namespace my
 	void Object::drawGouraudZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -1123,7 +1123,7 @@ namespace my
 	}
 
 	void Object::drawGouraudZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -1139,7 +1139,7 @@ namespace my
 	void Object::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -1153,7 +1153,7 @@ namespace my
 	}
 
 	void Object::drawTextureZBufferW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1172,7 +1172,7 @@ namespace my
 
 	void Object::drawTextureZBufferW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1190,7 +1190,7 @@ namespace my
 	}
 
 	void Object::drawTextureZBufferWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1209,7 +1209,7 @@ namespace my
 
 	void Object::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1227,7 +1227,7 @@ namespace my
 	}
 
 	void Object::drawTexturePerspectiveLPZBufferW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1246,7 +1246,7 @@ namespace my
 
 	void Object::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1264,7 +1264,7 @@ namespace my
 	}
 
 	void Object::drawTexturePerspectiveLPZBufferWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1283,7 +1283,7 @@ namespace my
 
 	void Object::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1301,7 +1301,7 @@ namespace my
 	}
 
 	void Object::drawTextureZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1320,7 +1320,7 @@ namespace my
 
 	void Object::drawTextureZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1338,7 +1338,7 @@ namespace my
 	}
 
 	void Object::drawTextureZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1357,7 +1357,7 @@ namespace my
 
 	void Object::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1375,7 +1375,7 @@ namespace my
 	}
 
 	void Object::drawTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1394,7 +1394,7 @@ namespace my
 
 	void Object::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1412,7 +1412,7 @@ namespace my
 	}
 
 	void Object::drawTexturePerspectiveLPZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1431,7 +1431,7 @@ namespace my
 
 	void Object::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1449,7 +1449,7 @@ namespace my
 	}
 
 	void Object::drawGouraudTextureZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1469,7 +1469,7 @@ namespace my
 	void Object::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1487,7 +1487,7 @@ namespace my
 	}
 
 	void Object::drawGouraudTextureZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1507,7 +1507,7 @@ namespace my
 	void Object::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1525,7 +1525,7 @@ namespace my
 	}
 
 	void Object::drawGouraudTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1545,7 +1545,7 @@ namespace my
 	void Object::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1563,7 +1563,7 @@ namespace my
 	}
 
 	void Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1583,7 +1583,7 @@ namespace my
 	void Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -1890,7 +1890,7 @@ namespace my
 
 	void IndexObject::drawWireZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1904,7 +1904,7 @@ namespace my
 	void IndexObject::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1944,7 +1944,7 @@ namespace my
 
 	void IndexObject::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -1958,7 +1958,7 @@ namespace my
 	void IndexObject::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -1998,7 +1998,7 @@ namespace my
 
 	void IndexObject::drawZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2012,7 +2012,7 @@ namespace my
 	void IndexObject::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2025,7 +2025,7 @@ namespace my
 
 	void IndexObject::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & color)
+		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
@@ -2039,7 +2039,7 @@ namespace my
 	void IndexObject::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
 		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
@@ -2051,7 +2051,7 @@ namespace my
 	}
 
 	void IndexObject::drawGouraudZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -2070,7 +2070,7 @@ namespace my
 	void IndexObject::drawGouraudZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -2087,7 +2087,7 @@ namespace my
 	}
 
 	void IndexObject::drawGouraudZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -2106,7 +2106,7 @@ namespace my
 	void IndexObject::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
@@ -2123,7 +2123,7 @@ namespace my
 	}
 
 	void IndexObject::drawTextureZBufferW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2145,7 +2145,7 @@ namespace my
 
 	void IndexObject::drawTextureZBufferW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2166,7 +2166,7 @@ namespace my
 	}
 
 	void IndexObject::drawTextureZBufferWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2188,7 +2188,7 @@ namespace my
 
 	void IndexObject::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2209,7 +2209,7 @@ namespace my
 	}
 
 	void IndexObject::drawTexturePerspectiveLPZBufferW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2231,7 +2231,7 @@ namespace my
 
 	void IndexObject::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2252,7 +2252,7 @@ namespace my
 	}
 
 	void IndexObject::drawTexturePerspectiveLPZBufferWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2274,7 +2274,7 @@ namespace my
 
 	void IndexObject::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2295,7 +2295,7 @@ namespace my
 	}
 
 	void IndexObject::drawTextureZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2317,7 +2317,7 @@ namespace my
 
 	void IndexObject::drawTextureZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2338,7 +2338,7 @@ namespace my
 	}
 
 	void IndexObject::drawTextureZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2360,7 +2360,7 @@ namespace my
 
 	void IndexObject::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2381,7 +2381,7 @@ namespace my
 	}
 
 	void IndexObject::drawTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2403,7 +2403,7 @@ namespace my
 
 	void IndexObject::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2424,7 +2424,7 @@ namespace my
 	}
 
 	void IndexObject::drawTexturePerspectiveLPZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2446,7 +2446,7 @@ namespace my
 
 	void IndexObject::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
-		const t3d::Mat4<real> & mmat)
+		const t3d::Mat4<real> & mmat) const
 	{
 		//_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2467,7 +2467,7 @@ namespace my
 	}
 
 	void IndexObject::drawGouraudTextureZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2490,7 +2490,7 @@ namespace my
 	void IndexObject::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2511,7 +2511,7 @@ namespace my
 	}
 
 	void IndexObject::drawGouraudTextureZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2534,7 +2534,7 @@ namespace my
 	void IndexObject::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2555,7 +2555,7 @@ namespace my
 	}
 
 	void IndexObject::drawGouraudTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2578,7 +2578,7 @@ namespace my
 	void IndexObject::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2599,7 +2599,7 @@ namespace my
 	}
 
 	void IndexObject::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
-		t3d::RenderContext * rc)
+		t3d::RenderContext * rc) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
@@ -2622,7 +2622,7 @@ namespace my
 	void IndexObject::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
-		const t3d::Mat4<real> & mrot)
+		const t3d::Mat4<real> & mrot) const
 	{
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
