@@ -167,7 +167,7 @@ namespace my
 
 			m_cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
 
-			m_cameraHalfFov = t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection());
+			m_cameraHalfFov = t3d::CameraContext::calculateCameraMinHalfFov(rc->getCameraProjection());
 		}
 
 		t3d::Vec4<real> getCameraPosition(void) const
@@ -272,7 +272,7 @@ namespace my
 		{
 			t3d::Vec4<real> cameraPos = drawer.getCameraPosition();
 
-			t3d::Vec4<real> cameraDir = t3d::vec3Neg(drawer.getCameraDirection());
+			t3d::Vec4<real> cameraDir = drawer.getCameraDirection();
 
 			real cameraHalfFov = drawer.getCameraHalfFov();
 

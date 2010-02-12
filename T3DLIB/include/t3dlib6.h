@@ -936,6 +936,11 @@ namespace t3d
 			return atan(1 / proj.y);
 		}
 
+		static real calculateCameraMinHalfFov(const Vec2<real> & proj)
+		{
+			return proj.x > proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
+		}
+
 		static real calculateCameraMaxHalfFov(const Vec2<real> & proj)
 		{
 			return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);

@@ -19,26 +19,26 @@ using t3d::real;
 // ======================================== TODO: BEGIN ========================================
 
 // 在这个地方定义自己的类
-
-void pushVertexByDirectionProject(
-	t3d::RenderContext * rc,
-	const t3d::Vec4<real> & dir,
-	const t3d::Vec4<real> & planePoint,
-	const t3d::Vec4<real> & planeNormal,
-	t3d::VertexList::const_iterator begin,
-	t3d::VertexList::const_iterator end,
-	const t3d::Mat4<real> & mmat)
-{
-	t3d::VertexList::const_iterator vert_iter = begin;
-	for(; vert_iter != end; vert_iter++)
-	{
-		rc->pushVertex(my::calculateLinePlaneIntersectionPoint(
-			*vert_iter * mmat,
-			dir,
-			planePoint,
-			planeNormal));
-	}
-}
+//
+//void pushVertexByDirectionProject(
+//	t3d::RenderContext * rc,
+//	const t3d::Vec4<real> & dir,
+//	const t3d::Vec4<real> & planePoint,
+//	const t3d::Vec4<real> & planeNormal,
+//	t3d::VertexList::const_iterator begin,
+//	t3d::VertexList::const_iterator end,
+//	const t3d::Mat4<real> & mmat)
+//{
+//	t3d::VertexList::const_iterator vert_iter = begin;
+//	for(; vert_iter != end; vert_iter++)
+//	{
+//		rc->pushVertex(my::calculateLinePlaneIntersectionPoint(
+//			*vert_iter * mmat,
+//			dir,
+//			planePoint,
+//			planeNormal));
+//	}
+//}
 
 void pushVertexByPointProject(
 	t3d::RenderContext * rc,
@@ -400,7 +400,7 @@ public:
 
 		// 设置渲染上下文的 camera
 		m_rc->setViewport(m_rc->getClipperRect());
-		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVHeight(DEG_TO_RAD(90), m_rc->getClipperRect().right - m_rc->getClipperRect().left, m_rc->getClipperRect().bottom - m_rc->getClipperRect().top));
+		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVHeight(DEG_TO_RAD(90), m_rc->getClipperRect().Width(), m_rc->getClipperRect().Height()));
 		m_rc->setCameraNearZ(1);
 		m_rc->setCameraFarZ(10000);
 
@@ -622,7 +622,7 @@ public:
 		m_sback->releaseDC(hdc);
 
 		// 绘制控制台模拟器
-		m_consoleSim->draw(m_sback.get(), 10, 10);
+		m_consoleSim->draw(m_sback.get(), 10, 130);
 
 		return true;
 	}
