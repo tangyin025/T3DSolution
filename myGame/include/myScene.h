@@ -62,7 +62,7 @@ namespace my
 	typedef boost::shared_ptr<BSPNode> BSPNodePtr;
 
 	class BSPNode
-		: public Object
+		//: public Object
 	{
 	public:
 		t3d::Vec4<real> planePoint;
@@ -75,26 +75,28 @@ namespace my
 
 		CustomShaderObjectPtrListContext m_customShaderObjList;
 
-	public:
-		size_t getTriangleCount(void) const;
+		Object m_obj;
 
-		const t3d::Vec4<real> & getTriangleVertex0(size_t i) const;
+	//public:
+	//	size_t getTriangleCount(void) const;
 
-		const t3d::Vec4<real> & getTriangleVertex1(size_t i) const;
+	//	const t3d::Vec4<real> & getTriangleVertex0(size_t i) const;
 
-		const t3d::Vec4<real> & getTriangleVertex2(size_t i) const;
+	//	const t3d::Vec4<real> & getTriangleVertex1(size_t i) const;
 
-		const t3d::Vec4<real> & getTriangleNormal0(size_t i) const;
+	//	const t3d::Vec4<real> & getTriangleVertex2(size_t i) const;
 
-		const t3d::Vec4<real> & getTriangleNormal1(size_t i) const;
+	//	const t3d::Vec4<real> & getTriangleNormal0(size_t i) const;
 
-		const t3d::Vec4<real> & getTriangleNormal2(size_t i) const;
+	//	const t3d::Vec4<real> & getTriangleNormal1(size_t i) const;
 
-		const t3d::Vec2<real> & getTriangleUV0(size_t i) const;
+	//	const t3d::Vec4<real> & getTriangleNormal2(size_t i) const;
 
-		const t3d::Vec2<real> & getTriangleUV1(size_t i) const;
+	//	const t3d::Vec2<real> & getTriangleUV0(size_t i) const;
 
-		const t3d::Vec2<real> & getTriangleUV2(size_t i) const;
+	//	const t3d::Vec2<real> & getTriangleUV1(size_t i) const;
+
+	//	const t3d::Vec2<real> & getTriangleUV2(size_t i) const;
 
 	public:
 		void drawWireZBufferRW(
@@ -373,24 +375,6 @@ namespace my
 
 	//ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
 	//	IOStream * meshStream);
-
-	void pushVertexByDirectionProject(
-		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & dir,
-		const t3d::Vec4<real> & planePoint,
-		const t3d::Vec4<real> & planeNormal,
-		t3d::VertexList::const_iterator begin,
-		t3d::VertexList::const_iterator end,
-		const t3d::Mat4<real> & mmat);
-
-	void pushVertexByPointProject(
-		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & point,
-		const t3d::Vec4<real> & planePoint,
-		const t3d::Vec4<real> & planeNormal,
-		t3d::VertexList::const_iterator begin,
-		t3d::VertexList::const_iterator end,
-		const t3d::Mat4<real> & mmat);
 }
 
 #endif // __MYSCENE_H__
