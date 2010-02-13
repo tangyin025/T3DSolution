@@ -118,7 +118,10 @@ namespace my
 		struct CONFIG_DESC
 		{
 		public:
-			CONFIG_DESC(DWORD _width, DWORD _height, int _smode);
+			CONFIG_DESC(DWORD _width, DWORD _height, int _smode)
+				: width(_width), height(_height), smode(_smode)
+			{
+			}
 
 		public:
 			DWORD width;

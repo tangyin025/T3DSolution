@@ -10,6 +10,7 @@ namespace t3d
 		: m_file(file)
 		, m_line(line)
 	{
+		_ASSERT(false);
 	}
 
 	Exception::~Exception(void)
