@@ -111,11 +111,6 @@ namespace my
 		return image->convertTo32Bits();
 	}
 
-	Game::CONFIG_DESC::CONFIG_DESC(DWORD _width, DWORD _height, int _smode)
-		: width(_width), height(_height), smode(_smode)
-	{
-	}
-
 	Game::Game(void)
 		: m_pwnd(NULL)
 	{

@@ -1,6 +1,7 @@
 ﻿/** FILE: main.cpp
 	定义了一个基本的 t3dlib 应用程序的框架
 */
+#include "resource.h"
 
 // 包含 my 的封装类
 #include "libc.h"				// 扩展 string 函数
@@ -640,11 +641,84 @@ public:
 	}
 };
 
+class MyDialog
+	: public my::ModelDialog				// 定义一个简单的 model 对话框，用来保存设置
+{
+public:
+	my::Game::CONFIG_DESC m_desc;			// 这个用来保存用户自定义设置
+
+public:
+	/** 构造函数
+		在这个地方已经开始了模式对话框，调用方可以通过 m_nResult 会的对话框的返回值
+	*/
+	MyDialog(void)
+		: ModelDialog(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), ::GetDesktopWindow())
+		, m_desc(800, 600, my::Game::SM_WINDOWED)
+	{
+	}
+
+	/** 重载 onProc 函数
+		用以初始化或保存用户在界面上的设置
+	*/
+	INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch(uMsg)
+		{
+		case WM_INITDIALOG:
+			// 在这里初始界面值
+			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, m_desc.width, FALSE));
+			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, m_desc.height, FALSE));
+			switch(m_desc.smode)
+			{
+			case my::Game::SM_WINDOWED:
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO1));
+				break;
+			case my::Game::SM_FULLSCREEN16:
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO2));
+				break;
+			case my::Game::SM_FULLSCREEN32:
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO3));
+				break;
+			default:
+				_ASSERT(false); break;
+			}
+			::SetWindowText(m_hdlg, _T("User Configuration"));
+			break;
+
+		case WM_COMMAND:
+			switch(LOWORD(wParam))
+			{
+			case IDOK:
+				// 在这里保存界面值
+				m_desc.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
+				m_desc.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
+				if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
+				{
+					m_desc.smode = my::Game::SM_WINDOWED;
+				}
+				else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
+				{
+					m_desc.smode = my::Game::SM_FULLSCREEN16;
+				}
+				else
+				{
+					_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
+
+					m_desc.smode = my::Game::SM_FULLSCREEN32;
+				}
+				break;
+			}
+			break;
+		}
+		return ModelDialog::onProc(hwndDlg, uMsg, wParam, lParam);
+	}
+};
+
 int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
-	MyGame game;
-	return game.run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
+	MyDialog dlg;
+	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_desc);
 
 	//// 下面是可运行最简单的应用程序模型
 	//my::Application app;

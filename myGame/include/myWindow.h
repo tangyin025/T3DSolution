@@ -30,6 +30,35 @@ namespace my
 
 #define T3D_WINEXCEPT(code) { throw my::WinException( _T(__FILE__), __LINE__, (code) ); }
 
+	class ModelDialog
+	{
+	public:
+		static ModelDialog * s_ptr;
+
+		static INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	public:
+		HINSTANCE m_hInstance;
+
+		LPCTSTR m_lpTemplateName;
+
+		HWND m_hWndParent;
+
+		HWND m_hdlg;
+
+	public:
+		virtual INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	public:
+		ModelDialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent = NULL);
+
+		~ModelDialog(void);
+
+		INT_PTR doModel(void);
+
+		void endDialog(INT_PTR nResult);
+	};
+
 	class Application;
 
 	class Window
@@ -110,7 +139,7 @@ namespace my
 			_ASSERT(NULL != s_ptr); return *s_ptr;
 		}
 
-		static LRESULT CALLBACK onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 	public:
 		WindowPtrMap m_wndMap;

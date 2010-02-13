@@ -28,6 +28,79 @@ namespace my
 	{
 	}
 
+	ModelDialog * ModelDialog::s_ptr = NULL;
+
+	INT_PTR CALLBACK ModelDialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		if(uMsg == WM_INITDIALOG)
+		{
+			_ASSERT(NULL == s_ptr); s_ptr = (ModelDialog *)lParam; s_ptr->m_hdlg = hwndDlg;
+		}
+
+		if(NULL != s_ptr)
+		{
+			return s_ptr->onProc(hwndDlg, uMsg, wParam, lParam);
+		}
+
+		return ::DefWindowProc(hwndDlg, uMsg, wParam, lParam);
+	}
+
+	INT_PTR ModelDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		_ASSERT(m_hdlg == hwndDlg);
+
+		switch(uMsg)
+		{
+		case WM_INITDIALOG:
+			Window(hwndDlg).centerWindow();
+			return TRUE;
+
+		case WM_COMMAND:
+			switch(LOWORD(wParam))
+			{
+			case IDOK:
+			case IDCANCEL:
+				endDialog(wParam);
+				return TRUE;
+			}
+			break;
+		}
+
+		return FALSE;
+		UNREFERENCED_PARAMETER(lParam);
+	}
+
+	ModelDialog::ModelDialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent /*= NULL*/)
+		: m_hInstance(hInstance)
+		, m_lpTemplateName(lpTemplateName)
+		, m_hWndParent(hWndParent)
+		, m_hdlg(NULL)
+	{
+		_ASSERT(NULL == s_ptr);
+	}
+
+	ModelDialog::~ModelDialog(void)
+	{
+		_ASSERT(NULL == s_ptr);
+	}
+
+	INT_PTR ModelDialog::doModel(void)
+	{
+		INT_PTR nResult = ::DialogBoxParam(
+			m_hInstance, m_lpTemplateName, m_hWndParent, my::ModelDialog::DialogProc, (LPARAM)this);
+
+		_ASSERT(NULL != s_ptr); s_ptr = NULL;
+
+		return nResult;
+	}
+
+	void ModelDialog::endDialog(INT_PTR nResult)
+	{
+		_ASSERT(NULL != m_hdlg);
+
+		VERIFY(EndDialog(m_hdlg, nResult));
+	}
+
 	std::basic_string<charT> WinException::what(void) const throw()
 	{
 		return GetErrorCodeStr(m_code);
@@ -575,7 +648,7 @@ namespace my
 		WNDCLASSEX wcex;
 		wcex.cbSize = sizeof(wcex);
 		wcex.style = CS_CLASSDC;
-		wcex.lpfnWndProc = Application::onProc;
+		wcex.lpfnWndProc = Application::WindowProc;
 		wcex.cbClsExtra = 0;
 		wcex.cbWndExtra = 0;
 		wcex.hInstance = moduleHandle;
@@ -732,12 +805,18 @@ namespace my
 
 	void Window::centerWindow(void)
 	{
-		CRect desktopRect;
-		VERIFY(::GetWindowRect(::GetDesktopWindow(), &desktopRect));
+		HWND hWndParent = ::GetParent(getHandle());
+		if(NULL == hWndParent)
+		{
+			hWndParent = ::GetDesktopWindow();
+		}
+
+		CRect parentRect;
+		VERIFY(::GetWindowRect(hWndParent, &parentRect));
 
 		CRect windowRect = getWindowRect();
-		int x = ((desktopRect.Width()) - (windowRect.Width())) / 2;
-		int y = ((desktopRect.Height()) - (windowRect.Height())) / 2;
+		int x = ((parentRect.Width()) - (windowRect.Width())) / 2;
+		int y = ((parentRect.Height()) - (windowRect.Height())) / 2;
 
 		setWindowPos(NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	}
@@ -759,7 +838,7 @@ namespace my
 
 	Application * Application::s_ptr = NULL;
 
-	LRESULT CALLBACK Application::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
+	LRESULT CALLBACK Application::WindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	{
 		if(NULL != s_ptr)
 		{
