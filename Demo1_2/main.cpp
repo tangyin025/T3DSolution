@@ -20,26 +20,6 @@ using t3d::real;
 // ======================================== TODO: BEGIN ========================================
 
 // 在这个地方定义自己的类
-//
-//void pushVertexByDirectionProject(
-//	t3d::RenderContext * rc,
-//	const t3d::Vec4<real> & dir,
-//	const t3d::Vec4<real> & planePoint,
-//	const t3d::Vec4<real> & planeNormal,
-//	t3d::VertexList::const_iterator begin,
-//	t3d::VertexList::const_iterator end,
-//	const t3d::Mat4<real> & mmat)
-//{
-//	t3d::VertexList::const_iterator vert_iter = begin;
-//	for(; vert_iter != end; vert_iter++)
-//	{
-//		rc->pushVertex(my::calculateLinePlaneIntersectionPoint(
-//			*vert_iter * mmat,
-//			dir,
-//			planePoint,
-//			planeNormal));
-//	}
-//}
 
 void pushVertexByPointProject(
 	t3d::RenderContext * rc,
@@ -322,6 +302,10 @@ public:
 			clipper.right = clipper.left + lWidth;
 			clipper.bottom = clipper.top + lHeight;
 		}
+		_ASSERT(clipper.left	>= m_rback.left);
+		_ASSERT(clipper.top		>= m_rback.top);
+		_ASSERT(clipper.right	<= m_rback.right);
+		_ASSERT(clipper.bottom	<= m_rback.bottom);
 		m_rc->setClipperRect(clipper);
 
 		// 添加媒体搜索路径，建立快捷方式时要注意当前路径的位置
@@ -683,10 +667,10 @@ public:
 };
 
 class MyDialog
-	: public my::ModelDialog				// 定义一个简单的 model 对话框，用来保存设置
+	: public my::ModelDialog	// 定义一个简单的 model 对话框，用来保存设置
 {
 public:
-	MyConfig m_cfg;			// 这个用来保存用户自定义设置
+	MyConfig m_cfg;				// 这个用来保存用户自定义设置
 
 public:
 	/** 构造函数
@@ -707,8 +691,17 @@ public:
 		{
 		case WM_INITDIALOG:
 			// 在这里初始界面值
-			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, m_cfg.width, FALSE));
-			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, m_cfg.height, FALSE));
+			::SetWindowText(m_hdlg, _T("User Configuration"));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("320x240")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("640x480")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1024x768")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1280x800")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1280x1024")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1366x768")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1680x1050")));
+			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_SELECTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
+			::SendMessage(m_hdlg, WM_COMMAND, MAKEWPARAM(IDC_COMBO1, CBN_SELCHANGE), (LPARAM)::GetDlgItem(m_hdlg, IDC_COMBO1));
 			switch(m_cfg.smode)
 			{
 			case my::Game::SM_FULLSCREEN16:
@@ -721,53 +714,72 @@ public:
 				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO1));
 				break;
 			}
-			if((real)4 / 3 == m_cfg.m_aspectRatio)
-			{
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO5));
-			}
-			else if((real)16 / 9 == m_cfg.m_aspectRatio)
-			{
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO6));
-			}
-			else
-			{
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO4));
-			}
-			::SetWindowText(m_hdlg, _T("User Configuration"));
 			break;
 
 		case WM_COMMAND:
-			switch(LOWORD(wParam))
+			switch(HIWORD(wParam))
 			{
-			case IDOK:
-				// 在这里保存界面值
-				m_cfg.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
-				m_cfg.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
-				if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
+			case CBN_SELCHANGE:
 				{
-					m_cfg.smode = my::Game::SM_WINDOWED;
+					int nIndex = ::SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+					_ASSERT(CB_ERR != nIndex);
+					std::basic_string<charT> strTmp;
+					strTmp.resize(::SendMessage((HWND)lParam, CB_GETLBTEXTLEN, nIndex, 0));
+					VERIFY(CB_ERR != ::SendMessage((HWND)lParam, CB_GETLBTEXT, nIndex, (LPARAM)&strTmp[0]));
+					int nWidth, nHeight;
+					VERIFY(2 == _stscanf_s(strTmp.c_str(), _T("%dx%d"), &nWidth, &nHeight));
+					VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, nWidth, FALSE));
+					VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, nHeight, FALSE));
+					real aspectRatio = (real)nWidth / nHeight;
+					if((real)4 / 3 == aspectRatio)
+					{
+						VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO5));
+					}
+					else if((real)16 / 9 == aspectRatio)
+					{
+						VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO6));
+					}
+					else
+					{
+						VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO4));
+					}
 				}
-				else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
+				break;
+
+			default:
+				switch(LOWORD(wParam))
 				{
-					m_cfg.smode = my::Game::SM_FULLSCREEN16;
-				}
-				else
-				{
-					_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
-					m_cfg.smode = my::Game::SM_FULLSCREEN32;
-				}
-				if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO4))
-				{
-					m_cfg.m_aspectRatio = (real)m_cfg.width / m_cfg.height;
-				}
-				else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO5))
-				{
-					m_cfg.m_aspectRatio = (real)4 / 3;
-				}
-				else
-				{
-					_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO6));
-					m_cfg.m_aspectRatio = (real)16 / 9;
+				case IDOK:
+					// 在这里保存界面值
+					m_cfg.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
+					m_cfg.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
+					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
+					{
+						m_cfg.smode = my::Game::SM_WINDOWED;
+					}
+					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
+					{
+						m_cfg.smode = my::Game::SM_FULLSCREEN16;
+					}
+					else
+					{
+						_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
+						m_cfg.smode = my::Game::SM_FULLSCREEN32;
+					}
+					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO4))
+					{
+						m_cfg.m_aspectRatio = (real)m_cfg.width / m_cfg.height;
+					}
+					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO5))
+					{
+						m_cfg.m_aspectRatio = (real)4 / 3;
+					}
+					else
+					{
+						_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO6));
+						m_cfg.m_aspectRatio = (real)16 / 9;
+					}
+					break;
 				}
 				break;
 			}
