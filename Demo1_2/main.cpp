@@ -170,7 +170,7 @@ public:
 		m_characterRotation = my::Vec4<real>(0, DEG_TO_RAD(180), 0);
 	}
 
-	void updateCharacter(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time)
+	void updateCharacter(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real /*step_time*/)
 	{
 		// 控制跟踪器的方位
 		t3d::vec3AddSelf(m_characterTracker.rotation, my::EularCamera::buildRotOffset(mouse));
@@ -202,6 +202,20 @@ public:
 typedef boost::shared_ptr<MyWorld> MyWorldPtr;
 
 // ======================================== TODO: END   ========================================
+
+class MyConfig
+	: public my::Game::CONFIG_DESC
+{
+public:
+	real m_aspectRatio;
+
+public:
+	MyConfig(int width, int height, my::Game::SCREEN_MODE smode, real aspectRatio)
+		: my::Game::CONFIG_DESC(width, height, smode)
+		, m_aspectRatio(aspectRatio)
+	{
+	}
+};
 
 class MyGame
 	: public my::Game						// 用以实现基于帧循环的基本应用程序框架，并已经实现了常见的 primary、back surface 结构
@@ -261,7 +275,7 @@ public:
 	/** 实现 my::Game::onInit 接口
 		通常在应用程序初始化时，框架会掉用这个接口，所以应当在这里实现自定义的初始化操作
 	*/
-	virtual bool onInit(void)
+	virtual bool onInit(const CONFIG_DESC & cfg)
 	{
 		// 初始化模拟控制台
 		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
@@ -285,6 +299,30 @@ public:
 		m_eularCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
 		m_eularCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
 		m_eularCam->reset();
+
+		// 根据 aspect ratio 重新调整 clipper rect
+		const MyConfig * pcfg = static_cast<const MyConfig *>(&cfg);
+		LONG lWidth, lHeight;
+		CRect clipper;
+		if(pcfg->m_aspectRatio < (real)pcfg->width / (real)pcfg->height)
+		{
+			lHeight = pcfg->height;
+			lWidth = (LONG)(lHeight * pcfg->m_aspectRatio + .5f);
+			clipper.left = (pcfg->width - lWidth) / 2;
+			clipper.top = 0;
+			clipper.right = clipper.left + lWidth;
+			clipper.bottom = clipper.top + lHeight;
+		}
+		else
+		{
+			lWidth = pcfg->width;
+			lHeight = (LONG)(lWidth / pcfg->m_aspectRatio + .5f);
+			clipper.left = 0;
+			clipper.top = (pcfg->height - lHeight) / 2;
+			clipper.right = clipper.left + lWidth;
+			clipper.bottom = clipper.top + lHeight;
+		}
+		m_rc->setClipperRect(clipper);
 
 		// 添加媒体搜索路径，建立快捷方式时要注意当前路径的位置
 		m_resourceMgr->addDir(_T("."));
@@ -386,22 +424,22 @@ public:
 		// 注意：为防止由于两帧时间间隔太长，导致物理引擎崩溃，所以设置成最差不得小于 30 帧 / 秒
 		const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
-		// 这里创建一个比窗口小的 clipper 区域，仅用于测试渲染的 clipper bug
-		// 由于软件渲染器，其 clipper 是通过算法实现的，所以若算法不强健，会导致绘图时越过 clipper 区域
-		// 甚至越过窗口区域，所以将绘图区域缩小一部分可以稍微避免，因越界导致系统崩溃的现象
-		CRect clipper(m_rback);
-		clipper.DeflateRect(10, 10);
-		m_rc->setClipperRect(clipper);
+		//// 这里创建一个比窗口小的 clipper 区域，仅用于测试渲染的 clipper bug
+		//// 由于软件渲染器，其 clipper 是通过算法实现的，所以若算法不强健，会导致绘图时越过 clipper 区域
+		//// 甚至越过窗口区域，所以将绘图区域缩小一部分可以稍微避免，因越界导致系统崩溃的现象
+		//CRect clipper(m_rback);
+		//clipper.DeflateRect(10, 10);
+		//m_rc->setClipperRect(clipper);
 
 		//// 清理 back surface
-		//m_rc->fillSurface(clipper, my::Color(0.8f, 0.8f, 0.8f));
+		//m_rc->fillSurface(m_rc->getClipperRect(), my::Color(0.8f, 0.8f, 0.8f));
 
 		//// 清理 zbuffer
-		//m_rc->fillZbuffer(clipper, 0);
+		//m_rc->fillZbuffer(m_rc->getClipperRect(), 0);
 
 		// 设置渲染上下文的 camera
 		m_rc->setViewport(m_rc->getClipperRect());
-		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVHeight(DEG_TO_RAD(90), m_rc->getClipperRect().Width(), m_rc->getClipperRect().Height()));
+		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(90), m_rc->getClipperRect().Width(), m_rc->getClipperRect().Height()));
 		m_rc->setCameraNearZ(1);
 		m_rc->setCameraFarZ(10000);
 
@@ -592,38 +630,41 @@ public:
 		std::basic_string<charT> strTmp;
 		HDC hdc = m_sback->getDC();
 
+		int textx = m_rc->getClipperRect().left + 10;
+		int texty = m_rc->getClipperRect().top + 10;
+
 		strTmp = str_printf(_T("fps: %.1f"), m_fpsMgr->getFPS());
-		::TextOut(hdc, 10, 10, strTmp.c_str(), (int)strTmp.length());
+		::TextOut(hdc, textx, texty, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("fps: %.1f"), 1 / elapsedTime);
-		::TextOut(hdc, 10, 30, strTmp.c_str(), (int)strTmp.length());
+		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("cam.pos: %f, %f, %f"),
 			m_rc->getCameraPosition().x, m_rc->getCameraPosition().y, m_rc->getCameraPosition().z);
-		::TextOut(hdc, 10, 50, strTmp.c_str(), (int)strTmp.length());
+		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
 			RAD_TO_DEG(m_eularCam->getRotation().x), RAD_TO_DEG(m_eularCam->getRotation().y), RAD_TO_DEG(m_eularCam->getRotation().z));
-		::TextOut(hdc, 10, 70, strTmp.c_str(), (int)strTmp.length());
+		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
-		//// 输出手柄信息
+		//// 输出手柄信息（仅测试）
 		//if(m_joy.get())
 		//{
 		//	m_joy->update();
 
 		//	strTmp = str_printf(_T("%s lstick: %ld, %ld"),
 		//		m_DIDeviceInstList.front().tszInstanceName, m_joy->getX(), m_joy->getY());
-		//	::TextOut(hdc, 10, 90, strTmp.c_str(), (int)strTmp.length());
+		//	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		//	strTmp = str_printf(_T("%s rstick: %ld, %ld"),
 		//		m_DIDeviceInstList.front().tszInstanceName, m_joy->getRz(), m_joy->getZ());
-		//	::TextOut(hdc, 10, 110, strTmp.c_str(), (int)strTmp.length());
+		//	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 		//}
 
 		m_sback->releaseDC(hdc);
 
 		// 绘制控制台模拟器
-		m_consoleSim->draw(m_sback.get(), 10, 130);
+		m_consoleSim->draw(m_sback.get(), 10, texty += 20);
 
 		return true;
 	}
@@ -631,7 +672,7 @@ public:
 	/** 实现 ErrorListener::onReport 接口
 		用以接收来自框架的错误 message，并将其打印到模拟控制台
 	*/
-	void onReport(const std::basic_string<charT> & info)
+	virtual void onReport(const std::basic_string<charT> & info)
 	{
 		// 将错误信息打印到控制台模拟器，这里稍微作了判断以防止答应重复信息
 		if(m_consoleSim->m_lines.empty() || info != m_consoleSim->m_lines.back())
@@ -645,7 +686,7 @@ class MyDialog
 	: public my::ModelDialog				// 定义一个简单的 model 对话框，用来保存设置
 {
 public:
-	my::Game::CONFIG_DESC m_desc;			// 这个用来保存用户自定义设置
+	MyConfig m_cfg;			// 这个用来保存用户自定义设置
 
 public:
 	/** 构造函数
@@ -653,26 +694,23 @@ public:
 	*/
 	MyDialog(void)
 		: ModelDialog(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), ::GetDesktopWindow())
-		, m_desc(800, 600, my::Game::SM_WINDOWED)
+		, m_cfg(800, 600, my::Game::SM_WINDOWED, (real)800 / 600)
 	{
 	}
 
 	/** 重载 onProc 函数
 		用以初始化或保存用户在界面上的设置
 	*/
-	INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	virtual INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch(uMsg)
 		{
 		case WM_INITDIALOG:
 			// 在这里初始界面值
-			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, m_desc.width, FALSE));
-			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, m_desc.height, FALSE));
-			switch(m_desc.smode)
+			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, m_cfg.width, FALSE));
+			VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, m_cfg.height, FALSE));
+			switch(m_cfg.smode)
 			{
-			case my::Game::SM_WINDOWED:
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO1));
-				break;
 			case my::Game::SM_FULLSCREEN16:
 				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO2));
 				break;
@@ -680,7 +718,20 @@ public:
 				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO3));
 				break;
 			default:
-				_ASSERT(false); break;
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO1));
+				break;
+			}
+			if((real)4 / 3 == m_cfg.m_aspectRatio)
+			{
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO5));
+			}
+			else if((real)16 / 9 == m_cfg.m_aspectRatio)
+			{
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO6));
+			}
+			else
+			{
+				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO4));
 			}
 			::SetWindowText(m_hdlg, _T("User Configuration"));
 			break;
@@ -690,21 +741,33 @@ public:
 			{
 			case IDOK:
 				// 在这里保存界面值
-				m_desc.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
-				m_desc.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
+				m_cfg.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
+				m_cfg.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
 				if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
 				{
-					m_desc.smode = my::Game::SM_WINDOWED;
+					m_cfg.smode = my::Game::SM_WINDOWED;
 				}
 				else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
 				{
-					m_desc.smode = my::Game::SM_FULLSCREEN16;
+					m_cfg.smode = my::Game::SM_FULLSCREEN16;
 				}
 				else
 				{
 					_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
-
-					m_desc.smode = my::Game::SM_FULLSCREEN32;
+					m_cfg.smode = my::Game::SM_FULLSCREEN32;
+				}
+				if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO4))
+				{
+					m_cfg.m_aspectRatio = (real)m_cfg.width / m_cfg.height;
+				}
+				else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO5))
+				{
+					m_cfg.m_aspectRatio = (real)4 / 3;
+				}
+				else
+				{
+					_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO6));
+					m_cfg.m_aspectRatio = (real)16 / 9;
 				}
 				break;
 			}
@@ -718,7 +781,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
 	MyDialog dlg;
-	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_desc);
+	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_cfg);
 
 	//// 下面是可运行最简单的应用程序模型
 	//my::Application app;
@@ -728,6 +791,5 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//return app.run();
 
 	//// 下面是可运行最简单的游戏框架模型
-	//my::Game game;
-	//return game.run();
+	//return my::Game().run();
 }

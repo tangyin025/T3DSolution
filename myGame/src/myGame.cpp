@@ -226,21 +226,6 @@ namespace my
 			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
 
-		// create zbuffer
-		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfg.width, cfg.height));
-
-		// save back surface & zbuffer to render context
-		DDSURFACEDESC2 ddsd = m_sback->lock();
-
-		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
-
-		m_sback->unlock();
-
-		m_rc->setZBufferBuffer(m_zbuff->getBuffer(), m_zbuff->getPitch(), m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
-
-		// set back surface rect to render context clipper
-		m_rc->setClipperRect(m_rback);
-
 		// create dinput
 		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
 
@@ -259,12 +244,27 @@ namespace my
 
 		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
 
+		// create zbuffer
+		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfg.width, cfg.height));
+
+		// save back surface & zbuffer to render context
+		DDSURFACEDESC2 ddsd = m_sback->lock();
+
+		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
+
+		m_sback->unlock();
+
+		m_rc->setZBufferBuffer(m_zbuff->getBuffer(), m_zbuff->getPitch(), m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
+
+		// set back surface rect to render context clipper
+		m_rc->setClipperRect(m_rback);
+
 		// show main window
 		m_pwnd->showWindow();
 
 		m_pwnd->updateWindow();
 
-		return onInit();
+		return onInit(cfg);
 	}
 
 	void Game::bltBackSurfaceToPrimary(void)
@@ -360,5 +360,19 @@ namespace my
 
 		// swap the backup and primary surface
 		bltBackSurfaceToPrimary();
+	}
+
+	bool Game::onInit(const CONFIG_DESC & /*cfg*/)
+	{
+		return true;
+	}
+
+	bool Game::onFrame(void)
+	{
+		return true;
+	}
+
+	void Game::onShutdown(void)
+	{
 	}
 }

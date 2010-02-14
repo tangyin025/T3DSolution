@@ -880,7 +880,7 @@ namespace t3d
 
 	Vec2<real> CameraContext::buildCameraProjectionFOVAuto(real fov, DWORD width, DWORD height)
 	{
-		if(width > height)
+		if(width < height)
 			return buildCameraProjectionFOVWidth(fov, width, height);
 		else
 			return buildCameraProjectionFOVHeight(fov, width, height);
