@@ -115,7 +115,7 @@ namespace my
 			SM_FULLSCREEN32 = 32,
 		};
 
-		struct CONFIG_DESC
+		class CONFIG_DESC
 		{
 		public:
 			CONFIG_DESC(DWORD _width, DWORD _height, int _smode)
@@ -146,12 +146,6 @@ namespace my
 
 		CRect m_rback;
 
-		t3d::RenderContextPtr m_rc;
-
-		ColorConversionPtr m_cc;
-
-		t3d::ZBufferPtr m_zbuff;
-
 		t3d::DInputPtr m_dinput;
 
 		t3d::DSoundPtr m_dsound;
@@ -159,6 +153,12 @@ namespace my
 		t3d::DIKeyboardPtr m_keyboard;
 
 		t3d::DIMousePtr m_mouse;
+
+		t3d::RenderContextPtr m_rc;
+
+		ColorConversionPtr m_cc;
+
+		t3d::ZBufferPtr m_zbuff;
 
 	public:
 		Game(void);
@@ -177,11 +177,11 @@ namespace my
 		void onIdle(void);
 
 	public:
-		virtual bool onInit(void) { return true; }
+		virtual bool onInit(const CONFIG_DESC & cfg);
 
-		virtual bool onFrame(void) { return true; }
+		virtual bool onFrame(void);
 
-		virtual void onShutdown(void) {}
+		virtual void onShutdown(void);
 	};
 }
 

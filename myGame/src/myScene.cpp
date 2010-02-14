@@ -167,7 +167,7 @@ namespace my
 
 			m_cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
 
-			m_cameraHalfFov = t3d::CameraContext::calculateCameraMinHalfFov(rc->getCameraProjection());
+			m_cameraHalfFov = t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()); // ***
 		}
 
 		t3d::Vec4<real> getCameraPosition(void) const
