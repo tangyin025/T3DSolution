@@ -676,9 +676,9 @@ public:
 	/** 构造函数
 		在这个地方已经开始了模式对话框，调用方可以通过 m_nResult 会的对话框的返回值
 	*/
-	MyDialog(void)
+	MyDialog(const MyConfig & cfg)
 		: ModelDialog(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), ::GetDesktopWindow())
-		, m_cfg(800, 600, my::Game::SM_WINDOWED, (real)800 / 600)
+		, m_cfg(cfg)
 	{
 	}
 
@@ -792,7 +792,7 @@ public:
 int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
-	MyDialog dlg;
+	MyDialog dlg(MyConfig(800, 600, my::Game::SM_WINDOWED, (real)800 / 600));
 	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_cfg);
 
 	//// 下面是可运行最简单的应用程序模型
