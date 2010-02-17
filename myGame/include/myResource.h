@@ -125,9 +125,7 @@ namespace my
 	t3d::DSBufferPtr createDSoundBufferForWholeWav(
 		t3d::DSound * dsound,
 		const Wav * wav,
-		int flags = DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME,
-		unsigned short channels = 1,
-		int samplesPerSec = 11025);
+		DWORD flags = DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE);
 
 	void copyWholeWavBufferToDSoundBuffer(
 		t3d::DSBuffer * dsbuffer,

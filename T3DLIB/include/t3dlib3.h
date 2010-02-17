@@ -41,7 +41,7 @@ namespace t3d
 		friend DSound;
 
 	public:
-		CComPtr<IDirectSoundBuffer8> m_dsbuffer;
+		CComPtr<IDirectSoundBuffer> m_dsbuffer;
 
 	protected:
 		DSBuffer(DSound * dsound, LPCDSBUFFERDESC pcDSBufferDesc);
@@ -73,9 +73,9 @@ namespace t3d
 
 		LONG getVolume(void);
 
-		DS3DBufferPtr createDS3DBuffer(void);
+		DS3DBufferPtr getDS3DBuffer(void);
 
-		DS3DListenerPtr createDS3DListener(void);
+		DS3DListenerPtr getDS3DListener(void);
 	};
 
 	typedef boost::shared_ptr<DSBuffer> DSBufferPtr;
@@ -85,7 +85,7 @@ namespace t3d
 		friend DSBuffer;
 
 	public:
-		CComPtr<IDirectSound3DBuffer8> m_ds3dbuffer;
+		CComPtr<IDirectSound3DBuffer> m_ds3dbuffer;
 
 	protected:
 		DS3DBuffer(DSBuffer * dsbuffer);
@@ -119,7 +119,7 @@ namespace t3d
 		friend DSBuffer;
 
 	public:
-		CComPtr<IDirectSound3DListener8> m_ds3dlistener;
+		CComPtr<IDirectSound3DListener> m_ds3dlistener;
 
 	protected:
 		DS3DListener(DSBuffer * dsbuffer);
@@ -127,11 +127,11 @@ namespace t3d
 	public:
 		virtual ~DS3DListener(void);
 
-		void CommitDeferredSettings(void);
+		void commitDeferredSettings(void);
 
-		void SetOrientation(D3DVALUE xFront, D3DVALUE yFront, D3DVALUE zFront, D3DVALUE xTop, D3DVALUE yTop, D3DVALUE zTop, DWORD dwApply = DS3D_DEFERRED);
+		void setOrientation(D3DVALUE xFront, D3DVALUE yFront, D3DVALUE zFront, D3DVALUE xTop, D3DVALUE yTop, D3DVALUE zTop, DWORD dwApply = DS3D_DEFERRED);
 
-		void GetOrientation(D3DVECTOR * pvOrientFront, D3DVECTOR * pvOrientTop);
+		void getOrientation(D3DVECTOR * pvOrientFront, D3DVECTOR * pvOrientTop);
 
 		void setPosition(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply = DS3D_DEFERRED);
 

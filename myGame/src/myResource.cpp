@@ -228,22 +228,13 @@ namespace my
 	t3d::DSBufferPtr createDSoundBufferForWholeWav(
 		t3d::DSound * dsound,
 		const Wav * wav,
-		int flags /*= DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME*/,
-		unsigned short channels /*= 1*/,
-		int samplesPerSec /*= 11025*/)
+		DWORD flags /*= DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
 	{
-		WAVEFORMATEX wavfmt;
-		wavfmt.wFormatTag = wav->wavfmt.wFormatTag;
-		wavfmt.nChannels = channels;
-		wavfmt.nSamplesPerSec = samplesPerSec;
-		wavfmt.wBitsPerSample = wav->wavfmt.wBitsPerSample;
-		wavfmt.nBlockAlign = wavfmt.nChannels * wavfmt.wBitsPerSample / 8;
-		wavfmt.nAvgBytesPerSec = wavfmt.nSamplesPerSec * wavfmt.nBlockAlign;
-		wavfmt.cbSize = 0;
+		WAVEFORMATEX wavfmt = wav->wavfmt;
 
 		DSBUFFERDESC dsbd;
 		dsbd.dwSize = sizeof(dsbd);
-		dsbd.dwFlags = flags | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE;
+		dsbd.dwFlags = flags;
 		dsbd.dwBufferBytes = wav->child.cksize;
 		dsbd.dwReserved = 0;
 		dsbd.lpwfxFormat = &wavfmt;
