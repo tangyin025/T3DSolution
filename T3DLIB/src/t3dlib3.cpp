@@ -108,7 +108,6 @@ namespace t3d
 	{
 		DWORD dwFrequency;
 		SUCCEEDED_VERIFY(m_dsbuffer->GetFrequency(&dwFrequency));
-
 		return dwFrequency;
 	}
 
@@ -121,7 +120,6 @@ namespace t3d
 	{
 		LONG lPan;
 		SUCCEEDED_VERIFY(m_dsbuffer->GetPan(&lPan));
-
 		return lPan;
 	}
 
@@ -134,8 +132,142 @@ namespace t3d
 	{
 		LONG lVolume;
 		SUCCEEDED_VERIFY(m_dsbuffer->GetVolume(&lVolume));
-
 		return lVolume;
+	}
+
+	DS3DBufferPtr DSBuffer::createDS3DBuffer(void)
+	{
+		return DS3DBufferPtr(new DS3DBuffer(this));
+	}
+
+	DS3DListenerPtr DSBuffer::createDS3DListener(void)
+	{
+		return DS3DListenerPtr(new DS3DListener(this));
+	}
+
+	DS3DBuffer::DS3DBuffer(DSBuffer * dsbuffer)
+	{
+		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DBuffer8, (LPVOID *)&m_ds3dbuffer));
+	}
+
+	DS3DBuffer::~DS3DBuffer(void)
+	{
+	}
+
+	void DS3DBuffer::setMaxDistance(D3DVALUE flMaxDistance, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dbuffer->SetMaxDistance(flMaxDistance, dwApply));
+	}
+
+	D3DVALUE DS3DBuffer::getMaxDistance(void)
+	{
+		D3DVALUE value;
+		SUCCEEDED_VERIFY(m_ds3dbuffer->GetMaxDistance(&value));
+		return value;
+	}
+
+	void DS3DBuffer::setMinDistance(D3DVALUE flMinDistance, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dbuffer->SetMinDistance(flMinDistance, dwApply));
+	}
+
+	D3DVALUE DS3DBuffer::getMinDistance(void)
+	{
+		D3DVALUE value;
+		SUCCEEDED_VERIFY(m_ds3dbuffer->GetMinDistance(&value));
+		return value;
+	}
+
+	void DS3DBuffer::setPosition(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dbuffer->SetPosition(x, y, z, dwApply));
+	}
+
+	D3DVECTOR DS3DBuffer::getPosition(void)
+	{
+		D3DVECTOR vector;
+		SUCCEEDED_VERIFY(m_ds3dbuffer->GetPosition(&vector));
+		return vector;
+	}
+
+	void DS3DBuffer::setVelocity(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dbuffer->SetVelocity(x, y, z, dwApply));
+	}
+
+	D3DVECTOR DS3DBuffer::getVelocity(void)
+	{
+		D3DVECTOR vector;
+		SUCCEEDED_VERIFY(m_ds3dbuffer->GetVelocity(&vector));
+		return vector;
+	}
+
+	void DS3DBuffer::setAllParameters(LPCDS3DBUFFER pcDs3dBuffer, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dbuffer->SetAllParameters(pcDs3dBuffer, dwApply));
+	}
+
+	void DS3DBuffer::getAllParameters(LPDS3DBUFFER pDs3dBuffer)
+	{
+		SUCCEEDED_VERIFY(m_ds3dbuffer->GetAllParameters(pDs3dBuffer));
+	}
+
+	DS3DListener::DS3DListener(DSBuffer * dsbuffer)
+	{
+		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DListener8, (LPVOID *)&m_ds3dlistener));
+	}
+
+	DS3DListener::~DS3DListener(void)
+	{
+	}
+
+	void DS3DListener::CommitDeferredSettings(void)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->CommitDeferredSettings());
+	}
+
+	void DS3DListener::SetOrientation(D3DVALUE xFront, D3DVALUE yFront, D3DVALUE zFront, D3DVALUE xTop, D3DVALUE yTop, D3DVALUE zTop, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->SetOrientation(xFront, yFront, zFront, xTop, yTop, zTop, dwApply));
+	}
+
+	void DS3DListener::GetOrientation(D3DVECTOR * pvOrientFront, D3DVECTOR * pvOrientTop)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->GetOrientation(pvOrientFront, pvOrientTop));
+	}
+
+	void DS3DListener::setPosition(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->SetPosition(x, y, z, dwApply));
+	}
+
+	D3DVECTOR DS3DListener::getPosition(void)
+	{
+		D3DVECTOR vector;
+		SUCCEEDED_VERIFY(m_ds3dlistener->GetPosition(&vector));
+		return vector;
+	}
+
+	void DS3DListener::setVelocity(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->SetVelocity(x, y, z, dwApply));
+	}
+
+	D3DVECTOR DS3DListener::getVelocity(void)
+	{
+		D3DVECTOR vector;
+		SUCCEEDED_VERIFY(m_ds3dlistener->GetVelocity(&vector));
+		return vector;
+	}
+
+	void DS3DListener::setAllParameters(LPCDS3DLISTENER pcListener, DWORD dwApply /*= DS3D_DEFERRED*/)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->SetAllParameters(pcListener, dwApply));
+	}
+
+	void DS3DListener::getAllParameters(LPDS3DLISTENER pListener)
+	{
+		SUCCEEDED_VERIFY(m_ds3dlistener->GetAllParameters(pListener));
 	}
 
 	DSound::DSound(void)

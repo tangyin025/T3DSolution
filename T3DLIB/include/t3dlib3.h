@@ -28,6 +28,14 @@ namespace t3d
 
 	class DSound;
 
+	class DS3DBuffer;
+
+	typedef boost::shared_ptr<DS3DBuffer> DS3DBufferPtr;
+
+	class DS3DListener;
+
+	typedef boost::shared_ptr<DS3DListener> DS3DListenerPtr;
+
 	class DSBuffer
 	{
 		friend DSound;
@@ -64,9 +72,79 @@ namespace t3d
 		void setVolume(LONG lVolume);
 
 		LONG getVolume(void);
+
+		DS3DBufferPtr createDS3DBuffer(void);
+
+		DS3DListenerPtr createDS3DListener(void);
 	};
 
 	typedef boost::shared_ptr<DSBuffer> DSBufferPtr;
+
+	class DS3DBuffer
+	{
+		friend DSBuffer;
+
+	public:
+		CComPtr<IDirectSound3DBuffer8> m_ds3dbuffer;
+
+	protected:
+		DS3DBuffer(DSBuffer * dsbuffer);
+
+	public:
+		virtual ~DS3DBuffer(void);
+
+		void setMaxDistance(D3DVALUE flMaxDistance, DWORD dwApply = DS3D_DEFERRED);
+
+		D3DVALUE getMaxDistance(void);
+
+		void setMinDistance(D3DVALUE flMinDistance, DWORD dwApply = DS3D_DEFERRED);
+
+		D3DVALUE getMinDistance(void);
+
+		void setPosition(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply = DS3D_DEFERRED);
+
+		D3DVECTOR getPosition(void);
+
+		void setVelocity(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply = DS3D_DEFERRED);
+
+		D3DVECTOR getVelocity(void);
+
+		void setAllParameters(LPCDS3DBUFFER pcDs3dBuffer, DWORD dwApply = DS3D_DEFERRED);
+
+		void getAllParameters(LPDS3DBUFFER pDs3dBuffer);
+	};
+
+	class DS3DListener
+	{
+		friend DSBuffer;
+
+	public:
+		CComPtr<IDirectSound3DListener8> m_ds3dlistener;
+
+	protected:
+		DS3DListener(DSBuffer * dsbuffer);
+
+	public:
+		virtual ~DS3DListener(void);
+
+		void CommitDeferredSettings(void);
+
+		void SetOrientation(D3DVALUE xFront, D3DVALUE yFront, D3DVALUE zFront, D3DVALUE xTop, D3DVALUE yTop, D3DVALUE zTop, DWORD dwApply = DS3D_DEFERRED);
+
+		void GetOrientation(D3DVECTOR * pvOrientFront, D3DVECTOR * pvOrientTop);
+
+		void setPosition(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply = DS3D_DEFERRED);
+
+		D3DVECTOR getPosition(void);
+
+		void setVelocity(D3DVALUE x, D3DVALUE y, D3DVALUE z, DWORD dwApply = DS3D_DEFERRED);
+
+		D3DVECTOR getVelocity(void);
+
+		void setAllParameters(LPCDS3DLISTENER pcListener, DWORD dwApply = DS3D_DEFERRED);
+
+		void getAllParameters(LPDS3DLISTENER pListener);
+	};
 
 	class DSound
 	{
