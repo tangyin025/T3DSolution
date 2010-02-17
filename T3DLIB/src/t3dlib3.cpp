@@ -59,10 +59,7 @@ namespace t3d
 
 	DSBuffer::DSBuffer(DSound * dsound, LPCDSBUFFERDESC pcDSBufferDesc)
 	{
-		CComPtr<IDirectSoundBuffer> dsbuffer;
-		FAILED_DSEXCEPT(dsound->m_dsound->CreateSoundBuffer(pcDSBufferDesc, &dsbuffer, NULL));
-
-		FAILED_DSEXCEPT(dsbuffer->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID *)&m_dsbuffer));
+		FAILED_DSEXCEPT(dsound->m_dsound->CreateSoundBuffer(pcDSBufferDesc, &m_dsbuffer, NULL));
 	}
 
 	DSBuffer::~DSBuffer(void)
@@ -135,19 +132,19 @@ namespace t3d
 		return lVolume;
 	}
 
-	DS3DBufferPtr DSBuffer::createDS3DBuffer(void)
+	DS3DBufferPtr DSBuffer::getDS3DBuffer(void)
 	{
 		return DS3DBufferPtr(new DS3DBuffer(this));
 	}
 
-	DS3DListenerPtr DSBuffer::createDS3DListener(void)
+	DS3DListenerPtr DSBuffer::getDS3DListener(void)
 	{
 		return DS3DListenerPtr(new DS3DListener(this));
 	}
 
 	DS3DBuffer::DS3DBuffer(DSBuffer * dsbuffer)
 	{
-		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DBuffer8, (LPVOID *)&m_ds3dbuffer));
+		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DBuffer, (LPVOID *)&m_ds3dbuffer));
 	}
 
 	DS3DBuffer::~DS3DBuffer(void)
@@ -214,24 +211,24 @@ namespace t3d
 
 	DS3DListener::DS3DListener(DSBuffer * dsbuffer)
 	{
-		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DListener8, (LPVOID *)&m_ds3dlistener));
+		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DListener, (LPVOID *)&m_ds3dlistener));
 	}
 
 	DS3DListener::~DS3DListener(void)
 	{
 	}
 
-	void DS3DListener::CommitDeferredSettings(void)
+	void DS3DListener::commitDeferredSettings(void)
 	{
 		SUCCEEDED_VERIFY(m_ds3dlistener->CommitDeferredSettings());
 	}
 
-	void DS3DListener::SetOrientation(D3DVALUE xFront, D3DVALUE yFront, D3DVALUE zFront, D3DVALUE xTop, D3DVALUE yTop, D3DVALUE zTop, DWORD dwApply /*= DS3D_DEFERRED*/)
+	void DS3DListener::setOrientation(D3DVALUE xFront, D3DVALUE yFront, D3DVALUE zFront, D3DVALUE xTop, D3DVALUE yTop, D3DVALUE zTop, DWORD dwApply /*= DS3D_DEFERRED*/)
 	{
 		SUCCEEDED_VERIFY(m_ds3dlistener->SetOrientation(xFront, yFront, zFront, xTop, yTop, zTop, dwApply));
 	}
 
-	void DS3DListener::GetOrientation(D3DVECTOR * pvOrientFront, D3DVECTOR * pvOrientTop)
+	void DS3DListener::getOrientation(D3DVECTOR * pvOrientFront, D3DVECTOR * pvOrientTop)
 	{
 		SUCCEEDED_VERIFY(m_ds3dlistener->GetOrientation(pvOrientFront, pvOrientTop));
 	}
