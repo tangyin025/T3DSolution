@@ -50,7 +50,7 @@
 #define SAFE_RELEASE(p)		if(p != NULL) { p->Release();	p = NULL; }
 
 #ifdef _DEBUG
-#define SUCCEEDED_VERIFY(expr) _ASSERT( SUCCEEDED( expr ) )
+#define SUCCEEDED_VERIFY(expr) { HRESULT hres; if( FAILED( hres = (expr) ) ) _ASSERT( false ); } // the hres should show at 'Locals' window
 #else
 #define SUCCEEDED_VERIFY(expr) expr
 #endif
