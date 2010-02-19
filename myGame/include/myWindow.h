@@ -147,7 +147,7 @@ namespace my
 		HINSTANCE m_hinst;
 
 	public:
-		Application(void);
+		Application(HINSTANCE hInstance = NULL);
 
 		virtual ~Application(void);
 

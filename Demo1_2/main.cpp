@@ -11,6 +11,11 @@
 #include "myCollision.h"		// 碰撞系统
 #include "myScene.h"
 
+// windows xp 样式支持
+#include <commctrl.h>
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 // unicode 支持
 using t3d::charT;
 
@@ -791,6 +796,14 @@ public:
 
 int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
+	// 运行时内存泄漏检查
+	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
+
+	// windows xp 样式支持
+	INITCOMMONCONTROLSEX InitCtrls = {sizeof(InitCtrls)};
+	InitCtrls.dwICC = ICC_WIN95_CLASSES;
+	InitCommonControlsEx(&InitCtrls);
+
 	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
 	MyDialog dlg(MyConfig(800, 600, my::Game::SM_WINDOWED, (real)800 / 600));
 	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_cfg);

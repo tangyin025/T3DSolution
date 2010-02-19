@@ -861,10 +861,15 @@ namespace my
 		return ::DefWindowProc(hwnd, message, wparam, lparam);
 	}
 
-	Application::Application(void)
-		: m_hinst(::GetModuleHandle(NULL))
+	Application::Application(HINSTANCE hInstance /*= NULL*/)
+		: m_hinst(hInstance)
 	{
-		_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
+		//_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
+
+		if(NULL == m_hinst)
+		{
+			m_hinst = ::GetModuleHandle(NULL);
+		}
 
 		_ASSERT(NULL != m_hinst);
 
