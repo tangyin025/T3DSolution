@@ -11,7 +11,13 @@
 #pragma push_macro("max")
 #define min std::min
 #define max std::max
+#pragma push_macro("REAL_MIN")
+#pragma push_macro("REAL_MAX")
+#undef REAL_MIN
+#undef REAL_MAX
 #include <atlimage.h>
+#pragma pop_macro("REAL_MAX")
+#pragma pop_macro("REAL_MIN")
 #pragma pop_macro("max")
 #pragma pop_macro("min")
 #include <boost/shared_ptr.hpp>

@@ -1,4 +1,7 @@
-﻿
+﻿/** FILE: main.cpp
+	定义了一个基本的 t3dlib 应用程序的框架，适用于 win32 或 mfc 应用程序
+*/
+
 #include <t3dlib1.h>
 #include <t3dlib6.h>
 #include <atltypes.h>
@@ -19,8 +22,10 @@ void DoRender(void);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+	// 运行时内存泄漏检查
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
+	// 定义一个基本的 windows 类
 	WNDCLASSEX wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -38,8 +43,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	TCHAR szModuleFileName[MAX_PATH];
 	GetModuleFileName(NULL, szModuleFileName, sizeof(szModuleFileName) / sizeof(szModuleFileName[0]));
+
 	try
 	{
+		// 创建窗口
 		HWND hWnd = CreateWindow(szWindowClass, szModuleFileName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 		if(hWnd)
 		{
@@ -57,6 +64,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				}
 				else
 				{
+					// 在没有消息的时候绘制一帧
 					OnFrame(hWnd);
 				}
 			}
@@ -70,12 +78,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	return 0;
 }
 
+// direct draw
 t3d::DDrawPtr g_ddraw;
 
+// direct draw surface 用作后缓存
 t3d::DDSurfacePtr g_ddsurface;
 
+// zbuffer
 t3d::ZBufferPtr g_zbuffer;
 
+// 渲染上下文
 t3d::RenderContextPtr g_rc;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -84,13 +96,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		{
+			// 创建 direct draw
 			g_ddraw = t3d::DDrawPtr(new t3d::DDraw());
 			g_ddraw->setCooperativeLevel(hWnd);
+
+			// 获得当前显示模式
 			DDSURFACEDESC2 ddsd = g_ddraw->getDisplayMode();
 			if( !(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) )
 			{
 				T3D_CUSEXCEPT(_T("unsupported pixel format"));
 			}
+
+			// 创建于当前显示模式兼容的渲染上下文
 			switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
 			{
 			case 16:
@@ -116,12 +133,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		if((SIZE_RESTORED == wParam || SIZE_MAXIMIZED == wParam) && g_ddraw.get())
 		{
+			_ASSERT(g_rc.get());
+
+			// 获得当前窗口宽度和高度
 			int width = LOWORD(lParam);
 			int height = HIWORD(lParam);
+
+			// “重新”创建对应的后缓存
 			g_ddsurface = g_ddraw->createMemorySurface(width, height);
 			CRect rectMem(0, 0, width, height);
 			g_ddsurface->setClipper(g_ddraw->createMemoryClipper(&rectMem, 1).get());
+
+			// 设置 surface buffer，其实 memory surface 只要设置一次就可以了
+			DDSURFACEDESC2 ddsd = g_ddsurface->lock(NULL);
+			g_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
+			g_ddsurface->unlock();
+
+			// “重新”创建 zbuffer
 			g_zbuffer = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
+
+			// 设置 zbuffer
+			g_rc->setZBufferBuffer(g_zbuffer->getBuffer(), g_zbuffer->getPitch(), width, height);
+
+			// 更新渲染上下文的 clipper rect
+			g_rc->setClipperRect(rectMem);
+
+			/** 注意：
+				其实在这个地方还有很多事情要做，如更新相机的 viewport 和 projection 等
+				详情参见 Demo1_2/main.cpp 的 MyGame::onFrame
+			*/
+
+			// 至少要填充一下那个后缓存吧
 			DoRender();
 			return 0;
 		}
@@ -129,8 +171,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		{
-			assert(g_ddsurface.get());
+			_ASSERT(g_ddsurface.get());
 
+			// 这里要做的是将后缓存更新到 windows DC 上
 			CRect clientRect;
 			GetClientRect(hWnd, &clientRect);
 			PAINTSTRUCT ps;
@@ -144,6 +187,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_DESTROY:
 		{
+			// 推出应用程序指令
 			PostQuitMessage(0);
 			return 0;
 		}
@@ -154,30 +198,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void OnFrame(HWND hwnd)
 {
-	assert(hwnd);
+	_ASSERT(IsWindow(hwnd));
 
+	// 渲染一帧
 	DoRender();
 
+	// 告知窗口无效，需要更新 windows DC，然后参见 WM_PAINT
 	InvalidateRect(hwnd, NULL, FALSE);
 }
 
 void DoRender(void)
 {
-	DDSURFACEDESC2 ddsd = g_ddsurface->lock(NULL);
-	g_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
-	g_ddsurface->unlock();
+	// 清理后缓存
+	g_rc->fillSurface(g_rc->getClipperRect(), t3d::vec3Build<real>(0.8f, 0.8f, 0.8f));
 
-	CRect rectSurface(0, 0, g_rc->getSurfaceWidth(), g_rc->getSurfaceHeight());
+	// 清理 zbuffer
+	g_rc->fillZbuffer(g_rc->getClipperRect(), 0);
 
-	g_rc->setZBufferBuffer(g_zbuffer->getBuffer(), g_zbuffer->getPitch(), rectSurface.Width(), rectSurface.Height());
-
-	CRect rectClipper = rectSurface;
-
-	rectClipper.DeflateRect(1, 1);
-
-	g_rc->setClipperRect(rectClipper);
-
-	g_rc->fillSurface(rectSurface, t3d::vec3Build<real>(0.8f, 0.8f, 0.8f));
-
-	g_rc->fillZbuffer(rectSurface, 0);
+	/** 注意：
+		由于本实例只使用了 t3dlib，没有使用 myGame，所以很多事情做起来十分麻烦
+		详情参见 Demo1_2/main.cpp 的 MyGame::onFrame
+	*/
 }

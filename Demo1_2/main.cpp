@@ -1,7 +1,6 @@
 ﻿/** FILE: main.cpp
-	定义了一个基本的 t3dlib 应用程序的框架
+	定义了一个基本的 myGame 应用程序的框架，已实现简单的 windows 封装
 */
-#include "resource.h"
 
 // 包含 my 的封装类
 #include "libc.h"				// 扩展 string 函数
@@ -11,7 +10,10 @@
 #include "myCollision.h"		// 碰撞系统
 #include "myScene.h"
 
-// windows xp 样式支持
+// 包含 resource
+#include "resource.h"
+
+// windows xp 样式支持（1/2）
 #include <commctrl.h>
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -799,7 +801,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 运行时内存泄漏检查
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
-	// windows xp 样式支持
+	// windows xp 样式支持（2/2）
 	INITCOMMONCONTROLSEX InitCtrls = {sizeof(InitCtrls)};
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
