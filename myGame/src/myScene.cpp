@@ -170,12 +170,12 @@ namespace my
 			m_cameraHalfFov = t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()); // ***
 		}
 
-		t3d::Vec4<real> getCameraPosition(void) const
+		const t3d::Vec4<real> & getCameraPosition(void) const
 		{
 			return m_cameraPos;
 		}
 
-		t3d::Vec4<real> getCameraDirection(void) const
+		const t3d::Vec4<real> & getCameraDirection(void) const
 		{
 			return m_cameraDir;
 		}
@@ -212,9 +212,9 @@ namespace my
 	{
 		if(!node.m_obj.getVertexList().empty())
 		{
-			t3d::Vec4<real> cameraPos = drawer.getCameraPosition();
+			const t3d::Vec4<real> & cameraPos = drawer.getCameraPosition();
 
-			t3d::Vec4<real> cameraDir = drawer.getCameraDirection();
+			const t3d::Vec4<real> & cameraDir = drawer.getCameraDirection();
 
 			real cameraHalfFov = drawer.getCameraHalfFov();
 
@@ -270,9 +270,9 @@ namespace my
 	{
 		if(!node.m_obj.getVertexList().empty())
 		{
-			t3d::Vec4<real> cameraPos = drawer.getCameraPosition();
+			const t3d::Vec4<real> & cameraPos = drawer.getCameraPosition();
 
-			t3d::Vec4<real> cameraDir = drawer.getCameraDirection();
+			const t3d::Vec4<real> & cameraDir = drawer.getCameraDirection();
 
 			real cameraHalfFov = drawer.getCameraHalfFov();
 

@@ -1,0 +1,102 @@
+﻿#!/usr/local/bin/perl -w
+use strict;
+
+sub convertAtDir( $ );
+
+# 这个perl程序的目的是将.sln文件及.vcproj文件从vc2008格式转换为vc2005格式
+convertAtDir('.');
+
+sub convertFile( $ );
+
+sub convertAtDir( $ )
+{
+	my $dir = $_[0];
+	$dir =~ s/\/$//;
+	opendir(my $dh, $dir) || die "cannot open dir $dir: $!";
+	while(my $file = readdir $dh)
+	{
+		if( !($file =~ /^\./) )
+		{
+			my $path = "$dir/$file";
+			if(-d $path)
+			{
+				convertAtDir($path);
+			}
+			else
+			{
+				convertFile($path);
+			}
+		}
+	}
+	closedir $dh;
+}
+
+sub convertSlnFile ( $ );
+
+sub convertVcprojFile ( $ );
+
+sub convertFile( $ )
+{
+	my $path = $_[0];
+	if(-f $path)
+	{
+		if($path =~ /.sln$/)
+		{
+			convertSlnFile($path);
+			return;
+		}
+		if($path =~ /.vcproj$/)
+		{
+			convertVcprojFile($path);
+			return;
+		}
+	}
+
+	#print "ignore $path \n";
+}
+
+sub replaceInFile( $\% );
+
+sub convertSlnFile ( $ )
+{
+	my $path = $_[0];
+	print "converte $path \n";
+	my %table = (
+		'Microsoft Visual Studio Solution File, Format Version 10.00' => 'Microsoft Visual Studio Solution File, Format Version 9.00',
+		'# Visual Studio 2008' => '# Visual Studio 2005');
+	replaceInFile($path, %table);
+}
+
+sub convertVcprojFile ( $ )
+{
+	my $path = $_[0];
+	print "converte $path \n";
+	my %table = (
+		'Version="9.00"' => 'Version="8.00"',
+		'D:\\\\Program Files \\(2\\)\\\\boost_1_34_1' => 'D:\\works\\boost_1_34_1');
+	replaceInFile($path, %table);
+}
+
+sub replaceInFile( $\% )
+{
+	my $path = $_[0];
+	my $table = $_[1];
+	open(my $fh, '<', $path) || die "cannot open $path: $!";
+	my @content = <$fh>;
+	close($fh);
+	
+	for my $line(@content)
+	{
+		for my $src(keys %$table)
+		{
+			if($line =~ s/$src/$$table{$src}/)
+			{
+				print $line;
+			}
+		}
+	}
+
+	open($fh, '>', $path) || die "cannot open $path: $!";
+	print $fh @content;
+	close($fh);
+}
