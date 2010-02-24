@@ -898,7 +898,7 @@ namespace t3d
 
 	struct CAMERA
 	{
-		Mat4<real> mcam;
+		Mat4<real> mcam; // *** an INVERSED matrix of camera transform
 		Vec2<real> proj;
 		real nz;
 		real fz;
@@ -944,6 +944,11 @@ namespace t3d
 		static real calculateCameraMaxHalfFov(const Vec2<real> & proj)
 		{
 			return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
+		}
+
+		static Vec4<real> calculateCameraPosition(const Mat4<real> & mcam)
+		{
+			return mat3GetRow3(mcam.inverse());
 		}
 
 		static Vec4<real> calculateCameraDirection(const Mat4<real> & mcam)
@@ -1002,10 +1007,10 @@ namespace t3d
 			return m_camera.viewport;
 		}
 
-		Vec4<real> getCameraPosition(void) const
-		{
-			return mat3GetRow3(getCameraMatrix().inverse());
-		}
+		//Vec4<real> getCameraPosition(void) const
+		//{
+		//	return mat3GetRow3(getCameraMatrix().inverse());
+		//}
 
 		const CAMERA & getCamera(void) const
 		{
