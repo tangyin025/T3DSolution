@@ -630,8 +630,9 @@ public:
 		strTmp = str_printf(_T("fps: %.1f"), 1 / elapsedTime);
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
+		t3d::Vec4<real> camPos = t3d::CameraContext::calculateCameraPosition(m_rc->getCameraMatrix());
 		strTmp = str_printf(_T("cam.pos: %f, %f, %f"),
-			m_rc->getCameraPosition().x, m_rc->getCameraPosition().y, m_rc->getCameraPosition().z);
+			camPos.x, camPos.y, camPos.z);
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("cam.rot: %f, %f, %f"),

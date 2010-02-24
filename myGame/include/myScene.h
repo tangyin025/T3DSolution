@@ -8,6 +8,26 @@
 
 namespace my
 {
+	typedef void (Object::*ObjectDrawFunc)(t3d::RenderContext * rc) const;
+	template <ObjectDrawFunc pFunc>
+	class CustomShaderObjectDrawer
+	{
+	public:
+		CustomShaderObjectDrawer(t3d::RenderContext * rc)
+			: m_rc(rc)
+		{
+		}
+
+	public:
+		void draw(const Object & obj) const
+		{
+			(obj.*pFunc)(m_rc);
+		}
+
+	protected:
+		t3d::RenderContext * m_rc;
+	};
+
 	class CustomShaderObject
 	{
 	public:

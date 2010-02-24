@@ -148,76 +148,17 @@ namespace my
 
 #define DISTANCE_ZERO_LIMIT REAL_ZERO_LIMIT
 
-	class BSPNodeDrawer
-	{
-	protected:
-		t3d::RenderContext * m_rc;
-
-		t3d::Vec4<real> m_cameraPos;
-
-		t3d::Vec4<real> m_cameraDir;
-
-		real m_cameraHalfFov;
-
-	public:
-		BSPNodeDrawer(t3d::RenderContext * rc)
-			: m_rc(rc)
-		{
-			m_cameraPos = rc->getCameraPosition();
-
-			m_cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
-
-			m_cameraHalfFov = t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()); // ***
-		}
-
-		const t3d::Vec4<real> & getCameraPosition(void) const
-		{
-			return m_cameraPos;
-		}
-
-		const t3d::Vec4<real> & getCameraDirection(void) const
-		{
-			return m_cameraDir;
-		}
-
-		real getCameraHalfFov(void) const
-		{
-			return m_cameraHalfFov;
-		}
-	};
-
-	typedef void (Object::*MemFuncTypeR)(t3d::RenderContext * rc) const;
-	template <MemFuncTypeR pFunc>
-	class BSPNodeDrawerR : public BSPNodeDrawer
-	{
-	public:
-		BSPNodeDrawerR(t3d::RenderContext * rc)
-			: BSPNodeDrawer(rc)
-		{
-		}
-
-		void draw(const BSPNode & node) const
-		{
-			(node.m_obj.*pFunc)(m_rc);
-		}
-
-		void drawObjList(const BSPNode & node) const
-		{
-			node.m_customShaderObjList.draw(m_rc);
-		}
-	};
-
-	template <class BSPNodeDrawer>
-	void drawBSPSceneBackToFront(const BSPNode & node, const BSPNodeDrawer & drawer)
+	template <class CustomShaderObjectDrawerClass>
+	void drawBSPSceneBackToFront(
+		t3d::RenderContext * rc,
+		const BSPNode & node,
+		const t3d::Vec4<real> & cameraPos,
+		const t3d::Vec4<real> & cameraDir,
+		real cameraHalfFov,
+		const CustomShaderObjectDrawerClass & drawer)
 	{
 		if(!node.m_obj.getVertexList().empty())
 		{
-			const t3d::Vec4<real> & cameraPos = drawer.getCameraPosition();
-
-			const t3d::Vec4<real> & cameraDir = drawer.getCameraDirection();
-
-			real cameraHalfFov = drawer.getCameraHalfFov();
-
 			real distance = calculatePointPlaneDistance(cameraPos, node.planePoint, node.planeNormal);
 
 			real angle = acos(t3d::vec3CosTheta(cameraDir, node.planeNormal));
@@ -228,17 +169,17 @@ namespace my
 				{
 					if(NULL != node.back)
 					{
-						drawBSPSceneBackToFront(*node.back, drawer);
+						drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 					}
 
-					drawer.draw(node);
+					drawer.draw(node.m_obj);
 				}
 
-				drawer.drawObjList(node);
+				node.m_customShaderObjList.draw(rc);
 
 				if(NULL != node.front)
 				{
-					drawBSPSceneBackToFront(*node.front, drawer);
+					drawBSPSceneBackToFront(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 			}
 			else
@@ -247,35 +188,35 @@ namespace my
 				{
 					if(NULL != node.front)
 					{
-						drawBSPSceneBackToFront(*node.front, drawer);
+						drawBSPSceneBackToFront(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 					}
 				}
 
-				drawer.drawObjList(node);
+				node.m_customShaderObjList.draw(rc);
 
 				if(NULL != node.back)
 				{
-					drawBSPSceneBackToFront(*node.back, drawer);
+					drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 			}
 		}
 		else
 		{
-			drawer.drawObjList(node);
+			node.m_customShaderObjList.draw(rc);
 		}
 	}
 
-	template <class BSPNodeDrawer>
-	void drawBSPSceneFrontToBack(const BSPNode & node, const BSPNodeDrawer & drawer)
+	template <class CustomShaderObjectDrawerClass>
+	void drawBSPSceneFrontToBack(
+		t3d::RenderContext * rc,
+		const BSPNode & node,
+		const t3d::Vec4<real> & cameraPos,
+		const t3d::Vec4<real> & cameraDir,
+		real cameraHalfFov,
+		const CustomShaderObjectDrawerClass & drawer)
 	{
 		if(!node.m_obj.getVertexList().empty())
 		{
-			const t3d::Vec4<real> & cameraPos = drawer.getCameraPosition();
-
-			const t3d::Vec4<real> & cameraDir = drawer.getCameraDirection();
-
-			real cameraHalfFov = drawer.getCameraHalfFov();
-
 			real distance = calculatePointPlaneDistance(cameraPos, node.planePoint, node.planeNormal);
 
 			real angle = acos(t3d::vec3CosTheta(cameraDir, node.planeNormal));
@@ -284,46 +225,45 @@ namespace my
 			{
 				if(NULL != node.front)
 				{
-					drawBSPSceneFrontToBack(*node.front, drawer);
+					drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 
-				drawer.drawObjList(node);
+				node.m_customShaderObjList.draw(rc);
 
 				if(angle + cameraHalfFov > DEG_TO_RAD(90))
 				{
 					if(NULL != node.back)
 					{
-						drawBSPSceneFrontToBack(*node.back, drawer);
+						drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 					}
 
-					drawer.draw(node);
+					drawer.draw(node.m_obj);
 				}
 			}
 			else
 			{
 				if(NULL != node.back)
 				{
-					drawBSPSceneFrontToBack(*node.back, drawer);
+					drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 
-				drawer.drawObjList(node);
+				node.m_customShaderObjList.draw(rc);
 
 				if(angle - cameraHalfFov < DEG_TO_RAD(90))
 				{
 					if(NULL != node.front)
 					{
-						drawBSPSceneFrontToBack(*node.front, drawer);
+						drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 					}
 				}
 			}
 		}
 		else
 		{
-			drawer.drawObjList(node);
+			node.m_customShaderObjList.draw(rc);
 		}
 	}
 
-#pragma warning(disable: 4100)
 	void BSPNode::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
@@ -447,7 +387,7 @@ namespace my
 	{
 		//if(!getVertexList().empty())
 		//{
-		//	t3d::Vec4<real> cameraPos = rc->getCameraPosition();
+		//	t3d::Vec4<real> cameraPos = t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix());
 
 		//	t3d::Vec4<real> cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
 
@@ -520,7 +460,13 @@ namespace my
 		//	m_customShaderObjList.draw(rc);
 		//}
 
-		drawBSPSceneBackToFront(*this, BSPNodeDrawerR<&Object::drawTextureZBufferRW>(rc));
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferW>(rc));
 	}
 
 	void BSPNode::drawTextureZBufferW(
@@ -654,7 +600,7 @@ namespace my
 	{
 		//if(!getVertexList().empty())
 		//{
-		//	t3d::Vec4<real> cameraPos = rc->getCameraPosition();
+		//	t3d::Vec4<real> cameraPos = t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix());
 
 		//	t3d::Vec4<real> cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
 
@@ -727,7 +673,13 @@ namespace my
 		//	m_customShaderObjList.draw(rc);
 		//}
 
-		drawBSPSceneFrontToBack(*this, BSPNodeDrawerR<&Object::drawGouraudTexturePerspectiveLPZBufferRW>(rc));
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawGouraudTexturePerspectiveLPZBufferRW>(rc));
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
@@ -751,7 +703,6 @@ namespace my
 	{
 		_ASSERT(false);
 	}
-#pragma warning(default: 4100)
 
 #define INSERT_VERTEX_NORMAL_UV_TO_UP(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
