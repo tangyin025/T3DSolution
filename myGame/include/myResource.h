@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <crtdbg.h>
 #include <list>
+#include <mmsystem.h>
 #pragma push_macro("min")
 #pragma push_macro("max")
 #define min std::min
