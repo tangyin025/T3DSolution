@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "myResource.h"
 #include <sstream>
-#include <mmsystem.h>
 #include "libc.h"
 
 #pragma comment(lib, "winmm.lib")
