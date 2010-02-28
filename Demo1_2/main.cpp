@@ -797,7 +797,7 @@ public:
 	}
 };
 
-int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
 	// 运行时内存泄漏检查
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
