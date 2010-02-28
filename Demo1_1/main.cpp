@@ -2,9 +2,8 @@
 	定义了一个基本的 t3dlib 应用程序的框架，适用于 win32 或 mfc 应用程序
 */
 
-#include <t3dlib1.h>
-#include <t3dlib6.h>
-#include <atltypes.h>
+#include <t3dlib1.h>	// ddraw 封装
+#include <t3dlib6.h>	// 渲染上下文
 
 using t3d::real;
 
