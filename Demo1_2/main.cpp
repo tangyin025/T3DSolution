@@ -8,7 +8,7 @@
 #include "myUtility.h"			// 快速模型绘制
 #include "myPhysics.h"			// 物理引擎
 #include "myCollision.h"		// 碰撞系统
-#include "myScene.h"
+#include "myScene.h"			// 场景管理
 
 // 包含 resource
 #include "resource.h"
