@@ -45,13 +45,14 @@ sub convertFile( $ )
 			convertSlnFile($path);
 			return;
 		}
+		
 		if($path =~ /.vcproj$/)
 		{
 			convertVcprojFile($path);
 			return;
 		}
 	}
-
+	
 	#print "ignore $path \n";
 }
 
@@ -85,6 +86,7 @@ sub replaceInFile( $\% )
 	my @content = <$fh>;
 	close($fh);
 	
+	my $modified = 0;
 	for my $line(@content)
 	{
 		for my $src(keys %$table)
@@ -92,11 +94,15 @@ sub replaceInFile( $\% )
 			if($line =~ s/$src/$$table{$src}/)
 			{
 				print $line;
+				$modified = 1;
 			}
 		}
 	}
-
-	open($fh, '>', $path) || die "cannot open $path: $!";
-	print $fh @content;
-	close($fh);
+	
+	if($modified)
+	{
+		open($fh, '>', $path) || die "cannot open $path: $!";
+		print $fh @content;
+		close($fh);
+	}
 }

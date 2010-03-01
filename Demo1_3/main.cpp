@@ -1,59 +1,59 @@
-/** FILE: main.cpp
-	¶¨ÒåÁËÒ»¸ö»ù±¾µÄ my::Game Ó¦ÓÃ³ÌĞòµÄ¿ò¼Ü
+ï»¿/** FILE: main.cpp
+	å®šä¹‰äº†ä¸€ä¸ªåŸºæœ¬çš„ my::Game åº”ç”¨ç¨‹åºçš„æ¡†æ¶
 */
 
-// °üº¬ my µÄ·â×°Àà
-#include "libc.h"				// À©Õ¹ string º¯Êı
-#include "myGame.h"				// Ó¦ÓÃ³ÌĞò·â×°
-#include "myUtility.h"			// ¿ìËÙÄ£ĞÍ»æÖÆ
-#include "myPhysics.h"			// ÎïÀíÒıÇæ
-#include "myCollision.h"		// Åö×²ÏµÍ³
-#include "myScene.h"			// ³¡¾°¹ÜÀí
+// åŒ…å« my çš„å°è£…ç±»
+#include "libc.h"				// æ‰©å±• string å‡½æ•°
+#include "myGame.h"				// åº”ç”¨ç¨‹åºå°è£…
+#include "myUtility.h"			// å¿«é€Ÿæ¨¡å‹ç»˜åˆ¶
+#include "myPhysics.h"			// ç‰©ç†å¼•æ“
+#include "myCollision.h"		// ç¢°æ’ç³»ç»Ÿ
+#include "myScene.h"			// åœºæ™¯ç®¡ç†
 
-// unicode Ö§³Ö
+// unicode æ”¯æŒ
 using t3d::charT;
 
-// ÊµĞÍ
+// å®å‹
 using t3d::real;
 
 // ======================================== TODO: BEGIN ========================================
 
-// ÔÚÕâ¸öµØ·½¶¨Òå×Ô¼ºµÄÀà
+// åœ¨è¿™ä¸ªåœ°æ–¹å®šä¹‰è‡ªå·±çš„ç±»
 
 // ======================================== TODO: END   ========================================
 
 class MyGame
-	: public my::Game						// ÓÃÒÔÊµÏÖ»ùÓÚÖ¡Ñ­»·µÄ»ù±¾Ó¦ÓÃ³ÌĞò¿ò¼Ü£¬²¢ÒÑ¾­ÊµÏÖÁË³£¼ûµÄ primary¡¢back surface ½á¹¹
-	, public my::ErrorListener				// ÊµÏÖ½ÓÊÜ´íÎóĞÅÏ¢µÄ½Ó¿Ú£¬ÕâĞ©´íÎóĞÅÏ¢Í¨³£À´×ÔÓÚ my µÄ·â×°£¬ÕâÑù¾Í¿ÉÒÔÊ¹ÓÃ REPORT_ERROR ºê¶ÔÕâ¸ö½Ó¿Ú±¨´í
-	, public my::DrawnHelper				// ÓÃÒÔ»æÖÆ³£¼û¶à±ßĞÎµÄ°ïÖúÀà£¬¿ÉÓÃÀ´»æÖÆ¼òµ¥µÄ sphere¡¢box¡¢plane µÈ
+	: public my::Game						// ç”¨ä»¥å®ç°åŸºäºå¸§å¾ªç¯çš„åŸºæœ¬åº”ç”¨ç¨‹åºæ¡†æ¶ï¼Œå¹¶å·²ç»å®ç°äº†å¸¸è§çš„ primaryã€back surface ç»“æ„
+	, public my::ErrorListener				// å®ç°æ¥å—é”™è¯¯ä¿¡æ¯çš„æ¥å£ï¼Œè¿™äº›é”™è¯¯ä¿¡æ¯é€šå¸¸æ¥è‡ªäº my çš„å°è£…ï¼Œè¿™æ ·å°±å¯ä»¥ä½¿ç”¨ REPORT_ERROR å®å¯¹è¿™ä¸ªæ¥å£æŠ¥é”™
+	, public my::DrawnHelper				// ç”¨ä»¥ç»˜åˆ¶å¸¸è§å¤šè¾¹å½¢çš„å¸®åŠ©ç±»ï¼Œå¯ç”¨æ¥ç»˜åˆ¶ç®€å•çš„ sphereã€boxã€plane ç­‰
 {
 protected:
-	// Ò»¸öÀàËÆ¿ØÖÆÌ¨µÄÄ£ÄâÆ÷£¬¿ÉÒÔÔÚ surface ÉÏÊä³ö¿ØÖÆÌ¨ĞÅÏ¢
+	// ä¸€ä¸ªç±»ä¼¼æ§åˆ¶å°çš„æ¨¡æ‹Ÿå™¨ï¼Œå¯ä»¥åœ¨ surface ä¸Šè¾“å‡ºæ§åˆ¶å°ä¿¡æ¯
 	my::ConsoleSimulatorPtr m_consoleSim;
 
-	// »ùÓÚ²ÉÑùµÄÖ¡ËÙÂÊ¼ÆËã¹¤¾ß
+	// åŸºäºé‡‡æ ·çš„å¸§é€Ÿç‡è®¡ç®—å·¥å…·
 	my::FPSManagerPtr m_fpsMgr;
 
-	// »ùÓÚÖ÷ÆµµÄÖ¡ËÙÂÊ¼ÆËã¹¤¾ß£¬Ö÷ÒªÌá¹©ÎïÀíÒıÇæÖ§³Ö
+	// åŸºäºä¸»é¢‘çš„å¸§é€Ÿç‡è®¡ç®—å·¥å…·ï¼Œä¸»è¦æä¾›ç‰©ç†å¼•æ“æ”¯æŒ
 	my::TimerPtr m_timer;
 
-	// »æÖÆÍø¸ñµÄ¹¤¾ß
+	// ç»˜åˆ¶ç½‘æ ¼çš„å·¥å…·
 	my::GridPtr m_grid;
 
-	// Å·À­Ïà»ú£¬Ä¬ÈÏ¿ÉÒÔÊ¹ÓÃÅ·À­Ïà»úÔÚ³¡¾°ÖĞ×ÔÓÉ¹Û²ì
+	// æ¬§æ‹‰ç›¸æœºï¼Œé»˜è®¤å¯ä»¥ä½¿ç”¨æ¬§æ‹‰ç›¸æœºåœ¨åœºæ™¯ä¸­è‡ªç”±è§‚å¯Ÿ
 	my::EularCameraPtr m_eularCam;
 
-	// Ä¬ÈÏÌùÍ¼£¬Ä¿µÄÊÇ·ÀÖ¹ÌùÍ¼äÖÈ¾Ê±Ã»ÓĞÌùÍ¼µ¼ÖÂ³ö´í
+	// é»˜è®¤è´´å›¾ï¼Œç›®çš„æ˜¯é˜²æ­¢è´´å›¾æ¸²æŸ“æ—¶æ²¡æœ‰è´´å›¾å¯¼è‡´å‡ºé”™
 	my::ImagePtr m_defaultTexture;
 
-	/** ÎªÊ²Ã´ÒªÊ¹ÓÃ ptr£¬¶ø²»Ö±½Ó¹¹Ôìº¯Êı£¿
-		Ó¦ÎªÄ³Ğ©¶ÔÏóÔÚ½¨Á¢Ê±£¬»áÓÃÓĞÏÈ¾öÌõ¼ş£¬¶ø my::Game ÔÚ¹¹Ôìº¯ÊıÊ±£¬»¹Ã»ÓĞ³õÊ¼»¯Ò»Ğ©¶ÔÏó£¬Èç SingleTon ¶ÔÏó
-		Ö»ÓĞÔÚ¿ò¼Üµ÷ÓÃ my::Game::onInit(...) Ê±£¬ÕâĞ©Ç°ÌáÌõ¼ş²Å³ÉÊì£¬ËùÒÔÍ¨³£ÊÇÊ¹ÓÃ ptr£¬ÔÚ onInit(...) Àï±ßÔÙ¹¹Ôì
+	/** ä¸ºä»€ä¹ˆè¦ä½¿ç”¨ ptrï¼Œè€Œä¸ç›´æ¥æ„é€ å‡½æ•°ï¼Ÿ
+		åº”ä¸ºæŸäº›å¯¹è±¡åœ¨å»ºç«‹æ—¶ï¼Œä¼šç”¨æœ‰å…ˆå†³æ¡ä»¶ï¼Œè€Œ my::Game åœ¨æ„é€ å‡½æ•°æ—¶ï¼Œè¿˜æ²¡æœ‰åˆå§‹åŒ–ä¸€äº›å¯¹è±¡ï¼Œå¦‚ SingleTon å¯¹è±¡
+		åªæœ‰åœ¨æ¡†æ¶è°ƒç”¨ my::Game::onInit(...) æ—¶ï¼Œè¿™äº›å‰ææ¡ä»¶æ‰æˆç†Ÿï¼Œæ‰€ä»¥é€šå¸¸æ˜¯ä½¿ç”¨ ptrï¼Œåœ¨ onInit(...) é‡Œè¾¹å†æ„é€ 
 	*/
 
 	// ======================================== TODO: BEGIN ========================================
 
-	// ÔÚÕâ¸öµØ·½¶¨Òå×Ô¼ºµÄ¶ÔÏó
+	// åœ¨è¿™ä¸ªåœ°æ–¹å®šä¹‰è‡ªå·±çš„å¯¹è±¡
 
 	t3d::DSBufferPtr m_dsbuffer;
 	t3d::DS3DBufferPtr m_ds3dbuffer;
@@ -62,39 +62,39 @@ protected:
 	// ======================================== TODO: END   ========================================
 
 public:
-	/** ÊµÏÖ my::Game::onInit ½Ó¿Ú
-		Í¨³£ÔÚÓ¦ÓÃ³ÌĞò³õÊ¼»¯Ê±£¬¿ò¼Ü»áµôÓÃÕâ¸ö½Ó¿Ú£¬ËùÒÔÓ¦µ±ÔÚÕâÀïÊµÏÖ×Ô¶¨ÒåµÄ³õÊ¼»¯²Ù×÷
+	/** å®ç° my::Game::onInit æ¥å£
+		é€šå¸¸åœ¨åº”ç”¨ç¨‹åºåˆå§‹åŒ–æ—¶ï¼Œæ¡†æ¶ä¼šæ‰ç”¨è¿™ä¸ªæ¥å£ï¼Œæ‰€ä»¥åº”å½“åœ¨è¿™é‡Œå®ç°è‡ªå®šä¹‰çš„åˆå§‹åŒ–æ“ä½œ
 	*/
 	virtual bool onInit(const CONFIG_DESC & cfg)
 	{
-		// ³õÊ¼»¯Ä£Äâ¿ØÖÆÌ¨
+		// åˆå§‹åŒ–æ¨¡æ‹Ÿæ§åˆ¶å°
 		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
 
-		// ½«×Ô¼º×¢²áÎª my::ErrorReporter µÄ¼àÌıÕß
+		// å°†è‡ªå·±æ³¨å†Œä¸º my::ErrorReporter çš„ç›‘å¬è€…
 		my::ErrorReporter::getSingleton().addErrorListener(this);
 
-		// ³õÊ¼»¯ fps ¹ÜÀíÆ÷
+		// åˆå§‹åŒ– fps ç®¡ç†å™¨
 		m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
 		m_fpsMgr->start();
 
-		// ³õÊ¼»¯²¢¿ªÊ¼ timer
+		// åˆå§‹åŒ–å¹¶å¼€å§‹ timer
 		m_timer = my::TimerPtr(new my::Timer());
 		m_timer->start();
 
-		// ³õÊ¼»¯Íø¸ñ
+		// åˆå§‹åŒ–ç½‘æ ¼
 		m_grid = my::GridPtr(new my::Grid());
 
-		// ¹¹ÔìÅ·À­Ïà»ú
+		// æ„é€ æ¬§æ‹‰ç›¸æœº
 		m_eularCam = my::EularCameraPtr(new my::EularCamera());
 		m_eularCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
 		m_eularCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
 		m_eularCam->reset();
 
-		// Ìí¼ÓÃ½ÌåËÑË÷Â·¾¶£¬½¨Á¢¿ì½İ·½Ê½Ê±Òª×¢Òâµ±Ç°Â·¾¶µÄÎ»ÖÃ
+		// æ·»åŠ åª’ä½“æœç´¢è·¯å¾„ï¼Œå»ºç«‹å¿«æ·æ–¹å¼æ—¶è¦æ³¨æ„å½“å‰è·¯å¾„çš„ä½ç½®
 		m_resourceMgr->addDir(_T("."));
 		m_resourceMgr->addDir(_T("../../common/medias"));
 
-		// load µÚÒ»¸öÌùÍ¼
+		// load ç¬¬ä¸€ä¸ªè´´å›¾
 		my::IOStreamPtr tmpStream;
 		my::ImagePtr tmpImage;
 		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
@@ -102,20 +102,20 @@ public:
 
 		// ======================================== TODO: BEGIN ========================================
 
-		// ÔÚÕâ¸öµØ·½³õÊ¼»¯×Ô¶¨ÒåµÄ¶ÔÏó
+		// åœ¨è¿™ä¸ªåœ°æ–¹åˆå§‹åŒ–è‡ªå®šä¹‰çš„å¯¹è±¡
 
-		// ²âÊÔ direct sound 3d buffer
+		// æµ‹è¯• direct sound 3d buffer
 		my::WavPtr tmpWav(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("MusicMono.wav"))));
 		m_dsbuffer = my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get(), DSBCAPS_CTRL3D);
 		m_ds3dbuffer = m_dsbuffer->getDS3DBuffer();
 
-		// ×¢Òâ£¬listener ±ØĞëÊÇ primary sound buffer ²ÅÄÜ´´½¨
+		// æ³¨æ„ï¼Œlistener å¿…é¡»æ˜¯ primary sound buffer æ‰èƒ½åˆ›å»º
 		DSBUFFERDESC ddsc = {sizeof(ddsc)};
 		ddsc.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
 		t3d::DSBufferPtr dsbprimary = m_dsound->createSoundBuffer(&ddsc);
 		m_ds3dlistener = dsbprimary->getDS3DListener();
 
-		// ÉèÖÃ 3dbuffer parameter
+		// è®¾ç½® 3dbuffer parameter
 		DS3DBUFFER ds3dbp = {sizeof(ds3dbp)};
 		m_ds3dbuffer->getAllParameters(&ds3dbp);
 		DS3DLISTENER ds3dlp = {sizeof(ds3dlp)};
@@ -128,7 +128,7 @@ public:
 		m_ds3dlistener->setAllParameters(&ds3dlp);
 		m_ds3dlistener->commitDeferredSettings();
 
-		// ²¥·ÅÉùÒô
+		// æ’­æ”¾å£°éŸ³
 		my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		m_dsbuffer->play(0, DSBPLAY_LOOPING);
 
@@ -137,70 +137,70 @@ public:
 		return true;
 	}
 
-	/** ÊµÏÖ my::Game::onShutdown ½Ó¿Ú
-		¿ò¼Ü»áÔÚÍË³öÓ¦ÓÃ³ÌĞòÊ±£¬µ÷ÓÃÕâ¸ö½Ó¿Ú£¬ÓÃÓÚ×Ô¶¨ÒåµÄÏú»Ù£¬ÓÉÓÚ»ù²ã¿ò¼ÜÈ«²¿Ê¹ÓÃ smart_ptr£¬ËùÒÔ²»ĞèÒª delete
+	/** å®ç° my::Game::onShutdown æ¥å£
+		æ¡†æ¶ä¼šåœ¨é€€å‡ºåº”ç”¨ç¨‹åºæ—¶ï¼Œè°ƒç”¨è¿™ä¸ªæ¥å£ï¼Œç”¨äºè‡ªå®šä¹‰çš„é”€æ¯ï¼Œç”±äºåŸºå±‚æ¡†æ¶å…¨éƒ¨ä½¿ç”¨ smart_ptrï¼Œæ‰€ä»¥ä¸éœ€è¦ delete
 	*/
 	virtual void onShutdown(void)
 	{
 	}
 
-	/** ÊµÏÖ my::Game::onFrame ½Ó¿Ú
-		¿ò¼Ü»áÔÚÖ÷Ïß³ÌÃ»ÓĞÏûÏ¢´¦ÀíµÄÊ±ºòµ÷ÓÃÕâ¸ö½Ó¿Ú£¬Ó¦µ±ÔÚÕâÀï½øĞĞÖ¡²Ù×÷£¬ÈçäÖÈ¾£¬step ÎïÀíÒıÇæµÈ
+	/** å®ç° my::Game::onFrame æ¥å£
+		æ¡†æ¶ä¼šåœ¨ä¸»çº¿ç¨‹æ²¡æœ‰æ¶ˆæ¯å¤„ç†çš„æ—¶å€™è°ƒç”¨è¿™ä¸ªæ¥å£ï¼Œåº”å½“åœ¨è¿™é‡Œè¿›è¡Œå¸§æ“ä½œï¼Œå¦‚æ¸²æŸ“ï¼Œstep ç‰©ç†å¼•æ“ç­‰
 	*/
 	virtual bool onFrame(void)
 	{
-		// Èç¹ûÓÃ»§ÊäÈë space Ôò return false ½áÊøÓ¦ÓÃ³ÌĞò
+		// å¦‚æœç”¨æˆ·è¾“å…¥ space åˆ™ return false ç»“æŸåº”ç”¨ç¨‹åº
 		if(m_keyboard->isKeyDown(DIK_ESCAPE))
 			return false;
 
-		// ÀÛ¼Æ fps ¹ÜÀíÆ÷
-		// fps ¹ÜÀíÆ÷ÊÇÍ¨¹ı²»¶Ï²ÉÑùÀ´»ñµÃÖ¡ËÙÂÊµÄ£¬ËùÒÔÃ»ÓĞ timer ÁéÃô£¬µ«ÆÕÍ¨Ó¦ÓÃÒÑ¾­×ã¹»ÁË
+		// ç´¯è®¡ fps ç®¡ç†å™¨
+		// fps ç®¡ç†å™¨æ˜¯é€šè¿‡ä¸æ–­é‡‡æ ·æ¥è·å¾—å¸§é€Ÿç‡çš„ï¼Œæ‰€ä»¥æ²¡æœ‰ timer çµæ•ï¼Œä½†æ™®é€šåº”ç”¨å·²ç»è¶³å¤Ÿäº†
 		m_fpsMgr->addFrame();
 
-		// »ñµÃ¾«È·Ö¡Ê±¼ä£¬¼´ÉÏÒ»´Î getElapsedTime µ½Õâ´ÎÖ®¼äµÄÊ±¼ä
-		// ×¢Òâ£ºÎª·ÀÖ¹ÓÉÓÚÁ½Ö¡Ê±¼ä¼ä¸ôÌ«³¤£¬µ¼ÖÂÎïÀíÒıÇæ±ÀÀ££¬ËùÒÔÉèÖÃ³É×î²î²»µÃĞ¡ÓÚ 30 Ö¡ / Ãë
+		// è·å¾—ç²¾ç¡®å¸§æ—¶é—´ï¼Œå³ä¸Šä¸€æ¬¡ getElapsedTime åˆ°è¿™æ¬¡ä¹‹é—´çš„æ—¶é—´
+		// æ³¨æ„ï¼šä¸ºé˜²æ­¢ç”±äºä¸¤å¸§æ—¶é—´é—´éš”å¤ªé•¿ï¼Œå¯¼è‡´ç‰©ç†å¼•æ“å´©æºƒï¼Œæ‰€ä»¥è®¾ç½®æˆæœ€å·®ä¸å¾—å°äº 30 å¸§ / ç§’
 		const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
-		//// ÕâÀï´´½¨Ò»¸ö±È´°¿ÚĞ¡µÄ clipper ÇøÓò£¬½öÓÃÓÚ²âÊÔäÖÈ¾µÄ clipper bug
-		//// ÓÉÓÚÈí¼şäÖÈ¾Æ÷£¬Æä clipper ÊÇÍ¨¹ıËã·¨ÊµÏÖµÄ£¬ËùÒÔÈôËã·¨²»Ç¿½¡£¬»áµ¼ÖÂ»æÍ¼Ê±Ô½¹ı clipper ÇøÓò
-		//// ÉõÖÁÔ½¹ı´°¿ÚÇøÓò£¬ËùÒÔ½«»æÍ¼ÇøÓòËõĞ¡Ò»²¿·Ö¿ÉÒÔÉÔÎ¢±ÜÃâ£¬ÒòÔ½½çµ¼ÖÂÏµÍ³±ÀÀ£µÄÏÖÏó
+		//// è¿™é‡Œåˆ›å»ºä¸€ä¸ªæ¯”çª—å£å°çš„ clipper åŒºåŸŸï¼Œä»…ç”¨äºæµ‹è¯•æ¸²æŸ“çš„ clipper bug
+		//// ç”±äºè½¯ä»¶æ¸²æŸ“å™¨ï¼Œå…¶ clipper æ˜¯é€šè¿‡ç®—æ³•å®ç°çš„ï¼Œæ‰€ä»¥è‹¥ç®—æ³•ä¸å¼ºå¥ï¼Œä¼šå¯¼è‡´ç»˜å›¾æ—¶è¶Šè¿‡ clipper åŒºåŸŸ
+		//// ç”šè‡³è¶Šè¿‡çª—å£åŒºåŸŸï¼Œæ‰€ä»¥å°†ç»˜å›¾åŒºåŸŸç¼©å°ä¸€éƒ¨åˆ†å¯ä»¥ç¨å¾®é¿å…ï¼Œå› è¶Šç•Œå¯¼è‡´ç³»ç»Ÿå´©æºƒçš„ç°è±¡
 		//CRect clipper(m_rback);
 		//clipper.DeflateRect(10, 10);
 		//m_rc->setClipperRect(clipper);
 
-		// ÇåÀí back surface
+		// æ¸…ç† back surface
 		m_rc->fillSurface(m_rc->getClipperRect(), my::Color(0.8f, 0.8f, 0.8f));
 
-		// ÇåÀí zbuffer
+		// æ¸…ç† zbuffer
 		m_rc->fillZbuffer(m_rc->getClipperRect(), 0);
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ camera
+		// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ camera
 		m_rc->setViewport(m_rc->getClipperRect());
 		m_rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(90), m_rc->getClipperRect().Width(), m_rc->getClipperRect().Height()));
 		m_rc->setCameraNearZ(1);
 		m_rc->setCameraFarZ(10000);
 
-		// ´ÓÓÃ»§ÊäÈëÀ´¸üĞÂÅ·À­Ïà»úµÄ×ø±êºÍ·½Î»
+		// ä»ç”¨æˆ·è¾“å…¥æ¥æ›´æ–°æ¬§æ‹‰ç›¸æœºçš„åæ ‡å’Œæ–¹ä½
 		m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
 		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ light
+		// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ light
 		my::Vec4<real> l_pos(-30, 30, -30);
 		l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
 		m_rc->clearLightList();
 		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 		m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ material
+		// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ material
 		m_rc->setAmbient(my::Color::WHITE);
 		m_rc->setDiffuse(my::Color::WHITE);
 
-		// ÉèÖÃäÖÈ¾ÉÏÏÂÎÄµÄ texture
+		// è®¾ç½®æ¸²æŸ“ä¸Šä¸‹æ–‡çš„ texture
 		m_rc->setTextureBuffer(m_defaultTexture->getBits(), m_defaultTexture->getPitch(), m_defaultTexture->getWidth(), m_defaultTexture->getHeight());
 
 		// ======================================== TODO: BEGIN ========================================
 
-		// Õâ¸öµØ·½×Ô¶¨ÒåäÖÈ¾£¬¿É¸Ä±äÖ®Ç°äÖÈ¾ÉÏÏÂÎÄµÄÉèÖÃ
+		// è¿™ä¸ªåœ°æ–¹è‡ªå®šä¹‰æ¸²æŸ“ï¼Œå¯æ”¹å˜ä¹‹å‰æ¸²æŸ“ä¸Šä¸‹æ–‡çš„è®¾ç½®
 
 		m_ds3dlistener->setPosition(m_eularCam->getPosition().x, m_eularCam->getPosition().y, m_eularCam->getPosition().z);
 		my::Mat4<real> mCameraRotation = t3d::mat4GetRotationScalePart(m_rc->getCameraMatrix().inverse());
@@ -211,10 +211,10 @@ public:
 
 		// ======================================== TODO: END   ========================================
 
-		// äÖÈ¾Íø¸ñ
+		// æ¸²æŸ“ç½‘æ ¼
 		m_grid->drawZBufferRW(m_rc.get());
 
-		// Êä³ö³£ÓÃĞÅÏ¢£¬ÈçÖ¡ËÙÂÊ¡¢Ïà»ú·½Î»µÈ
+		// è¾“å‡ºå¸¸ç”¨ä¿¡æ¯ï¼Œå¦‚å¸§é€Ÿç‡ã€ç›¸æœºæ–¹ä½ç­‰
 		std::basic_string<charT> strTmp;
 		HDC hdc = m_sback->getDC();
 
@@ -238,18 +238,18 @@ public:
 
 		m_sback->releaseDC(hdc);
 
-		// »æÖÆ¿ØÖÆÌ¨Ä£ÄâÆ÷
+		// ç»˜åˆ¶æ§åˆ¶å°æ¨¡æ‹Ÿå™¨
 		m_consoleSim->draw(m_sback.get(), 10, texty += 20);
 
 		return true;
 	}
 
-	/** ÊµÏÖ ErrorListener::onReport ½Ó¿Ú
-		ÓÃÒÔ½ÓÊÕÀ´×Ô¿ò¼ÜµÄ´íÎó message£¬²¢½«Æä´òÓ¡µ½Ä£Äâ¿ØÖÆÌ¨
+	/** å®ç° ErrorListener::onReport æ¥å£
+		ç”¨ä»¥æ¥æ”¶æ¥è‡ªæ¡†æ¶çš„é”™è¯¯ messageï¼Œå¹¶å°†å…¶æ‰“å°åˆ°æ¨¡æ‹Ÿæ§åˆ¶å°
 	*/
 	virtual void onReport(const std::basic_string<charT> & info)
 	{
-		// ½«´íÎóĞÅÏ¢´òÓ¡µ½¿ØÖÆÌ¨Ä£ÄâÆ÷£¬ÕâÀïÉÔÎ¢×÷ÁËÅĞ¶ÏÒÔ·ÀÖ¹´ğÓ¦ÖØ¸´ĞÅÏ¢
+		// å°†é”™è¯¯ä¿¡æ¯æ‰“å°åˆ°æ§åˆ¶å°æ¨¡æ‹Ÿå™¨ï¼Œè¿™é‡Œç¨å¾®ä½œäº†åˆ¤æ–­ä»¥é˜²æ­¢ç­”åº”é‡å¤ä¿¡æ¯
 		if(m_consoleSim->m_lines.empty() || info != m_consoleSim->m_lines.back())
 		{
 			m_consoleSim->report(info);
@@ -259,19 +259,19 @@ public:
 
 int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
-	// ÔËĞĞÊ±ÄÚ´æĞ¹Â©¼ì²é
+	// è¿è¡Œæ—¶å†…å­˜æ³„æ¼æ£€æŸ¥
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
-	// ÔÚÕâ¸öµØ·½¶ÁÈ¡ÓÃ»§×Ô¶¨Òå·Ö±æÂÊ£¬ÆÁÄ»ÉèÖÃµÈ£¬ÏêÇé²Î¿¼ my::Game::SCREEN_MODE
+	// åœ¨è¿™ä¸ªåœ°æ–¹è¯»å–ç”¨æˆ·è‡ªå®šä¹‰åˆ†è¾¨ç‡ï¼Œå±å¹•è®¾ç½®ç­‰ï¼Œè¯¦æƒ…å‚è€ƒ my::Game::SCREEN_MODE
 	return MyGame().run(my::Game::CONFIG_DESC(800, 600, my::Game::SM_WINDOWED));
 
-	//// ÏÂÃæÊÇ¿ÉÔËĞĞ×î¼òµ¥µÄÓ¦ÓÃ³ÌĞòÄ£ĞÍ
+	//// ä¸‹é¢æ˜¯å¯è¿è¡Œæœ€ç®€å•çš„åº”ç”¨ç¨‹åºæ¨¡å‹
 	//my::Application app;
 	//my::Window * pwnd = app.createWindow(_T("Hello world"));
 	//pwnd->showWindow();
 	//pwnd->updateWindow();
 	//return app.run();
 
-	//// ÏÂÃæÊÇ¿ÉÔËĞĞ×î¼òµ¥µÄÓÎÏ·¿ò¼ÜÄ£ĞÍ
+	//// ä¸‹é¢æ˜¯å¯è¿è¡Œæœ€ç®€å•çš„æ¸¸æˆæ¡†æ¶æ¨¡å‹
 	//return my::Game().run();
 }
