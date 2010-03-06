@@ -147,21 +147,21 @@ namespace my
 		// create ddraw and adjust main window
 		switch(cfg.smode)
 		{
-		case SM_WINDOWED:
+		case SCREEN_MODE_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
 			m_pwnd->adjustClientRect(m_rback);
 			m_pwnd->centerWindow();
 			break;
 
-		case SM_FULLSCREEN16:
+		case SCREEN_MODE_FULLSCREEN16:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_rback);
 			break;
 
-		case SM_FULLSCREEN32:
+		case SCREEN_MODE_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
@@ -311,7 +311,7 @@ namespace my
 	//	return run(CONFIG_DESC(vmap["width"].as<int>(), vmap["height"].as<int>(), vmap["fullscreen-mode"].as<int>()));
 	//}
 
-	int Game::run(const CONFIG_DESC & cfg /*= CONFIG_DESC(800, 600, SM_WINDOWED)*/)
+	int Game::run(const CONFIG_DESC & cfg /*= CONFIG_DESC(800, 600, SCREEN_MODE_WINDOWED)*/)
 	{
 		int res = 1;
 
@@ -329,7 +329,7 @@ namespace my
 		}
 		catch(t3d::Exception & e)
 		{
-			::MessageBox(m_pwnd && (cfg.smode == SM_WINDOWED) ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+			::MessageBox(m_pwnd && (cfg.smode == SCREEN_MODE_WINDOWED) ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
 			exit(1);
 		}
 

@@ -110,15 +110,15 @@ namespace my
 	public:
 		enum SCREEN_MODE
 		{
-			SM_WINDOWED = 0,
-			SM_FULLSCREEN16 = 16,
-			SM_FULLSCREEN32 = 32,
+			SCREEN_MODE_WINDOWED = 0,
+			SCREEN_MODE_FULLSCREEN16,
+			SCREEN_MODE_FULLSCREEN32,
 		};
 
 		class CONFIG_DESC
 		{
 		public:
-			CONFIG_DESC(DWORD _width, DWORD _height, int _smode)
+			CONFIG_DESC(DWORD _width, DWORD _height, SCREEN_MODE _smode)
 				: width(_width), height(_height), smode(_smode)
 			{
 			}
@@ -126,7 +126,7 @@ namespace my
 		public:
 			DWORD width;
 			DWORD height;
-			int smode;
+			SCREEN_MODE smode;
 		};
 
 	protected:
@@ -172,7 +172,7 @@ namespace my
 
 		//int run(LPTSTR lpCmdLine);
 
-		int run(const CONFIG_DESC & cfg = CONFIG_DESC(800, 600, SM_WINDOWED));
+		int run(const CONFIG_DESC & cfg = CONFIG_DESC(800, 600, SCREEN_MODE_WINDOWED));
 
 		void onIdle(void);
 
