@@ -712,10 +712,10 @@ public:
 			::SendMessage(m_hdlg, WM_COMMAND, MAKEWPARAM(IDC_COMBO1, CBN_SELCHANGE), (LPARAM)::GetDlgItem(m_hdlg, IDC_COMBO1));
 			switch(m_cfg.smode)
 			{
-			case my::Game::SM_FULLSCREEN16:
+			case my::Game::SCREEN_MODE_FULLSCREEN16:
 				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO2));
 				break;
-			case my::Game::SM_FULLSCREEN32:
+			case my::Game::SCREEN_MODE_FULLSCREEN32:
 				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO3));
 				break;
 			default:
@@ -763,16 +763,16 @@ public:
 					m_cfg.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
 					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
 					{
-						m_cfg.smode = my::Game::SM_WINDOWED;
+						m_cfg.smode = my::Game::SCREEN_MODE_WINDOWED;
 					}
 					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
 					{
-						m_cfg.smode = my::Game::SM_FULLSCREEN16;
+						m_cfg.smode = my::Game::SCREEN_MODE_FULLSCREEN16;
 					}
 					else
 					{
 						_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
-						m_cfg.smode = my::Game::SM_FULLSCREEN32;
+						m_cfg.smode = my::Game::SCREEN_MODE_FULLSCREEN32;
 					}
 					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO4))
 					{
@@ -808,7 +808,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	InitCommonControlsEx(&InitCtrls);
 
 	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
-	MyDialog dlg(MyConfig(800, 600, my::Game::SM_WINDOWED, (real)800 / 600));
+	MyDialog dlg(MyConfig(800, 600, my::Game::SCREEN_MODE_WINDOWED, (real)800 / 600));
 	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_cfg);
 
 	//// 下面是可运行最简单的应用程序模型
