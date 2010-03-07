@@ -13,8 +13,8 @@ MyConfig MyConfig::LoadFromFile(const std::basic_string<charT> & fileName)
 
 void MyConfig::SaveToFile(const MyConfig & config, const std::basic_string<charT> & fileName)
 {
-	::WritePrivateProfileString(_T("config"), _T("width"), str_printf(_T("%u"), config.width).c_str(), fileName.c_str());
-	::WritePrivateProfileString(_T("config"), _T("height"), str_printf(_T("%u"), config.height).c_str(), fileName.c_str());
-	::WritePrivateProfileString(_T("config"), _T("screenmode"), str_printf(_T("%u"), config.smode).c_str(), fileName.c_str());
-	::WritePrivateProfileString(_T("config"), _T("aspectratio"), str_printf(_T("%u"), config.aspect_ratio_mode).c_str(), fileName.c_str());
+	::WritePrivateProfileString(_T("config"), _T("width"), str_printf(_T("%d"), config.width).c_str(), fileName.c_str());
+	::WritePrivateProfileString(_T("config"), _T("height"), str_printf(_T("%d"), config.height).c_str(), fileName.c_str());
+	::WritePrivateProfileString(_T("config"), _T("screenmode"), str_printf(_T("%d"), config.smode).c_str(), fileName.c_str());
+	::WritePrivateProfileString(_T("config"), _T("aspectratio"), str_printf(_T("%d"), config.aspect_ratio_mode).c_str(), fileName.c_str());
 }

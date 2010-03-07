@@ -8,6 +8,11 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	// check memory leak
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
+	// common control supported
+	INITCOMMONCONTROLSEX InitCtrls = {sizeof(InitCtrls)};
+	InitCtrls.dwICC = ICC_WIN95_CLASSES;
+	InitCommonControlsEx(&InitCtrls);
+
 	// parser the application file path to obtain the ini file path
 	my::Game game;
 	std::basic_string<charT> strConfigPath = game.getModuleFileName();
@@ -23,11 +28,15 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	}
 	strConfigPath = strCurrentDir + strConfigPath.substr(lpos, rpos - lpos) + _T(".ini");
 
+	// show configuration dialog
 	MyConfig cfg(MyConfig::LoadFromFile(strConfigPath));
 	MyDialog dlg(cfg, game.getHandle());
 	if(IDOK == dlg.doModel())
 	{
-		//MyConfig::SaveToFile(dlg.m_cfg, strConfigPath);
+		if(BST_CHECKED == dlg.m_save_configuration)
+		{
+			MyConfig::SaveToFile(dlg.m_cfg, strConfigPath);
+		}
 	}
 	return 0;
 }
