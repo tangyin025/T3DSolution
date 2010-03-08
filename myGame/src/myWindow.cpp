@@ -878,10 +878,10 @@ namespace my
 
 	Application::~Application(void)
 	{
-		while(!m_wndMap.empty())
-		{
-			m_wndMap.begin()->second->destroyWindow();
-		}
+		//while(!m_wndMap.empty())
+		//{
+		//	m_wndMap.begin()->second->destroyWindow();
+		//}
 
 		s_ptr = NULL;
 	}

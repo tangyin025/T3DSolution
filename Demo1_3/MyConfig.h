@@ -14,11 +14,9 @@ public:
 	ASPECT_RATIO aspect_ratio_mode;
 
 public:
-	MyConfig(DWORD width, DWORD height, my::Game::SCREEN_MODE smode, ASPECT_RATIO _aspect_ratio_mode)
-		: my::Game::CONFIG_DESC(width, height, smode)
-		, aspect_ratio_mode(_aspect_ratio_mode)
-	{
-	}
+	MyConfig(DWORD width, DWORD height, my::Game::SCREEN_MODE smode, ASPECT_RATIO _aspect_ratio_mode);
+
+	~MyConfig(void);
 
 public:
 	static MyConfig LoadFromFile(const std::basic_string<charT> & fileName);

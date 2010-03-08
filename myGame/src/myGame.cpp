@@ -315,8 +315,8 @@ namespace my
 	{
 		int res = 1;
 
-		try
-		{
+		//try
+		//{
 			// prepare game initialize
 			if(prepare(cfg))
 			{
@@ -326,12 +326,12 @@ namespace my
 
 			// do shutdown
 			onShutdown();
-		}
-		catch(t3d::Exception & e)
-		{
-			::MessageBox(m_pwnd && (cfg.smode == SCREEN_MODE_WINDOWED) ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
-			exit(1);
-		}
+		//}
+		//catch(t3d::Exception & e)
+		//{
+		//	::MessageBox(m_pwnd && (cfg.smode == SCREEN_MODE_WINDOWED) ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+		//	exit(1);
+		//}
 
 		return res;
 	}

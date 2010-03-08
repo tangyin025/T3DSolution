@@ -10,6 +10,10 @@ MyDialog::MyDialog(const MyConfig & cfg, HINSTANCE hInstance /*= ::GetModuleHand
 {
 }
 
+MyDialog::~MyDialog(void)
+{
+}
+
 INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch(uMsg)

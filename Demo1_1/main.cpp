@@ -71,6 +71,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	}
 	catch(t3d::Exception & e)
 	{
+		// 报告异常信息
 		::MessageBox(NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
 	}
 

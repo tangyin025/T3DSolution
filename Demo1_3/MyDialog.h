@@ -13,5 +13,7 @@ public:
 public:
 	MyDialog(const MyConfig & cfg, HINSTANCE hInstance = ::GetModuleHandle(NULL), HWND hWndParent = NULL);
 
+	~MyDialog(void);
+
 	INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
