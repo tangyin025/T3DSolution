@@ -319,20 +319,16 @@ public:
 		m_resourceMgr->addDir(_T("."));
 		m_resourceMgr->addDir(_T("../../common/medias"));
 
-		// load 第一个贴图
-		my::IOStreamPtr tmpStream;
-		my::ImagePtr tmpImage;
-		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("checker5x5.bmp"))));
-		m_defaultTexture = my::ImagePtr(my::ColorConversion::getSingleton().convertImage(tmpImage.get()));
-
 		// ======================================== TODO: BEGIN ========================================
 
 		// 在这个地方初始化自定义的对象
 
 		// load 场景
+		my::IOStreamPtr tmpStream;
 		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("office_tri_list.mesh.xml"));
 		m_scene = my::ObjectFromOgreMeshPtr(new my::ObjectFromOgreMesh(tmpStream.get()));
 
+		my::ImagePtr tmpImage;
 		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png"))));
 		m_scene_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
 
@@ -448,9 +444,6 @@ public:
 		// 设置渲染上下文的 material
 		m_rc->setAmbient(my::Color::WHITE);
 		m_rc->setDiffuse(my::Color::WHITE);
-
-		// 设置渲染上下文的 texture
-		m_rc->setTextureBuffer(m_defaultTexture->getBits(), m_defaultTexture->getPitch(), m_defaultTexture->getWidth(), m_defaultTexture->getHeight());
 
 		// ======================================== TODO: BEGIN ========================================
 
@@ -807,17 +800,29 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
-	MyDialog dlg(MyConfig(800, 600, my::Game::SCREEN_MODE_WINDOWED, (real)800 / 600));
-	return IDOK != dlg.doModel() ? 0 : MyGame().run(dlg.m_cfg);
+	// the global instance
+	MyGame game;
 
-	//// 下面是可运行最简单的应用程序模型
-	//my::Application app;
-	//my::Window * pwnd = app.createWindow(_T("Hello world"));
-	//pwnd->showWindow();
-	//pwnd->updateWindow();
-	//return app.run();
+	try
+	{
+		// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
+		MyDialog dlg(MyConfig(800, 600, my::Game::SCREEN_MODE_WINDOWED, (real)800 / 600));
+		return IDOK != dlg.doModel() ? 0 : game.run(dlg.m_cfg);
 
-	//// 下面是可运行最简单的游戏框架模型
-	//return my::Game().run();
+		//// 下面是可运行最简单的应用程序模型
+		//my::Application app;
+		//my::Window * pwnd = app.createWindow(_T("Hello world"));
+		//pwnd->showWindow();
+		//pwnd->updateWindow();
+		//return app.run();
+
+		//// 下面是可运行最简单的游戏框架模型
+		//return my::Game().run();
+	}
+	catch(t3d::Exception & e)
+	{
+		// 报告异常信息
+		::MessageBox(NULL != game.m_pwnd ? game.m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+		exit(1);
+	}
 }

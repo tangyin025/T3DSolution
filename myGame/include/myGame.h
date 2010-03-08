@@ -129,7 +129,7 @@ namespace my
 			SCREEN_MODE smode;
 		};
 
-	protected:
+	public:
 		ErrorReporterPtr m_errorRpt;
 
 		ResourceMgrPtr m_resourceMgr;
