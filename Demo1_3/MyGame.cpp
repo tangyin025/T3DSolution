@@ -1,4 +1,4 @@
-
+ï»¿
 #include "StdAfx.h"
 #include "MyGame.h"
 #include "MyConfig.h"
@@ -98,9 +98,9 @@ bool MyGame::onFrame(void)
 	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
 	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
-	//// ÕâÀï´´½¨Ò»¸ö±È´°¿ÚÐ¡µÄ clipper ÇøÓò£¬½öÓÃÓÚ²âÊÔäÖÈ¾µÄ clipper bug
-	//// ÓÉÓÚÈí¼þäÖÈ¾Æ÷£¬Æä clipper ÊÇÍ¨¹ýËã·¨ÊµÏÖµÄ£¬ËùÒÔÈôËã·¨²»Ç¿½¡£¬»áµ¼ÖÂ»æÍ¼Ê±Ô½¹ý clipper ÇøÓò
-	//// ÉõÖÁÔ½¹ý´°¿ÚÇøÓò£¬ËùÒÔ½«»æÍ¼ÇøÓòËõÐ¡Ò»²¿·Ö¿ÉÒÔÉÔÎ¢±ÜÃâ£¬ÒòÔ½½çµ¼ÖÂÏµÍ³±ÀÀ£µÄÏÖÏó
+	//// è¿™é‡Œåˆ›å»ºä¸€ä¸ªæ¯”çª—å£å°çš„ clipper åŒºåŸŸï¼Œä»…ç”¨äºŽæµ‹è¯•æ¸²æŸ“çš„ clipper bug
+	//// ç”±äºŽè½¯ä»¶æ¸²æŸ“å™¨ï¼Œå…¶ clipper æ˜¯é€šè¿‡ç®—æ³•å®žçŽ°çš„ï¼Œæ‰€ä»¥è‹¥ç®—æ³•ä¸å¼ºå¥ï¼Œä¼šå¯¼è‡´ç»˜å›¾æ—¶è¶Šè¿‡ clipper åŒºåŸŸ
+	//// ç”šè‡³è¶Šè¿‡çª—å£åŒºåŸŸï¼Œæ‰€ä»¥å°†ç»˜å›¾åŒºåŸŸç¼©å°ä¸€éƒ¨åˆ†å¯ä»¥ç¨å¾®é¿å…ï¼Œå› è¶Šç•Œå¯¼è‡´ç³»ç»Ÿå´©æºƒçš„çŽ°è±¡
 	//CRect clipper(m_rback);
 	//clipper.DeflateRect(10, 10);
 	//m_rc->setClipperRect(clipper);
