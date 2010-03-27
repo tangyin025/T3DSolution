@@ -316,8 +316,8 @@ public:
 		m_rc->setClipperRect(clipper);
 
 		// 添加媒体搜索路径，建立快捷方式时要注意当前路径的位置
-		m_resourceMgr->addDir(_T("."));
-		m_resourceMgr->addDir(_T("../../common/medias"));
+		my::ResourceMgr::getSingleton().addDir(_T("."));
+		my::ResourceMgr::getSingleton().addDir(_T("../../common/medias"));
 
 		// ======================================== TODO: BEGIN ========================================
 
@@ -668,7 +668,7 @@ public:
 };
 
 class MyDialog
-	: public my::ModelDialog	// 定义一个简单的 model 对话框，用来保存设置
+	: public my::Dialog	// 定义一个简单的 model 对话框，用来保存设置
 {
 public:
 	MyConfig m_cfg;				// 这个用来保存用户自定义设置
@@ -678,7 +678,7 @@ public:
 		在这个地方已经开始了模式对话框，调用方可以通过 m_nResult 会的对话框的返回值
 	*/
 	MyDialog(const MyConfig & cfg)
-		: ModelDialog(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), ::GetDesktopWindow())
+		: Dialog(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), ::GetDesktopWindow())
 		, m_cfg(cfg)
 	{
 	}
@@ -786,7 +786,7 @@ public:
 			}
 			break;
 		}
-		return ModelDialog::onProc(hwndDlg, uMsg, wParam, lParam);
+		return Dialog::onProc(hwndDlg, uMsg, wParam, lParam);
 	}
 };
 

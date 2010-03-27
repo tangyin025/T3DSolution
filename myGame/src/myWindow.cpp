@@ -28,13 +28,13 @@ namespace my
 	{
 	}
 
-	ModelDialog * ModelDialog::s_ptr = NULL;
+	Dialog * Dialog::s_ptr = NULL;
 
-	INT_PTR CALLBACK ModelDialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	INT_PTR CALLBACK Dialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if(uMsg == WM_INITDIALOG)
 		{
-			_ASSERT(NULL == s_ptr); s_ptr = (ModelDialog *)lParam; s_ptr->m_hdlg = hwndDlg;
+			_ASSERT(NULL == s_ptr); s_ptr = (Dialog *)lParam; s_ptr->m_hdlg = hwndDlg;
 		}
 
 		if(NULL != s_ptr)
@@ -45,7 +45,7 @@ namespace my
 		return ::DefWindowProc(hwndDlg, uMsg, wParam, lParam);
 	}
 
-	INT_PTR ModelDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	INT_PTR Dialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		_ASSERT(m_hdlg == hwndDlg);
 
@@ -70,7 +70,7 @@ namespace my
 		UNREFERENCED_PARAMETER(lParam);
 	}
 
-	ModelDialog::ModelDialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent /*= NULL*/)
+	Dialog::Dialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent /*= NULL*/)
 		: m_hInstance(hInstance)
 		, m_lpTemplateName(lpTemplateName)
 		, m_hWndParent(hWndParent)
@@ -79,22 +79,22 @@ namespace my
 		_ASSERT(NULL == s_ptr);
 	}
 
-	ModelDialog::~ModelDialog(void)
+	Dialog::~Dialog(void)
 	{
 		_ASSERT(NULL == s_ptr);
 	}
 
-	INT_PTR ModelDialog::doModel(void)
+	INT_PTR Dialog::doModel(void)
 	{
 		INT_PTR nResult = ::DialogBoxParam(
-			m_hInstance, m_lpTemplateName, m_hWndParent, my::ModelDialog::DialogProc, (LPARAM)this);
+			m_hInstance, m_lpTemplateName, m_hWndParent, my::Dialog::DialogProc, (LPARAM)this);
 
 		_ASSERT(NULL != s_ptr); s_ptr = NULL;
 
 		return nResult;
 	}
 
-	void ModelDialog::endDialog(INT_PTR nResult)
+	void Dialog::endDialog(INT_PTR nResult)
 	{
 		_ASSERT(NULL != m_hdlg);
 

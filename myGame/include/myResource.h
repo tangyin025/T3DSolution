@@ -22,6 +22,7 @@
 #pragma pop_macro("max")
 #pragma pop_macro("min")
 #include <boost/shared_ptr.hpp>
+#include "mySingleton.h"
 
 namespace my
 {
@@ -77,17 +78,8 @@ namespace my
 		FILE * m_handle;
 	};
 
-	class ResourceMgr
+	class ResourceMgr : public Singleton<ResourceMgr>
 	{
-	protected:
-		static ResourceMgr * s_ptr;
-
-	public:
-		static inline ResourceMgr & getSingleton(void)
-		{
-			_ASSERT(NULL != s_ptr); return * s_ptr;
-		}
-
 	public:
 		ResourceMgr(void);
 
@@ -144,7 +136,8 @@ namespace my
 
 	class Image
 	{
-	protected:
+	//protected:
+	public:
 		CImage m_image;
 
 	public:

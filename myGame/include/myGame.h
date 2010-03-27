@@ -7,6 +7,7 @@
 #include <t3dlib2.h>
 #include <t3dlib3.h>
 #include <t3dlib6.h>
+#include "mySingleton.h"
 #include "myWindow.h"
 #include "myMath.h"
 #include "myResource.h"
@@ -24,17 +25,8 @@ namespace my
 		virtual void onReport(const std::basic_string<charT> & info) = 0;
 	};
 
-	class ErrorReporter
+	class ErrorReporter : public Singleton<ErrorReporter>
 	{
-	protected:
-		static ErrorReporter * s_ptr;
-
-	public:
-		static ErrorReporter & getSingleton(void)
-		{
-			_ASSERT(NULL != s_ptr); return * s_ptr;
-		}
-
 	public:
 		ErrorReporter(void);
 

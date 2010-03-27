@@ -48,20 +48,14 @@ namespace my
 		return m_handle;
 	}
 
-	ResourceMgr * ResourceMgr::s_ptr = NULL;
+	Singleton<ResourceMgr>::DRIVED_CLASS_PTR ResourceMgr::s_ptr;
 
 	ResourceMgr::ResourceMgr(void)
 	{
-		_ASSERT(NULL == s_ptr);
-
-		s_ptr = this;
 	}
 
 	ResourceMgr::~ResourceMgr(void)
 	{
-		_ASSERT(this == s_ptr);
-
-		s_ptr = NULL;
 	}
 
 	void ResourceMgr::addDir(const std::basic_string<charT> & dir)
