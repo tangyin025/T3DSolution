@@ -11,18 +11,14 @@ namespace my
 	{
 	}
 
-	ErrorReporter * ErrorReporter::s_ptr = NULL;
+	Singleton<ErrorReporter>::DRIVED_CLASS_PTR ErrorReporter::s_ptr;
 
 	ErrorReporter::ErrorReporter(void)
 	{
-		_ASSERT(NULL == s_ptr);
-		s_ptr = this;
 	}
 
 	ErrorReporter::~ErrorReporter(void)
 	{
-		_ASSERT(this == s_ptr);
-		s_ptr = NULL;
 	}
 
 	void ErrorReporter::addErrorListener(ErrorListener * listener)
@@ -122,11 +118,11 @@ namespace my
 
 	bool Game::prepare(const CONFIG_DESC & cfg)
 	{
-		// create error reporter
-		m_errorRpt = ErrorReporterPtr(new ErrorReporter());
+		//// create error reporter
+		//m_errorRpt = ErrorReporterPtr(new ErrorReporter());
 
-		// create resource manager
-		m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
+		//// create resource manager
+		//m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
 
 		// create main window
 		m_pwnd = createWindow(getModuleFileName());

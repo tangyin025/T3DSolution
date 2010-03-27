@@ -76,8 +76,8 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 	_ASSERT(clipper.bottom	<= m_rback.bottom);
 	m_rc->setClipperRect(clipper);
 
-	// set default media files searching directory
-	m_resourceMgr->addDir(_T("."));
+	//// set default media files searching directory
+	//m_resourceMgr->addDir(_T("."));
 
 	return my::Game::onInit(cfg);
 }

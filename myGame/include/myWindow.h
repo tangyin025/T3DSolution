@@ -30,10 +30,10 @@ namespace my
 
 #define T3D_WINEXCEPT(code) { throw my::WinException( _T(__FILE__), __LINE__, (code) ); }
 
-	class ModelDialog
+	class Dialog
 	{
 	public:
-		static ModelDialog * s_ptr;
+		static Dialog * s_ptr;
 
 		static INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -50,9 +50,9 @@ namespace my
 		virtual INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	public:
-		ModelDialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent = NULL);
+		Dialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent = NULL);
 
-		~ModelDialog(void);
+		~Dialog(void);
 
 		INT_PTR doModel(void);
 

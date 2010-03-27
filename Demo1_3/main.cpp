@@ -32,6 +32,10 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		}
 		strConfigPath = strCurrentDir + strConfigPath.substr(lpos, rpos - lpos) + _T(".ini");
 
+		// initialize searching path
+		my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias"));
+		my::ResourceMgr::getSingleton().addDir(_T("."));
+
 		// show configuration dialog
 		int ret = 0;
 		MyConfig cfg(MyConfig::LoadFromFile(strConfigPath));
