@@ -5,6 +5,8 @@
 #include <t3dlib1.h>	// ddraw 封装
 #include <t3dlib6.h>	// 渲染上下文
 
+#pragma comment(lib, "winmm.lib") // windows 媒体库
+
 using t3d::real;
 
 #ifdef _DEBUG
@@ -219,4 +221,29 @@ void DoRender(void)
 		由于本实例只使用了 t3dlib，没有使用 myGame，所以很多事情做起来十分麻烦
 		详情参见 Demo1_2/main.cpp 的 MyGame::onFrame
 	*/
+
+	// 用于计算 fps 的集合
+	static DWORD last_time = ::timeGetTime();
+	static DWORD past_time = 0;
+	static DWORD past_frames = 0;
+	static real fps = 0;
+
+	// 平均采样法计算 fps
+	DWORD curr_time = ::timeGetTime();
+	past_time += curr_time - last_time;
+	past_frames += 1;
+	if(past_time > 1000)
+	{
+		fps = (real)past_frames / (real)past_time * 1000;
+		past_time = 0;
+		past_frames = 0;
+	}
+	last_time = curr_time;
+
+	// 输出 fps
+	TCHAR buffer[MAX_PATH];
+	_stprintf_s(buffer, _T("fps: %.1f"), fps);
+	HDC hdc = g_ddsurface->getDC();
+	::TextOut(hdc, 10, 10, buffer, _tcslen(buffer));
+	g_ddsurface->releaseDC(hdc);
 }
