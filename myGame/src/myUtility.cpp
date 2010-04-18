@@ -133,78 +133,78 @@ namespace my
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
-	// EularCamera
+	// EulerCamera
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovFront(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovFront(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(0)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(0)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovFrontRight(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovFrontRight(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(45)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(45)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovRight(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovRight(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(90)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(90)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovRightBack(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovRightBack(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(135)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(135)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovBack(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovBack(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(180)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(180)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovBackLeft(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovBackLeft(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(225)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(225)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovLeft(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovLeft(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(270)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(270)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovLeftFront(t3d::Vec4<real> & vres, real angle, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovLeftFront(t3d::Vec4<real> & vres, real angle, real scaler)
 	{
 		vres.x = sin(angle + DEG_TO_RAD(315)) * scaler;
 		vres.z = cos(angle + DEG_TO_RAD(315)) * scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovUp(t3d::Vec4<real> & vres, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovUp(t3d::Vec4<real> & vres, real scaler)
 	{
 		vres.y = scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> & EularCamera::updateVec4OnMovDown(t3d::Vec4<real> & vres, real scaler)
+	t3d::Vec4<real> & EulerCamera::updateVec4OnMovDown(t3d::Vec4<real> & vres, real scaler)
 	{
 		vres.y = -scaler;
 		return vres;
 	}
 
-	t3d::Vec4<real> EularCamera::buildMovOffset(t3d::DIKeyboard * keyboard, real angle, real scaler)
+	t3d::Vec4<real> EulerCamera::buildMovOffset(t3d::DIKeyboard * keyboard, real angle, real scaler)
 	{
 		static const DWORD MOV_STATE_UP		= 0x01;
 		static const DWORD MOV_STATE_DOWN	= 0x02;
@@ -283,12 +283,12 @@ namespace my
 		return vres;
 	}
 
-	t3d::Vec4<real> EularCamera::buildRotOffset(t3d::DIMouse * mouse)
+	t3d::Vec4<real> EulerCamera::buildRotOffset(t3d::DIMouse * mouse)
 	{
 		return my::Vec4<real>(DEG_TO_RAD(mouse->getY()), DEG_TO_RAD(mouse->getX()), 0);
 	}
 
-	EularCamera::EularCamera(void)
+	EulerCamera::EulerCamera(void)
 		: m_posDefault(my::Vec4<real>::ZERO)
 		, m_pos(my::Vec4<real>::ZERO)
 		, m_rotDefault(my::Vec4<real>::ZERO)
@@ -297,123 +297,123 @@ namespace my
 	{
 	}
 
-	EularCamera::~EularCamera(void)
+	EulerCamera::~EulerCamera(void)
 	{
 	}
 
-	void EularCamera::setDefaultPosition(const t3d::Vec4<real> & pos)
+	void EulerCamera::setDefaultPosition(const t3d::Vec4<real> & pos)
 	{
 		m_posDefault = pos;
 	}
 
-	const t3d::Vec4<real> & EularCamera::getDefaultPosition(void) const
+	const t3d::Vec4<real> & EulerCamera::getDefaultPosition(void) const
 	{
 		return m_posDefault;
 	}
 
-	void EularCamera::setDefaultRotation(const t3d::Vec4<real> & rot)
+	void EulerCamera::setDefaultRotation(const t3d::Vec4<real> & rot)
 	{
 		m_rotDefault = rot;
 	}
 
-	const t3d::Vec4<real> & EularCamera::getDefaultRotation(void) const
+	const t3d::Vec4<real> & EulerCamera::getDefaultRotation(void) const
 	{
 		return m_rotDefault;
 	}
 
-	void EularCamera::setPosition(const t3d::Vec4<real> & pos)
+	void EulerCamera::setPosition(const t3d::Vec4<real> & pos)
 	{
 		m_pos = pos;
 	}
 
-	void EularCamera::addPosition(const t3d::Vec4<real> & pos)
+	void EulerCamera::addPosition(const t3d::Vec4<real> & pos)
 	{
 		t3d::vec3AddSelf(m_pos, pos);
 	}
 
-	const t3d::Vec4<real> & EularCamera::getPosition(void) const
+	const t3d::Vec4<real> & EulerCamera::getPosition(void) const
 	{
 		return m_pos;
 	}
 
-	void EularCamera::setRotation(const t3d::Vec4<real> & rot)
+	void EulerCamera::setRotation(const t3d::Vec4<real> & rot)
 	{
 		m_rot = rot;
 	}
 
-	void EularCamera::addRotation(const t3d::Vec4<real> & rot)
+	void EulerCamera::addRotation(const t3d::Vec4<real> & rot)
 	{
 		t3d::vec3AddSelf(m_rot, rot);
 	}
 
-	const t3d::Vec4<real> & EularCamera::getRotation(void) const
+	const t3d::Vec4<real> & EulerCamera::getRotation(void) const
 	{
 		return m_rot;
 	}
 
-	void EularCamera::setPitch(real value)
+	void EulerCamera::setPitch(real value)
 	{
 		m_rot.x = value;
 	}
 
-	void EularCamera::addPitch(real value)
+	void EulerCamera::addPitch(real value)
 	{
 		m_rot.x += value;
 	}
 
-	real EularCamera::getPitch(void) const
+	real EulerCamera::getPitch(void) const
 	{
 		return m_rot.x;
 	}
 
-	void EularCamera::setYaw(real value)
+	void EulerCamera::setYaw(real value)
 	{
 		m_rot.y = value;
 	}
 
-	void EularCamera::addYaw(real value)
+	void EulerCamera::addYaw(real value)
 	{
 		m_rot.y += value;
 	}
 
-	real EularCamera::getYaw(void) const
+	real EulerCamera::getYaw(void) const
 	{
 		return m_rot.y;
 	}
 
-	void EularCamera::setRoll(real value)
+	void EulerCamera::setRoll(real value)
 	{
 		m_rot.z = value;
 	}
 
-	void EularCamera::addRoll(real value)
+	void EulerCamera::addRoll(real value)
 	{
 		m_rot.z += value;
 	}
 
-	real EularCamera::getRoll(void) const
+	real EulerCamera::getRoll(void) const
 	{
 		return m_rot.z;
 	}
 
-	void EularCamera::setMovSpeed(real speed)
+	void EulerCamera::setMovSpeed(real speed)
 	{
 		m_movSpeed = speed;
 	}
 
-	real EularCamera::getMovSpeed(void) const
+	real EulerCamera::getMovSpeed(void) const
 	{
 		return m_movSpeed;
 	}
 
-	void EularCamera::reset(void)
+	void EulerCamera::reset(void)
 	{
 		setPosition(getDefaultPosition());
 
 		setRotation(getDefaultRotation());
 	}
 
-	void EularCamera::update(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time)
+	void EulerCamera::update(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real step_time)
 	{
 		if(!keyboard->isKeyDown(DIK_R))
 		{

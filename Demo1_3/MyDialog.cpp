@@ -23,8 +23,8 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			// initialize dialog title
 			::SetWindowText(m_hdlg, _T("User Configuration"));
 
-			// initialize splash image
-			m_image = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("splash.jpg"))));
+			//// initialize splash image
+			//m_image = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("splash.jpg"))));
 
 			// initialize combo box1 with resolutions
 			VERIFY(0 == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("320x240")));
@@ -84,8 +84,7 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			// draw this image to screen
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwndDlg, &ps);
-			//m_image->m_image.BitBlt(hdc, 0, 0, SRCCOPY);
-			m_image->m_image.StretchBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), SRCCOPY);
+			//m_image->m_image.StretchBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), SRCCOPY);
 			EndPaint(hwndDlg, &ps);
 		}
 		break;

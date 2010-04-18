@@ -22,5 +22,5 @@ protected:
 
 	my::GridPtr m_grid;
 
-	my::EularCameraPtr m_eularCam;
+	my::EulerCameraPtr m_eulerCam;
 };

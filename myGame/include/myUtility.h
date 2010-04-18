@@ -78,10 +78,10 @@ namespace my
 	typedef boost::shared_ptr<Timer> TimerPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
-	// EularCamera
+	// EulerCamera
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class EularCamera
+	class EulerCamera
 	{
 	public:
 		static t3d::Vec4<real> & updateVec4OnMovFront(t3d::Vec4<real> & vres, real angle, real scaler);
@@ -109,9 +109,9 @@ namespace my
 		static t3d::Vec4<real> buildRotOffset(t3d::DIMouse * mouse);
 
 	public:
-		EularCamera(void);
+		EulerCamera(void);
 
-		~EularCamera(void);
+		~EulerCamera(void);
 
 	public:
 		void setDefaultPosition(const t3d::Vec4<real> & pos);
@@ -172,7 +172,7 @@ namespace my
 		real m_movSpeed;
 	};
 
-	typedef boost::shared_ptr<EularCamera> EularCameraPtr;
+	typedef boost::shared_ptr<EulerCamera> EulerCameraPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ConsoleSimulator

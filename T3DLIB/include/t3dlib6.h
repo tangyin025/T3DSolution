@@ -911,9 +911,9 @@ namespace t3d
 		CAMERA m_camera;
 
 	public:
-		static Mat4<real> buildCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq = RS_ZXY);
+		static Mat4<real> buildCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq = RS_ZXY);
 
-		static Mat4<real> buildInverseCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq = RS_ZXY);
+		static Mat4<real> buildInverseCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq = RS_ZXY);
 
 		static Mat4<real> buildInverseCameraTransformUVN(const Vec4<real> & pos, const Vec4<real> & target, const Vec4<real> & up);
 

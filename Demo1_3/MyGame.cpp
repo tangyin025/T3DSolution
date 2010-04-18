@@ -24,11 +24,11 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 	// initialize grid
 	m_grid = my::GridPtr(new my::Grid());
 
-	// initialize eular camera
-	m_eularCam = my::EularCameraPtr(new my::EularCamera());
-	m_eularCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
-	m_eularCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
-	m_eularCam->reset();
+	// initialize euler camera
+	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
+	m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
+	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
+	m_eulerCam->reset();
 
 	// calculate aspect ratio
 	const MyConfig * pcfg = static_cast<const MyConfig *>(&cfg);
@@ -117,13 +117,13 @@ bool MyGame::onFrame(void)
 	m_rc->setCameraNearZ(1);
 	m_rc->setCameraFarZ(10000);
 
-	// update eular cameras position and orientation by user input
-	m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
-	m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
+	// update euler cameras position and orientation by user input
+	m_eulerCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
+	m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);
-	l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
+	l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
 	m_rc->clearLightList();
 	m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
@@ -154,7 +154,7 @@ bool MyGame::onFrame(void)
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 	strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
-		RAD_TO_DEG(m_eularCam->getRotation().x), RAD_TO_DEG(m_eularCam->getRotation().y), RAD_TO_DEG(m_eularCam->getRotation().z));
+		RAD_TO_DEG(m_eulerCam->getRotation().x), RAD_TO_DEG(m_eulerCam->getRotation().y), RAD_TO_DEG(m_eulerCam->getRotation().z));
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 	m_sback->releaseDC(hdc);
