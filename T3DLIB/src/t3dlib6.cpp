@@ -804,7 +804,7 @@ namespace t3d
 	//	return m_lightList.end();
 	//}
 
-	Mat4<real> CameraContext::buildCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
+	Mat4<real> CameraContext::buildCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
 	{
 		switch(rot_seq)
 		{
@@ -825,7 +825,7 @@ namespace t3d
 		};
 	}
 
-	Mat4<real> CameraContext::buildInverseCameraTransformEular(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
+	Mat4<real> CameraContext::buildInverseCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
 	{
 		switch(rot_seq)
 		{

@@ -160,10 +160,10 @@ public:
 	void updateCharacter(t3d::DIKeyboard * keyboard, t3d::DIMouse * mouse, real /*step_time*/)
 	{
 		// 控制跟踪器的方位
-		t3d::vec3AddSelf(m_characterTracker.rotation, my::EularCamera::buildRotOffset(mouse));
+		t3d::vec3AddSelf(m_characterTracker.rotation, my::EulerCamera::buildRotOffset(mouse));
 
 		// 控制角色移动
-		t3d::Vec4<real> movOffset = my::EularCamera::buildMovOffset(keyboard, m_characterTracker.rotation.y, 20 /** step_time*/);
+		t3d::Vec4<real> movOffset = my::EulerCamera::buildMovOffset(keyboard, m_characterTracker.rotation.y, 20 /** step_time*/);
 		if(!IS_ZERO_FLOAT(movOffset.x) || !IS_ZERO_FLOAT(movOffset.y) || !IS_ZERO_FLOAT(movOffset.z))
 		{
 			// 加个速度就可以了，让框架来移动角色
@@ -223,7 +223,7 @@ protected:
 	my::GridPtr m_grid;
 
 	// 欧拉相机，默认可以使用欧拉相机在场景中自由观察
-	my::EularCameraPtr m_eularCam;
+	my::EulerCameraPtr m_eulerCam;
 
 	// 默认贴图，目的是防止贴图渲染时没有贴图导致出错
 	my::ImagePtr m_defaultTexture;
@@ -282,10 +282,10 @@ public:
 		m_grid = my::GridPtr(new my::Grid());
 
 		// 构造欧拉相机
-		m_eularCam = my::EularCameraPtr(new my::EularCamera());
-		m_eularCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
-		m_eularCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
-		m_eularCam->reset();
+		m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
+		m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
+		m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
+		m_eulerCam->reset();
 
 		// 根据 aspect ratio 重新调整 clipper rect
 		const MyConfig * pcfg = static_cast<const MyConfig *>(&cfg);
@@ -431,12 +431,12 @@ public:
 		m_rc->setCameraFarZ(10000);
 
 		//// 从用户输入来更新欧拉相机的坐标和方位
-		//m_eularCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
-		//m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEular(m_eularCam->getPosition(), m_eularCam->getRotation()));
+		//m_eulerCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
+		//m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
 
 		// 设置渲染上下文的 light
 		my::Vec4<real> l_pos(-30, 30, -30);
-		l_pos *= t3d::mat3RotZXY(m_eularCam->getRotation()) * t3d::mat3Mov(m_eularCam->getPosition());
+		l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
 		m_rc->clearLightList();
 		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 		m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
@@ -461,7 +461,7 @@ public:
 
 		// 重新设定相机为 uvn 相机
 		real cameraHeight = 20;
-		t3d::Mat4<real> cameraOffset = t3d::CameraContext::buildCameraTransformEular(t3d::vec3Add(m_world->m_characterBody->getPosition(), my::Vec4<real>(0, cameraHeight, 0)), m_world->m_characterTracker.rotation);
+		t3d::Mat4<real> cameraOffset = t3d::CameraContext::buildCameraTransformEuler(t3d::vec3Add(m_world->m_characterBody->getPosition(), my::Vec4<real>(0, cameraHeight, 0)), m_world->m_characterTracker.rotation);
 		t3d::Vec4<real> cameraPos = m_world->m_characterTracker.distance * cameraOffset;
 		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformUVN(cameraPos, t3d::vec3Add(m_world->m_characterBody->getPosition(), my::Vec4<real>(0, cameraHeight, 0)), my::Vec4<real>::UNIT_Y));
 
@@ -629,7 +629,7 @@ public:
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
-			RAD_TO_DEG(m_eularCam->getRotation().x), RAD_TO_DEG(m_eularCam->getRotation().y), RAD_TO_DEG(m_eularCam->getRotation().z));
+			RAD_TO_DEG(m_eulerCam->getRotation().x), RAD_TO_DEG(m_eulerCam->getRotation().y), RAD_TO_DEG(m_eulerCam->getRotation().z));
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		//// 输出手柄信息（仅测试）
