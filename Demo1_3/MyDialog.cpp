@@ -3,6 +3,8 @@
 #include "MyDialog.h"
 #include "resource.h"
 
+static const charT SPLASH_IMAGE_NAME[] = _T("splash.jpg");
+
 MyDialog::MyDialog(const MyConfig & cfg, HINSTANCE hInstance /*= ::GetModuleHandle(NULL)*/, HWND hWndParent /*= NULL*/)
 	: my::Dialog(hInstance, (LPCTSTR)IDD_DIALOG1, hWndParent)
 	, m_cfg(cfg)
@@ -23,8 +25,12 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			// initialize dialog title
 			::SetWindowText(m_hdlg, _T("User Configuration"));
 
-			//// initialize splash image
-			//m_image = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("splash.jpg"))));
+			// initialize splash image
+			std::basic_string<charT> filePath = my::ResourceMgr::getSingleton().findFile(SPLASH_IMAGE_NAME);
+			if(!filePath.empty())
+			{
+				m_image = my::ImagePtr(new my::Image(filePath));
+			}
 
 			// initialize combo box1 with resolutions
 			VERIFY(0 == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("320x240")));
@@ -77,14 +83,25 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		{
-			// get window rect
+			// get custom control rect
 			CRect rect;
-			::GetClientRect(hwndDlg, &rect);
+			VERIFY(::GetWindowRect(::GetDlgItem(hwndDlg, IDC_PICTURE1), &rect));
+			::ScreenToClient(hwndDlg, (LPPOINT)&rect.left);
+			::ScreenToClient(hwndDlg, (LPPOINT)&rect.right);
 
 			// draw this image to screen
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwndDlg, &ps);
-			//m_image->m_image.StretchBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), SRCCOPY);
+			if(NULL != m_image)
+			{
+				m_image->m_image.StretchBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), SRCCOPY);
+			}
+			else
+			{
+				// output error message if it lost the specified splash image
+				std::basic_string<charT> errorInfo = str_printf(_T("lost %s"), SPLASH_IMAGE_NAME);
+				::DrawText(hdc, errorInfo.c_str(), errorInfo.length(), &rect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+			}
 			EndPaint(hwndDlg, &ps);
 		}
 		break;
