@@ -68,7 +68,7 @@ BEGIN
     GROUPBOX        "Resolution",IDC_STATIC,7,169,168,30
     GROUPBOX        "Screen Mode",IDC_STATIC,181,169,78,30
     GROUPBOX        "Aspect Ratio",IDC_STATIC,265,169,78,30
-    CONTROL         "",IDC_PICTURE1,"Static",SS_OWNERDRAW,7,7,336,159
+    CONTROL         "",IDC_STATIC1,"Static",SS_OWNERDRAW,7,7,336,159
 END
 
 

@@ -9,7 +9,7 @@
 #define IDC_COMBO2                      1004
 #define IDC_COMBO3                      1005
 #define IDC_CHECK1                      1006
-#define IDC_PICTURE1                    1007
+#define IDC_STATIC1                     1007
 
 // Next default values for new objects
 // 

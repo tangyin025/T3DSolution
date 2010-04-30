@@ -1,4 +1,4 @@
-﻿
+
 #include "StdAfx.h"
 #include "MyGame.h"
 #include "MyConfig.h"
@@ -98,9 +98,10 @@ bool MyGame::onFrame(void)
 	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
 	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
-	//// 这里创建一个比窗口小的 clipper 区域，仅用于测试渲染的 clipper bug
-	//// 由于软件渲染器，其 clipper 是通过算法实现的，所以若算法不强健，会导致绘图时越过 clipper 区域
-	//// 甚至越过窗口区域，所以将绘图区域缩小一部分可以稍微避免，因越界导致系统崩溃的现象
+	//// here i created the clipper region smaller than the window, only used to test the clipper bug
+	//// because of the software simulating, the algorithm of cutting polygon is implemented by software,
+	//// so the unstrong algorithm will lead edge overflow, and even crash the application
+	//// reducing the clipper region will somehow avoid this phenomenon
 	//CRect clipper(m_rback);
 	//clipper.DeflateRect(10, 10);
 	//m_rc->setClipperRect(clipper);
