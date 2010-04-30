@@ -83,24 +83,25 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		{
-			// get custom control rect
-			CRect rect;
-			VERIFY(::GetWindowRect(::GetDlgItem(hwndDlg, IDC_PICTURE1), &rect));
-			::ScreenToClient(hwndDlg, (LPPOINT)&rect.left);
-			::ScreenToClient(hwndDlg, (LPPOINT)&rect.right);
+			// get custom control imageRect
+			CRect imageRect;
+			VERIFY(::GetWindowRect(::GetDlgItem(hwndDlg, IDC_STATIC1), &imageRect));
+			::ScreenToClient(hwndDlg, (LPPOINT)&imageRect.left);
+			::ScreenToClient(hwndDlg, (LPPOINT)&imageRect.right);
 
 			// draw this image to screen
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwndDlg, &ps);
 			if(NULL != m_image)
 			{
-				m_image->m_image.StretchBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), SRCCOPY);
+				m_image->m_image.StretchBlt(hdc, imageRect.left, imageRect.top, imageRect.Width(), imageRect.Height(), SRCCOPY);
 			}
 			else
 			{
 				// output error message if it lost the specified splash image
-				std::basic_string<charT> errorInfo = str_printf(_T("lost %s"), SPLASH_IMAGE_NAME);
-				::DrawText(hdc, errorInfo.c_str(), errorInfo.length(), &rect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+				std::basic_string<charT> errorMsg;
+				errorMsg = str_printf(_T("lost %s"), SPLASH_IMAGE_NAME);
+				::DrawText(hdc, errorMsg.c_str(), errorMsg.length(), &imageRect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 			}
 			EndPaint(hwndDlg, &ps);
 		}
