@@ -8,74 +8,54 @@
 
 namespace my
 {
-	typedef void (Object::*ObjectDrawFunc)(t3d::RenderContext * rc) const;
-	template <ObjectDrawFunc pFunc>
-	class CustomShaderObjectDrawer
-	{
-	public:
-		CustomShaderObjectDrawer(t3d::RenderContext * rc)
-			: m_rc(rc)
-		{
-		}
+	//class CustomShaderObject
+	//{
+	//public:
+	//	virtual void draw(t3d::RenderContext * rc) const = 0;
 
-	public:
-		void draw(const Object & obj) const
-		{
-			(obj.*pFunc)(m_rc);
-		}
+	//public:
+	//	virtual ~CustomShaderObject(void);
+	//};
 
-	protected:
-		t3d::RenderContext * m_rc;
-	};
+	//typedef boost::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
 
-	class CustomShaderObject
-	{
-	public:
-		virtual void draw(t3d::RenderContext * rc) const = 0;
+	//typedef std::vector<CustomShaderObjectPtr> CustomShaderObjectPtrList;
 
-	public:
-		virtual ~CustomShaderObject(void);
-	};
+	//class CustomShaderObjectPtrListContext
+	//{
+	//private:
+	//	CustomShaderObjectPtrList m_customShaderObjList;
 
-	typedef boost::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
+	//public:
+	//	const CustomShaderObjectPtrList & getCustomShaderObjList(void) const;
 
-	typedef std::vector<CustomShaderObjectPtr> CustomShaderObjectPtrList;
+	//	CustomShaderObjectPtrList & getCustomShaderObjList(void);
 
-	class CustomShaderObjectPtrListContext
-	{
-	private:
-		CustomShaderObjectPtrList m_customShaderObjList;
+	//	void pushCustomShaderObj(CustomShaderObjectPtrList::const_reference obj);
 
-	public:
-		const CustomShaderObjectPtrList & getCustomShaderObjList(void) const;
+	//	void pushCustomShaderObjList(CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end);
 
-		CustomShaderObjectPtrList & getCustomShaderObjList(void);
+	//	void clearCustomShaderObjList(void);
 
-		void pushCustomShaderObj(CustomShaderObjectPtrList::const_reference obj);
+	//	void resizeCustomShaderObjList(CustomShaderObjectPtrList::size_type size);
 
-		void pushCustomShaderObjList(CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end);
+	//	CustomShaderObjectPtrList::size_type getCustomShaderObjListSize(void) const;
 
-		void clearCustomShaderObjList(void);
+	//	CustomShaderObjectPtrList::reference customShaderObjAt(CustomShaderObjectPtrList::size_type i);
 
-		void resizeCustomShaderObjList(CustomShaderObjectPtrList::size_type size);
+	//	CustomShaderObjectPtrList::const_reference customShaderObjAt(CustomShaderObjectPtrList::size_type i) const;
 
-		CustomShaderObjectPtrList::size_type getCustomShaderObjListSize(void) const;
+	//	CustomShaderObjectPtrList::iterator getCustomShaderObjListBegin(void);
 
-		CustomShaderObjectPtrList::reference customShaderObjAt(CustomShaderObjectPtrList::size_type i);
+	//	CustomShaderObjectPtrList::const_iterator getCustomShaderObjListBegin(void) const;
 
-		CustomShaderObjectPtrList::const_reference customShaderObjAt(CustomShaderObjectPtrList::size_type i) const;
+	//	CustomShaderObjectPtrList::iterator getCustomShaderObjListEnd(void);
 
-		CustomShaderObjectPtrList::iterator getCustomShaderObjListBegin(void);
+	//	CustomShaderObjectPtrList::const_iterator getCustomShaderObjListEnd(void) const;
 
-		CustomShaderObjectPtrList::const_iterator getCustomShaderObjListBegin(void) const;
-
-		CustomShaderObjectPtrList::iterator getCustomShaderObjListEnd(void);
-
-		CustomShaderObjectPtrList::const_iterator getCustomShaderObjListEnd(void) const;
-
-	public:
-		void draw(t3d::RenderContext * rc) const;
-	};
+	//public:
+	//	void draw(t3d::RenderContext * rc) const;
+	//};
 
 	class BSPNode;
 
@@ -93,7 +73,7 @@ namespace my
 
 		BSPNodePtr back;
 
-		CustomShaderObjectPtrListContext m_customShaderObjList;
+		//CustomShaderObjectPtrListContext m_customShaderObjList;
 
 		Object m_obj;
 
@@ -128,15 +108,6 @@ namespace my
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const;
 
-		//void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const;
-
-		//void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const;
-
 		void drawWireZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color) const;
@@ -145,15 +116,6 @@ namespace my
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const;
-
-		//void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const;
-
-		//void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const;
 
 		void drawZBufferRW(
 			t3d::RenderContext * rc,
@@ -378,10 +340,10 @@ namespace my
 		const t3d::NormalList & normalList,
 		const t3d::UVList & uvList);
 
-	void insertObjectToBSPScene(
-		BSPNodePtr node,
-		const CustomShaderObjectPtr & customShaderObj,
-		const t3d::VertexList & objVertexList);
+	//void insertObjectToBSPScene(
+	//	BSPNodePtr node,
+	//	const CustomShaderObjectPtr & customShaderObj,
+	//	const t3d::VertexList & objVertexList);
 
 	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
