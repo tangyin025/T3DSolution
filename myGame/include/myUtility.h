@@ -458,15 +458,6 @@ namespace my
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const = 0;
 
-		//virtual void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const = 0;
-
-		//virtual void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const = 0;
-
 		virtual void drawWireZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color) const = 0;
@@ -475,15 +466,6 @@ namespace my
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const = 0;
-
-		//virtual void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const = 0;
-
-		//virtual void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const = 0;
 
 		virtual void drawZBufferRW(
 			t3d::RenderContext * rc,
@@ -651,15 +633,6 @@ namespace my
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const;
 
-		//void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const;
-
-		//void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const;
-
 		void drawWireZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color) const;
@@ -668,15 +641,6 @@ namespace my
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const;
-
-		//void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const;
-
-		//void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const;
 
 		void drawZBufferRW(
 			t3d::RenderContext * rc,
@@ -860,15 +824,6 @@ namespace my
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const;
 
-		//void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const;
-
-		//void drawWireZBufferRWWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const;
-
 		void drawWireZBufferRWWithBackface(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color) const;
@@ -877,15 +832,6 @@ namespace my
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & color,
 			const t3d::Mat4<real> & mmat) const;
-
-		//void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color) const;
-
-		//void drawWireZBufferRWWithBackfaceWithoutThird(
-		//	t3d::RenderContext * rc,
-		//	const t3d::Vec4<real> & color,
-		//	const t3d::Mat4<real> & mmat) const;
 
 		void drawZBufferRW(
 			t3d::RenderContext * rc,

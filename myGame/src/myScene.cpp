@@ -5,87 +5,87 @@
 
 namespace my
 {
-	CustomShaderObject::~CustomShaderObject(void)
-	{
-	}
+	//CustomShaderObject::~CustomShaderObject(void)
+	//{
+	//}
 
-	const CustomShaderObjectPtrList & CustomShaderObjectPtrListContext::getCustomShaderObjList(void) const
-	{
-		return m_customShaderObjList;
-	}
+	//const CustomShaderObjectPtrList & CustomShaderObjectPtrListContext::getCustomShaderObjList(void) const
+	//{
+	//	return m_customShaderObjList;
+	//}
 
-	CustomShaderObjectPtrList & CustomShaderObjectPtrListContext::getCustomShaderObjList(void)
-	{
-		return m_customShaderObjList;
-	}
+	//CustomShaderObjectPtrList & CustomShaderObjectPtrListContext::getCustomShaderObjList(void)
+	//{
+	//	return m_customShaderObjList;
+	//}
 
-	void CustomShaderObjectPtrListContext::pushCustomShaderObj(CustomShaderObjectPtrList::const_reference obj)
-	{
-		m_customShaderObjList.push_back(obj);
-	}
+	//void CustomShaderObjectPtrListContext::pushCustomShaderObj(CustomShaderObjectPtrList::const_reference obj)
+	//{
+	//	m_customShaderObjList.push_back(obj);
+	//}
 
-	void CustomShaderObjectPtrListContext::pushCustomShaderObjList(CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end)
-	{
-		m_customShaderObjList.insert(getCustomShaderObjListBegin(), begin, end);
-	}
+	//void CustomShaderObjectPtrListContext::pushCustomShaderObjList(CustomShaderObjectPtrList::const_iterator begin, CustomShaderObjectPtrList::const_iterator end)
+	//{
+	//	m_customShaderObjList.insert(getCustomShaderObjListBegin(), begin, end);
+	//}
 
-	void CustomShaderObjectPtrListContext::clearCustomShaderObjList(void)
-	{
-		m_customShaderObjList.clear();
-	}
+	//void CustomShaderObjectPtrListContext::clearCustomShaderObjList(void)
+	//{
+	//	m_customShaderObjList.clear();
+	//}
 
-	void CustomShaderObjectPtrListContext::resizeCustomShaderObjList(CustomShaderObjectPtrList::size_type size)
-	{
-		m_customShaderObjList.resize(size);
-	}
+	//void CustomShaderObjectPtrListContext::resizeCustomShaderObjList(CustomShaderObjectPtrList::size_type size)
+	//{
+	//	m_customShaderObjList.resize(size);
+	//}
 
-	CustomShaderObjectPtrList::size_type CustomShaderObjectPtrListContext::getCustomShaderObjListSize(void) const
-	{
-		return m_customShaderObjList.size();
-	}
+	//CustomShaderObjectPtrList::size_type CustomShaderObjectPtrListContext::getCustomShaderObjListSize(void) const
+	//{
+	//	return m_customShaderObjList.size();
+	//}
 
-	CustomShaderObjectPtrList::reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i)
-	{
-		_ASSERT(i < getCustomShaderObjListSize());
+	//CustomShaderObjectPtrList::reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i)
+	//{
+	//	_ASSERT(i < getCustomShaderObjListSize());
 
-		return m_customShaderObjList[i];
-	}
+	//	return m_customShaderObjList[i];
+	//}
 
-	CustomShaderObjectPtrList::const_reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i) const
-	{
-		_ASSERT(i < getCustomShaderObjListSize());
+	//CustomShaderObjectPtrList::const_reference CustomShaderObjectPtrListContext::customShaderObjAt(CustomShaderObjectPtrList::size_type i) const
+	//{
+	//	_ASSERT(i < getCustomShaderObjListSize());
 
-		return m_customShaderObjList[i];
-	}
+	//	return m_customShaderObjList[i];
+	//}
 
-	CustomShaderObjectPtrList::iterator CustomShaderObjectPtrListContext::getCustomShaderObjListBegin(void)
-	{
-		return m_customShaderObjList.begin();
-	}
+	//CustomShaderObjectPtrList::iterator CustomShaderObjectPtrListContext::getCustomShaderObjListBegin(void)
+	//{
+	//	return m_customShaderObjList.begin();
+	//}
 
-	CustomShaderObjectPtrList::const_iterator CustomShaderObjectPtrListContext::getCustomShaderObjListBegin(void) const
-	{
-		return m_customShaderObjList.begin();
-	}
+	//CustomShaderObjectPtrList::const_iterator CustomShaderObjectPtrListContext::getCustomShaderObjListBegin(void) const
+	//{
+	//	return m_customShaderObjList.begin();
+	//}
 
-	CustomShaderObjectPtrList::iterator CustomShaderObjectPtrListContext::getCustomShaderObjListEnd(void)
-	{
-		return m_customShaderObjList.end();
-	}
+	//CustomShaderObjectPtrList::iterator CustomShaderObjectPtrListContext::getCustomShaderObjListEnd(void)
+	//{
+	//	return m_customShaderObjList.end();
+	//}
 
-	CustomShaderObjectPtrList::const_iterator CustomShaderObjectPtrListContext::getCustomShaderObjListEnd(void) const
-	{
-		return m_customShaderObjList.end();
-	}
+	//CustomShaderObjectPtrList::const_iterator CustomShaderObjectPtrListContext::getCustomShaderObjListEnd(void) const
+	//{
+	//	return m_customShaderObjList.end();
+	//}
 
-	void CustomShaderObjectPtrListContext::draw(t3d::RenderContext * rc) const
-	{
-		CustomShaderObjectPtrList::const_iterator obj_iter = getCustomShaderObjListBegin();
-		for(; obj_iter != getCustomShaderObjListEnd(); obj_iter++)
-		{
-			(*obj_iter)->draw(rc);
-		}
-	}
+	//void CustomShaderObjectPtrListContext::draw(t3d::RenderContext * rc) const
+	//{
+	//	CustomShaderObjectPtrList::const_iterator obj_iter = getCustomShaderObjListBegin();
+	//	for(; obj_iter != getCustomShaderObjListEnd(); obj_iter++)
+	//	{
+	//		(*obj_iter)->draw(rc);
+	//	}
+	//}
 
 	//size_t BSPNode::getTriangleCount(void) const
 	//{
@@ -148,6 +148,129 @@ namespace my
 
 #define DISTANCE_ZERO_LIMIT REAL_ZERO_LIMIT
 
+	typedef void (Object::*ObjectDrawFunc)(t3d::RenderContext * rc) const;
+
+	template <ObjectDrawFunc pFunc>
+	class CustomShaderObjectDrawer
+	{
+	public:
+		CustomShaderObjectDrawer(t3d::RenderContext * rc)
+			: m_rc(rc)
+		{
+		}
+
+	public:
+		void draw(const Object & obj) const
+		{
+			(obj.*pFunc)(m_rc);
+		}
+
+	protected:
+		t3d::RenderContext * m_rc;
+	};
+
+	typedef void (Object::*ObjectDrawFuncRC)(t3d::RenderContext * rc, const t3d::Vec4<real> & color) const;
+
+	template <ObjectDrawFuncRC pFunc>
+	class CustomShaderObjectDrawerRC
+	{
+	public:
+		CustomShaderObjectDrawerRC(t3d::RenderContext * rc, const t3d::Vec4<real> & color)
+			: m_rc(rc)
+			, m_color(color)
+		{
+		}
+
+	public:
+		void draw(const Object & obj) const
+		{
+			(obj.*pFunc)(m_rc, m_color);
+		}
+
+	protected:
+		t3d::RenderContext * m_rc;
+
+		const t3d::Vec4<real> & m_color;
+	};
+
+	typedef void (Object::*ObjectDrawFuncRCM)(t3d::RenderContext * rc, const t3d::Vec4<real> & color, const t3d::Mat4<real> & mmat) const;
+
+	template <ObjectDrawFuncRCM pFunc>
+	class CustomShaderObjectDrawerRCM
+	{
+	public:
+		CustomShaderObjectDrawerRCM(t3d::RenderContext * rc, const t3d::Vec4<real> & color, const t3d::Mat4<real> & mmat)
+			: m_rc(rc)
+			, m_color(color)
+			, m_mmat(mmat)
+		{
+		}
+
+	public:
+		void draw(const Object & obj) const
+		{
+			(obj.*pFunc)(m_rc, m_color, m_mmat);
+		}
+
+	protected:
+		t3d::RenderContext * m_rc;
+
+		const t3d::Vec4<real> & m_color;
+
+		const t3d::Mat4<real> & m_mmat;
+	};
+
+	typedef void (Object::*ObjectDrawFuncRM)(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat) const;
+
+	template <ObjectDrawFuncRM pFunc>
+	class CustomShaderObjectDrawerRM
+	{
+	public:
+		CustomShaderObjectDrawerRM(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat)
+			: m_rc(rc)
+			, m_mmat(mmat)
+		{
+		}
+
+	public:
+		void draw(const Object & obj) const
+		{
+			(obj.*pFunc)(m_rc, m_mmat);
+		}
+
+	protected:
+		t3d::RenderContext * m_rc;
+
+		const t3d::Mat4<real> & m_mmat;
+	};
+
+	typedef void (Object::*ObjectDrawFuncRMM)(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+
+	template <ObjectDrawFuncRMM pFunc>
+	class CustomShaderObjectDrawerRMM
+	{
+	public:
+		CustomShaderObjectDrawerRMM(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot)
+			: m_rc(rc)
+			, m_mmat(mmat)
+			, m_mrot(mrot)
+		{
+		}
+
+	public:
+		void draw(const Object & obj) const
+		{
+			(obj.*pFunc)(m_rc, m_mmat, m_mrot);
+		}
+
+	protected:
+		t3d::RenderContext * m_rc;
+
+		const t3d::Mat4<real> & m_mmat;
+
+		const t3d::Mat4<real> & m_mrot;
+	};
+
 	template <class CustomShaderObjectDrawerClass>
 	void drawBSPSceneBackToFront(
 		t3d::RenderContext * rc,
@@ -175,7 +298,7 @@ namespace my
 					drawer.draw(node.m_obj);
 				}
 
-				node.m_customShaderObjList.draw(rc);
+				//node.m_customShaderObjList.draw(rc);
 
 				if(NULL != node.front)
 				{
@@ -192,7 +315,7 @@ namespace my
 					}
 				}
 
-				node.m_customShaderObjList.draw(rc);
+				//node.m_customShaderObjList.draw(rc);
 
 				if(NULL != node.back)
 				{
@@ -200,10 +323,10 @@ namespace my
 				}
 			}
 		}
-		else
-		{
-			node.m_customShaderObjList.draw(rc);
-		}
+		//else
+		//{
+		//	node.m_customShaderObjList.draw(rc);
+		//}
 	}
 
 	template <class CustomShaderObjectDrawerClass>
@@ -228,7 +351,7 @@ namespace my
 					drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 
-				node.m_customShaderObjList.draw(rc);
+				//node.m_customShaderObjList.draw(rc);
 
 				if(angle + cameraHalfFov > DEG_TO_RAD(90))
 				{
@@ -247,7 +370,7 @@ namespace my
 					drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 
-				node.m_customShaderObjList.draw(rc);
+				//node.m_customShaderObjList.draw(rc);
 
 				if(angle - cameraHalfFov < DEG_TO_RAD(90))
 				{
@@ -258,17 +381,23 @@ namespace my
 				}
 			}
 		}
-		else
-		{
-			node.m_customShaderObjList.draw(rc);
-		}
+		//else
+		//{
+		//	node.m_customShaderObjList.draw(rc);
+		//}
 	}
 
 	void BSPNode::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRC<&Object::drawWireZBufferRW>(rc, color));
 	}
 
 	void BSPNode::drawWireZBufferRW(
@@ -276,29 +405,26 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRCM<&Object::drawWireZBufferRW>(rc, color, mmat));
 	}
-
-	//void BSPNode::drawWireZBufferRWWithoutThird(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & color)
-	//{
-	//	_ASSERT(false);
-	//}
-
-	//void BSPNode::drawWireZBufferRWWithoutThird(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & color,
-	//	const t3d::Mat4<real> & mmat)
-	//{
-	//	_ASSERT(false);
-	//}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRC<&Object::drawWireZBufferRWWithBackface>(rc, color));
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
@@ -306,29 +432,26 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRCM<&Object::drawWireZBufferRWWithBackface>(rc, color, mmat));
 	}
-
-	//void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & color)
-	//{
-	//	_ASSERT(false);
-	//}
-
-	//void BSPNode::drawWireZBufferRWWithBackfaceWithoutThird(
-	//	t3d::RenderContext * rc,
-	//	const t3d::Vec4<real> & color,
-	//	const t3d::Mat4<real> & mmat)
-	//{
-	//	_ASSERT(false);
-	//}
 
 	void BSPNode::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRC<&Object::drawZBufferRW>(rc, color));
 	}
 
 	void BSPNode::drawZBufferRW(
@@ -336,14 +459,26 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRCM<&Object::drawZBufferRW>(rc, color, mmat));
 	}
 
 	void BSPNode::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRC<&Object::drawZBufferRWWithBackface>(rc, color));
 	}
 
 	void BSPNode::drawZBufferRWWithBackface(
@@ -351,13 +486,25 @@ namespace my
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRCM<&Object::drawZBufferRWWithBackface>(rc, color, mmat));
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawGouraudZBufferRW>(rc));
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
@@ -365,13 +512,25 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudZBufferRW>(rc, mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawGouraudZBufferRWWithBackface>(rc));
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
@@ -379,87 +538,18 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudZBufferRWWithBackface>(rc, mmat, mrot));
 	}
 
 	void BSPNode::drawTextureZBufferW(
 		t3d::RenderContext * rc) const
 	{
-		//if(!getVertexList().empty())
-		//{
-		//	t3d::Vec4<real> cameraPos = t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix());
-
-		//	t3d::Vec4<real> cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
-
-		//	real cameraHalfFov = t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection());
-
-		//	real dis = calculatePointPlaneDistance(cameraPos, planePoint, planeNormal);
-
-		//	real angle = acos(t3d::vec3CosTheta(cameraDir, planeNormal));
-
-		//	if(dis > DISTANCE_ZERO_LIMIT)
-		//	{
-		//		if(angle + cameraHalfFov > DEG_TO_RAD(90))
-		//		{
-		//			if(NULL != back)
-		//				back->drawTextureZBufferW(rc);
-
-		//			Object::drawTextureZBufferWWithBackface(rc);
-		//		}
-
-		//		m_customShaderObjList.draw(rc);
-
-		//		if(NULL != front)
-		//			front->drawTextureZBufferW(rc);
-		//	}
-		//	else if(dis < -DISTANCE_ZERO_LIMIT)
-		//	{
-		//		if(angle - cameraHalfFov < DEG_TO_RAD(90))
-		//		{
-		//			if(NULL != front)
-		//				front->drawTextureZBufferW(rc);
-		//		}
-
-		//		m_customShaderObjList.draw(rc);
-
-		//		if(NULL != back)
-		//			back->drawTextureZBufferW(rc);
-		//	}
-		//	else
-		//	{
-		//		if(angle < DEG_TO_RAD(90))
-		//		{
-		//			if(angle + cameraHalfFov > DEG_TO_RAD(90))
-		//			{
-		//				if(NULL != back)
-		//					back->drawTextureZBufferW(rc);
-		//			}
-
-		//			m_customShaderObjList.draw(rc);
-
-		//			if(NULL != front)
-		//				front->drawTextureZBufferW(rc);
-		//		}
-		//		else
-		//		{
-		//			if(angle - cameraHalfFov < DEG_TO_RAD(90))
-		//			{
-		//				if(NULL != front)
-		//					front->drawTextureZBufferW(rc);
-		//			}
-
-		//			m_customShaderObjList.draw(rc);
-
-		//			if(NULL != back)
-		//				back->drawTextureZBufferW(rc);
-		//		}
-		//	}
-		//}
-		//else
-		//{
-		//	m_customShaderObjList.draw(rc);
-		//}
-
 		drawBSPSceneBackToFront(
 			rc,
 			*this,
@@ -473,104 +563,200 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferW>(rc, mmat));
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferWWithBackface>(rc));
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferWWithBackface>(rc, mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferW>(rc));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferW>(rc, mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferWWithBackface>(rc));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneBackToFront(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferWWithBackface>(rc, mmat));
 	}
 
 	void BSPNode::drawTextureZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferRW>(rc));
 	}
 
 	void BSPNode::drawTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferRW>(rc, mmat));
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferRWWithBackface>(rc));
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferRWWithBackface>(rc, mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferRW>(rc));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferRW>(rc, mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferRWWithBackface>(rc));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferRWWithBackface>(rc, mmat));
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawGouraudTextureZBufferRW>(rc));
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
@@ -578,13 +764,25 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTextureZBufferRW>(rc, mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawGouraudTextureZBufferRWWithBackface>(rc));
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
@@ -592,87 +790,18 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTextureZBufferRWWithBackface>(rc, mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		//if(!getVertexList().empty())
-		//{
-		//	t3d::Vec4<real> cameraPos = t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix());
-
-		//	t3d::Vec4<real> cameraDir = t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix());
-
-		//	real cameraHalfFov = t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection());
-
-		//	real dis = calculatePointPlaneDistance(cameraPos, planePoint, planeNormal);
-
-		//	real angle = acos(t3d::vec3CosTheta(cameraDir, planeNormal));
-
-		//	if(dis > DISTANCE_ZERO_LIMIT)
-		//	{
-		//		if(NULL != front)
-		//			front->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-
-		//		m_customShaderObjList.draw(rc);
-
-		//		if(angle + cameraHalfFov > DEG_TO_RAD(90))
-		//		{
-		//			Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(rc);
-
-		//			if(NULL != back)
-		//				back->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-		//		}
-		//	}
-		//	else if(dis < -DISTANCE_ZERO_LIMIT)
-		//	{
-		//		if(NULL != back)
-		//			back->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-
-		//		m_customShaderObjList.draw(rc);
-
-		//		if(angle - cameraHalfFov < DEG_TO_RAD(90))
-		//		{
-		//			if(NULL != front)
-		//				front->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-		//		}
-		//	}
-		//	else
-		//	{
-		//		if(angle < DEG_TO_RAD(90))
-		//		{
-		//			if(NULL != front)
-		//				front->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-
-		//			m_customShaderObjList.draw(rc);
-
-		//			if(angle + cameraHalfFov > DEG_TO_RAD(90))
-		//			{
-		//				if(NULL != back)
-		//					back->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-		//			}
-		//		}
-		//		else
-		//		{
-		//			if(NULL != back)
-		//				back->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-
-		//			m_customShaderObjList.draw(rc);
-
-		//			if(angle - cameraHalfFov < DEG_TO_RAD(90))
-		//			{
-		//				if(NULL != front)
-		//					front->drawGouraudTexturePerspectiveLPZBufferRW(rc);
-		//			}
-		//		}
-		//	}
-		//}
-		//else
-		//{
-		//	m_customShaderObjList.draw(rc);
-		//}
-
 		drawBSPSceneFrontToBack(
 			rc,
 			*this,
@@ -687,13 +816,25 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTexturePerspectiveLPZBufferRW>(rc, mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawer<&Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface>(rc));
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
@@ -701,7 +842,13 @@ namespace my
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(false);
+		drawBSPSceneFrontToBack(
+			rc,
+			*this,
+			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
+			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface>(rc, mmat, mrot));
 	}
 
 #define INSERT_VERTEX_NORMAL_UV_TO_UP(index0, index1, index2) \
@@ -1217,70 +1364,70 @@ namespace my
 		return node;
 	}
 
-	void insertObjectToBSPScene(
-		BSPNodePtr node,
-		const CustomShaderObjectPtr & customShaderObj,
-		const t3d::VertexList & objVertexList)
-	{
-		if(node->m_obj.getVertexList().empty())
-		{
-			_ASSERT(NULL == node->front);
-			_ASSERT(NULL == node->back);
+	//void insertObjectToBSPScene(
+	//	BSPNodePtr node,
+	//	const CustomShaderObjectPtr & customShaderObj,
+	//	const t3d::VertexList & objVertexList)
+	//{
+	//	if(node->m_obj.getVertexList().empty())
+	//	{
+	//		_ASSERT(NULL == node->front);
+	//		_ASSERT(NULL == node->back);
 
-			node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
-		}
-		else
-		{
-			_ASSERT(!node->m_obj.getVertexList().empty());
+	//		node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
+	//	}
+	//	else
+	//	{
+	//		_ASSERT(!node->m_obj.getVertexList().empty());
 
-			bool haveFrontVertex = false;
-			bool haveBackVertex = false;
+	//		bool haveFrontVertex = false;
+	//		bool haveBackVertex = false;
 
-			t3d::VertexList::const_iterator vert_iter = objVertexList.begin();
-			for(; vert_iter != objVertexList.end(); vert_iter++)
-			{
-				real distance = calculatePointPlaneDistance(*vert_iter, node->planePoint, node->planeNormal);
+	//		t3d::VertexList::const_iterator vert_iter = objVertexList.begin();
+	//		for(; vert_iter != objVertexList.end(); vert_iter++)
+	//		{
+	//			real distance = calculatePointPlaneDistance(*vert_iter, node->planePoint, node->planeNormal);
 
-				if(distance > DISTANCE_ZERO_LIMIT)
-				{
-					haveFrontVertex = true;
-				}
-				else if(distance < -DISTANCE_ZERO_LIMIT)
-				{
-					haveBackVertex = true;
-				}
-			}
+	//			if(distance > DISTANCE_ZERO_LIMIT)
+	//			{
+	//				haveFrontVertex = true;
+	//			}
+	//			else if(distance < -DISTANCE_ZERO_LIMIT)
+	//			{
+	//				haveBackVertex = true;
+	//			}
+	//		}
 
-			if(haveFrontVertex)
-			{
-				if(haveBackVertex)
-				{
-					node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
-				}
-				else
-				{
-					if(NULL == node->front)
-						node->front = BSPNodePtr(new BSPNode());
-						
-					insertObjectToBSPScene(node->front, customShaderObj, objVertexList);
-				}
-			}
-			else
-			{
-				if(haveBackVertex)
-				{
-					if(NULL == node->back)
-						node->back = BSPNodePtr(new BSPNode());
-						
-					insertObjectToBSPScene(node->back, customShaderObj, objVertexList);
-				}
-				else
-				{
-					node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
-				}
-			}
-		}
-	}
+	//		if(haveFrontVertex)
+	//		{
+	//			if(haveBackVertex)
+	//			{
+	//				node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
+	//			}
+	//			else
+	//			{
+	//				if(NULL == node->front)
+	//					node->front = BSPNodePtr(new BSPNode());
+	//					
+	//				insertObjectToBSPScene(node->front, customShaderObj, objVertexList);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			if(haveBackVertex)
+	//			{
+	//				if(NULL == node->back)
+	//					node->back = BSPNodePtr(new BSPNode());
+	//					
+	//				insertObjectToBSPScene(node->back, customShaderObj, objVertexList);
+	//			}
+	//			else
+	//			{
+	//				node->m_customShaderObjList.pushCustomShaderObj(customShaderObj);
+	//			}
+	//		}
+	//	}
+	//}
 
 	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,

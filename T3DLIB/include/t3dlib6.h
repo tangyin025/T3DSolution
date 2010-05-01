@@ -926,35 +926,17 @@ namespace t3d
 		static Vec2<real> buildCameraProjectionFOVAuto(real fov, DWORD width, DWORD height);
 
 	public:
-		static real calculateCameraHalfFovX(const Vec2<real> & proj)
-		{
-			return atan(1 / proj.x);
-		}
+		static real calculateCameraHalfFovX(const Vec2<real> & proj);
 
-		static real calculateCameraHalfFovY(const Vec2<real> & proj)
-		{
-			return atan(1 / proj.y);
-		}
+		static real calculateCameraHalfFovY(const Vec2<real> & proj);
 
-		static real calculateCameraMinHalfFov(const Vec2<real> & proj)
-		{
-			return proj.x > proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
-		}
+		static real calculateCameraMinHalfFov(const Vec2<real> & proj);
 
-		static real calculateCameraMaxHalfFov(const Vec2<real> & proj)
-		{
-			return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
-		}
+		static real calculateCameraMaxHalfFov(const Vec2<real> & proj);
 
-		static Vec4<real> calculateCameraPosition(const Mat4<real> & mcam)
-		{
-			return mat3GetRow3(mcam.inverse());
-		}
+		static Vec4<real> calculateCameraPosition(const Mat4<real> & mcam);
 
-		static Vec4<real> calculateCameraDirection(const Mat4<real> & mcam)
-		{
-			return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
-		}
+		static Vec4<real> calculateCameraDirection(const Mat4<real> & mcam);
 
 	public:
 		void setCameraMatrix(const Mat4<real> & mcam)
@@ -1588,17 +1570,9 @@ namespace t3d
 
 		virtual void drawTriangleIndexListWireZBufferRW(const Vec4<real> & color) = 0;
 
-		//virtual void drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color) = 0;
-
-		//virtual void drawTriangleIndexListWireZBufferRWWithoutThird(const Vec4<real> & color) = 0;
-
 		virtual void drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color) = 0;
 
 		virtual void drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color) = 0;
-
-		//virtual void drawTriangleListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color) = 0;
-
-		//virtual void drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color) = 0;
 
 		virtual void drawTriangleListZBufferRW(const Vec4<real> & color) = 0;
 
@@ -1682,17 +1656,9 @@ namespace t3d
 
 		void drawTriangleIndexListWireZBufferRW(const Vec4<real> & color);
 
-		//void drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color);
-
-		//void drawTriangleIndexListWireZBufferRWWithoutThird(const Vec4<real> & color);
-
 		void drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color);
 
 		void drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color);
-
-		//void drawTriangleListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color);
-
-		//void drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color);
 
 		void drawTriangleListZBufferRW(const Vec4<real> & color);
 
@@ -1774,17 +1740,9 @@ namespace t3d
 
 		void drawTriangleIndexListWireZBufferRW(const Vec4<real> & color);
 
-		//void drawTriangleListWireZBufferRWWithoutThird(const Vec4<real> & color);
-
-		//void drawTriangleIndexListWireZBufferRWWithoutThird(const Vec4<real> & color);
-
 		void drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color);
 
 		void drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color);
-
-		//void drawTriangleListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color);
-
-		//void drawTriangleIndexListWireZBufferRWWithBackfaceWithoutThird(const Vec4<real> & color);
 
 		void drawTriangleListZBufferRW(const Vec4<real> & color);
 
