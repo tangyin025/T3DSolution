@@ -579,31 +579,38 @@ public:
 		m_character_h->drawGouraudTextureZBufferRWWithBackface(m_rc.get(), mmat, mrot);
 
 		// 绘制角色阴影，hack 手法
-		m_rc->clearVertexList();
-		m_rc->clearVertexIndexList();
-		pushVertexByPointProject(
-			m_rc.get(),
-			l_pos,
-			my::Vec4<real>(0, 0.5f, 0),
-			my::Vec4<real>::UNIT_Y,
-			m_character->getVertexListBegin(),
-			m_character->getVertexListEnd(),
-			mmat);
-		m_rc->pushVertexIndexList(m_character->getVertexIndexListBegin(), m_character->getVertexIndexListEnd());
-		m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+		if(l_pos.y > 30.0f)
+		{
+			/** 为什么要 l_pos.y > 30.0f
+				当 l_pos（光源位置）低于角色的头顶时，对地面的投影将达到无穷远，从而导致浮点数溢出死机
+				这样做之后当光源过低时（估计这个角色不会超过 30.0f 这个单位），就不绘制阴影
+			*/
+			m_rc->clearVertexList();
+			m_rc->clearVertexIndexList();
+			pushVertexByPointProject(
+				m_rc.get(),
+				l_pos,
+				my::Vec4<real>(0, 0.5f, 0),
+				my::Vec4<real>::UNIT_Y,
+				m_character->getVertexListBegin(),
+				m_character->getVertexListEnd(),
+				mmat);
+			m_rc->pushVertexIndexList(m_character->getVertexIndexListBegin(), m_character->getVertexIndexListEnd());
+			m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
 
-		m_rc->clearVertexList();
-		m_rc->clearVertexIndexList();
-		pushVertexByPointProject(
-			m_rc.get(),
-			l_pos,
-			my::Vec4<real>(0, 0.5f, 0),
-			my::Vec4<real>::UNIT_Y,
-			m_character_h->getVertexListBegin(),
-			m_character_h->getVertexListEnd(),
-			mmat);
-		m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
-		m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+			m_rc->clearVertexList();
+			m_rc->clearVertexIndexList();
+			pushVertexByPointProject(
+				m_rc.get(),
+				l_pos,
+				my::Vec4<real>(0, 0.5f, 0),
+				my::Vec4<real>::UNIT_Y,
+				m_character_h->getVertexListBegin(),
+				m_character_h->getVertexListEnd(),
+				mmat);
+			m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
+			m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+		}
 
 		// ======================================== TODO: END   ========================================
 
