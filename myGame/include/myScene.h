@@ -340,6 +340,12 @@ namespace my
 		const t3d::NormalList & normalList,
 		const t3d::UVList & uvList);
 
+	//BSPNodePtr buildBalanceBSPScene(
+	//	int & deepth,
+	//	const t3d::VertexList & vertexList,
+	//	const t3d::NormalList & normalList,
+	//	const t3d::UVList & uvList);
+
 	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
 	//	const CustomShaderObjectPtr & customShaderObj,

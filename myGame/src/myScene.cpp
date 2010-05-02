@@ -1302,11 +1302,11 @@ namespace my
 		if(vertexList.empty())
 			return BSPNodePtr();
 
-		BSPNodePtr node = BSPNodePtr(new BSPNode());
-
 		_ASSERT(vertexList.size() == normalList.size());
 		_ASSERT(vertexList.size() == uvList.size());
 		_ASSERT(0 == vertexList.size() % 3);
+
+		BSPNodePtr node(new BSPNode());
 
 		t3d::VertexList lVertexList;
 		t3d::NormalList lNormalList;
@@ -1363,6 +1363,121 @@ namespace my
 
 		return node;
 	}
+
+	//size_t balanceBSPNode(BSPNodePtr & node, int l_deepth, int r_deepth)
+	//{
+	//	if(l_deepth - r_deepth > 1)
+	//	{
+	//		_ASSERT(NULL != node);
+	//		_ASSERT(NULL != node->front);
+
+	//		BSPNodePtr tmpNode = node->front;
+	//		node->front = node->front->back;
+	//		tmpNode->back = node;
+	//		node = tmpNode;
+
+	//		return balanceBSPNode(node, l_deepth - 1, r_deepth + 1);
+	//	}
+	//	else if(r_deepth - l_deepth > 1)
+	//	{
+	//		_ASSERT(NULL != node);
+	//		_ASSERT(NULL != node->back);
+
+	//		BSPNodePtr tmpNode = node->back;
+	//		node->back = node->back->front;
+	//		tmpNode->front = node;
+	//		node = tmpNode;
+
+	//		return balanceBSPNode(node, l_deepth + 1, r_deepth - 1);
+	//	}
+
+	//	return std::max(l_deepth, r_deepth);
+	//}
+
+	//BSPNodePtr buildBalanceBSPScene(
+	//	int & deepth,
+	//	const t3d::VertexList & vertexList,
+	//	const t3d::NormalList & normalList,
+	//	const t3d::UVList & uvList)
+	//{
+	//	if(vertexList.empty())
+	//	{
+	//		deepth = 1;
+	//		return BSPNodePtr();
+	//	}
+
+	//	_ASSERT(vertexList.size() == normalList.size());
+	//	_ASSERT(vertexList.size() == uvList.size());
+	//	_ASSERT(0 == vertexList.size() % 3);
+
+	//	BSPNodePtr node(new BSPNode());
+
+	//	t3d::VertexList lVertexList;
+	//	t3d::NormalList lNormalList;
+	//	t3d::UVList lUVList;
+
+	//	t3d::VertexList rVertexList;
+	//	t3d::NormalList rNormalList;
+	//	t3d::UVList rUVList;
+
+	//	node->planePoint = vertexList[0];
+
+	//	node->planeNormal = calculateTriangleNormal(vertexList[0], vertexList[1], vertexList[2]);
+
+	//	for(size_t i = 0; i < vertexList.size(); i += 3)
+	//	{
+	//		if(!splitTriangleVertexNormalUV(
+	//			lVertexList,
+	//			lNormalList,
+	//			lUVList,
+	//			rVertexList,
+	//			rNormalList,
+	//			rUVList,
+	//			vertexList[i + 0],
+	//			vertexList[i + 1],
+	//			vertexList[i + 2],
+	//			normalList[i + 0],
+	//			normalList[i + 1],
+	//			normalList[i + 2],
+	//			uvList[i + 0],
+	//			uvList[i + 1],
+	//			uvList[i + 2],
+	//			node->planePoint,
+	//			node->planeNormal))
+	//		{
+	//			node->m_obj.pushVertex(vertexList[i + 0]);
+	//			node->m_obj.pushVertex(vertexList[i + 1]);
+	//			node->m_obj.pushVertex(vertexList[i + 2]);
+
+	//			node->m_obj.pushNormal(normalList[i + 0]);
+	//			node->m_obj.pushNormal(normalList[i + 1]);
+	//			node->m_obj.pushNormal(normalList[i + 2]);
+
+	//			node->m_obj.pushUV(uvList[i + 0]);
+	//			node->m_obj.pushUV(uvList[i + 1]);
+	//			node->m_obj.pushUV(uvList[i + 2]);
+	//		}
+	//	}
+
+	//	_ASSERT(!node->m_obj.getVertexList().empty());
+
+	//	int l_deepth;
+	//	node->front = buildBalanceBSPScene(l_deepth, lVertexList, lNormalList, lUVList);
+
+	//	int r_deepth;
+	//	node->back = buildBalanceBSPScene(r_deepth, rVertexList, rNormalList, rUVList);
+
+	//	if(l_deepth != r_deepth)
+	//	{
+	//		deepth = balanceBSPNode(node, l_deepth, r_deepth) + 1;
+	//	}
+	//	else
+	//	{
+	//		deepth = l_deepth + 1;
+	//	}
+
+	//	return node;
+	//}
 
 	//void insertObjectToBSPScene(
 	//	BSPNodePtr node,
