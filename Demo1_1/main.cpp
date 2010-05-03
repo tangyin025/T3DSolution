@@ -42,6 +42,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	wcex.hIconSm = LoadIcon(NULL, IDC_ICON);
 	RegisterClassEx(&wcex);
 
+	// 获得可执行文件名
 	TCHAR szModuleFileName[MAX_PATH];
 	GetModuleFileName(NULL, szModuleFileName, sizeof(szModuleFileName) / sizeof(szModuleFileName[0]));
 
@@ -51,15 +52,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		HWND hWnd = CreateWindow(szWindowClass, szModuleFileName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 		if(hWnd)
 		{
+			// 显示及更新窗口
 			ShowWindow(hWnd, nCmdShow);
 			UpdateWindow(hWnd);
 
+			// 进入消息循环
 			MSG msg;
 			msg.message = ~WM_QUIT;
 			while(msg.message != WM_QUIT)
 			{
+				// 取出一个消息
 				if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 				{
+					// 转换及分发消息
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
 				}
@@ -113,9 +118,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
 			{
 			case 16:
-				if(ddsd.ddpfPixelFormat.dwRBitMask != 0xF800
-					|| ddsd.ddpfPixelFormat.dwGBitMask != 0x07E0
-					|| ddsd.ddpfPixelFormat.dwBBitMask != 0x001F)
+				if(ddsd.ddpfPixelFormat.dwRBitMask != RGB16_RED_MASK
+					|| ddsd.ddpfPixelFormat.dwGBitMask != RGB16_GREEN_MASK
+					|| ddsd.ddpfPixelFormat.dwBBitMask != RGB16_BLUE_MASK)
 				{
 					T3D_CUSEXCEPT(_T("unsupported pixel format"));
 				}
@@ -123,6 +128,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 
 			case 32:
+				if(ddsd.ddpfPixelFormat.dwRBitMask != RGB32_RED_MASK
+					|| ddsd.ddpfPixelFormat.dwGBitMask != RGB32_GREEN_MASK
+					|| ddsd.ddpfPixelFormat.dwBBitMask != RGB32_BLUE_MASK)
+				{
+					T3D_CUSEXCEPT(_T("unsupported pixel format"));
+				}
 				g_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
 				break;
 
@@ -135,6 +146,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		if((SIZE_RESTORED == wParam || SIZE_MAXIMIZED == wParam) && g_ddraw.get())
 		{
+			// 渲染上下文必须被创建
 			_ASSERT(g_rc.get());
 
 			// 获得当前窗口宽度和高度
@@ -162,7 +174,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			/** 注意：
 				其实在这个地方还有很多事情要做，如更新相机的 viewport 和 projection 等
-				详情参见 Demo1_2/main.cpp 的 MyGame::onFrame
+				详情参见 trunk/Demo1_2/main.cpp 的 MyGame::onFrame
 			*/
 
 			// 至少要填充一下那个后缓存吧
@@ -173,6 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		{
+			// 后缓存必须已经被创建
 			_ASSERT(g_ddsurface.get());
 
 			// 这里要做的是将后缓存更新到 windows DC 上
@@ -189,7 +202,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_DESTROY:
 		{
-			// 推出应用程序指令
+			// 退出应用程序指令
 			PostQuitMessage(0);
 			return 0;
 		}
@@ -200,6 +213,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void OnFrame(HWND hwnd)
 {
+	// 这个窗口必须有效
 	_ASSERT(IsWindow(hwnd));
 
 	// 渲染一帧

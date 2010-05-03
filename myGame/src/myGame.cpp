@@ -118,12 +118,6 @@ namespace my
 
 	bool Game::prepare(const CONFIG_DESC & cfg)
 	{
-		//// create error reporter
-		//m_errorRpt = ErrorReporterPtr(new ErrorReporter());
-
-		//// create resource manager
-		//m_resourceMgr = ResourceMgrPtr(new ResourceMgr());
-
 		// create main window
 		m_pwnd = createWindow(getModuleFileName());
 
@@ -189,36 +183,34 @@ namespace my
 		m_sback->setClipper(m_ddraw->createMemoryClipper(&m_rback, 1).get());
 
 		// create pixel dependency objects
-		bool bSupportedPixelFormat = false;
+		// NOTE: some singleton object should be re-destoryed before creating, such as m_cc
 		switch(ddpf.dwRGBBitCount)
 		{
 		case 16:
-			if(ddpf.dwRBitMask == RGB16_RED_MASK
-				&& ddpf.dwGBitMask == RGB16_GREEN_MASK
-				&& ddpf.dwBBitMask == RGB16_BLUE_MASK)
+			if(ddpf.dwRBitMask != RGB16_RED_MASK
+				|| ddpf.dwGBitMask != RGB16_GREEN_MASK
+				|| ddpf.dwBBitMask != RGB16_BLUE_MASK)
 			{
-				m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
-				m_cc = ColorConversionPtr(); // Singleton object should be destoryed before create
-				m_cc = ColorConversionPtr(new ColorConversion16());
-				bSupportedPixelFormat = true;
+				T3D_CUSEXCEPT(_T("unsupported pixel format"));
 			}
+			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
+			m_cc = ColorConversionPtr();
+			m_cc = ColorConversionPtr(new ColorConversion16());
 			break;
 
 		case 32:
-			if(ddpf.dwRBitMask == RGB32_RED_MASK
-				&& ddpf.dwGBitMask == RGB32_GREEN_MASK
-				&& ddpf.dwBBitMask == RGB32_BLUE_MASK)
+			if(ddpf.dwRBitMask != RGB32_RED_MASK
+				|| ddpf.dwGBitMask != RGB32_GREEN_MASK
+				|| ddpf.dwBBitMask != RGB32_BLUE_MASK)
 			{
-				m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
-				m_cc = ColorConversionPtr();
-				m_cc = ColorConversionPtr(new ColorConversion32());
-				bSupportedPixelFormat = true;
+				T3D_CUSEXCEPT(_T("unsupported pixel format"));
 			}
+			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
+			m_cc = ColorConversionPtr();
+			m_cc = ColorConversionPtr(new ColorConversion32());
 			break;
-		}
 
-		if( !bSupportedPixelFormat )
-		{
+		default:
 			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
 
@@ -311,23 +303,15 @@ namespace my
 	{
 		int res = 1;
 
-		//try
-		//{
-			// prepare game initialize
-			if(prepare(cfg))
-			{
-				// run main application
-				res = Application::run();
-			}
+		// set up configuration
+		if(prepare(cfg))
+		{
+			// run main application
+			res = Application::run();
+		}
 
-			// do shutdown
-			onShutdown();
-		//}
-		//catch(t3d::Exception & e)
-		//{
-		//	::MessageBox(m_pwnd && (cfg.smode == SCREEN_MODE_WINDOWED) ? m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
-		//	exit(1);
-		//}
+		// do shutdown
+		onShutdown();
 
 		return res;
 	}
@@ -358,9 +342,10 @@ namespace my
 		bltBackSurfaceToPrimary();
 	}
 
-	bool Game::onInit(const CONFIG_DESC & /*cfg*/)
+	bool Game::onInit(const CONFIG_DESC & cfg)
 	{
 		return true;
+		UNREFERENCED_PARAMETER(cfg);
 	}
 
 	bool Game::onFrame(void)
