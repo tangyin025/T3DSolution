@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MyUI.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -232,6 +236,10 @@
 			</File>
 			<File
 				RelativePath=".\MyState.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MyUI.h"
 				>
 			</File>
 			<File

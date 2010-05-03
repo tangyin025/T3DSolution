@@ -1562,6 +1562,10 @@ namespace t3d
 		virtual void fillSurface(const CRect & rect, const Vec4<real> & color) = 0;
 
 	public:
+		virtual void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color) = 0;
+
+		virtual void drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color) = 0;
+
 		virtual void drawLineListZBufferRW(const Vec4<real> & color) = 0;
 
 		virtual void drawLineIndexListZBufferRW(const Vec4<real> & color) = 0;
@@ -1648,6 +1652,10 @@ namespace t3d
 		void fillSurface(const CRect & rect, const Vec4<real> & color);
 
 	public:
+		void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color);
+
+		void drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color);
+
 		void drawLineListZBufferRW(const Vec4<real> & color);
 
 		void drawLineIndexListZBufferRW(const Vec4<real> & color);
@@ -1732,6 +1740,10 @@ namespace t3d
 		void fillSurface(const CRect & rect, const Vec4<real> & color);
 
 	public:
+		void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color);
+
+		void drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color);
+
 		void drawLineListZBufferRW(const Vec4<real> & color);
 
 		void drawLineIndexListZBufferRW(const Vec4<real> & color);

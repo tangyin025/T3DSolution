@@ -2,6 +2,7 @@
 #pragma once
 
 #include "MyState.h"
+#include "MyUI.h"
 
 class MyGame
 	: public my::Game
@@ -51,6 +52,8 @@ class MyLoadState
 {
 protected:
 	MyGame * m_game;
+
+	MyUIProgressBarBoxPtr m_progressBox;
 
 public:
 	static const std::basic_string<charT> s_name;

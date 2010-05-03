@@ -96,10 +96,14 @@ namespace my
 	{
 		_ASSERT(NULL != m_hThread);
 
-		if(THREAD_PRIORITY_ERROR_RETURN == ::GetThreadPriority(m_hThread))
+		int nRet = ::GetThreadPriority(m_hThread);
+
+		if(THREAD_PRIORITY_ERROR_RETURN == nRet)
 		{
 			T3D_WINEXCEPT(::GetLastError());
 		}
+
+		return nRet;
 	}
 
 	void Thread::TerminateThread(DWORD dwExitCode)
@@ -786,9 +790,10 @@ namespace my
 		}
 	}
 
-	Window::Window(HWND hwnd /*= NULL*/)
+	Window::Window(HWND hwnd)
 		: m_hwnd(hwnd)
 	{
+		_ASSERT(NULL != m_hwnd);
 	}
 
 	Window::~Window(void)
@@ -955,6 +960,11 @@ namespace my
 	void Window::releaseDC(HDC hdc)
 	{
 		VERIFY(1 == ::ReleaseDC(m_hwnd, hdc));
+	}
+
+	void Window::InvalidateRect(CONST RECT * lpRect /*= NULL*/, BOOL bErase /*= FALSE*/)
+	{
+		VERIFY(::InvalidateRect(m_hwnd, lpRect, bErase));
 	}
 
 	Application * Application::s_ptr = NULL;

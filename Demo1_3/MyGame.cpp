@@ -115,6 +115,14 @@ MyLoadState::~MyLoadState(void)
 
 void MyLoadState::enterState(void)
 {
+	// initial progress box
+	int barWidth = 250;
+	int barHeight = 60;
+	CRect clipper = m_game->m_rc->getClipperRect();
+	int x = clipper.left + (clipper.Width() - barWidth) / 2;
+	int y = clipper.top + (clipper.Height() - barHeight) / 2;
+	m_progressBox = MyUIProgressBarBoxPtr(new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight))));
+
 	// begin work thread here
 	CreateThread();
 	ResumeThread();
@@ -147,20 +155,27 @@ bool MyLoadState::onFrame(void)
 	// clear back surface with gray color
 	rc->fillSurface(rc->getClipperRect(), my::Color::BLACK);
 
+	// draw progress bar
+	m_progressBox->draw(rc);
+
 	// general information output
-	std::basic_string<charT> strTmp;
+	std::basic_string<charT> strTmp(_T("loading ..."));
 	HDC hdc = m_game->m_sback->getDC();
-
-	int textx = rc->getClipperRect().left + 10;
-	int texty = rc->getClipperRect().top + 10;
-
-	strTmp = _T("loading ...");
-	::TextOut(hdc, textx, texty, strTmp.c_str(), (int)strTmp.length());
-
+	int bkMode = ::SetBkMode(hdc, TRANSPARENT);
+	COLORREF textColor = ::SetTextColor(hdc, RGB(255, 255, 255));
+	::TextOut(
+		hdc,
+		m_progressBox->m_rect.left + MyUIProgressBarBox::SIDE_BORDER,
+		m_progressBox->m_rect.top + MyUIProgressBarBox::SIDE_BORDER,
+		strTmp.c_str(),
+		(int)strTmp.length());
+	::SetTextColor(hdc, textColor);
+	::SetBkMode(hdc, bkMode);
 	m_game->m_sback->releaseDC(hdc);
 
 	// sleep some time to set aside cpu resource to back thread
 	::Sleep(33);
+
 	return true;
 }
 
@@ -184,7 +199,12 @@ DWORD MyLoadState::onProc(void)
 	m_game->m_eulerCam->reset();
 
 	// simulate times occupied process
-	::Sleep(5000);
+	int count = 100;
+	for(int i = 1; i <= count; i++)
+	{
+		m_progressBox->setPercent((real)i / count);
+		::Sleep(50);
+	}
 	return 0;
 }
 

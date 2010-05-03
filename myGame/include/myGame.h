@@ -97,6 +97,30 @@ namespace my
 		my::ImagePtr convertImage(const my::Image * image);
 	};
 
+	//class GameWnd : public Window
+	//{
+	//public:
+	//	t3d::DDrawPtr m_ddraw;
+
+	//	t3d::DDSurfacePtr m_backSurface;
+
+	//	CRect m_backSurfaceRect;
+
+	//	t3d::RenderContextPtr m_rc;
+
+	//	ColorConversionPtr m_cc;
+
+	//	t3d::ZBufferPtr m_zbuffer;
+
+	//public:
+	//	GameWnd(HWND hwnd);
+
+	//	~GameWnd(void);
+
+	//public:
+	//	LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+	//};
+
 	class Game : public Application
 	{
 	public:
