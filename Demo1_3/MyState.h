@@ -4,6 +4,11 @@
 class MyState
 {
 public:
+	MyState(void);
+
+	virtual ~MyState(void);
+
+public:
 	virtual void enterState(void);
 
 	virtual void leaveState(void);
@@ -11,7 +16,7 @@ public:
 
 typedef boost::shared_ptr<MyState> MyStatePtr;
 
-typedef std::map<std::string, MyStatePtr> MyStatePtrMap;
+typedef std::map<std::basic_string<charT>, MyStatePtr> MyStatePtrMap;
 
 class MyStateChart
 {
@@ -21,9 +26,14 @@ protected:
 	MyStatePtr m_currentState;
 
 public:
-	void addState(const std::string & name, MyStatePtr state);
+	MyStateChart(void);
 
-	void setCurrentState(const std::string & name);
+	virtual ~MyStateChart(void);
+
+public:
+	void addState(const std::basic_string<charT> & name, MyStatePtr state);
+
+	void setCurrentState(const std::basic_string<charT> & name);
 
 	template <class DRIVED_STATE_CLASS>
 	boost::shared_ptr<DRIVED_STATE_CLASS> getCurrentState(void)

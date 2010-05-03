@@ -33,8 +33,8 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		strConfigPath = strCurrentDir + strConfigPath.substr(lpos, rpos - lpos) + _T(".ini");
 
 		// initialize searching path
-		my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias"));
 		my::ResourceMgr::getSingleton().addDir(_T("."));
+		my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias"));
 
 		// show configuration dialog
 		int ret = 0;
