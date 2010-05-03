@@ -28,6 +28,9 @@ using t3d::real;
 
 // 在这个地方定义自己的类
 
+/** 这个函数是将所有的点投影到指定的平面
+	这个方法通常被用来绘制假光影，且十分有效
+*/
 void pushVertexByPointProject(
 	t3d::RenderContext * rc,
 	const t3d::Vec4<real> & point,
@@ -40,6 +43,8 @@ void pushVertexByPointProject(
 	t3d::VertexList::const_iterator vert_iter = begin;
 	for(; vert_iter != end; vert_iter++)
 	{
+		// 注意这个地方会发生矢量与平面不相交的现象
+		// 应当在外面限制光源的高度避免这种现象
 		t3d::Vec4<real> tmpVert = *vert_iter * mmat;
 		rc->pushVertex(my::calculateLinePlaneIntersectionPoint(
 			tmpVert,
@@ -579,9 +584,9 @@ public:
 		m_character_h->drawGouraudTextureZBufferRWWithBackface(m_rc.get(), mmat, mrot);
 
 		// 绘制角色阴影，hack 手法
-		if(l_pos.y > 30.0f)
+		if(l_pos.y - m_world->m_characterBody->getPosition().y > 30.0f)
 		{
-			/** 为什么要 l_pos.y > 30.0f
+			/** 为什么要 l_pos.y - character.pos.y > 30.0f
 				当 l_pos（光源位置）低于角色的头顶时，对地面的投影将达到无穷远，从而导致浮点数溢出死机
 				这样做之后当光源过低时（估计这个角色不会超过 30.0f 这个单位），就不绘制阴影
 			*/
