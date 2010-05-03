@@ -107,6 +107,118 @@ namespace my
 		return image->convertTo32Bits();
 	}
 
+	//GameWnd::GameWnd(HWND hwnd)
+	//	: Window(hwnd)
+	//{
+	//}
+
+	//GameWnd::~GameWnd(void)
+	//{
+	//}
+
+	//LRESULT GameWnd::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
+	//{
+	//	_ASSERT(hwnd == m_hwnd);
+
+	//	switch(message)
+	//	{
+	//	case WM_CREATE:
+	//		{
+	//			// create ddraw object
+	//			m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
+	//			m_ddraw->setCooperativeLevel(hwnd, t3d::DDraw::CL_NORMAL);
+
+	//			// obtain current display mode
+	//			DDSURFACEDESC2 ddsd = m_ddraw->getDisplayMode();
+	//			if( !(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) )
+	//			{
+	//				T3D_CUSEXCEPT(_T("unsupported pixel format"));
+	//			}
+
+	//			// create the compatible render context
+	//			switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
+	//			{
+	//			case 16:
+	//				if(ddsd.ddpfPixelFormat.dwRBitMask != RGB16_RED_MASK
+	//					|| ddsd.ddpfPixelFormat.dwGBitMask != RGB16_GREEN_MASK
+	//					|| ddsd.ddpfPixelFormat.dwBBitMask != RGB16_BLUE_MASK)
+	//				{
+	//					T3D_CUSEXCEPT(_T("unsupported pixel format"));
+	//				}
+	//				m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
+	//				m_cc = ColorConversionPtr();
+	//				m_cc = ColorConversionPtr(new ColorConversion16());
+	//				break;
+
+	//			case 32:
+	//				if(ddsd.ddpfPixelFormat.dwRBitMask != RGB32_RED_MASK
+	//					|| ddsd.ddpfPixelFormat.dwGBitMask != RGB32_GREEN_MASK
+	//					|| ddsd.ddpfPixelFormat.dwBBitMask != RGB32_BLUE_MASK)
+	//				{
+	//					T3D_CUSEXCEPT(_T("unsupported pixel format"));
+	//				}
+	//				m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
+	//				m_cc = ColorConversionPtr();
+	//				m_cc = ColorConversionPtr(new ColorConversion32());
+	//				break;
+
+	//			default:
+	//				T3D_CUSEXCEPT(_T("unsupported pixel format"));
+	//			}
+	//			return 0;
+	//		}
+
+	//	case WM_SIZE:
+	//		if(SIZE_RESTORED == wparam || SIZE_MAXIMIZED == wparam)
+	//		{
+	//			// ddraw object must be created
+	//			_ASSERT(NULL != m_ddraw);
+
+	//			// gain current window size
+	//			int width = LOWORD(lparam);
+	//			int height = HIWORD(lparam);
+
+	//			// re-create the back surface according to current size
+	//			m_backSurface = m_ddraw->createMemorySurface(width, height);
+	//			m_backSurfaceRect.SetRect(0, 0, width, height);
+	//			m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
+
+	//			// attach new back surface to render context
+	//			DDSURFACEDESC2 ddsd = m_backSurface->lock(NULL);
+	//			m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
+	//			m_backSurface->unlock();
+
+	//			// re-create zbuffer
+	//			m_zbuffer = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
+
+	//			// attach new zbuffer to render context
+	//			m_rc->setZBufferBuffer(m_zbuffer->getBuffer(), m_zbuffer->getPitch(), width, height);
+
+	//			// update clipper region
+	//			m_rc->setClipperRect(m_backSurfaceRect);
+	//			return 0;
+	//		}
+	//		break;
+
+	//	case WM_PAINT:
+	//		{
+	//			// back surface must be created
+	//			_ASSERT(NULL != m_backSurface);
+
+	//			// update the attached back surface to client area
+	//			PAINTSTRUCT ps;
+	//			HDC hdc = BeginPaint(hwnd, &ps);
+	//			HDC hdcSrc = m_backSurface->getDC();
+	//			BitBlt(hdc, m_backSurfaceRect.left, m_backSurfaceRect.top, m_backSurfaceRect.Width(), m_backSurfaceRect.Height(), hdcSrc, 0, 0, SRCCOPY);
+	//			m_backSurface->releaseDC(hdcSrc);
+	//			EndPaint(hwnd, &ps);
+	//			return 0;
+	//		}
+	//	}
+
+	//	return Window::onProc(hwnd, message, wparam, lparam);
+	//}
+
 	Game::Game(void)
 		: m_pwnd(NULL)
 	{

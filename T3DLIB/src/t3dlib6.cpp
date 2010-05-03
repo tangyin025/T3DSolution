@@ -5232,6 +5232,16 @@ namespace t3d
 		fillSurface16(getSurfaceRef16(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
 	}
 
+	void RenderContext16::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
+	{
+		//drawClippedHorizonLine16(getSurfaceRef16(), getClipperRect(), x0, y0, width, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext16::drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color)
+	{
+		//drawClippedVerticalLine16(getSurfaceRef16(), getClipperRect(), x0, y0, height, rgbaSaturate<real>(color * 255, 255));
+	}
+
 	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)
 	{
 		//RenderLineListZBufferRW::reset();
@@ -5969,6 +5979,16 @@ namespace t3d
 		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		fillSurface32(getSurfaceRef32(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext32::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
+	{
+		drawClippedHorizonLine32(getSurfaceRef32(), getClipperRect(), x0, y0, width, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext32::drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color)
+	{
+		drawClippedVerticalLine32(getSurfaceRef32(), getClipperRect(), x0, y0, height, rgbaSaturate<real>(color * 255, 255));
 	}
 
 	void RenderContext32::drawLineListZBufferRW(const Vec4<real> & color)

@@ -136,27 +136,31 @@ namespace t3d
 
 	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int width,
 		const Vec4<real> & color);
 
 	void drawClippedHorizonLine32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int width,
 		const Vec4<real> & color);
 
 	void drawVerticalLine32(
 		SurfaceRef<uint32> surface,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int height,
 		const Vec4<real> & color);
 
 	void drawClippedVerticalLine32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int height,
 		const Vec4<real> & color);
 

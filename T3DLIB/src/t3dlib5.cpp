@@ -64,35 +64,32 @@ namespace t3d
 
 	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int width,
 		const Vec4<real> & color)
 	{
 		_ASSERT(width >= 0);
 
-		int x0 = real_to_int(v0.x);
-		int y0 = real_to_int(v0.y);
-
-		memSet32(&surface[x0][y0],
+		memSet32(&surface[y0][x0],
 			_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), width);
 	}
 
 	void drawClippedHorizonLine32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int width,
 		const Vec4<real> & color)
 	{
 		_ASSERT(width >= 0);
 
-		if(v0.y >= clipper.top && v0.y < clipper.bottom)
+		if(y0 >= clipper.top && y0 < clipper.bottom)
 		{
-			if(v0.x < clipper.right)
+			if(x0 < clipper.right)
 			{
 				int clippedWidth = width;
-				int x0 = real_to_int(v0.x);
-				int y0 = real_to_int(v0.y);
 
 				if(x0 < clipper.left)
 				{
@@ -102,7 +99,7 @@ namespace t3d
 
 				if(clippedWidth > 0)
 				{
-					memSet32(&surface[x0][y0],
+					memSet32(&surface[y0][x0],
 						_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), clippedWidth);
 				}
 			}
@@ -111,18 +108,16 @@ namespace t3d
 
 	void drawVerticalLine32(
 		SurfaceRef<uint32> surface,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int height,
 		const Vec4<real> & color)
 	{
 		_ASSERT(height >= 0);
 
-		int x0 = real_to_int(v0.x);
-		int y0 = real_to_int(v0.y);
-
 		for(int y1 = y0 + height; y0 < y1; y0++)
 		{
-			surface[x0][y0] =
+			surface[y0][x0] =
 				_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
 		}
 	}
@@ -130,19 +125,18 @@ namespace t3d
 	void drawClippedVerticalLine32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
-		const Vec4<real> & v0,
+		int x0,
+		int y0,
 		int height,
 		const Vec4<real> & color)
 	{
 		_ASSERT(height >= 0);
 
-		if(v0.x >= clipper.left && v0.x < clipper.right)
+		if(x0 >= clipper.left && x0 < clipper.right)
 		{
-			if(v0.y < clipper.bottom)
+			if(y0 < clipper.bottom)
 			{
 				int clippedHeight = height;
-				int x0 = real_to_int(v0.x);
-				int y0 = real_to_int(v0.y);
 
 				if(y0 < clipper.top)
 				{
@@ -154,7 +148,7 @@ namespace t3d
 				{
 					for(int y1 = y0 + clippedHeight; y0 < y1; y0++)
 					{
-						surface[x0][y0] =
+						surface[y0][x0] =
 							_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
 					}
 				}

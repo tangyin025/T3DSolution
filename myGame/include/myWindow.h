@@ -111,7 +111,7 @@ namespace my
 		HWND m_hwnd;
 
 	public:
-		Window(HWND hwnd = NULL);
+		Window(HWND hwnd);
 
 		virtual ~Window(void);
 
@@ -158,6 +158,8 @@ namespace my
 		HDC getDC(void);
 
 		void releaseDC(HDC hdc);
+
+		void InvalidateRect(CONST RECT * lpRect = NULL, BOOL bErase = FALSE);
 	};
 
 	typedef boost::shared_ptr<Window> WindowPtr;

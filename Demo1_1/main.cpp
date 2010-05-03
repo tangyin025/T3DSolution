@@ -58,7 +58,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 			// 进入消息循环
 			MSG msg;
-			msg.message = ~WM_QUIT;
+			msg.message = ~(UINT)WM_QUIT;
 			while(msg.message != WM_QUIT)
 			{
 				// 取出一个消息
@@ -83,6 +83,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	}
 
 	return 0;
+	UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(hPrevInstance);
 }
 
 // direct draw
