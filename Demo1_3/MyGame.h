@@ -1,7 +1,11 @@
 
 #pragma once
 
-class MyGame : public my::Game
+#include "MyState.h"
+
+class MyGame
+	: public my::Game
+	, public MyStateChart
 {
 public:
 	MyGame(void) throw();

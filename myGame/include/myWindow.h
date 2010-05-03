@@ -30,10 +30,41 @@ namespace my
 
 #define T3D_WINEXCEPT(code) { throw my::WinException( _T(__FILE__), __LINE__, (code) ); }
 
+	class Thread
+	{
+	protected:
+		HANDLE m_hThread;
+
+	public:
+		Thread(void);
+
+		~Thread(void);
+
+		void CreateThread(DWORD dwCreationFlags = CREATE_SUSPENDED);
+
+		void ResumeThread(void);
+
+		void SuspendThread(void);
+
+		void TerminateThread(DWORD dwExitCode);
+
+		bool WaitForThreadStopped(DWORD dwMilliseconds);
+
+	public:
+		virtual DWORD onProc(void);
+
+	protected:
+		static DWORD WINAPI ThreadProc(__in LPVOID lpParameter);
+	};
+
+	class Dialog;
+
+	typedef std::map<HWND, Dialog *> DialogMap;
+
 	class Dialog
 	{
 	public:
-		static Dialog * s_ptr;
+		static DialogMap s_dlgMap;
 
 		static INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

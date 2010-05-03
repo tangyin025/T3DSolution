@@ -28,21 +28,110 @@ namespace my
 	{
 	}
 
-	Dialog * Dialog::s_ptr = NULL;
+	Thread::Thread(void)
+		: m_hThread(NULL)
+	{
+	}
+
+	Thread::~Thread(void)
+	{
+		if(NULL != m_hThread)
+		{
+			_ASSERT(WAIT_TIMEOUT != ::WaitForSingleObject(m_hThread, 0));
+
+			//// The thread object remains in the system until the thread has terminated
+			//// and all handles to it have been closed through a call to CloseHandle.
+			//::CloseHandle(m_hThread);
+		}
+	}
+
+	void Thread::CreateThread(DWORD dwCreationFlags /*= CREATE_SUSPENDED*/)
+	{
+		_ASSERT(NULL == m_hThread);
+
+		if(NULL == (m_hThread = ::CreateThread(NULL, 0, ThreadProc, this, dwCreationFlags, NULL)))
+		{
+			T3D_WINEXCEPT(::GetLastError());
+		}
+	}
+
+	void Thread::ResumeThread(void)
+	{
+		_ASSERT(NULL != m_hThread);
+
+		if(-1 == ::ResumeThread(m_hThread))
+		{
+			T3D_WINEXCEPT(::GetLastError());
+		}
+	}
+
+	void Thread::SuspendThread(void)
+	{
+		_ASSERT(NULL != m_hThread);
+
+		if(-1 == ::SuspendThread(m_hThread))
+		{
+			T3D_WINEXCEPT(::GetLastError());
+		}
+	}
+
+	void Thread::TerminateThread(DWORD dwExitCode)
+	{
+		_ASSERT(NULL != m_hThread);
+
+		if(!::TerminateThread(m_hThread, dwExitCode))
+		{
+			//T3D_WINEXCEPT(::GetLastError());
+		}
+	}
+
+	bool Thread::WaitForThreadStopped(DWORD dwMilliseconds)
+	{
+		if(WAIT_TIMEOUT == ::WaitForSingleObject(m_hThread, dwMilliseconds))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	DWORD Thread::onProc(void)
+	{
+		return 0;
+	}
+
+	DWORD WINAPI Thread::ThreadProc(__in LPVOID lpParameter)
+	{
+		Thread * pThread = reinterpret_cast<Thread *>(lpParameter);
+
+		return pThread->onProc();
+	}
+
+	DialogMap Dialog::s_dlgMap;
 
 	INT_PTR CALLBACK Dialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if(uMsg == WM_INITDIALOG)
 		{
-			_ASSERT(NULL == s_ptr); s_ptr = (Dialog *)lParam; s_ptr->m_hdlg = hwndDlg;
+			Dialog * pDialog = reinterpret_cast<Dialog *>(lParam);
+
+			_ASSERT(NULL == pDialog->m_hdlg);
+
+			pDialog->m_hdlg = hwndDlg;
+
+			_ASSERT(s_dlgMap.end() == s_dlgMap.find(hwndDlg));
+
+			s_dlgMap.insert(DialogMap::value_type(hwndDlg, pDialog));
 		}
 
-		if(NULL != s_ptr)
+		DialogMap::iterator dlgIter = s_dlgMap.find(hwndDlg);
+
+		if(dlgIter != s_dlgMap.end())
 		{
-			return s_ptr->onProc(hwndDlg, uMsg, wParam, lParam);
+			return dlgIter->second->onProc(hwndDlg, uMsg, wParam, lParam);
 		}
 
-		return ::DefWindowProc(hwndDlg, uMsg, wParam, lParam);
+		return FALSE;
 	}
 
 	INT_PTR Dialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -51,9 +140,24 @@ namespace my
 
 		switch(uMsg)
 		{
+		case WM_NCDESTROY:
+			{
+				//DialogMap::iterator dlgIter = s_dlgMap.find(m_hdlg);
+
+				//_ASSERT(dlgIter != s_dlgMap.end());
+
+				//s_dlgMap.erase(dlgIter);
+
+				////m_hdlg = NULL;
+
+				return FALSE;
+			}
+
 		case WM_INITDIALOG:
-			Window(hwndDlg).centerWindow();
-			return TRUE;
+			{
+				Window(hwndDlg).centerWindow();
+				return TRUE;
+			}
 
 		case WM_COMMAND:
 			switch(LOWORD(wParam))
@@ -76,20 +180,17 @@ namespace my
 		, m_hWndParent(hWndParent)
 		, m_hdlg(NULL)
 	{
-		_ASSERT(NULL == s_ptr);
 	}
 
 	Dialog::~Dialog(void)
 	{
-		_ASSERT(NULL == s_ptr);
+		//_ASSERT(NULL == m_hdlg);
 	}
 
 	INT_PTR Dialog::doModel(void)
 	{
 		INT_PTR nResult = ::DialogBoxParam(
 			m_hInstance, m_lpTemplateName, m_hWndParent, my::Dialog::DialogProc, (LPARAM)this);
-
-		_ASSERT(NULL != s_ptr); s_ptr = NULL;
 
 		return nResult;
 	}
@@ -683,15 +784,15 @@ namespace my
 		{
 		case WM_NCDESTROY:
 			{
-				m_hwnd = NULL;
-
 				WindowPtrMap & wndMap = Application::getSingleton().m_wndMap;
 
-				WindowPtrMap::iterator iter = wndMap.find(hwnd);
+				WindowPtrMap::iterator wndIter = wndMap.find(hwnd);
 
-				_ASSERT(iter != wndMap.end());
+				_ASSERT(wndIter != wndMap.end());
 
-				wndMap.erase(iter);
+				m_hwnd = NULL; // *** must be accessed before destructor
+
+				wndMap.erase(wndIter);
 
 				if(wndMap.empty())
 				{

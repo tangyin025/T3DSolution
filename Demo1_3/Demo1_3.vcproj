@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MyState.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -224,6 +228,10 @@
 			</File>
 			<File
 				RelativePath=".\MyGame.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MyState.h"
 				>
 			</File>
 			<File
