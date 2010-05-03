@@ -13,23 +13,6 @@ MyGame::~MyGame(void)
 
 bool MyGame::onInit(const CONFIG_DESC & cfg)
 {
-	// initialize fps manager
-	m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
-	m_fpsMgr->start();
-
-	// initialize timer
-	m_timer = my::TimerPtr(new my::Timer());
-	m_timer->start();
-
-	// initialize grid
-	m_grid = my::GridPtr(new my::Grid());
-
-	// initialize euler camera
-	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
-	m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
-	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
-	m_eulerCam->reset();
-
 	// calculate aspect ratio
 	const MyConfig * pcfg = static_cast<const MyConfig *>(&cfg);
 	real aspect_ratio;
@@ -78,6 +61,23 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 
 	//// set default media files searching directory
 	//m_resourceMgr->addDir(_T("."));
+
+	// initialize fps manager
+	m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
+	m_fpsMgr->start();
+
+	// initialize timer
+	m_timer = my::TimerPtr(new my::Timer());
+	m_timer->start();
+
+	// initialize grid
+	m_grid = my::GridPtr(new my::Grid());
+
+	// initialize euler camera
+	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
+	m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
+	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
+	m_eulerCam->reset();
 
 	return my::Game::onInit(cfg);
 }

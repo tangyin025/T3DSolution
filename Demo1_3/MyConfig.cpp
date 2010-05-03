@@ -14,6 +14,7 @@ MyConfig::~MyConfig(void)
 
 MyConfig MyConfig::LoadFromFile(const std::basic_string<charT> & fileName)
 {
+	// get specified value from user profile file, and construct MyConfig object
 	return MyConfig(
 		::GetPrivateProfileInt(_T("config"), _T("width"), 800, fileName.c_str()),
 		::GetPrivateProfileInt(_T("config"), _T("height"), 600, fileName.c_str()),
@@ -23,6 +24,7 @@ MyConfig MyConfig::LoadFromFile(const std::basic_string<charT> & fileName)
 
 void MyConfig::SaveToFile(const MyConfig & config, const std::basic_string<charT> & fileName)
 {
+	// write specified value to user profile file
 	::WritePrivateProfileString(_T("config"), _T("width"), str_printf(_T("%d"), config.width).c_str(), fileName.c_str());
 	::WritePrivateProfileString(_T("config"), _T("height"), str_printf(_T("%d"), config.height).c_str(), fileName.c_str());
 	::WritePrivateProfileString(_T("config"), _T("screenmode"), str_printf(_T("%d"), config.smode).c_str(), fileName.c_str());
