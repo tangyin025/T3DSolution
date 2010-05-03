@@ -35,6 +35,9 @@ namespace my
 	protected:
 		HANDLE m_hThread;
 
+	protected:
+		static DWORD WINAPI ThreadProc(__in LPVOID lpParameter);
+
 	public:
 		Thread(void);
 
@@ -46,15 +49,16 @@ namespace my
 
 		void SuspendThread(void);
 
+		void SetThreadPriority(int nPriority);
+
+		int GetThreadPriority(void);
+
 		void TerminateThread(DWORD dwExitCode);
 
-		bool WaitForThreadStopped(DWORD dwMilliseconds);
+		bool WaitForThreadStopped(DWORD dwMilliseconds = INFINITE);
 
 	public:
-		virtual DWORD onProc(void);
-
-	protected:
-		static DWORD WINAPI ThreadProc(__in LPVOID lpParameter);
+		virtual DWORD onProc(void) = 0;
 	};
 
 	class Dialog;

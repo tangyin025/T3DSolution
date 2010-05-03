@@ -28,6 +28,13 @@ namespace my
 	{
 	}
 
+	DWORD WINAPI Thread::ThreadProc(__in LPVOID lpParameter)
+	{
+		Thread * pThread = reinterpret_cast<Thread *>(lpParameter);
+
+		return pThread->onProc();
+	}
+
 	Thread::Thread(void)
 		: m_hThread(NULL)
 	{
@@ -75,6 +82,26 @@ namespace my
 		}
 	}
 
+	void Thread::SetThreadPriority(int nPriority)
+	{
+		_ASSERT(NULL != m_hThread);
+
+		if(!::SetThreadPriority(m_hThread, nPriority))
+		{
+			T3D_WINEXCEPT(::GetLastError());
+		}
+	}
+
+	int Thread::GetThreadPriority(void)
+	{
+		_ASSERT(NULL != m_hThread);
+
+		if(THREAD_PRIORITY_ERROR_RETURN == ::GetThreadPriority(m_hThread))
+		{
+			T3D_WINEXCEPT(::GetLastError());
+		}
+	}
+
 	void Thread::TerminateThread(DWORD dwExitCode)
 	{
 		_ASSERT(NULL != m_hThread);
@@ -85,7 +112,7 @@ namespace my
 		}
 	}
 
-	bool Thread::WaitForThreadStopped(DWORD dwMilliseconds)
+	bool Thread::WaitForThreadStopped(DWORD dwMilliseconds /*= INFINITE*/)
 	{
 		if(WAIT_TIMEOUT == ::WaitForSingleObject(m_hThread, dwMilliseconds))
 		{
@@ -95,17 +122,10 @@ namespace my
 		return true;
 	}
 
-	DWORD Thread::onProc(void)
-	{
-		return 0;
-	}
-
-	DWORD WINAPI Thread::ThreadProc(__in LPVOID lpParameter)
-	{
-		Thread * pThread = reinterpret_cast<Thread *>(lpParameter);
-
-		return pThread->onProc();
-	}
+	//DWORD Thread::onProc(void)
+	//{
+	//	return 0;
+	//}
 
 	DialogMap Dialog::s_dlgMap;
 

@@ -2,6 +2,14 @@
 #include "StdAfx.h"
 #include "MyState.h"
 
+MyState::MyState(void)
+{
+}
+
+MyState::~MyState(void)
+{
+}
+
 void MyState::enterState(void)
 {
 }
@@ -10,7 +18,15 @@ void MyState::leaveState(void)
 {
 }
 
-void MyStateChart::addState(const std::string & name, MyStatePtr state)
+MyStateChart::MyStateChart(void)
+{
+}
+
+MyStateChart::~MyStateChart(void)
+{
+}
+
+void MyStateChart::addState(const std::basic_string<charT> & name, MyStatePtr state)
 {
 	// the specified name state must not be in the map
 	_ASSERT(m_stateMap.end() == m_stateMap.find(name));
@@ -19,7 +35,7 @@ void MyStateChart::addState(const std::string & name, MyStatePtr state)
 	m_stateMap[name] = state;
 }
 
-void MyStateChart::setCurrentState(const std::string & name)
+void MyStateChart::setCurrentState(const std::basic_string<charT> & name)
 {
 	// the specified name state must be in the map
 	_ASSERT(m_stateMap.end() != m_stateMap.find(name));
