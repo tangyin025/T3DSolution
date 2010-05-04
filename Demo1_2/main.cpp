@@ -314,10 +314,10 @@ public:
 			clipper.right = clipper.left + lWidth;
 			clipper.bottom = clipper.top + lHeight;
 		}
-		_ASSERT(clipper.left	>= m_rback.left);
-		_ASSERT(clipper.top		>= m_rback.top);
-		_ASSERT(clipper.right	<= m_rback.right);
-		_ASSERT(clipper.bottom	<= m_rback.bottom);
+		_ASSERT(clipper.left	>= m_backSurfaceRect.left);
+		_ASSERT(clipper.top		>= m_backSurfaceRect.top);
+		_ASSERT(clipper.right	<= m_backSurfaceRect.right);
+		_ASSERT(clipper.bottom	<= m_backSurfaceRect.bottom);
 		m_rc->setClipperRect(clipper);
 
 		// 添加媒体搜索路径，建立快捷方式时要注意当前路径的位置
@@ -419,7 +419,7 @@ public:
 		//// 这里创建一个比窗口小的 clipper 区域，仅用于测试渲染的 clipper bug
 		//// 由于软件渲染器，其 clipper 是通过算法实现的，所以若算法不强健，会导致绘图时越过 clipper 区域
 		//// 甚至越过窗口区域，所以将绘图区域缩小一部分可以稍微避免，因越界导致系统崩溃的现象
-		//CRect clipper(m_rback);
+		//CRect clipper(m_backSurfaceRect);
 		//clipper.DeflateRect(10, 10);
 		//m_rc->setClipperRect(clipper);
 
@@ -624,7 +624,7 @@ public:
 
 		// 输出常用信息，如帧速率、相机方位等
 		std::basic_string<charT> strTmp;
-		HDC hdc = m_sback->getDC();
+		HDC hdc = m_backSurface->getDC();
 
 		int textx = m_rc->getClipperRect().left + 10;
 		int texty = m_rc->getClipperRect().top + 10;
@@ -658,10 +658,10 @@ public:
 		//	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 		//}
 
-		m_sback->releaseDC(hdc);
+		m_backSurface->releaseDC(hdc);
 
 		// 绘制控制台模拟器
-		m_consoleSim->draw(m_sback.get(), 10, texty += 20);
+		m_consoleSim->draw(m_backSurface.get(), 10, texty += 20);
 
 		return true;
 	}

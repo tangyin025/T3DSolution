@@ -107,117 +107,51 @@ namespace my
 		return image->convertTo32Bits();
 	}
 
-	//GameWnd::GameWnd(HWND hwnd)
-	//	: Window(hwnd)
-	//{
-	//}
+	GameWnd::GameWnd(HWND hwnd)
+		: Window(hwnd)
+	{
+	}
 
-	//GameWnd::~GameWnd(void)
-	//{
-	//}
+	GameWnd::~GameWnd(void)
+	{
+	}
 
-	//LRESULT GameWnd::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
-	//{
-	//	_ASSERT(hwnd == m_hwnd);
+	LRESULT GameWnd::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
+	{
+		_ASSERT(hwnd == m_hwnd);
 
-	//	switch(message)
-	//	{
-	//	case WM_CREATE:
-	//		{
-	//			// create ddraw object
-	//			m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
-	//			m_ddraw->setCooperativeLevel(hwnd, t3d::DDraw::CL_NORMAL);
+		switch(message)
+		{
+		case WM_PAINT:
+			{
+				// obtain global application object
+				Game * game = dynamic_cast<Game *>(Application::getSingletonPtr());
 
-	//			// obtain current display mode
-	//			DDSURFACEDESC2 ddsd = m_ddraw->getDisplayMode();
-	//			if( !(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) )
-	//			{
-	//				T3D_CUSEXCEPT(_T("unsupported pixel format"));
-	//			}
+				// back surface must be created
+				_ASSERT(NULL != game->m_backSurface);
 
-	//			// create the compatible render context
-	//			switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
-	//			{
-	//			case 16:
-	//				if(ddsd.ddpfPixelFormat.dwRBitMask != RGB16_RED_MASK
-	//					|| ddsd.ddpfPixelFormat.dwGBitMask != RGB16_GREEN_MASK
-	//					|| ddsd.ddpfPixelFormat.dwBBitMask != RGB16_BLUE_MASK)
-	//				{
-	//					T3D_CUSEXCEPT(_T("unsupported pixel format"));
-	//				}
-	//				m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
-	//				m_cc = ColorConversionPtr();
-	//				m_cc = ColorConversionPtr(new ColorConversion16());
-	//				break;
+				// update the attached back surface to client area
+				PAINTSTRUCT ps;
+				HDC hdc = BeginPaint(hwnd, &ps);
+				HDC hdcSrc = game->m_backSurface->getDC();
+				BitBlt(
+					hdc,
+					game->m_backSurfaceRect.left,
+					game->m_backSurfaceRect.top,
+					game->m_backSurfaceRect.Width(),
+					game->m_backSurfaceRect.Height(),
+					hdcSrc,
+					0,
+					0,
+					SRCCOPY);
+				game->m_backSurface->releaseDC(hdcSrc);
+				EndPaint(hwnd, &ps);
+				return 0;
+			}
+		}
 
-	//			case 32:
-	//				if(ddsd.ddpfPixelFormat.dwRBitMask != RGB32_RED_MASK
-	//					|| ddsd.ddpfPixelFormat.dwGBitMask != RGB32_GREEN_MASK
-	//					|| ddsd.ddpfPixelFormat.dwBBitMask != RGB32_BLUE_MASK)
-	//				{
-	//					T3D_CUSEXCEPT(_T("unsupported pixel format"));
-	//				}
-	//				m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
-	//				m_cc = ColorConversionPtr();
-	//				m_cc = ColorConversionPtr(new ColorConversion32());
-	//				break;
-
-	//			default:
-	//				T3D_CUSEXCEPT(_T("unsupported pixel format"));
-	//			}
-	//			return 0;
-	//		}
-
-	//	case WM_SIZE:
-	//		if(SIZE_RESTORED == wparam || SIZE_MAXIMIZED == wparam)
-	//		{
-	//			// ddraw object must be created
-	//			_ASSERT(NULL != m_ddraw);
-
-	//			// gain current window size
-	//			int width = LOWORD(lparam);
-	//			int height = HIWORD(lparam);
-
-	//			// re-create the back surface according to current size
-	//			m_backSurface = m_ddraw->createMemorySurface(width, height);
-	//			m_backSurfaceRect.SetRect(0, 0, width, height);
-	//			m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
-
-	//			// attach new back surface to render context
-	//			DDSURFACEDESC2 ddsd = m_backSurface->lock(NULL);
-	//			m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
-	//			m_backSurface->unlock();
-
-	//			// re-create zbuffer
-	//			m_zbuffer = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
-
-	//			// attach new zbuffer to render context
-	//			m_rc->setZBufferBuffer(m_zbuffer->getBuffer(), m_zbuffer->getPitch(), width, height);
-
-	//			// update clipper region
-	//			m_rc->setClipperRect(m_backSurfaceRect);
-	//			return 0;
-	//		}
-	//		break;
-
-	//	case WM_PAINT:
-	//		{
-	//			// back surface must be created
-	//			_ASSERT(NULL != m_backSurface);
-
-	//			// update the attached back surface to client area
-	//			PAINTSTRUCT ps;
-	//			HDC hdc = BeginPaint(hwnd, &ps);
-	//			HDC hdcSrc = m_backSurface->getDC();
-	//			BitBlt(hdc, m_backSurfaceRect.left, m_backSurfaceRect.top, m_backSurfaceRect.Width(), m_backSurfaceRect.Height(), hdcSrc, 0, 0, SRCCOPY);
-	//			m_backSurface->releaseDC(hdcSrc);
-	//			EndPaint(hwnd, &ps);
-	//			return 0;
-	//		}
-	//	}
-
-	//	return Window::onProc(hwnd, message, wparam, lparam);
-	//}
+		return Window::onProc(hwnd, message, wparam, lparam);
+	}
 
 	Game::Game(void)
 		: m_pwnd(NULL)
@@ -226,6 +160,11 @@ namespace my
 
 	Game::~Game(void)
 	{
+	}
+
+	Window * Game::newWindow(HWND hwnd)
+	{
+		return new GameWnd(hwnd);
 	}
 
 	bool Game::prepare(const CONFIG_DESC & cfg)
@@ -244,7 +183,7 @@ namespace my
 		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// set back surface rect
-		m_rback.SetRect(0, 0, cfg.width, cfg.height);
+		m_backSurfaceRect.SetRect(0, 0, cfg.width, cfg.height);
 
 		// create ddraw and adjust main window
 		switch(cfg.smode)
@@ -252,7 +191,7 @@ namespace my
 		case SCREEN_MODE_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
-			m_pwnd->adjustClientRect(m_rback);
+			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			m_pwnd->centerWindow();
 			break;
 
@@ -260,14 +199,14 @@ namespace my
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->adjustClientRect(m_rback);
+			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			break;
 
 		case SCREEN_MODE_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->adjustClientRect(m_rback);
+			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			break;
 
 		default:
@@ -275,14 +214,14 @@ namespace my
 		}
 
 		//// destory previous primary surface
-		//m_sprim = t3d::DDSurfacePtr();
+		//m_primSurface = t3d::DDSurfacePtr();
 
 		//// create primary surface
-		//m_sprim = m_ddraw->createWindowSurface();
+		//m_primSurface = m_ddraw->createWindowSurface();
 
-		//m_sprim->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
+		//m_primSurface->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
 
-		//DDPIXELFORMAT ddpf = m_sprim->getPixelFormat();
+		//DDPIXELFORMAT ddpf = m_primSurface->getPixelFormat();
 		DDPIXELFORMAT ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
 		if( !(ddpf.dwFlags & DDPF_RGB) )
 		{
@@ -290,9 +229,9 @@ namespace my
 		}
 
 		// create screen compatible back surface
-		m_sback = m_ddraw->createMemorySurface(cfg.width, cfg.height, ddpf);
+		m_backSurface = m_ddraw->createMemorySurface(cfg.width, cfg.height, ddpf);
 
-		m_sback->setClipper(m_ddraw->createMemoryClipper(&m_rback, 1).get());
+		m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
 
 		// create pixel dependency objects
 		// NOTE: some singleton object should be re-destoryed before creating, such as m_cc
@@ -348,16 +287,16 @@ namespace my
 		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfg.width, cfg.height));
 
 		// save back surface & zbuffer to render context
-		DDSURFACEDESC2 ddsd = m_sback->lock();
+		DDSURFACEDESC2 ddsd = m_backSurface->lock();
 
 		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
 
-		m_sback->unlock();
+		m_backSurface->unlock();
 
 		m_rc->setZBufferBuffer(m_zbuff->getBuffer(), m_zbuff->getPitch(), m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
 
 		// set back surface rect to render context clipper
-		m_rc->setClipperRect(m_rback);
+		m_rc->setClipperRect(m_backSurfaceRect);
 
 		// show main window
 		m_pwnd->showWindow();
@@ -365,29 +304,6 @@ namespace my
 		m_pwnd->updateWindow();
 
 		return onInit(cfg);
-	}
-
-	void Game::bltBackSurfaceToPrimary(void)
-	{
-		_ASSERT(NULL != m_pwnd);
-
-		// commit back surface to primary surface within corrected rectangle
-		//m_rprim = m_pwnd->getClientRect();
-		//m_pwnd->clientToScreenSelf(m_rprim);
-		CRect rect = m_pwnd->getClientRect();
-
-		// NOTE: for some reason, if the window size is greater than the desktop size, will lead these assert abort
-		_ASSERT(rect == m_rback);
-
-		//m_sprim->blt(&m_rprim, m_sback.get(), &m_rback);
-		HDC hdcSrc = m_sback->getDC();
-		HDC hdc = m_pwnd->getDC();
-		if(!::BitBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), hdcSrc, m_rback.left, m_rback.top, SRCCOPY))
-		{
-			T3D_WINEXCEPT(::GetLastError());
-		}
-		m_pwnd->releaseDC(hdc);
-		m_sback->releaseDC(hdcSrc);
 	}
 
 	//int Game::run(LPTSTR lpCmdLine)
@@ -451,7 +367,7 @@ namespace my
 		}
 
 		// swap the backup and primary surface
-		bltBackSurfaceToPrimary();
+		m_pwnd->InvalidateRect(&m_rc->getClipperRect(), FALSE);
 	}
 
 	bool Game::onInit(const CONFIG_DESC & cfg)

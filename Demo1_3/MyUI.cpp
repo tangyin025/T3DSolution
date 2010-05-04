@@ -54,17 +54,32 @@ void MyUIProgressBar::draw(t3d::RenderContext * rc)
 
 MyUIProgressBarBox::MyUIProgressBarBox(const CRect & rect)
 	: MyUIElement(rect)
-	, m_rectangle(rect, my::Color(0.3f, 0.3f, 0.3f))
-	, m_progressBar(CRect(0, 0, 0, 0), my::Color(0.7f, 0.7f, 0.5f))
+	, m_rectangle(CRect(), my::Color(0.3f, 0.3f, 0.3f))
+	, m_titleRect(CRect())
+	, m_progressBar(CRect(), my::Color(0.7f, 0.7f, 0.5f))
 {
-	m_progressBar.m_rect.left = m_rectangle.m_rect.left + SIDE_BORDER;
-	m_progressBar.m_rect.right = m_rectangle.m_rect.right - SIDE_BORDER;
-	m_progressBar.m_rect.top = m_rectangle.m_rect.top + TITLE_HEIGHT + (m_rectangle.m_rect.Height() - TITLE_HEIGHT - BAR_HEIGHT) / 2;
-	m_progressBar.m_rect.bottom = m_progressBar.m_rect.top + BAR_HEIGHT;
+	setRect(rect);
 }
 
 MyUIProgressBarBox::~MyUIProgressBarBox(void)
 {
+}
+
+void MyUIProgressBarBox::setRect(const CRect & rect)
+{
+	MyUIElement::setRect(rect);
+
+	m_rectangle.setRect(rect);
+
+	m_titleRect.left = m_rect.left + SIDE_BORDER;
+	m_titleRect.right = m_rect.right - SIDE_BORDER;
+	m_titleRect.top = m_rect.top + SIDE_BORDER;
+	m_titleRect.bottom = m_titleRect.top + TITLE_HEIGHT;
+
+	m_progressBar.m_rect.left = m_rect.left + SIDE_BORDER;
+	m_progressBar.m_rect.right = m_rect.right - SIDE_BORDER;
+	m_progressBar.m_rect.top = m_titleRect.bottom + (m_rect.bottom - m_titleRect.bottom - BAR_HEIGHT) / 2;
+	m_progressBar.m_rect.bottom = m_progressBar.m_rect.top + BAR_HEIGHT;
 }
 
 void MyUIProgressBarBox::setPercent(t3d::real percent)
