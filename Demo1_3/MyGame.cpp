@@ -55,10 +55,10 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 	}
 
 	// validate the clipper region
-	_ASSERT(clipper.left	>= m_rback.left);
-	_ASSERT(clipper.top		>= m_rback.top);
-	_ASSERT(clipper.right	<= m_rback.right);
-	_ASSERT(clipper.bottom	<= m_rback.bottom);
+	_ASSERT(clipper.left	>= m_backSurfaceRect.left);
+	_ASSERT(clipper.top		>= m_backSurfaceRect.top);
+	_ASSERT(clipper.right	<= m_backSurfaceRect.right);
+	_ASSERT(clipper.bottom	<= m_backSurfaceRect.bottom);
 
 	// update clipper region to render context
 	m_rc->setClipperRect(clipper);
@@ -159,19 +159,14 @@ bool MyLoadState::onFrame(void)
 	m_progressBox->draw(rc);
 
 	// general information output
-	std::basic_string<charT> strTmp(_T("loading ..."));
-	HDC hdc = m_game->m_sback->getDC();
+	std::basic_string<charT> strTmp(_T("Loading ..."));
+	HDC hdc = m_game->m_backSurface->getDC();
 	int bkMode = ::SetBkMode(hdc, TRANSPARENT);
 	COLORREF textColor = ::SetTextColor(hdc, RGB(255, 255, 255));
-	::TextOut(
-		hdc,
-		m_progressBox->m_rect.left + MyUIProgressBarBox::SIDE_BORDER,
-		m_progressBox->m_rect.top + MyUIProgressBarBox::SIDE_BORDER,
-		strTmp.c_str(),
-		(int)strTmp.length());
+	::DrawText(hdc, strTmp.c_str(), strTmp.length(), &m_progressBox->m_titleRect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 	::SetTextColor(hdc, textColor);
 	::SetBkMode(hdc, bkMode);
-	m_game->m_sback->releaseDC(hdc);
+	m_game->m_backSurface->releaseDC(hdc);
 
 	// sleep some time to set aside cpu resource to back thread
 	::Sleep(33);
@@ -292,7 +287,7 @@ bool MyGameState::onFrame(void)
 
 	// general information output
 	std::basic_string<charT> strTmp;
-	HDC hdc = m_game->m_sback->getDC();
+	HDC hdc = m_game->m_backSurface->getDC();
 
 	int textx = rc->getClipperRect().left + 10;
 	int texty = rc->getClipperRect().top + 10;
@@ -312,7 +307,7 @@ bool MyGameState::onFrame(void)
 		RAD_TO_DEG(eularCam->getRotation().x), RAD_TO_DEG(eularCam->getRotation().y), RAD_TO_DEG(eularCam->getRotation().z));
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
-	m_game->m_sback->releaseDC(hdc);
+	m_game->m_backSurface->releaseDC(hdc);
 
 	return true;
 }

@@ -7,6 +7,17 @@ public:
 	CRect m_rect;
 
 public:
+	void setRect(const CRect & rect)
+	{
+		m_rect = rect;
+	}
+
+	const CRect & getRect(void) const
+	{
+		return m_rect;
+	}
+
+public:
 	MyUIElement(const CRect & rect);
 
 	virtual ~MyUIElement(void);
@@ -60,6 +71,8 @@ public:
 public:
 	MyUIRectangle m_rectangle;
 
+	CRect m_titleRect;
+
 	MyUIProgressBar m_progressBar;
 
 public:
@@ -68,6 +81,8 @@ public:
 	~MyUIProgressBarBox(void);
 
 public:
+	void setRect(const CRect & rect);
+
 	void setPercent(t3d::real percent);
 
 	void draw(t3d::RenderContext * rc);

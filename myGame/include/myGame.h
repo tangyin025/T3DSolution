@@ -57,9 +57,14 @@ namespace my
 		static ColorConversion * s_ptr;
 
 	public:
+		static ColorConversion * getSingletonPtr(void)
+		{
+			_ASSERT(NULL != s_ptr); return s_ptr;
+		}
+
 		static ColorConversion & getSingleton(void)
 		{
-			_ASSERT(NULL != s_ptr); return * s_ptr;
+			return * getSingletonPtr();
 		}
 
 	public:
@@ -97,29 +102,16 @@ namespace my
 		my::ImagePtr convertImage(const my::Image * image);
 	};
 
-	//class GameWnd : public Window
-	//{
-	//public:
-	//	t3d::DDrawPtr m_ddraw;
+	class GameWnd : public Window
+	{
+	public:
+		GameWnd(HWND hwnd);
 
-	//	t3d::DDSurfacePtr m_backSurface;
+		~GameWnd(void);
 
-	//	CRect m_backSurfaceRect;
-
-	//	t3d::RenderContextPtr m_rc;
-
-	//	ColorConversionPtr m_cc;
-
-	//	t3d::ZBufferPtr m_zbuffer;
-
-	//public:
-	//	GameWnd(HWND hwnd);
-
-	//	~GameWnd(void);
-
-	//public:
-	//	LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-	//};
+	public:
+		LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+	};
 
 	class Game : public Application
 	{
@@ -154,13 +146,13 @@ namespace my
 
 		t3d::DDrawPtr m_ddraw;
 
-		//t3d::DDSurfacePtr m_sprim;
+		//t3d::DDSurfacePtr m_primSurface;
 
-		//CRect m_rprim;
+		//CRect m_primSurfaceRect;
 
-		t3d::DDSurfacePtr m_sback;
+		t3d::DDSurfacePtr m_backSurface;
 
-		CRect m_rback;
+		CRect m_backSurfaceRect;
 
 		t3d::DInputPtr m_dinput;
 
@@ -182,9 +174,9 @@ namespace my
 		~Game(void);
 
 	public:
-		bool prepare(const CONFIG_DESC & cfg);
+		Window * newWindow(HWND hwnd);
 
-		void bltBackSurfaceToPrimary(void);
+		bool prepare(const CONFIG_DESC & cfg);
 
 		//int run(LPTSTR lpCmdLine);
 

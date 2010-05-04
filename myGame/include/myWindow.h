@@ -171,9 +171,14 @@ namespace my
 	public:
 		static Application * s_ptr;
 
+		static Application * getSingletonPtr(void)
+		{
+			_ASSERT(NULL != s_ptr); return s_ptr;
+		}
+
 		static Application & getSingleton(void)
 		{
-			_ASSERT(NULL != s_ptr); return *s_ptr;
+			return * getSingletonPtr();
 		}
 
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
