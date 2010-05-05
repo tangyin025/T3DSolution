@@ -166,13 +166,13 @@ namespace my
 		{
 		case WM_NCDESTROY:
 			{
-				//DialogMap::iterator dlgIter = s_dlgMap.find(m_hdlg);
+				DialogMap::iterator dlgIter = s_dlgMap.find(m_hdlg);
 
-				//_ASSERT(dlgIter != s_dlgMap.end());
+				_ASSERT(dlgIter != s_dlgMap.end());
 
-				//s_dlgMap.erase(dlgIter);
+				s_dlgMap.erase(dlgIter);
 
-				////m_hdlg = NULL;
+				m_hdlg = NULL;
 
 				return FALSE;
 			}
