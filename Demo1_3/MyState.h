@@ -23,6 +23,8 @@ class MyStateChart
 protected:
 	MyStatePtrMap m_stateMap;
 
+	std::basic_string<charT> m_currentStateName;
+
 	MyStatePtr m_currentState;
 
 public:
@@ -34,6 +36,8 @@ public:
 	void addState(const std::basic_string<charT> & name, MyStatePtr state);
 
 	void setCurrentState(const std::basic_string<charT> & name);
+
+	const std::basic_string<charT> & getCurrentStateName(void) const;
 
 	template <class DRIVED_STATE_CLASS>
 	boost::shared_ptr<DRIVED_STATE_CLASS> getCurrentState(void)

@@ -46,9 +46,18 @@ void MyStateChart::setCurrentState(const std::basic_string<charT> & name)
 		m_currentState->leaveState();
 	}
 
+	// set current state name
+	m_currentStateName = name;
+
 	// set current state
 	m_currentState = m_stateMap[name];
 
 	// enter current state
 	m_currentState->enterState();
+}
+
+const std::basic_string<charT> & MyStateChart::getCurrentStateName(void) const
+{
+	// return current state name
+	return m_currentStateName;
 }

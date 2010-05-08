@@ -4,6 +4,18 @@
 #include "MyState.h"
 #include "MyUI.h"
 
+class MyWindow
+	: public my::GameWnd
+{
+public:
+	MyWindow(HWND hwnd);
+
+	~MyWindow(void);
+
+public:
+	LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+};
+
 class MyGame
 	: public my::Game
 	, public MyStateChart
@@ -11,6 +23,17 @@ class MyGame
 	friend class MyLoadState;
 
 	friend class MyGameState;
+
+public:
+	static MyGame * getSingletonPtr(void)
+	{
+		return dynamic_cast<MyGame *>(my::Game::getSingletonPtr());
+	}
+
+	static MyGame & getSingleton(void)
+	{
+		return * getSingletonPtr();
+	}
 
 protected:
 	my::FPSManagerPtr m_fpsMgr;
@@ -27,11 +50,13 @@ public:
 	~MyGame(void);
 
 public:
-	virtual bool onInit(const CONFIG_DESC & cfg);
+	my::Window * newWindow(HWND hwnd);
 
-	virtual bool onFrame(void);
+	bool onInit(const CONFIG_DESC & cfg);
 
-	virtual void onShutdown(void);
+	bool onFrame(void);
+
+	void onShutdown(void);
 };
 
 class MyStateBase
@@ -46,6 +71,8 @@ public:
 	virtual bool onFrame(void) = 0;
 };
 
+typedef boost::shared_ptr<MyStateBase> MyStateBasePtr;
+
 class MyLoadState
 	: public MyStateBase
 	, public my::Thread
@@ -55,8 +82,21 @@ protected:
 
 	MyUIProgressBarBoxPtr m_progressBox;
 
+	bool m_exitFlag;
+
 public:
 	static const std::basic_string<charT> s_name;
+
+public:
+	void setExitFlag(bool exitFlag = true)
+	{
+		m_exitFlag = exitFlag;
+	}
+
+	bool getExitFlag(void)
+	{
+		return m_exitFlag;
+	}
 
 public:
 	MyLoadState(MyGame * game);

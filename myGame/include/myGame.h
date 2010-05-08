@@ -138,6 +138,17 @@ namespace my
 		};
 
 	public:
+		static Game * getSingletonPtr(void)
+		{
+			return dynamic_cast<Game *>(my::Application::getSingletonPtr());
+		}
+
+		static Game & getSingleton(void)
+		{
+			return * getSingletonPtr();
+		}
+
+	public:
 		ErrorReporterPtr m_errorRpt;
 
 		ResourceMgrPtr m_resourceMgr;

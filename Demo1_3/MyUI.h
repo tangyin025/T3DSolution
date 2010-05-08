@@ -41,20 +41,11 @@ public:
 
 	static const DWORD BLOCK_WIDTH = 10;
 
-	static const DWORD INTERVAL_WIDTH = 3;
+	static const DWORD BLOCK_INTERVAL = 3;
 
 	my::Color m_color;
 
 	t3d::real m_percent;
-
-protected:
-	int m_nBlockCount;
-
-	int m_nBlockHeight;
-
-	int m_xStart;
-
-	int m_yStart;
 
 public:
 	void setColor(const my::Color & color)
@@ -86,8 +77,6 @@ public:
 	~MyUIProgressBar(void);
 
 public:
-	void setRect(const CRect & rect);
-
 	void draw(t3d::RenderContext * rc);
 };
 

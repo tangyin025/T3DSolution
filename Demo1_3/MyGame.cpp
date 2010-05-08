@@ -3,12 +3,46 @@
 #include "MyGame.h"
 #include "MyConfig.h"
 
+MyWindow::MyWindow(HWND hwnd)
+	: GameWnd(hwnd)
+{
+}
+
+MyWindow::~MyWindow(void)
+{
+}
+
+LRESULT MyWindow::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
+{
+	switch(message)
+	{
+	case WM_CLOSE:
+		if(MyGame::getSingleton().getCurrentStateName() == MyLoadState::s_name)
+		{
+			// for load state, there must be waiting for other thread to prepare for quiting
+			MyLoadStatePtr loadState = MyGame::getSingleton().getCurrentState<MyLoadState>();
+			if(!loadState->getExitFlag())
+			{
+				loadState->setExitFlag();
+			}
+			return 0;
+		}
+		break;
+	}
+	return GameWnd::onProc(hwnd, message, wparam, lparam);
+}
+
 MyGame::MyGame(void)
 {
 }
 
 MyGame::~MyGame(void)
 {
+}
+
+my::Window * MyGame::newWindow(HWND hwnd)
+{
+	return new MyWindow(hwnd);
 }
 
 bool MyGame::onInit(const CONFIG_DESC & cfg)
@@ -90,8 +124,8 @@ bool MyGame::onFrame(void)
 
 void MyGame::onShutdown(void)
 {
-	//// get current state and do leaveState
-	//getCurrentState<MyStateBase>()->leaveState();
+	// get current state and do leaveState
+	getCurrentState<MyStateBase>()->leaveState();
 }
 
 MyStateBase::MyStateBase(void)
@@ -106,6 +140,7 @@ const std::basic_string<charT> MyLoadState::s_name(_T("MyLoadState"));
 
 MyLoadState::MyLoadState(MyGame * game)
 	: m_game(game)
+	, m_exitFlag(false)
 {
 }
 
@@ -130,6 +165,7 @@ void MyLoadState::enterState(void)
 
 void MyLoadState::leaveState(void)
 {
+	_ASSERT(WaitForThreadStopped(0));
 }
 
 bool MyLoadState::onFrame(void)
@@ -138,15 +174,24 @@ bool MyLoadState::onFrame(void)
 	if(m_game->m_keyboard->isKeyDown(DIK_ESCAPE))
 	{
 		// DO NOT USE TerminateThread HERE!
-		TerminateThread(1); // JUST FOR TEST!!!
-		return false;
+		if(!getExitFlag())
+		{
+			setExitFlag();
+		}
 	}
 
 	// exit application by return false with user input 'escape'
 	if(WaitForThreadStopped(0))
 	{
-		m_game->setCurrentState(MyGameState::s_name);
-		return true;
+		if(!getExitFlag())
+		{
+			m_game->setCurrentState(MyGameState::s_name);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	// define render context point
@@ -159,7 +204,15 @@ bool MyLoadState::onFrame(void)
 	m_progressBox->draw(rc);
 
 	// general information output
-	std::basic_string<charT> strTmp(_T("Loading ..."));
+	std::basic_string<charT> strTmp;
+	if(!getExitFlag())
+	{
+		strTmp = _T("Loading ...");
+	}
+	else
+	{
+		strTmp = _T("Exiting ...");
+	}
 	HDC hdc = m_game->m_backSurface->getDC();
 	int bkMode = ::SetBkMode(hdc, TRANSPARENT);
 	COLORREF textColor = ::SetTextColor(hdc, RGB(255, 255, 255));
@@ -195,9 +248,18 @@ DWORD MyLoadState::onProc(void)
 
 	// simulate times occupied process
 	int count = 100;
-	for(int i = 1; i <= count; i++)
+	for(int i = 1; i <= count; i += 1)
 	{
+		// if user specified to exit application, stop any job
+		if(getExitFlag())
+		{
+			break;
+		}
+
+		// update progress percent
 		m_progressBox->setPercent((real)i / count);
+
+		// sleep some time as if doing the job
 		::Sleep(50);
 	}
 	return 0;
