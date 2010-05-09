@@ -94,7 +94,8 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 	_ASSERT(clipper.right	<= m_backSurfaceRect.right);
 	_ASSERT(clipper.bottom	<= m_backSurfaceRect.bottom);
 
-	// update clipper region to render context
+	// update clipper region to render context,
+	// and later the camera's viewport & projection will be recalculated by this clipper rect
 	m_rc->setClipperRect(clipper);
 
 	// create and add load state
@@ -103,7 +104,7 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 	// create and add game state
 	addState(MyGameState::s_name, MyGameStatePtr(new MyGameState(this)));
 
-	// set current state as load state
+	// set current state to load state
 	setCurrentState(MyLoadState::s_name);
 
 	// call default parent onInit
@@ -112,8 +113,8 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 
 bool MyGame::onFrame(void)
 {
-	// get current state and do onFrame
-	if(!getCurrentState<MyStateBase>()->onFrame())
+	// get current state and do frame
+	if(!getCurrentState<MyStateBase>()->doFrame())
 	{
 		return false;
 	}
@@ -168,7 +169,7 @@ void MyLoadState::leaveState(void)
 	_ASSERT(WaitForThreadStopped(0));
 }
 
-bool MyLoadState::onFrame(void)
+bool MyLoadState::doFrame(void)
 {
 	// exit application by return false with user input 'escape'
 	if(m_game->m_keyboard->isKeyDown(DIK_ESCAPE))
@@ -229,22 +230,25 @@ bool MyLoadState::onFrame(void)
 
 DWORD MyLoadState::onProc(void)
 {
+	// get the game state ptr
+	MyGameStatePtr gameState = m_game->getState<MyGameState>(MyGameState::s_name);
+
 	// initialize fps manager
-	m_game->m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
-	m_game->m_fpsMgr->start();
+	gameState->m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
+	gameState->m_fpsMgr->start();
 
 	// initialize timer
-	m_game->m_timer = my::TimerPtr(new my::Timer());
-	m_game->m_timer->start();
+	gameState->m_timer = my::TimerPtr(new my::Timer());
+	gameState->m_timer->start();
 
 	// initialize grid
-	m_game->m_grid = my::GridPtr(new my::Grid());
+	gameState->m_grid = my::GridPtr(new my::Grid());
 
 	// initialize euler camera
-	m_game->m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
-	m_game->m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
-	m_game->m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
-	m_game->m_eulerCam->reset();
+	gameState->m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
+	gameState->m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
+	gameState->m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
+	gameState->m_eulerCam->reset();
 
 	// simulate times occupied process
 	int count = 100;
@@ -279,21 +283,20 @@ MyGameState::~MyGameState(void)
 void MyGameState::enterState(void)
 {
 	// verify all data are created properly
-	_ASSERT(m_game->m_fpsMgr);
-	_ASSERT(m_game->m_timer);
-	_ASSERT(m_game->m_grid);
-	_ASSERT(m_game->m_eulerCam);
+	_ASSERT(m_fpsMgr);
+	_ASSERT(m_timer);
+	_ASSERT(m_grid);
+	_ASSERT(m_eulerCam);
 }
 
 void MyGameState::leaveState(void)
 {
 }
 
-bool MyGameState::onFrame(void)
+bool MyGameState::doFrame(void)
 {
 	// define render context point
 	t3d::RenderContext * rc = m_game->m_rc.get();
-	my::EulerCamera * eularCam = m_game->m_eulerCam.get();
 
 	// exit application by return false with user input 'escape'
 	if(m_game->m_keyboard->isKeyDown(DIK_ESCAPE))
@@ -303,17 +306,17 @@ bool MyGameState::onFrame(void)
 
 	// fps manager, witch calculated fps by incremented frame
 	// the precision of this fps manager witch depend on sampling second was low, but its enough
-	m_game->m_fpsMgr->addFrame();
+	m_fpsMgr->addFrame();
 
 	// the high precision timer, witch calculate time interval between last frame by cpu count
 	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
-	const real elapsedTime = std::min((real)m_game->m_timer->getElapsedTime(), (real)0.033);
+	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
 	//// here i created the clipper region smaller than the window, only used to test the clipper bug
 	//// because of the software simulating, the algorithm of cutting polygon is implemented by software,
 	//// so the unstrong algorithm will lead edge overflow, and even crash the application
 	//// reducing the clipper region will somehow avoid this phenomenon
-	//CRect clipper(m_game->m_rback);
+	//CRect clipper(m_rback);
 	//clipper.DeflateRect(10, 10);
 	//rc->setClipperRect(clipper);
 
@@ -330,12 +333,12 @@ bool MyGameState::onFrame(void)
 	rc->setCameraFarZ(10000);
 
 	// update euler cameras position and orientation by user input
-	eularCam->update(m_game->m_keyboard.get(), m_game->m_mouse.get(), elapsedTime);
-	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(eularCam->getPosition(), eularCam->getRotation()));
+	m_eulerCam->update(m_game->m_keyboard.get(), m_game->m_mouse.get(), elapsedTime);
+	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);
-	l_pos *= t3d::mat3RotZXY(eularCam->getRotation()) * t3d::mat3Mov(eularCam->getPosition());
+	l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
 	rc->clearLightList();
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
@@ -345,7 +348,7 @@ bool MyGameState::onFrame(void)
 	rc->setDiffuse(my::Color::WHITE);
 
 	// draw default grid, with use to test distance of the scene
-	m_game->m_grid->drawZBufferRW(rc);
+	m_grid->drawZBufferRW(rc);
 
 	// general information output
 	std::basic_string<charT> strTmp;
@@ -354,7 +357,7 @@ bool MyGameState::onFrame(void)
 	int textx = rc->getClipperRect().left + 10;
 	int texty = rc->getClipperRect().top + 10;
 
-	strTmp = str_printf(_T("fps: %.1f"), m_game->m_fpsMgr->getFPS());
+	strTmp = str_printf(_T("fps: %.1f"), m_fpsMgr->getFPS());
 	::TextOut(hdc, textx, texty, strTmp.c_str(), (int)strTmp.length());
 
 	strTmp = str_printf(_T("fps: %.1f"), 1 / elapsedTime);
@@ -366,7 +369,7 @@ bool MyGameState::onFrame(void)
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 	strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
-		RAD_TO_DEG(eularCam->getRotation().x), RAD_TO_DEG(eularCam->getRotation().y), RAD_TO_DEG(eularCam->getRotation().z));
+		RAD_TO_DEG(m_eulerCam->getRotation().x), RAD_TO_DEG(m_eulerCam->getRotation().y), RAD_TO_DEG(m_eulerCam->getRotation().z));
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 	m_game->m_backSurface->releaseDC(hdc);

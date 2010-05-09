@@ -35,15 +35,6 @@ public:
 		return * getSingletonPtr();
 	}
 
-protected:
-	my::FPSManagerPtr m_fpsMgr;
-
-	my::TimerPtr m_timer;
-
-	my::GridPtr m_grid;
-
-	my::EulerCameraPtr m_eulerCam;
-
 public:
 	MyGame(void) throw();
 
@@ -68,7 +59,7 @@ public:
 	~MyStateBase(void);
 
 public:
-	virtual bool onFrame(void) = 0;
+	virtual bool doFrame(void) = 0;
 };
 
 typedef boost::shared_ptr<MyStateBase> MyStateBasePtr;
@@ -107,7 +98,7 @@ public:
 
 	void leaveState(void);
 
-	bool onFrame(void);
+	bool doFrame(void);
 
 	DWORD onProc(void);
 };
@@ -117,8 +108,18 @@ typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 class MyGameState
 	: public MyStateBase
 {
+	friend MyLoadState;
+
 protected:
 	MyGame * m_game;
+
+	my::FPSManagerPtr m_fpsMgr;
+
+	my::TimerPtr m_timer;
+
+	my::GridPtr m_grid;
+
+	my::EulerCameraPtr m_eulerCam;
 
 public:
 	static const std::basic_string<charT> s_name;
@@ -132,7 +133,7 @@ public:
 
 	void leaveState(void);
 
-	bool onFrame(void);
+	bool doFrame(void);
 };
 
 typedef boost::shared_ptr<MyGameState> MyGameStatePtr;
