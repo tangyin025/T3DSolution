@@ -1,6 +1,6 @@
 
 #include "StdAfx.h"
-#include "MyGame.h"
+#include "MyGame2.h"
 #include "MyConfig.h"
 
 MyWindow::MyWindow(HWND hwnd)
@@ -114,7 +114,7 @@ bool MyGame::onInit(const CONFIG_DESC & cfg)
 bool MyGame::onFrame(void)
 {
 	// get current state and do frame
-	if(!getCurrentState<MyStateBase>()->doFrame())
+	if(!getCurrentState<MyFrameState>()->doFrame())
 	{
 		return false;
 	}
@@ -126,14 +126,14 @@ bool MyGame::onFrame(void)
 void MyGame::onShutdown(void)
 {
 	// get current state and do leaveState
-	getCurrentState<MyStateBase>()->leaveState();
+	getCurrentState<MyFrameState>()->leaveState();
 }
 
-MyStateBase::MyStateBase(void)
+MyFrameState::MyFrameState(void)
 {
 }
 
-MyStateBase::~MyStateBase(void)
+MyFrameState::~MyFrameState(void)
 {
 }
 
