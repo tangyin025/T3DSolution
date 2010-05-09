@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "MyConfig.h"
 #include "MyDialog.h"
-#include "MyGame.h"
+#include "MyGame2.h"
 
 int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {

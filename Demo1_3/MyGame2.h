@@ -50,22 +50,22 @@ public:
 	void onShutdown(void);
 };
 
-class MyStateBase
+class MyFrameState
 	: public MyState
 {
 public:
-	MyStateBase(void);
+	MyFrameState(void);
 
-	~MyStateBase(void);
+	~MyFrameState(void);
 
 public:
 	virtual bool doFrame(void) = 0;
 };
 
-typedef boost::shared_ptr<MyStateBase> MyStateBasePtr;
+typedef boost::shared_ptr<MyFrameState> MyStateBasePtr;
 
 class MyLoadState
-	: public MyStateBase
+	: public MyFrameState
 	, public my::Thread
 {
 protected:
@@ -106,7 +106,7 @@ public:
 typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 
 class MyGameState
-	: public MyStateBase
+	: public MyFrameState
 {
 	friend MyLoadState;
 
