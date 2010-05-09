@@ -26,15 +26,6 @@ MyStateChart::~MyStateChart(void)
 {
 }
 
-void MyStateChart::addState(const std::basic_string<charT> & name, MyStatePtr state)
-{
-	// the specified name state must not be in the map
-	_ASSERT(m_stateMap.end() == m_stateMap.find(name));
-
-	// insert this state to map
-	m_stateMap[name] = state;
-}
-
 void MyStateChart::setCurrentState(const std::basic_string<charT> & name)
 {
 	// the specified name state must be in the map
@@ -54,10 +45,4 @@ void MyStateChart::setCurrentState(const std::basic_string<charT> & name)
 
 	// enter current state
 	m_currentState->enterState();
-}
-
-const std::basic_string<charT> & MyStateChart::getCurrentStateName(void) const
-{
-	// return current state name
-	return m_currentStateName;
 }
