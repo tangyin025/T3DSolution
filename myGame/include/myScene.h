@@ -77,27 +77,6 @@ namespace my
 
 		Object m_obj;
 
-	//public:
-	//	size_t getTriangleCount(void) const;
-
-	//	const t3d::Vec4<real> & getTriangleVertex0(size_t i) const;
-
-	//	const t3d::Vec4<real> & getTriangleVertex1(size_t i) const;
-
-	//	const t3d::Vec4<real> & getTriangleVertex2(size_t i) const;
-
-	//	const t3d::Vec4<real> & getTriangleNormal0(size_t i) const;
-
-	//	const t3d::Vec4<real> & getTriangleNormal1(size_t i) const;
-
-	//	const t3d::Vec4<real> & getTriangleNormal2(size_t i) const;
-
-	//	const t3d::Vec2<real> & getTriangleUV0(size_t i) const;
-
-	//	const t3d::Vec2<real> & getTriangleUV1(size_t i) const;
-
-	//	const t3d::Vec2<real> & getTriangleUV2(size_t i) const;
-
 	public:
 		void drawWireZBufferRW(
 			t3d::RenderContext * rc,
