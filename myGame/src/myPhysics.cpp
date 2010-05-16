@@ -1152,27 +1152,27 @@ namespace my
 			return;
 		}
 
-	    // Calculate linear acceleration from force inputs.
+		// Calculate linear acceleration from force inputs.
 		resultingAcc = t3d::vec3Add(acceleration, t3d::vec3Mul(forceAccum, inverseMass));
 
-	    // Calculate angular acceleration from torque inputs.
+		// Calculate angular acceleration from torque inputs.
 		resultingAngularAcc = torqueAccum * inverseInertiaTensorWorld;
 
-	    // Update linear velocity from both acceleration and impulse.
+		// Update linear velocity from both acceleration and impulse.
 		addVelocity(t3d::vec3Mul(resultingAcc, duration));
 
-	    // Update angular velocity from both acceleration and impulse.
+		// Update angular velocity from both acceleration and impulse.
 		addRotation(t3d::vec3Mul(resultingAngularAcc, duration));
 
-	    // Impose drag.
+		// Impose drag.
 		t3d::vec3MulSelf(velocity, pow(damping, duration));
 
 		t3d::vec3MulSelf(rotation, pow(angularDamping, duration));
 
-	    // Update linear position.
+		// Update linear position.
 		addPosition(t3d::vec3Mul(velocity, duration));
 
-	    // Update angular position.
+		// Update angular position.
 		addOrientation(t3d::vec3Mul(rotation, duration));
 
 		// Normalise the orientation, and update the matrices with the new
@@ -1503,11 +1503,11 @@ namespace my
 
 	t3d::Vec4<real> Contact::calculateLocalVelocity(const RigidBody & body, const t3d::Vec4<real> & relativeContactPosition, real duration) const // ***
 	{
-	    // Work out the velocity of the contact point.
+		// Work out the velocity of the contact point.
 		t3d::Vec4<real> velocity = t3d::vec3Add(
 			t3d::vec3Cross(body.getRotation(), relativeContactPosition), body.getVelocity());
 
-	    // Turn the velocity into contact-coordinates.
+		// Turn the velocity into contact-coordinates.
 		t3d::Vec4<real> velocityLocal = velocity.transformTranspose(contactToWorld);
 
 		// Calculate the ammount of velocity that is due to forces without
@@ -1639,7 +1639,7 @@ namespace my
 		// Check if we need to add body two's data
 		if(NULL != bodys[1])
 		{
-	        // Set the cross product matrix
+			// Set the cross product matrix
 			impulseToTorque = t3d::buildSkewSymmetricMatrxi(relativeContactPositions[1]);
 
 			// Calculate the velocity change matrix
@@ -1743,32 +1743,32 @@ namespace my
 		t3d::Vec4<real> & linearChange,
 		t3d::Vec4<real> & angularChange) // ***
 	{
-        // Velocity change is easier - it is just the linear movement
-        // along the contact normal.
+		// Velocity change is easier - it is just the linear movement
+		// along the contact normal.
 		linearChange = t3d::vec3Mul(contactNormal, linearMove);
 
-        // We have the linear amount of movement required by turning
-        // the rigid body (in angularMove[i]). We now need to
-        // calculate the desired rotation to achieve that.
+		// We have the linear amount of movement required by turning
+		// the rigid body (in angularMove[i]). We now need to
+		// calculate the desired rotation to achieve that.
 		if(0 == angularMove)
 		{
-            // Easy case - no angular movement means no rotation.
+			// Easy case - no angular movement means no rotation.
 			angularChange = my::Vec4<real>::ZERO;
 		}
 		else
 		{
-            // Work out the direction we'd like to rotate in.
+			// Work out the direction we'd like to rotate in.
 			t3d::Vec4<real> angularPerMove = t3d::vec3Div(t3d::vec3Cross(relativeContactPosition, contactNormal) * body.getInverseInertialTensor(), angularInertia); // ***
 
-            // Work out the direction we'd need to rotate to achieve that
+			// Work out the direction we'd need to rotate to achieve that
 			angularChange = t3d::vec3Mul(angularPerMove, angularMove);
 		}
 
-        // Now we can start to apply the values we've calculated.
-        // Apply the linear movement
+		// Now we can start to apply the values we've calculated.
+		// Apply the linear movement
 		body.addPosition(linearChange);
 
-        // And the change in orientation
+		// And the change in orientation
 		body.addOrientation(angularChange);
 
 		// BUG FIX:
@@ -1777,10 +1777,10 @@ namespace my
 		body.setOrientation(body.getOrientation().normalize()); // ***
 
 		// We need to calculate the derived data for any body that is
-        // asleep, so that the changes are reflected in the object's
-        // data. Otherwise the resolution will not change the position
-        // of the object, and the next collision detection round will
-        // have the same penetration.
+		// asleep, so that the changes are reflected in the object's
+		// data. Otherwise the resolution will not change the position
+		// of the object, and the next collision detection round will
+		// have the same penetration.
 		if(!body.getAwake())
 		{
 			body.calculateDerivedData();

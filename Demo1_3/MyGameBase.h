@@ -16,7 +16,7 @@ public:
 	LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 };
 
-class MyGame
+class MyGameBase
 	: public my::Game
 	, public MyStateChart
 {
@@ -25,20 +25,25 @@ class MyGame
 	friend class MyGameState;
 
 public:
-	static MyGame * getSingletonPtr(void)
+	static MyGameBase * getSingletonPtr(void)
 	{
-		return dynamic_cast<MyGame *>(my::Game::getSingletonPtr());
+		return dynamic_cast<MyGameBase *>(my::Game::getSingletonPtr());
 	}
 
-	static MyGame & getSingleton(void)
+	static MyGameBase & getSingleton(void)
 	{
 		return * getSingletonPtr();
 	}
 
 public:
-	MyGame(void) throw();
+	virtual bool doInit(void) = 0;
 
-	~MyGame(void);
+	virtual bool doFrame(void) = 0;
+
+public:
+	MyGameBase(void) throw();
+
+	~MyGameBase(void);
 
 public:
 	my::Window * newWindow(HWND hwnd);
@@ -69,11 +74,17 @@ class MyLoadState
 	, public my::Thread
 {
 protected:
-	MyGame * m_game;
+	MyGameBase * m_game;
 
 	MyUIProgressBarBoxPtr m_progressBox;
 
+	real m_progressPercent;
+
+	my::CriticalSection m_progressPercentLock;
+
 	bool m_exitFlag;
+
+	my::CriticalSection m_exitFlagLock;
 
 public:
 	static const std::basic_string<charT> s_name;
@@ -81,16 +92,36 @@ public:
 public:
 	void setExitFlag(bool exitFlag = true)
 	{
+		m_exitFlagLock.enter();
 		m_exitFlag = exitFlag;
+		m_exitFlagLock.leave();
 	}
 
 	bool getExitFlag(void)
 	{
-		return m_exitFlag;
+		m_exitFlagLock.enter();
+		bool flag = m_exitFlag;
+		m_exitFlagLock.leave();
+		return flag;
+	}
+
+	void setPercent(real percent)
+	{
+		m_progressPercentLock.enter();
+		m_progressPercent = percent;
+		m_progressPercentLock.leave();
+	}
+
+	real getPercent(void)
+	{
+		m_progressPercentLock.enter();
+		real percent = m_progressPercent;
+		m_progressPercentLock.leave();
+		return percent;
 	}
 
 public:
-	MyLoadState(MyGame * game);
+	MyLoadState(MyGameBase * game);
 
 	~MyLoadState(void);
 
@@ -108,30 +139,16 @@ typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 class MyGameState
 	: public MyFrameState
 {
-	friend MyLoadState;
-
 protected:
-	MyGame * m_game;
-
-	my::FPSManagerPtr m_fpsMgr;
-
-	my::TimerPtr m_timer;
-
-	my::GridPtr m_grid;
-
-	my::EulerCameraPtr m_eulerCam;
+	MyGameBase * m_game;
 
 public:
 	static const std::basic_string<charT> s_name;
 
 public:
-	MyGameState(MyGame * game);
+	MyGameState(MyGameBase * game);
 
 	~MyGameState(void);
-
-	void enterState(void);
-
-	void leaveState(void);
 
 	bool doFrame(void);
 };

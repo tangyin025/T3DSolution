@@ -185,7 +185,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MyGame2.cpp"
+				RelativePath=".\MyGameBase.cpp"
 				>
 			</File>
 			<File
@@ -231,7 +231,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MyGame2.h"
+				RelativePath=".\MyGameBase.h"
 				>
 			</File>
 			<File

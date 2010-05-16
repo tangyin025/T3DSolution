@@ -28,6 +28,31 @@ namespace my
 	{
 	}
 
+	CriticalSection::CriticalSection(void)
+	{
+		::InitializeCriticalSection(&m_section);
+	}
+
+	CriticalSection::~CriticalSection(void)
+	{
+		::DeleteCriticalSection(&m_section);
+	}
+
+	void CriticalSection::enter(void)
+	{
+		::EnterCriticalSection(&m_section);
+	}
+
+	void CriticalSection::leave(void)
+	{
+		::LeaveCriticalSection(&m_section);
+	}
+
+	BOOL CriticalSection::TryEnterCriticalSection(void)
+	{
+		return ::TryEnterCriticalSection(&m_section);
+	}
+
 	DWORD WINAPI Thread::ThreadProc(__in LPVOID lpParameter)
 	{
 		Thread * pThread = reinterpret_cast<Thread *>(lpParameter);
@@ -108,6 +133,8 @@ namespace my
 
 	void Thread::TerminateThread(DWORD dwExitCode)
 	{
+		_ASSERT(!"you should not use TerminateThread anymore");
+
 		_ASSERT(NULL != m_hThread);
 
 		if(!::TerminateThread(m_hThread, dwExitCode))

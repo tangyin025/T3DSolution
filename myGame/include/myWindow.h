@@ -30,6 +30,23 @@ namespace my
 
 #define T3D_WINEXCEPT(code) { throw my::WinException( _T(__FILE__), __LINE__, (code) ); }
 
+	class CriticalSection
+	{
+	protected:
+		CRITICAL_SECTION m_section;
+
+	public:
+		CriticalSection(void);
+
+		~CriticalSection(void);
+
+		void enter(void);
+
+		void leave(void);
+
+		BOOL TryEnterCriticalSection(void);
+	};
+
 	class Thread
 	{
 	protected:

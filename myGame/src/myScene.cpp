@@ -154,19 +154,15 @@ namespace my
 	class CustomShaderObjectDrawer
 	{
 	public:
-		CustomShaderObjectDrawer(t3d::RenderContext * rc)
-			: m_rc(rc)
+		CustomShaderObjectDrawer(void)
 		{
 		}
 
 	public:
-		void draw(const Object & obj) const
+		void draw(t3d::RenderContext * rc, const Object & obj) const
 		{
-			(obj.*pFunc)(m_rc);
+			(obj.*pFunc)(rc);
 		}
-
-	protected:
-		t3d::RenderContext * m_rc;
 	};
 
 	typedef void (Object::*ObjectDrawFuncRC)(t3d::RenderContext * rc, const t3d::Vec4<real> & color) const;
@@ -175,21 +171,18 @@ namespace my
 	class CustomShaderObjectDrawerRC
 	{
 	public:
-		CustomShaderObjectDrawerRC(t3d::RenderContext * rc, const t3d::Vec4<real> & color)
-			: m_rc(rc)
-			, m_color(color)
+		CustomShaderObjectDrawerRC(const t3d::Vec4<real> & color)
+			: m_color(color)
 		{
 		}
 
 	public:
-		void draw(const Object & obj) const
+		void draw(t3d::RenderContext * rc, const Object & obj) const
 		{
-			(obj.*pFunc)(m_rc, m_color);
+			(obj.*pFunc)(rc, m_color);
 		}
 
 	protected:
-		t3d::RenderContext * m_rc;
-
 		const t3d::Vec4<real> & m_color;
 	};
 
@@ -199,22 +192,19 @@ namespace my
 	class CustomShaderObjectDrawerRCM
 	{
 	public:
-		CustomShaderObjectDrawerRCM(t3d::RenderContext * rc, const t3d::Vec4<real> & color, const t3d::Mat4<real> & mmat)
-			: m_rc(rc)
-			, m_color(color)
+		CustomShaderObjectDrawerRCM(const t3d::Vec4<real> & color, const t3d::Mat4<real> & mmat)
+			: m_color(color)
 			, m_mmat(mmat)
 		{
 		}
 
 	public:
-		void draw(const Object & obj) const
+		void draw(t3d::RenderContext * rc, const Object & obj) const
 		{
-			(obj.*pFunc)(m_rc, m_color, m_mmat);
+			(obj.*pFunc)(rc, m_color, m_mmat);
 		}
 
 	protected:
-		t3d::RenderContext * m_rc;
-
 		const t3d::Vec4<real> & m_color;
 
 		const t3d::Mat4<real> & m_mmat;
@@ -226,21 +216,18 @@ namespace my
 	class CustomShaderObjectDrawerRM
 	{
 	public:
-		CustomShaderObjectDrawerRM(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat)
-			: m_rc(rc)
-			, m_mmat(mmat)
+		CustomShaderObjectDrawerRM(const t3d::Mat4<real> & mmat)
+			: m_mmat(mmat)
 		{
 		}
 
 	public:
-		void draw(const Object & obj) const
+		void draw(t3d::RenderContext * rc, const Object & obj) const
 		{
-			(obj.*pFunc)(m_rc, m_mmat);
+			(obj.*pFunc)(rc, m_mmat);
 		}
 
 	protected:
-		t3d::RenderContext * m_rc;
-
 		const t3d::Mat4<real> & m_mmat;
 	};
 
@@ -250,22 +237,19 @@ namespace my
 	class CustomShaderObjectDrawerRMM
 	{
 	public:
-		CustomShaderObjectDrawerRMM(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot)
-			: m_rc(rc)
-			, m_mmat(mmat)
+		CustomShaderObjectDrawerRMM(const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot)
+			: m_mmat(mmat)
 			, m_mrot(mrot)
 		{
 		}
 
 	public:
-		void draw(const Object & obj) const
+		void draw(t3d::RenderContext * rc, const Object & obj) const
 		{
-			(obj.*pFunc)(m_rc, m_mmat, m_mrot);
+			(obj.*pFunc)(rc, m_mmat, m_mrot);
 		}
 
 	protected:
-		t3d::RenderContext * m_rc;
-
 		const t3d::Mat4<real> & m_mmat;
 
 		const t3d::Mat4<real> & m_mrot;
@@ -295,7 +279,7 @@ namespace my
 						drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 					}
 
-					drawer.draw(node.m_obj);
+					drawer.draw(rc, node.m_obj);
 				}
 
 				//node.m_customShaderObjList.draw(rc);
@@ -360,7 +344,7 @@ namespace my
 						drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 					}
 
-					drawer.draw(node.m_obj);
+					drawer.draw(rc, node.m_obj);
 				}
 			}
 			else
@@ -397,7 +381,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRC<&Object::drawWireZBufferRW>(rc, color));
+			CustomShaderObjectDrawerRC<&Object::drawWireZBufferRW>(color));
 	}
 
 	void BSPNode::drawWireZBufferRW(
@@ -411,7 +395,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRCM<&Object::drawWireZBufferRW>(rc, color, mmat));
+			CustomShaderObjectDrawerRCM<&Object::drawWireZBufferRW>(color, mmat));
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
@@ -424,7 +408,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRC<&Object::drawWireZBufferRWWithBackface>(rc, color));
+			CustomShaderObjectDrawerRC<&Object::drawWireZBufferRWWithBackface>(color));
 	}
 
 	void BSPNode::drawWireZBufferRWWithBackface(
@@ -438,7 +422,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRCM<&Object::drawWireZBufferRWWithBackface>(rc, color, mmat));
+			CustomShaderObjectDrawerRCM<&Object::drawWireZBufferRWWithBackface>(color, mmat));
 	}
 
 	void BSPNode::drawZBufferRW(
@@ -451,7 +435,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRC<&Object::drawZBufferRW>(rc, color));
+			CustomShaderObjectDrawerRC<&Object::drawZBufferRW>(color));
 	}
 
 	void BSPNode::drawZBufferRW(
@@ -465,7 +449,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRCM<&Object::drawZBufferRW>(rc, color, mmat));
+			CustomShaderObjectDrawerRCM<&Object::drawZBufferRW>(color, mmat));
 	}
 
 	void BSPNode::drawZBufferRWWithBackface(
@@ -478,7 +462,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRC<&Object::drawZBufferRWWithBackface>(rc, color));
+			CustomShaderObjectDrawerRC<&Object::drawZBufferRWWithBackface>(color));
 	}
 
 	void BSPNode::drawZBufferRWWithBackface(
@@ -492,7 +476,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRCM<&Object::drawZBufferRWWithBackface>(rc, color, mmat));
+			CustomShaderObjectDrawerRCM<&Object::drawZBufferRWWithBackface>(color, mmat));
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
@@ -504,7 +488,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawGouraudZBufferRW>(rc));
+			CustomShaderObjectDrawer<&Object::drawGouraudZBufferRW>());
 	}
 
 	void BSPNode::drawGouraudZBufferRW(
@@ -518,7 +502,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRMM<&Object::drawGouraudZBufferRW>(rc, mmat, mrot));
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudZBufferRW>(mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
@@ -530,7 +514,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawGouraudZBufferRWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawGouraudZBufferRWWithBackface>());
 	}
 
 	void BSPNode::drawGouraudZBufferRWWithBackface(
@@ -544,7 +528,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRMM<&Object::drawGouraudZBufferRWWithBackface>(rc, mmat, mrot));
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudZBufferRWWithBackface>(mmat, mrot));
 	}
 
 	void BSPNode::drawTextureZBufferW(
@@ -556,7 +540,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTextureZBufferW>(rc));
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferW>());
 	}
 
 	void BSPNode::drawTextureZBufferW(
@@ -569,7 +553,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferW>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferW>(mmat));
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
@@ -581,7 +565,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTextureZBufferWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferWWithBackface>());
 	}
 
 	void BSPNode::drawTextureZBufferWWithBackface(
@@ -594,7 +578,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferWWithBackface>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferWWithBackface>(mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
@@ -606,7 +590,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferW>(rc));
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferW>());
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferW(
@@ -619,7 +603,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferW>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferW>(mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
@@ -631,7 +615,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferWWithBackface>());
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferWWithBackface(
@@ -644,7 +628,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferWWithBackface>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferWWithBackface>(mmat));
 	}
 
 	void BSPNode::drawTextureZBufferRW(
@@ -656,7 +640,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTextureZBufferRW>(rc));
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferRW>());
 	}
 
 	void BSPNode::drawTextureZBufferRW(
@@ -669,7 +653,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferRW>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferRW>(mmat));
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
@@ -681,7 +665,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTextureZBufferRWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawTextureZBufferRWWithBackface>());
 	}
 
 	void BSPNode::drawTextureZBufferRWWithBackface(
@@ -694,7 +678,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferRWWithBackface>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTextureZBufferRWWithBackface>(mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
@@ -706,7 +690,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferRW>(rc));
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferRW>());
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRW(
@@ -719,7 +703,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferRW>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferRW>(mmat));
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
@@ -731,7 +715,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferRWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawTexturePerspectiveLPZBufferRWWithBackface>());
 	}
 
 	void BSPNode::drawTexturePerspectiveLPZBufferRWWithBackface(
@@ -744,7 +728,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferRWWithBackface>(rc, mmat));
+			CustomShaderObjectDrawerRM<&Object::drawTexturePerspectiveLPZBufferRWWithBackface>(mmat));
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
@@ -756,7 +740,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawGouraudTextureZBufferRW>(rc));
+			CustomShaderObjectDrawer<&Object::drawGouraudTextureZBufferRW>());
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRW(
@@ -770,7 +754,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRMM<&Object::drawGouraudTextureZBufferRW>(rc, mmat, mrot));
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTextureZBufferRW>(mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
@@ -782,7 +766,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawGouraudTextureZBufferRWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawGouraudTextureZBufferRWWithBackface>());
 	}
 
 	void BSPNode::drawGouraudTextureZBufferRWWithBackface(
@@ -796,7 +780,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRMM<&Object::drawGouraudTextureZBufferRWWithBackface>(rc, mmat, mrot));
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTextureZBufferRWWithBackface>(mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
@@ -808,7 +792,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawGouraudTexturePerspectiveLPZBufferRW>(rc));
+			CustomShaderObjectDrawer<&Object::drawGouraudTexturePerspectiveLPZBufferRW>());
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRW(
@@ -822,7 +806,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRMM<&Object::drawGouraudTexturePerspectiveLPZBufferRW>(rc, mmat, mrot));
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTexturePerspectiveLPZBufferRW>(mmat, mrot));
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
@@ -834,7 +818,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawer<&Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface>(rc));
+			CustomShaderObjectDrawer<&Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface>());
 	}
 
 	void BSPNode::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
@@ -848,7 +832,7 @@ namespace my
 			t3d::CameraContext::calculateCameraPosition(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraDirection(rc->getCameraMatrix()),
 			t3d::CameraContext::calculateCameraMaxHalfFov(rc->getCameraProjection()),
-			CustomShaderObjectDrawerRMM<&Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface>(rc, mmat, mrot));
+			CustomShaderObjectDrawerRMM<&Object::drawGouraudTexturePerspectiveLPZBufferRWWithBackface>(mmat, mrot));
 	}
 
 #define INSERT_VERTEX_NORMAL_UV_TO_UP(index0, index1, index2) \
