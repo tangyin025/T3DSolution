@@ -18,7 +18,7 @@ LRESULT MyWindow::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	case WM_CLOSE:
 		if(MyGameBase::getSingleton().getCurrentStateName() == MyLoadState::s_name)
 		{
-			// for load state, there must be waiting for other thread to prepare for quiting
+			// for load state, there must be waiting for another thread to prepare for quiting
 			MyLoadStatePtr loadState = MyGameBase::getSingleton().getCurrentState<MyLoadState>();
 			if(!loadState->getExitFlag())
 			{
@@ -47,8 +47,8 @@ my::Window * MyGameBase::newWindow(HWND hwnd)
 bool MyGameBase::onInit(const my::Config & cfg)
 {
 	// predefine config values
-	const int width = m_rc->getSurfaceWidth();
-	const int height = m_rc->getSurfaceHeight();
+	const int cfgWidth = m_rc->getSurfaceWidth();
+	const int cfgHeight = m_rc->getSurfaceHeight();
 
 	// calculate aspect ratio
 	real aspect_ratio;
@@ -56,7 +56,7 @@ bool MyGameBase::onInit(const my::Config & cfg)
 	{
 	default:
 		_ASSERT(ASPECT_RATIO_STRETCHED == cfg.getInt(_T("aspectratio")));
-		aspect_ratio = (real)width / height;
+		aspect_ratio = (real)cfgWidth / cfgHeight;
 		break;
 
 	case ASPECT_RATIO_STANDARD:
@@ -71,21 +71,21 @@ bool MyGameBase::onInit(const my::Config & cfg)
 	// adjust clipper region by aspect ratio
 	LONG lWidth, lHeight;
 	CRect clipper;
-	if(aspect_ratio < (real)width / (real)height)
+	if(aspect_ratio < (real)cfgWidth / (real)cfgHeight)
 	{
-		lHeight = height;
+		lHeight = cfgHeight;
 		lWidth = (LONG)(lHeight * aspect_ratio + .5f);
-		clipper.left = (width - lWidth) / 2;
+		clipper.left = (cfgWidth - lWidth) / 2;
 		clipper.top = 0;
 		clipper.right = clipper.left + lWidth;
 		clipper.bottom = clipper.top + lHeight;
 	}
 	else
 	{
-		lWidth = width;
+		lWidth = cfgWidth;
 		lHeight = (LONG)(lWidth / aspect_ratio + .5f);
 		clipper.left = 0;
-		clipper.top = (height - lHeight) / 2;
+		clipper.top = (cfgHeight - lHeight) / 2;
 		clipper.right = clipper.left + lWidth;
 		clipper.bottom = clipper.top + lHeight;
 	}
@@ -233,6 +233,7 @@ bool MyLoadState::doFrame(void)
 
 DWORD MyLoadState::onProc(void)
 {
+	// the thread call back process
 	if(!m_game->doInit() && !getExitFlag())
 	{
 		setExitFlag(true);
@@ -254,6 +255,6 @@ MyGameState::~MyGameState(void)
 
 bool MyGameState::doFrame(void)
 {
-
+	// render a really game frame
 	return m_game->doFrame();
 }

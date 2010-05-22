@@ -173,9 +173,9 @@ namespace my
 		m_pwnd = createWindow(getModuleFileName());
 
 		// predefine config values
-		const int width = cfg.getIntOrDefault(_T("width"), 800);
-		const int height = cfg.getIntOrDefault(_T("height"), 600);
-		const int screenmode = cfg.getIntOrDefault(_T("screenmode"), SCREEN_MODE_WINDOWED);
+		const int cfgWidth = cfg.getIntOrDefault(_T("width"), 800);
+		const int cfgHeight = cfg.getIntOrDefault(_T("height"), 600);
+		const int cfgScreenmode = cfg.getIntOrDefault(_T("screenmode"), SCREEN_MODE_WINDOWED);
 
 		if(NULL == m_pwnd)
 		{
@@ -188,10 +188,10 @@ namespace my
 		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// set back surface rect
-		m_backSurfaceRect.SetRect(0, 0, width, height);
+		m_backSurfaceRect.SetRect(0, 0, cfgWidth, cfgHeight);
 
 		// create ddraw and adjust main window
-		switch(screenmode)
+		switch(cfgScreenmode)
 		{
 		case SCREEN_MODE_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
@@ -202,14 +202,14 @@ namespace my
 
 		case SCREEN_MODE_FULLSCREEN16:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
-			m_ddraw->setDisplayMode(width, height, 16);
+			m_ddraw->setDisplayMode(cfgWidth, cfgHeight, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			break;
 
 		case SCREEN_MODE_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
-			m_ddraw->setDisplayMode(width, height, 32);
+			m_ddraw->setDisplayMode(cfgWidth, cfgHeight, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			break;
@@ -234,7 +234,7 @@ namespace my
 		}
 
 		// create screen compatible back surface
-		m_backSurface = m_ddraw->createMemorySurface(width, height, ddpf);
+		m_backSurface = m_ddraw->createMemorySurface(cfgWidth, cfgHeight, ddpf);
 
 		m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
 
@@ -289,7 +289,7 @@ namespace my
 		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
 
 		// create zbuffer
-		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
+		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfgWidth, cfgHeight));
 
 		// save back surface & zbuffer to render context
 		DDSURFACEDESC2 ddsd = m_backSurface->lock();
