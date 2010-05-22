@@ -167,10 +167,15 @@ namespace my
 		return new GameWnd(hwnd);
 	}
 
-	bool Game::prepare(const CONFIG_DESC & cfg)
+	bool Game::prepare(const Config & cfg)
 	{
 		// create main window
 		m_pwnd = createWindow(getModuleFileName());
+
+		// predefine config values
+		const int width = cfg.getIntOrDefault(_T("width"), 800);
+		const int height = cfg.getIntOrDefault(_T("height"), 600);
+		const int screenmode = cfg.getIntOrDefault(_T("screenmode"), SCREEN_MODE_WINDOWED);
 
 		if(NULL == m_pwnd)
 		{
@@ -183,10 +188,10 @@ namespace my
 		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// set back surface rect
-		m_backSurfaceRect.SetRect(0, 0, cfg.width, cfg.height);
+		m_backSurfaceRect.SetRect(0, 0, width, height);
 
 		// create ddraw and adjust main window
-		switch(cfg.smode)
+		switch(screenmode)
 		{
 		case SCREEN_MODE_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
@@ -197,14 +202,14 @@ namespace my
 
 		case SCREEN_MODE_FULLSCREEN16:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
-			m_ddraw->setDisplayMode(cfg.width, cfg.height, 16);
+			m_ddraw->setDisplayMode(width, height, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			break;
 
 		case SCREEN_MODE_FULLSCREEN32:
 			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
-			m_ddraw->setDisplayMode(cfg.width, cfg.height, 32);
+			m_ddraw->setDisplayMode(width, height, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_backSurfaceRect);
 			break;
@@ -229,7 +234,7 @@ namespace my
 		}
 
 		// create screen compatible back surface
-		m_backSurface = m_ddraw->createMemorySurface(cfg.width, cfg.height, ddpf);
+		m_backSurface = m_ddraw->createMemorySurface(width, height, ddpf);
 
 		m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
 
@@ -284,7 +289,7 @@ namespace my
 		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
 
 		// create zbuffer
-		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfg.width, cfg.height));
+		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
 
 		// save back surface & zbuffer to render context
 		DDSURFACEDESC2 ddsd = m_backSurface->lock();
@@ -312,10 +317,9 @@ namespace my
 	//	int i_opt;
 	//	boost::program_options::options_description desc("my game options");
 	//	desc.add_options()
-	//		("width,W", boost::program_options::value<int>(&i_opt)->default_value(640), "specify resolution width")
-	//		("height,H", boost::program_options::value<int>(&i_opt)->default_value(480), "specify resolution height")
-	//		("fullscreen-mode,F", boost::program_options::value<int>(&i_opt)->default_value(0), "specify color deepth for fullscreen mode")
-	//		;
+	//		("width,W", boost::program_options::value<int>(&i_opt)->default_value(800), "specify resolution width")
+	//		("height,H", boost::program_options::value<int>(&i_opt)->default_value(600), "specify resolution height")
+	//		("screenmode,S", boost::program_options::value<int>(&i_opt)->default_value(SCREEN_MODE_WINDOWED), "specify color deepth for fullscreen mode");
 
 	//	// store comman line argument to variables map
 	//	boost::program_options::variables_map vmap;
@@ -324,10 +328,15 @@ namespace my
 	//		boost::program_options::basic_command_line_parser<charT>(args).options(desc).run(), vmap);
 	//	boost::program_options::notify(vmap);
 
-	//	return run(CONFIG_DESC(vmap["width"].as<int>(), vmap["height"].as<int>(), vmap["fullscreen-mode"].as<int>()));
+	//	// build config obj
+	//	Config cfg;
+	//	cfg.addInt(_T("width"), vmap["width"].as<int>());
+	//	cfg.addInt(_T("height"), vmap["height"].as<int>());
+	//	cfg.addInt(_T("screenmode"), vmap["screenmode"].as<int>());
+	//	return run(cfg);
 	//}
 
-	int Game::run(const CONFIG_DESC & cfg /*= CONFIG_DESC(800, 600, SCREEN_MODE_WINDOWED)*/)
+	int Game::run(const Config & cfg)
 	{
 		int res = 1;
 
@@ -370,7 +379,7 @@ namespace my
 		m_pwnd->InvalidateRect(&m_rc->getClipperRect(), FALSE);
 	}
 
-	bool Game::onInit(const CONFIG_DESC & cfg)
+	bool Game::onInit(const Config & cfg)
 	{
 		return true;
 		UNREFERENCED_PARAMETER(cfg);

@@ -196,16 +196,18 @@ typedef boost::shared_ptr<MyWorld> MyWorldPtr;
 // ======================================== TODO: END   ========================================
 
 class MyConfig
-	: public my::Game::CONFIG_DESC
+	: public my::Config
 {
 public:
 	real m_aspectRatio;
 
 public:
 	MyConfig(int width, int height, my::Game::SCREEN_MODE smode, real aspectRatio)
-		: my::Game::CONFIG_DESC(width, height, smode)
-		, m_aspectRatio(aspectRatio)
+		: m_aspectRatio(aspectRatio)
 	{
+		addInt(_T("width"), width);
+		addInt(_T("height"), height);
+		addInt(_T("screenmode"), smode);
 	}
 };
 
@@ -267,7 +269,7 @@ public:
 	/** 实现 my::Game::onInit 接口
 		通常在应用程序初始化时，框架会掉用这个接口，所以应当在这里实现自定义的初始化操作
 	*/
-	virtual bool onInit(const CONFIG_DESC & cfg)
+	virtual bool onInit(const my::Config & cfg)
 	{
 		// 初始化模拟控制台
 		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
@@ -296,21 +298,21 @@ public:
 		const MyConfig * pcfg = static_cast<const MyConfig *>(&cfg);
 		LONG lWidth, lHeight;
 		CRect clipper;
-		if(pcfg->m_aspectRatio < (real)pcfg->width / (real)pcfg->height)
+		if(pcfg->m_aspectRatio < (real)cfg.getInt(_T("width")) / (real)cfg.getInt(_T("height")))
 		{
-			lHeight = pcfg->height;
+			lHeight = cfg.getInt(_T("height"));
 			lWidth = (LONG)(lHeight * pcfg->m_aspectRatio + .5f);
-			clipper.left = (pcfg->width - lWidth) / 2;
+			clipper.left = (cfg.getInt(_T("width")) - lWidth) / 2;
 			clipper.top = 0;
 			clipper.right = clipper.left + lWidth;
 			clipper.bottom = clipper.top + lHeight;
 		}
 		else
 		{
-			lWidth = pcfg->width;
+			lWidth = cfg.getInt(_T("width"));
 			lHeight = (LONG)(lWidth / pcfg->m_aspectRatio + .5f);
 			clipper.left = 0;
-			clipper.top = (pcfg->height - lHeight) / 2;
+			clipper.top = (cfg.getInt(_T("height")) - lHeight) / 2;
 			clipper.right = clipper.left + lWidth;
 			clipper.bottom = clipper.top + lHeight;
 		}
@@ -715,7 +717,7 @@ public:
 			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1680x1050")));
 			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_SELECTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
 			::SendMessage(m_hdlg, WM_COMMAND, MAKEWPARAM(IDC_COMBO1, CBN_SELCHANGE), (LPARAM)::GetDlgItem(m_hdlg, IDC_COMBO1));
-			switch(m_cfg.smode)
+			switch(m_cfg.getInt(_T("screenmode")))
 			{
 			case my::Game::SCREEN_MODE_FULLSCREEN16:
 				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO2));
@@ -764,24 +766,24 @@ public:
 				{
 				case IDOK:
 					// 在这里保存界面值
-					m_cfg.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
-					m_cfg.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
+					m_cfg.setInt(_T("width"), ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE));
+					m_cfg.setInt(_T("height"), ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE));
 					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
 					{
-						m_cfg.smode = my::Game::SCREEN_MODE_WINDOWED;
+						m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
 					}
 					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
 					{
-						m_cfg.smode = my::Game::SCREEN_MODE_FULLSCREEN16;
+						m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_FULLSCREEN16);
 					}
 					else
 					{
 						_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
-						m_cfg.smode = my::Game::SCREEN_MODE_FULLSCREEN32;
+						m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_FULLSCREEN32);
 					}
 					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO4))
 					{
-						m_cfg.m_aspectRatio = (real)m_cfg.width / m_cfg.height;
+						m_cfg.m_aspectRatio = (real)m_cfg.getInt(_T("width")) / m_cfg.getInt(_T("height"));
 					}
 					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO5))
 					{

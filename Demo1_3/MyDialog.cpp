@@ -2,10 +2,11 @@
 #include "stdafx.h"
 #include "MyDialog.h"
 #include "resource.h"
+#include "MyGameBase.h"
 
 static const charT SPLASH_IMAGE_NAME[] = _T("splash.jpg");
 
-MyDialog::MyDialog(const MyConfig & cfg, HINSTANCE hInstance /*= ::GetModuleHandle(NULL)*/, HWND hWndParent /*= NULL*/)
+MyDialog::MyDialog(const my::Config & cfg, HINSTANCE hInstance /*= ::GetModuleHandle(NULL)*/, HWND hWndParent /*= NULL*/)
 	: my::Dialog(hInstance, (LPCTSTR)IDD_DIALOG1, hWndParent)
 	, m_cfg(cfg)
 	, m_save_configuration(BST_UNCHECKED)
@@ -43,11 +44,11 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			VERIFY(7 == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1680x1050")));
 
 			// select the specified resolution
-			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_SELECTSTRING, (WPARAM)-1, (LPARAM)str_printf(_T("%dx%d"), m_cfg.width, m_cfg.height).c_str()))
+			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_SELECTSTRING, (WPARAM)-1, (LPARAM)str_printf(_T("%dx%d"), m_cfg.getInt(_T("width")), m_cfg.getInt(_T("height"))).c_str()))
 			{
 				// for use customized resolution
-				VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, m_cfg.width, FALSE));
-				VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, m_cfg.height, FALSE));
+				VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, m_cfg.getInt(_T("width")), FALSE));
+				VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, m_cfg.getInt(_T("height")), FALSE));
 			}
 			else
 			{
@@ -60,18 +61,18 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			VERIFY(my::Game::SCREEN_MODE_FULLSCREEN32 == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("32bpp full screen")));
 
 			// select the specified screen mode
-			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_SETCURSEL, m_cfg.smode, 0))
+			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_SETCURSEL, m_cfg.getInt(_T("screenmode")), 0))
 			{
 				VERIFY(0 == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_SETCURSEL, 0, 0));
 			}
 
 			// initialize combo box3 with aspect ratio mode
-			VERIFY(MyConfig::ASPECT_RATIO_STRETCHED == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("Stretch mode")));
-			VERIFY(MyConfig::ASPECT_RATIO_STANDARD == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("4 : 3")));
-			VERIFY(MyConfig::ASPECT_RATIO_WIDESCREEN == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("16 : 9")));
+			VERIFY(MyGameBase::ASPECT_RATIO_STRETCHED == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("Stretch mode")));
+			VERIFY(MyGameBase::ASPECT_RATIO_STANDARD == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("4 : 3")));
+			VERIFY(MyGameBase::ASPECT_RATIO_WIDESCREEN == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("16 : 9")));
 
 			// select the specified aspect ratio mode
-			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_SETCURSEL, m_cfg.aspect_ratio_mode, 0))
+			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_SETCURSEL, m_cfg.getInt(_T("aspectratio")), 0))
 			{
 				VERIFY(0 == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_SETCURSEL, 0, 0));
 			}
@@ -114,14 +115,14 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if(LOWORD(wParam) == IDOK)
 			{
 				// update resolution
-				m_cfg.width = ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE);
-				m_cfg.height = ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE);
+				m_cfg.setInt(_T("width"), ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE));
+				m_cfg.setInt(_T("height"), ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE));
 
 				// update screen mode
-				m_cfg.smode = (my::Game::SCREEN_MODE)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_GETCURSEL, 0, 0);
+				m_cfg.setInt(_T("screenmode"), (my::Game::SCREEN_MODE)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_GETCURSEL, 0, 0));
 
 				// update aspect ratio mode
-				m_cfg.aspect_ratio_mode = (MyConfig::ASPECT_RATIO)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_GETCURSEL, 0, 0);
+				m_cfg.setInt(_T("aspectratio"), (MyGameBase::ASPECT_RATIO)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_GETCURSEL, 0, 0));
 
 				// update save configuration option
 				m_save_configuration = ::IsDlgButtonChecked(m_hdlg, IDC_CHECK1);

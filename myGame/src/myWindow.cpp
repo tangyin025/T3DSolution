@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include "libc.h"
 
 namespace my
 {
@@ -157,6 +158,130 @@ namespace my
 	//{
 	//	return 0;
 	//}
+
+	ProfileBase::~ProfileBase(void)
+	{
+	}
+
+	ProfileInt::ProfileInt(int nDefault)
+		: m_value(nDefault)
+	{
+	}
+
+	void ProfileInt::load(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName)
+	{
+		m_value = ::GetPrivateProfileInt(lpAppName, lpKeyName, m_value, lpFileName);
+	}
+
+	void ProfileInt::save(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) const
+	{
+		::WritePrivateProfileString(lpAppName, lpKeyName, str_printf(_T("%d"), m_value).c_str(), lpFileName);
+	}
+
+	ProfileString::ProfileString(LPCTSTR lpDefault)
+		: m_value(lpDefault)
+	{
+	}
+
+	void ProfileString::load(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName)
+	{
+		std::basic_string<charT> tmpValue;
+		for(tmpValue.resize(512); tmpValue.size() == ::GetPrivateProfileString(
+			lpAppName, lpKeyName, m_value.c_str(), &tmpValue[0], tmpValue.size(), lpFileName) + 1; tmpValue.resize(tmpValue.size() + 512))
+		{
+		}
+		m_value = tmpValue;
+	}
+
+	void ProfileString::save(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) const
+	{
+		::WritePrivateProfileString(lpAppName, lpKeyName, m_value.c_str(), lpFileName);
+	}
+
+	Config::Config(LPCTSTR lpAppName /*= _T("Config")*/)
+		: m_appName(lpAppName)
+	{
+	}
+
+	void Config::addInt(LPCTSTR lpKeyName, int nDefault)
+	{
+		_ASSERT(end() == find(lpKeyName));
+
+		insert(value_type(lpKeyName, ProfileBasePtr(new ProfileInt(nDefault))));
+	}
+
+	void Config::setInt(LPCTSTR lpKeyName, int nValue)
+	{
+		_ASSERT(end() != find(lpKeyName));
+
+		return (boost::shared_dynamic_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->setValue(nValue);
+	}
+
+	int Config::getInt(LPCTSTR lpKeyName) const
+	{
+		_ASSERT(end() != find(lpKeyName));
+
+		return (boost::shared_dynamic_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->getValue();
+	}
+
+	int Config::getIntOrDefault(LPCTSTR lpKeyName, int nDefault) const
+	{
+		const_iterator profile_iter = find(lpKeyName);
+		if(end() == profile_iter)
+		{
+			return nDefault;
+		}
+		return (boost::shared_dynamic_cast<ProfileInt, ProfileBase>(profile_iter->second))->getValue();
+	}
+
+	void Config::addString(LPCTSTR lpKeyName, LPCTSTR lpDefault)
+	{
+		_ASSERT(end() == find(lpKeyName));
+
+		insert(value_type(lpKeyName, ProfileBasePtr(new ProfileString(lpDefault))));
+	}
+
+	void Config::setString(LPCTSTR lpKeyName, LPCTSTR lpValue)
+	{
+		_ASSERT(end() != find(lpKeyName));
+
+		return (boost::shared_dynamic_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->setValue(lpValue);
+	}
+
+	const std::basic_string<charT> & Config::getString(LPCTSTR lpKeyName) const
+	{
+		_ASSERT(end() != find(lpKeyName));
+
+		return (boost::shared_dynamic_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->getValue();
+	}
+
+	const std::basic_string<charT> & Config::getStringOrDefault(LPCTSTR lpKeyName, const std::basic_string<charT> & strDefault) const
+	{
+		const_iterator profile_iter = find(lpKeyName);
+		if(end() == profile_iter)
+		{
+			return strDefault;
+		}
+		return (boost::shared_dynamic_cast<ProfileString, ProfileBase>(profile_iter->second))->getValue();
+	}
+
+	void Config::load(LPCTSTR lpFileName)
+	{
+		iterator profile_iter = begin();
+		for(; profile_iter != end(); profile_iter++)
+		{
+			profile_iter->second->load(getAppName().c_str(), profile_iter->first.c_str(), lpFileName);
+		}
+	}
+
+	void Config::save(LPCTSTR lpFileName) const
+	{
+		const_iterator profile_iter = begin();
+		for(; profile_iter != end(); profile_iter++)
+		{
+			profile_iter->second->save(getAppName().c_str(), profile_iter->first.c_str(), lpFileName);
+		}
+	}
 
 	DialogMap Dialog::s_dlgMap;
 

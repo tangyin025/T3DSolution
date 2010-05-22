@@ -1,6 +1,5 @@
 ﻿
 #include "stdafx.h"
-#include "MyConfig.h"
 #include "MyDialog.h"
 #include "MyGameBase.h"
 
@@ -170,9 +169,16 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		my::ResourceMgr::getSingleton().addDir(_T("."));
 		my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias"));
 
+		// initialize configuration
+		my::Config cfg(_T("config"));
+		cfg.addInt(_T("width"), 800);
+		cfg.addInt(_T("height"), 600);
+		cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
+		cfg.addInt(_T("aspectratio"), MyGameBase::ASPECT_RATIO_STRETCHED);
+		cfg.load(strConfigPath.c_str());
+
 		// show configuration dialog
 		int ret = 0;
-		MyConfig cfg(MyConfig::LoadFromFile(strConfigPath));
 		MyDialog dlg(cfg, game.getHandle());
 		if(IDOK == dlg.doModel())
 		{
@@ -181,7 +187,8 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			{
 				if(BST_CHECKED == dlg.m_save_configuration)
 				{
-					MyConfig::SaveToFile(dlg.m_cfg, strConfigPath);
+					// save configuration to user profile
+					cfg.save(strConfigPath.c_str());
 				}
 			}
 		}
