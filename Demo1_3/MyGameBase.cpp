@@ -1,7 +1,6 @@
 
 #include "StdAfx.h"
 #include "MyGameBase.h"
-#include "MyConfig.h"
 
 MyWindow::MyWindow(HWND hwnd)
 	: GameWnd(hwnd)
@@ -45,23 +44,26 @@ my::Window * MyGameBase::newWindow(HWND hwnd)
 	return new MyWindow(hwnd);
 }
 
-bool MyGameBase::onInit(const CONFIG_DESC & cfg)
+bool MyGameBase::onInit(const my::Config & cfg)
 {
+	// predefine config values
+	const int width = m_rc->getSurfaceWidth();
+	const int height = m_rc->getSurfaceHeight();
+
 	// calculate aspect ratio
-	const MyConfig * pcfg = static_cast<const MyConfig *>(&cfg);
 	real aspect_ratio;
-	switch(pcfg->aspect_ratio_mode)
+	switch(cfg.getInt(_T("aspectratio")))
 	{
 	default:
-		_ASSERT(MyConfig::ASPECT_RATIO_STRETCHED == pcfg->aspect_ratio_mode);
-		aspect_ratio = (real)pcfg->width / pcfg->height;
+		_ASSERT(ASPECT_RATIO_STRETCHED == cfg.getInt(_T("aspectratio")));
+		aspect_ratio = (real)width / height;
 		break;
 
-	case MyConfig::ASPECT_RATIO_STANDARD:
+	case ASPECT_RATIO_STANDARD:
 		aspect_ratio = (real)4 / 3;
 		break;
 
-	case MyConfig::ASPECT_RATIO_WIDESCREEN:
+	case ASPECT_RATIO_WIDESCREEN:
 		aspect_ratio = (real)16 / 9;
 		break;
 	}
@@ -69,21 +71,21 @@ bool MyGameBase::onInit(const CONFIG_DESC & cfg)
 	// adjust clipper region by aspect ratio
 	LONG lWidth, lHeight;
 	CRect clipper;
-	if(aspect_ratio < (real)pcfg->width / (real)pcfg->height)
+	if(aspect_ratio < (real)width / (real)height)
 	{
-		lHeight = pcfg->height;
+		lHeight = height;
 		lWidth = (LONG)(lHeight * aspect_ratio + .5f);
-		clipper.left = (pcfg->width - lWidth) / 2;
+		clipper.left = (width - lWidth) / 2;
 		clipper.top = 0;
 		clipper.right = clipper.left + lWidth;
 		clipper.bottom = clipper.top + lHeight;
 	}
 	else
 	{
-		lWidth = pcfg->width;
+		lWidth = width;
 		lHeight = (LONG)(lWidth / aspect_ratio + .5f);
 		clipper.left = 0;
-		clipper.top = (pcfg->height - lHeight) / 2;
+		clipper.top = (height - lHeight) / 2;
 		clipper.right = clipper.left + lWidth;
 		clipper.bottom = clipper.top + lHeight;
 	}

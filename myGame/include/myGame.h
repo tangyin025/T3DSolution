@@ -123,20 +123,6 @@ namespace my
 			SCREEN_MODE_FULLSCREEN32,
 		};
 
-		class CONFIG_DESC
-		{
-		public:
-			CONFIG_DESC(DWORD _width, DWORD _height, SCREEN_MODE _smode)
-				: width(_width), height(_height), smode(_smode)
-			{
-			}
-
-		public:
-			DWORD width;
-			DWORD height;
-			SCREEN_MODE smode;
-		};
-
 	public:
 		static Game * getSingletonPtr(void)
 		{
@@ -187,16 +173,16 @@ namespace my
 	public:
 		Window * newWindow(HWND hwnd);
 
-		bool prepare(const CONFIG_DESC & cfg);
+		bool prepare(const Config & cfg);
 
 		//int run(LPTSTR lpCmdLine);
 
-		int run(const CONFIG_DESC & cfg = CONFIG_DESC(800, 600, SCREEN_MODE_WINDOWED));
+		int run(const Config & cfg);
 
 		void onIdle(void);
 
 	public:
-		virtual bool onInit(const CONFIG_DESC & cfg);
+		virtual bool onInit(const Config & cfg);
 
 		virtual bool onFrame(void);
 

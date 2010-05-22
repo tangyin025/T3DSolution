@@ -78,6 +78,111 @@ namespace my
 		virtual DWORD onProc(void) = 0;
 	};
 
+	class ProfileBase
+	{
+	public:
+		virtual ~ProfileBase(void);
+
+	public:
+		virtual void load(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) = 0;
+
+		virtual void save(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) const = 0;
+	};
+
+	typedef boost::shared_ptr<ProfileBase> ProfileBasePtr;
+
+	class ProfileInt : public ProfileBase
+	{
+	protected:
+		int m_value;
+
+	public:
+		void setValue(int nValue)
+		{
+			m_value = nValue;
+		}
+
+		int getValue(void) const
+		{
+			return m_value;
+		}
+
+	public:
+		ProfileInt(int nDefault);
+
+	public:
+		void load(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName);
+
+		void save(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) const;
+	};
+
+	class ProfileString : public ProfileBase
+	{
+	protected:
+		std::basic_string<charT> m_value;
+
+	public:
+		void setValue(LPCTSTR lpValue)
+		{
+			m_value = lpValue;
+		}
+
+		const std::basic_string<charT> & getValue(void) const
+		{
+			return m_value;
+		}
+
+	public:
+		ProfileString(LPCTSTR lpDefault);
+
+	public:
+		void load(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName);
+
+		void save(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) const;
+	};
+
+	class Config : protected std::map<std::basic_string<charT>, ProfileBasePtr>
+	{
+	protected:
+		std::basic_string<charT> m_appName;
+
+	public:
+		void setAppName(LPCTSTR lpAppName)
+		{
+			m_appName = lpAppName;
+		}
+
+		const std::basic_string<charT> & getAppName(void) const
+		{
+			return m_appName;
+		}
+
+	public:
+		Config(LPCTSTR lpAppName = _T("Config"));
+
+	public:
+		void addInt(LPCTSTR lpKeyName, int nDefault);
+
+		void setInt(LPCTSTR lpKeyName, int nValue);
+
+		int getInt(LPCTSTR lpKeyName) const;
+
+		int getIntOrDefault(LPCTSTR lpKeyName, int nDefault) const;
+
+		void addString(LPCTSTR lpKeyName, LPCTSTR lpDefault);
+
+		void setString(LPCTSTR lpKeyName, LPCTSTR lpValue);
+
+		const std::basic_string<charT> & getString(LPCTSTR lpKeyName) const;
+
+		const std::basic_string<charT> & getStringOrDefault(LPCTSTR lpKeyName, const std::basic_string<charT> & strDefault) const;
+
+	public:
+		void load(LPCTSTR lpFileName);
+
+		void save(LPCTSTR lpFileName) const;
+	};
+
 	class Dialog;
 
 	typedef std::map<HWND, Dialog *> DialogMap;

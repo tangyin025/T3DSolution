@@ -25,6 +25,14 @@ class MyGameBase
 	friend class MyGameState;
 
 public:
+	enum ASPECT_RATIO
+	{
+		ASPECT_RATIO_STRETCHED = 0,
+		ASPECT_RATIO_STANDARD,
+		ASPECT_RATIO_WIDESCREEN
+	};
+
+public:
 	static MyGameBase * getSingletonPtr(void)
 	{
 		return dynamic_cast<MyGameBase *>(my::Game::getSingletonPtr());
@@ -48,7 +56,7 @@ public:
 public:
 	my::Window * newWindow(HWND hwnd);
 
-	bool onInit(const CONFIG_DESC & cfg);
+	bool onInit(const my::Config & cfg);
 
 	bool onFrame(void);
 
