@@ -204,8 +204,9 @@ bool MyLoadState::doFrame(void)
 	rc->fillSurface(rc->getClipperRect(), my::Color::BLACK);
 
 	// draw progress bar
-	m_progressBox->setPercent(getPercent());
+	m_progressBoxLock.enter();
 	m_progressBox->draw(rc);
+	m_progressBoxLock.leave();
 
 	// general information output
 	std::basic_string<charT> strTmp;

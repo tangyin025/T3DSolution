@@ -86,9 +86,7 @@ protected:
 
 	MyUIProgressBarBoxPtr m_progressBox;
 
-	real m_progressPercent;
-
-	my::CriticalSection m_progressPercentLock;
+	my::CriticalSection m_progressBoxLock;
 
 	bool m_exitFlag;
 
@@ -115,16 +113,16 @@ public:
 
 	void setPercent(real percent)
 	{
-		m_progressPercentLock.enter();
-		m_progressPercent = percent;
-		m_progressPercentLock.leave();
+		m_progressBoxLock.enter();
+		m_progressBox->setPercent(percent);
+		m_progressBoxLock.leave();
 	}
 
 	real getPercent(void)
 	{
-		m_progressPercentLock.enter();
-		real percent = m_progressPercent;
-		m_progressPercentLock.leave();
+		m_progressBoxLock.enter();
+		real percent = m_progressBox->getPercent();
+		m_progressBoxLock.leave();
 		return percent;
 	}
 
