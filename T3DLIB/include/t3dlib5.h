@@ -201,8 +201,23 @@ namespace t3d
 		Vec4<real> & vres0,
 		Vec4<real> & vres1);
 
+	void drawLineZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & color);
+
 	void drawLineZBufferRW32(
 		SurfaceRef<uint32> surface,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & color);
+
+	void drawClippedLineZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,

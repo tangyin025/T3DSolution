@@ -456,6 +456,142 @@ namespace t3d
 		return false;
 	}
 
+	void drawLineZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & color)
+	{
+		int x0;
+		int y0;
+		fixp28 z0;
+		int x1;
+		int y1;
+		fixp28 z1;
+
+		if(v0.x < v1.x)
+		{
+			x0 = real_to_int(v0.x);
+			y0 = real_to_int(v0.y);
+			z0 = real_to_fixp28(1 / v0.z);
+			x1 = real_to_int(v1.x);
+			y1 = real_to_int(v1.y);
+			z1 = real_to_fixp28(1 / v1.z);
+		}
+		else
+		{
+			x0 = real_to_int(v1.x);
+			y0 = real_to_int(v1.y);
+			z0 = real_to_fixp28(1 / v1.z);
+			x1 = real_to_int(v0.x);
+			y1 = real_to_int(v0.y);
+			z1 = real_to_fixp28(1 / v0.z);
+		}
+
+		if(y0 < y1)
+		{
+			/****************************************************************************
+			* 0
+			*   \
+			*     1
+			****************************************************************************/
+
+			int dx = x1 - x0;
+			int dy = y1 - y0;
+
+			if(dx > dy)
+			{
+				fixp28 dz = (z1 - z0) / dx;
+				for(int error = dy * 2 - dx; x0 <= x1; x0++, error += dy * 2, z0 += dz)
+				{
+					if(z0 > zbuffer[y0][x0])
+					{
+						surface[y0][x0] = _RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
+						zbuffer[y0][x0] = z0;
+					}
+
+					if(error >= 0)
+					{
+						y0++;
+						error -= dx * 2;
+					}
+				}
+			}
+			else
+			{
+				fixp28 dz = (z1 - z0) / dy;
+				for(int error = dx * 2 - dy; y0 <= y1; y0++, error += dx * 2, z0 += dz)
+				{
+					if(z0 > zbuffer[y0][x0])
+					{
+						surface[y0][x0] = _RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
+						zbuffer[y0][x0] = z0;
+					}
+
+					if(error >= 0)
+					{
+						x0++;
+						error -= dy * 2;
+					}
+				}
+			}
+		}
+		else
+		{
+			/****************************************************************************
+			*     1
+			*   /
+			* 0
+			****************************************************************************/
+
+			int dx = x1 - x0;
+			int dy = y0 - y1;
+
+			if(dx > dy)
+			{
+				fixp28 dz = (z1 - z0) / dx;
+				for(int error = dy * 2 - dx; x0 <= x1; x0++, error += dy * 2, z0 += dz)
+				{
+					if(z0 > zbuffer[y0][x0])
+					{
+						surface[y0][x0] = _RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
+						zbuffer[y0][x0] = z0;
+					}
+
+					if(error >= 0)
+					{
+						y0--;
+						error -= dx * 2;
+					}
+				}
+			}
+			else
+			{
+				if(0 == dy) // ***
+				{
+					_ASSERT(0 == dx); return;
+				}
+
+				fixp28 dz = (z1 - z0) / dy;
+				for(int error = dx * 2 - dy; y0 >= y1; y0--, error += dx * 2, z0 += dz) // ***
+				{
+					if(z0 > zbuffer[y0][x0])
+					{
+						surface[y0][x0] = _RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
+						zbuffer[y0][x0] = z0;
+					}
+
+					if(error >= 0)
+					{
+						x0++;
+						error -= dy * 2;
+					}
+				}
+			}
+		}
+	}
+
 	void drawLineZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -589,6 +725,21 @@ namespace t3d
 					}
 				}
 			}
+		}
+	}
+
+	void drawClippedLineZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & color)
+	{
+		Vec4<real> vres0, vres1;
+		if(clipLineZBuffer(clipper, v0, v1, vres0, vres1))
+		{
+			drawLineZBufferRW16(surface, zbuffer, vres0, vres1, color);
 		}
 	}
 
