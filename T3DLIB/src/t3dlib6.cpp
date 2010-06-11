@@ -5234,12 +5234,12 @@ namespace t3d
 
 	void RenderContext16::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
 	{
-		//drawClippedHorizonLine16(getSurfaceRef16(), getClipperRect(), x0, y0, width, rgbaSaturate<real>(color * 255, 255));
+		drawClippedHorizonLine16(getSurfaceRef16(), getClipperRect(), x0, y0, width, rgbaSaturate<real>(color * 255, 255));
 	}
 
 	void RenderContext16::drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color)
 	{
-		//drawClippedVerticalLine16(getSurfaceRef16(), getClipperRect(), x0, y0, height, rgbaSaturate<real>(color * 255, 255));
+		drawClippedVerticalLine16(getSurfaceRef16(), getClipperRect(), x0, y0, height, rgbaSaturate<real>(color * 255, 255));
 	}
 
 	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)

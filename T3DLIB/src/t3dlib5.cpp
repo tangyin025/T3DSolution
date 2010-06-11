@@ -62,6 +62,19 @@ namespace t3d
 		}
 	}
 
+	void drawHorizonLine16(
+		SurfaceRef<uint16> surface,
+		int x0,
+		int y0,
+		int width,
+		const Vec4<real> & color)
+	{
+		_ASSERT(width >= 0);
+
+		memSet16(&surface[y0][x0],
+			_RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), width);
+	}
+
 	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,
 		int x0,
@@ -73,6 +86,36 @@ namespace t3d
 
 		memSet32(&surface[y0][x0],
 			_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), width);
+	}
+
+	void drawClippedHorizonLine16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		int x0,
+		int y0,
+		int width,
+		const Vec4<real> & color)
+	{
+		_ASSERT(width >= 0);
+
+		if(y0 >= clipper.top && y0 < clipper.bottom)
+		{
+			if(x0 < clipper.right)
+			{
+				int clippedWidth = width;
+
+				if(x0 < clipper.left)
+				{
+					clippedWidth -= clipper.left - x0;
+					x0 = clipper.left;
+				}
+
+				if(clippedWidth > 0)
+				{
+					drawHorizonLine16(surface, x0, y0, clippedWidth, color);
+				}
+			}
+		}
 	}
 
 	void drawClippedHorizonLine32(
@@ -99,10 +142,25 @@ namespace t3d
 
 				if(clippedWidth > 0)
 				{
-					memSet32(&surface[y0][x0],
-						_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z)), clippedWidth);
+					drawHorizonLine32(surface, x0, y0, clippedWidth, color);
 				}
 			}
+		}
+	}
+
+	void drawVerticalLine16(
+		SurfaceRef<uint16> surface,
+		int x0,
+		int y0,
+		int height,
+		const Vec4<real> & color)
+	{
+		_ASSERT(height >= 0);
+
+		for(int y1 = y0 + height; y0 < y1; y0++)
+		{
+			surface[y0][x0] =
+				_RGB16BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
 		}
 	}
 
@@ -119,6 +177,36 @@ namespace t3d
 		{
 			surface[y0][x0] =
 				_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
+		}
+	}
+
+	void drawClippedVerticalLine16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		int x0,
+		int y0,
+		int height,
+		const Vec4<real> & color)
+	{
+		_ASSERT(height >= 0);
+
+		if(x0 >= clipper.left && x0 < clipper.right)
+		{
+			if(y0 < clipper.bottom)
+			{
+				int clippedHeight = height;
+
+				if(y0 < clipper.top)
+				{
+					clippedHeight -= clipper.top - y0;
+					y0 = clipper.left;
+				}
+
+				if(clippedHeight > 0)
+				{
+					drawVerticalLine16(surface, x0, y0, clippedHeight, color);
+				}
+			}
 		}
 	}
 
@@ -146,11 +234,7 @@ namespace t3d
 
 				if(clippedHeight > 0)
 				{
-					for(int y1 = y0 + clippedHeight; y0 < y1; y0++)
-					{
-						surface[y0][x0] =
-							_RGB32BIT(real_to_int(color.x), real_to_int(color.y), real_to_int(color.z));
-					}
+					drawVerticalLine32(surface, x0, y0, clippedHeight, color);
 				}
 			}
 		}
