@@ -861,7 +861,7 @@ namespace my
 		rUVList.push_back(t##index2); \
 	}
 
-	void splitTriangleVertexNormalUVUp(
+	static void splitTriangleVertexNormalUVUp(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -914,7 +914,7 @@ namespace my
 		}
 	}
 
-	void splitTriangleVertexNormalUVDown(
+	static void splitTriangleVertexNormalUVDown(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -967,7 +967,7 @@ namespace my
 		}
 	}
 
-	void splitTriangleVertexNormalUVLeft(
+	static void splitTriangleVertexNormalUVLeft(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1009,7 +1009,7 @@ namespace my
 		}
 	}
 
-	void splitTriangleVertexNormalUVRight(
+	static void splitTriangleVertexNormalUVRight(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
@@ -1107,7 +1107,7 @@ namespace my
 		t##index2, \
 		planePoint, planeNormal);
 
-	bool splitTriangleVertexNormalUV(
+	static bool splitTriangleVertexNormalUV(
 		t3d::VertexList & lVertexList,
 		t3d::NormalList & lNormalList,
 		t3d::UVList & lUVList,
