@@ -134,8 +134,23 @@ namespace t3d
 		const CRect & rect,
 		const Vec4<real> & color);
 
+	void drawHorizonLine16(
+		SurfaceRef<uint16> surface,
+		int x0,
+		int y0,
+		int width,
+		const Vec4<real> & color);
+
 	void drawHorizonLine32(
 		SurfaceRef<uint32> surface,
+		int x0,
+		int y0,
+		int width,
+		const Vec4<real> & color);
+
+	void drawClippedHorizonLine16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
 		int x0,
 		int y0,
 		int width,
@@ -149,8 +164,23 @@ namespace t3d
 		int width,
 		const Vec4<real> & color);
 
+	void drawVerticalLine16(
+		SurfaceRef<uint16> surface,
+		int x0,
+		int y0,
+		int height,
+		const Vec4<real> & color);
+
 	void drawVerticalLine32(
 		SurfaceRef<uint32> surface,
+		int x0,
+		int y0,
+		int height,
+		const Vec4<real> & color);
+
+	void drawClippedVerticalLine16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
 		int x0,
 		int y0,
 		int height,
