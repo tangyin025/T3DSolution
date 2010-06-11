@@ -7106,22 +7106,22 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawLineZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	vertexList[i * 2 + 0],
-				//	vertexList[i * 2 + 1],
-				//	color * 255);
+				drawLineZBufferRW16(
+					surface,
+					zbuffer,
+					vertexList[i * 2 + 0],
+					vertexList[i * 2 + 1],
+					color * 255);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedLineZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	vertexList[i * 2 + 0],
-				//	vertexList[i * 2 + 1],
-				//	color * 255);
+				drawClippedLineZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[i * 2 + 0],
+					vertexList[i * 2 + 1],
+					color * 255);
 				break;
 			}
 		}
@@ -7185,22 +7185,22 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawLineZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	vertexList[vertexIndexList[i * 2 + 0]],
-				//	vertexList[vertexIndexList[i * 2 + 1]],
-				//	color * 255);
+				drawLineZBufferRW16(
+					surface,
+					zbuffer,
+					vertexList[vertexIndexList[i * 2 + 0]],
+					vertexList[vertexIndexList[i * 2 + 1]],
+					color * 255);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedLineZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	vertexList[vertexIndexList[i * 2 + 0]],
-				//	vertexList[vertexIndexList[i * 2 + 1]],
-				//	color * 255);
+				drawClippedLineZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 2 + 0]],
+					vertexList[vertexIndexList[i * 2 + 1]],
+					color * 255);
 				break;
 			}
 		}
@@ -8006,15 +8006,15 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawLineZBufferRW16(surface, zbuffer, vertexList[i * 3 + 0], vertexList[i * 3 + 1], color * 255);
-				//drawLineZBufferRW16(surface, zbuffer, vertexList[i * 3 + 1], vertexList[i * 3 + 2], color * 255);
-				//drawLineZBufferRW16(surface, zbuffer, vertexList[i * 3 + 2], vertexList[i * 3 + 0], color * 255);
+				drawLineZBufferRW16(surface, zbuffer, vertexList[i * 3 + 0], vertexList[i * 3 + 1], color * 255);
+				drawLineZBufferRW16(surface, zbuffer, vertexList[i * 3 + 1], vertexList[i * 3 + 2], color * 255);
+				drawLineZBufferRW16(surface, zbuffer, vertexList[i * 3 + 2], vertexList[i * 3 + 0], color * 255);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[i * 3 + 0], vertexList[i * 3 + 1], color * 255);
-				//drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[i * 3 + 1], vertexList[i * 3 + 2], color * 255);
-				//drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[i * 3 + 2], vertexList[i * 3 + 0], color * 255);
+				drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[i * 3 + 0], vertexList[i * 3 + 1], color * 255);
+				drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[i * 3 + 1], vertexList[i * 3 + 2], color * 255);
+				drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[i * 3 + 2], vertexList[i * 3 + 0], color * 255);
 				break;
 			}
 		}
@@ -8071,15 +8071,15 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawLineZBufferRW16(surface, zbuffer, vertexList[vertexIndexList[i * 3 + 0]], vertexList[vertexIndexList[i * 3 + 1]], color * 255);
-				//drawLineZBufferRW16(surface, zbuffer, vertexList[vertexIndexList[i * 3 + 1]], vertexList[vertexIndexList[i * 3 + 2]], color * 255);
-				//drawLineZBufferRW16(surface, zbuffer, vertexList[vertexIndexList[i * 3 + 2]], vertexList[vertexIndexList[i * 3 + 0]], color * 255);
+				drawLineZBufferRW16(surface, zbuffer, vertexList[vertexIndexList[i * 3 + 0]], vertexList[vertexIndexList[i * 3 + 1]], color * 255);
+				drawLineZBufferRW16(surface, zbuffer, vertexList[vertexIndexList[i * 3 + 1]], vertexList[vertexIndexList[i * 3 + 2]], color * 255);
+				drawLineZBufferRW16(surface, zbuffer, vertexList[vertexIndexList[i * 3 + 2]], vertexList[vertexIndexList[i * 3 + 0]], color * 255);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[vertexIndexList[i * 3 + 0]], vertexList[vertexIndexList[i * 3 + 1]], color * 255);
-				//drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[vertexIndexList[i * 3 + 1]], vertexList[vertexIndexList[i * 3 + 2]], color * 255);
-				//drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[vertexIndexList[i * 3 + 2]], vertexList[vertexIndexList[i * 3 + 0]], color * 255);
+				drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[vertexIndexList[i * 3 + 0]], vertexList[vertexIndexList[i * 3 + 1]], color * 255);
+				drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[vertexIndexList[i * 3 + 1]], vertexList[vertexIndexList[i * 3 + 2]], color * 255);
+				drawClippedLineZBufferRW16(surface, clipper, zbuffer, vertexList[vertexIndexList[i * 3 + 2]], vertexList[vertexIndexList[i * 3 + 0]], color * 255);
 				break;
 			}
 		}

@@ -2172,6 +2172,16 @@ namespace t3d
 			limit(rhs.w, elem_t(0), intensity));
 	}
 
+	//template <typename elem_t>
+	//inline Vec4<elem_t> rgbaSaturate(const Vec4<elem_t> & rhs, const Vec4<elem_t> & intensity)
+	//{
+	//	return Vec4<elem_t>(
+	//		limit(rhs.x, elem_t(0), intensity.x),
+	//		limit(rhs.y, elem_t(0), intensity.y),
+	//		limit(rhs.z, elem_t(0), intensity.z),
+	//		limit(rhs.w, elem_t(0), intensity.w));
+	//}
+
 	template <typename elem_t>
 	inline Vec4<elem_t> & rgbaSaturateSelf(Vec4<elem_t> & res, elem_t intensity = 1.0f)
 	{
@@ -2181,6 +2191,16 @@ namespace t3d
 		res.w = limit(res.w, elem_t(0), intensity);
 		return res;
 	}
+
+	//template <typename elem_t>
+	//inline Vec4<elem_t> & rgbaSaturateSelf(Vec4<elem_t> & res, const Vec4<elem_t> & intensity)
+	//{
+	//	res.x = limit(res.x, elem_t(0), intensity.x);
+	//	res.y = limit(res.y, elem_t(0), intensity.y);
+	//	res.z = limit(res.z, elem_t(0), intensity.z);
+	//	res.w = limit(res.w, elem_t(0), intensity.w);
+	//	return res;
+	//}
 }
 
 #endif // __T3DLIB4_H__
