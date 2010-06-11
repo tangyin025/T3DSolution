@@ -205,6 +205,7 @@ namespace my
 			m_ddraw->setDisplayMode(cfgWidth, cfgHeight, 16);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_backSurfaceRect);
+			m_pwnd->InvalidateRect(NULL);
 			break;
 
 		case SCREEN_MODE_FULLSCREEN32:
@@ -212,6 +213,7 @@ namespace my
 			m_ddraw->setDisplayMode(cfgWidth, cfgHeight, 32);
 			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
 			m_pwnd->adjustClientRect(m_backSurfaceRect);
+			m_pwnd->InvalidateRect(NULL);
 			break;
 
 		default:
@@ -306,7 +308,7 @@ namespace my
 		// show main window
 		m_pwnd->showWindow();
 
-		m_pwnd->updateWindow();
+		//m_pwnd->updateWindow();
 
 		return onInit(cfg);
 	}
