@@ -601,6 +601,52 @@ namespace t3d
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
 
+	void drawTriangleTexturePerspectiveLPZBufferW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawTriangleTexturePerspectiveLPZBufferW32(
+		SurfaceRef<uint32> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
 	void drawTriangleTextureZBufferRW16(
 		SurfaceRef<uint16> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -636,6 +682,52 @@ namespace t3d
 		const Vec2<real> & t2);
 
 	void drawClippedTriangleTextureZBufferRW32(
+		SurfaceRef<uint32> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawTriangleTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawTriangleTexturePerspectiveLPZBufferRW32(
+		SurfaceRef<uint32> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint32> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2);
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferRW32(
 		SurfaceRef<uint32> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
@@ -701,98 +793,6 @@ namespace t3d
 		const Vec4<real> & c0,
 		const Vec4<real> & c1,
 		const Vec4<real> & c2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawTriangleTexturePerspectiveLPZBufferW16(
-		SurfaceRef<uint16> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint16> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawTriangleTexturePerspectiveLPZBufferW32(
-		SurfaceRef<uint32> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawClippedTriangleTexturePerspectiveLPZBufferW16(
-		SurfaceRef<uint16> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint16> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawClippedTriangleTexturePerspectiveLPZBufferW32(
-		SurfaceRef<uint32> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawTriangleTexturePerspectiveLPZBufferRW16(
-		SurfaceRef<uint16> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint16> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawTriangleTexturePerspectiveLPZBufferRW32(
-		SurfaceRef<uint32> surface,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawClippedTriangleTexturePerspectiveLPZBufferRW16(
-		SurfaceRef<uint16> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint16> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
-		const Vec2<real> & t0,
-		const Vec2<real> & t1,
-		const Vec2<real> & t2);
-
-	void drawClippedTriangleTexturePerspectiveLPZBufferRW32(
-		SurfaceRef<uint32> surface,
-		const RECT & clipper,
-		SurfaceRef<fixp28> zbuffer,
-		ConstSurfaceRef<uint32> texture,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2,
 		const Vec2<real> & t0,
 		const Vec2<real> & t1,
 		const Vec2<real> & t2);
