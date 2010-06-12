@@ -20,7 +20,7 @@ protected:
 
 	my::ObjectPtr m_lstObj;
 
-	my::ImagePtr m_objTexture;
+	my::ImagePtr m_objImg;
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,8 +45,8 @@ public:
 
 		// initialize euler camera
 		m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
-		m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
-		m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
+		m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
+		m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
 		m_eulerCam->reset();
 		if(loadState->getExitFlag())
 		{
@@ -76,7 +76,8 @@ public:
 		loadState->setPercent(currentStep++ / totalSteps);
 		::Sleep(300);
 
-		m_objTexture = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("92fs_brigadier.jpg"))));
+		my::ImagePtr tmpImg = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("92fs_brigadier.jpg"))));
+		m_objImg = my::ColorConversion::getSingleton().convertImage(tmpImg.get());
 		if(loadState->getExitFlag())
 		{
 			return false;
@@ -145,9 +146,45 @@ public:
 
 		// //////////////////////////////////////////////////////////////////////////////////////////
 
-		m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, -100)));
+		real idxZ = -50, lstZ = -50;
 
-		m_lstObj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, -100)));
+		m_rc->setTextureBuffer(m_objImg->getBits(), m_objImg->getPitch(), m_objImg->getWidth(), m_objImg->getHeight());
+
+		m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+
+		m_lstObj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+
+		m_obj->drawZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+
+		m_lstObj->drawZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+
+		m_obj->drawGouraudZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
+
+		m_lstObj->drawGouraudZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
+
+		m_obj->drawTextureZBufferW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+
+		m_lstObj->drawTextureZBufferW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+
+		m_obj->drawTexturePerspectiveLPZBufferW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+
+		m_lstObj->drawTexturePerspectiveLPZBufferW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+
+		m_obj->drawTextureZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+
+		m_lstObj->drawTextureZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+
+		m_obj->drawTexturePerspectiveLPZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+
+		m_lstObj->drawTexturePerspectiveLPZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+
+		m_obj->drawGouraudTextureZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
+
+		m_lstObj->drawGouraudTextureZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
+
+		m_obj->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
+
+		m_lstObj->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get(), t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
 
 		// //////////////////////////////////////////////////////////////////////////////////////////
 

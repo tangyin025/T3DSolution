@@ -270,9 +270,16 @@ namespace my
 		FAILED_CUSEXCEPT(m_image.Create(nWidth, nHeight, nBPP, dwFlags));
 	}
 
+	Image::Image(int nWidth, int nHeight, int nBPP, DWORD eCompression, const DWORD* pdwBitmasks /*= NULL*/, DWORD dwFlags /*= 0*/)
+	{
+		FAILED_CUSEXCEPT(m_image.CreateEx(nWidth, nHeight, nBPP, eCompression, pdwBitmasks, dwFlags));
+	}
+
 	ImagePtr Image::convertTo16Bits565(void) const
 	{
-		ImagePtr image(new Image(getWidth(), getHeight(), 16, 0));
+		DWORD dwBitmasks[] = {RGB16_RED_MASK, RGB16_GREEN_MASK, RGB16_BLUE_MASK};
+
+		ImagePtr image(new Image(getWidth(), getHeight(), 16, BI_BITFIELDS, dwBitmasks));
 
 		HDC hdc = image->getDC();
 		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
@@ -283,7 +290,7 @@ namespace my
 
 	ImagePtr Image::convertTo32Bits(void) const
 	{
-		ImagePtr image(new Image(getWidth(), getHeight(), 32, 0));
+		ImagePtr image(new Image(getWidth(), getHeight(), 32));
 
 		HDC hdc = image->getDC();
 		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));

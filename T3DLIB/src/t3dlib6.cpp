@@ -5824,7 +5824,7 @@ namespace t3d
 		clipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
-		drawTriangleListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleIndexListGouraudTextureZBufferRW(void)
@@ -5845,7 +5845,7 @@ namespace t3d
 		clipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
-		drawTriangleIndexListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleIndexListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleListGouraudTextureZBufferRWWithBackface(void)
@@ -5866,7 +5866,7 @@ namespace t3d
 		clipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
-		drawTriangleListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleIndexListGouraudTextureZBufferRWWithBackface(void)
@@ -5887,7 +5887,7 @@ namespace t3d
 		clipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
-		drawTriangleIndexListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleIndexListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleListGouraudTexturePerspectiveLPZBufferRW(void)
@@ -5908,7 +5908,7 @@ namespace t3d
 		clipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
-		drawTriangleListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW(void)
@@ -5929,7 +5929,7 @@ namespace t3d
 		clipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
-		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
@@ -5950,7 +5950,7 @@ namespace t3d
 		clipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
-		drawTriangleListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext16::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
@@ -5971,7 +5971,7 @@ namespace t3d
 		clipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
 		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
 		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
-		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
 	}
 
 	void RenderContext32::fillSurface(const CRect & rect, const Vec4<real> & color)
@@ -8136,24 +8136,24 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	color * 255);
+				drawTriangleZBufferRW16(
+					surface,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					color * 255);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	color * 255);
+				drawClippedTriangleZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					color * 255);
 				break;
 			}
 		}
@@ -8219,24 +8219,24 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	color * 255);
+				drawTriangleZBufferRW16(
+					surface,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					color * 255);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	color * 255);
+				drawClippedTriangleZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					color * 255);
 				break;
 			}
 		}
@@ -8955,28 +8955,28 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleGouraudZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255));
+				drawTriangleGouraudZBufferRW16(
+					surface,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255));
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleGouraudZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255));
+				drawClippedTriangleGouraudZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255));
 				break;
 			}
 		}
@@ -9044,28 +9044,28 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleGouraudZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255));
+				drawTriangleGouraudZBufferRW16(
+					surface,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255));
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleGouraudZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255));
+				drawClippedTriangleGouraudZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255));
 				break;
 			}
 		}
@@ -9685,30 +9685,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTextureZBufferW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend));
+				drawTriangleTextureZBufferW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTextureZBufferW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend);
+				drawClippedTriangleTextureZBufferW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 			}
 		}
@@ -9782,30 +9782,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTextureZBufferW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawTriangleTextureZBufferW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTextureZBufferW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawClippedTriangleTextureZBufferW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 			}
 		}
@@ -9879,30 +9879,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTexturePerspectiveLPZBufferW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend));
+				drawTriangleTexturePerspectiveLPZBufferW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTexturePerspectiveLPZBufferW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend);
+				drawClippedTriangleTexturePerspectiveLPZBufferW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 			}
 		}
@@ -9976,30 +9976,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTexturePerspectiveLPZBufferW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawTriangleTexturePerspectiveLPZBufferW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTexturePerspectiveLPZBufferW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawClippedTriangleTexturePerspectiveLPZBufferW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 			}
 		}
@@ -10073,30 +10073,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTextureZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend));
+				drawTriangleTextureZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTextureZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend);
+				drawClippedTriangleTextureZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 			}
 		}
@@ -10170,30 +10170,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTextureZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawTriangleTextureZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTextureZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawClippedTriangleTextureZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 			}
 		}
@@ -10267,30 +10267,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend));
+				drawTriangleTexturePerspectiveLPZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend);
+				drawClippedTriangleTexturePerspectiveLPZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 			}
 		}
@@ -10364,30 +10364,30 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawTriangleTexturePerspectiveLPZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawClippedTriangleTexturePerspectiveLPZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 			}
 		}
@@ -11039,7 +11039,7 @@ namespace t3d
 		SurfaceRef<uint16> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
-		SurfaceRef<uint32> texture,
+		SurfaceRef<uint16> texture,
 		const Vec2<real> & texture_expend,
 		const VertexList & vertexList,
 		const ColorList & colorList,
@@ -11055,36 +11055,36 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleGouraudTextureZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend));
+				drawTriangleGouraudTextureZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleGouraudTextureZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend);
+				drawClippedTriangleGouraudTextureZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 			}
 		}
@@ -11149,7 +11149,7 @@ namespace t3d
 		SurfaceRef<uint16> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
-		SurfaceRef<uint32> texture,
+		SurfaceRef<uint16> texture,
 		const Vec2<real> & texture_expend,
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
@@ -11166,36 +11166,36 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleGouraudTextureZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawTriangleGouraudTextureZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleGouraudTextureZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawClippedTriangleGouraudTextureZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 			}
 		}
@@ -11261,7 +11261,7 @@ namespace t3d
 		SurfaceRef<uint16> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
-		SurfaceRef<uint32> texture,
+		SurfaceRef<uint16> texture,
 		const Vec2<real> & texture_expend,
 		const VertexList & vertexList,
 		const ColorList & colorList,
@@ -11277,36 +11277,36 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleGouraudTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend));
+				drawTriangleGouraudTexturePerspectiveLPZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[i * 3 + 0],
-				//	vertexList[i * 3 + 1],
-				//	vertexList[i * 3 + 2],
-				//	rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
-				//	rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
-				//	uvList[i * 3 + 0] * texture_expend,
-				//	uvList[i * 3 + 1] * texture_expend,
-				//	uvList[i * 3 + 2] * texture_expend);
+				drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2],
+					rgbaSaturate<real>(colorList[i * 3 + 0] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 1] * 255, 255),
+					rgbaSaturate<real>(colorList[i * 3 + 2] * 255, 255),
+					uvList[i * 3 + 0] * texture_expend,
+					uvList[i * 3 + 1] * texture_expend,
+					uvList[i * 3 + 2] * texture_expend);
 				break;
 			}
 		}
@@ -11371,7 +11371,7 @@ namespace t3d
 		SurfaceRef<uint16> surface,
 		const RECT & clipper,
 		SurfaceRef<fixp28> zbuffer,
-		SurfaceRef<uint32> texture,
+		SurfaceRef<uint16> texture,
 		const Vec2<real> & texture_expend,
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
@@ -11388,36 +11388,36 @@ namespace t3d
 			switch(clipStateList[i])
 			{
 			case CLIP_STATE_NONE:
-				//drawTriangleGouraudTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawTriangleGouraudTexturePerspectiveLPZBufferRW16(
+					surface,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 
 			case CLIP_STATE_SCLIPPED:
-				//drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW16(
-				//	surface,
-				//	clipper,
-				//	zbuffer,
-				//	texture,
-				//	vertexList[vertexIndexList[i * 3 + 0]],
-				//	vertexList[vertexIndexList[i * 3 + 1]],
-				//	vertexList[vertexIndexList[i * 3 + 2]],
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
-				//	rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
-				//	uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
-				//	uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
+				drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW16(
+					surface,
+					clipper,
+					zbuffer,
+					texture,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]],
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 0]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 1]] * 255, 255),
+					rgbaSaturate<real>(colorList[vertexIndexList[i * 3 + 2]] * 255, 255),
+					uvList[vertexIndexList[i * 3 + 0]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 1]] * texture_expend,
+					uvList[vertexIndexList[i * 3 + 2]] * texture_expend);
 				break;
 			}
 		}

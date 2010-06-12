@@ -68,18 +68,33 @@
 				{
 #ifdef __draw_gouraud
 	#ifdef __draw_texture
+		#ifdef __draw_16bit
+					surface[y0][x0] = _RGB16BIT_WITHOUT_RSHIFT(
+						_COLORMUL(_RGB16GETR(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.x)),
+						_COLORMUL(_RGB16GETG(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.y)),
+						_COLORMUL(_RGB16GETB(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.z)));
+		#else
 					surface[y0][x0] = _RGB32BIT(
-						_COLORMUL(fixp16_to_int(lc.x), _RGB32GETR(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)])),
-						_COLORMUL(fixp16_to_int(lc.y), _RGB32GETG(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)])),
-						_COLORMUL(fixp16_to_int(lc.z), _RGB32GETB(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)])));
+						_COLORMUL(_RGB32GETR(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.x)),
+						_COLORMUL(_RGB32GETG(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.y)),
+						_COLORMUL(_RGB32GETB(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.z)));
+		#endif
 	#else // __draw_texture
+		#ifdef __draw_16bit
+					surface[y0][x0] = _RGB16BIT(fixp16_to_int(lc.x), fixp16_to_int(lc.y), fixp16_to_int(lc.z));
+		#else
 					surface[y0][x0] = _RGB32BIT(fixp16_to_int(lc.x), fixp16_to_int(lc.y), fixp16_to_int(lc.z));
+		#endif
 	#endif // __draw_texture
 #else // __draw_gouraud
 	#ifdef __draw_texture
 					surface[y0][x0] = texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)];
 	#else // __draw_texture
+		#ifdef __draw_16bit
+					surface[y0][x0] = _RGB16BIT(fixp16_to_int(color.x), fixp16_to_int(color.y), fixp16_to_int(color.z));
+		#else
 					surface[y0][x0] = _RGB32BIT(fixp16_to_int(color.x), fixp16_to_int(color.y), fixp16_to_int(color.z));
+		#endif
 	#endif // __draw_texture
 #endif // __draw_gouraud
 
