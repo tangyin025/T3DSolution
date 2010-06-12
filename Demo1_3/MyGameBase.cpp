@@ -27,6 +27,15 @@ LRESULT MyWindow::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 			return 0;
 		}
 		break;
+
+	case WM_USER + 0:
+		{
+			// handle the exception thrown from the load state thread
+			t3d::Exception * e = reinterpret_cast<t3d::Exception *>(wparam);
+			_ASSERT(NULL != e);
+			::MessageBox(getHandle(), e->getFullDesc().c_str(), _T("Exception"), MB_OK);
+		}
+		break;
 	}
 	return GameWnd::onProc(hwnd, message, wparam, lparam);
 }
@@ -186,14 +195,14 @@ bool MyLoadState::doFrame(void)
 	// exit application by return false with user input 'escape'
 	if(WaitForThreadStopped(0))
 	{
-		if(!getExitFlag())
+		if(getExitFlag())
 		{
-			m_game->setCurrentState(MyGameState::s_name);
-			return true;
+			return false;
 		}
 		else
 		{
-			return false;
+			m_game->setCurrentState(MyGameState::s_name);
+			return true;
 		}
 	}
 
@@ -234,9 +243,18 @@ bool MyLoadState::doFrame(void)
 
 DWORD MyLoadState::onProc(void)
 {
-	// the thread call back process
-	if(!m_game->doInit() && !getExitFlag())
+	// NOTE: because of multi-thread frame, the try block in the main thread
+	// could not catch any exceptions which was thrown from the this thread proc
+	try
 	{
+		if(!m_game->doInit())
+		{
+			setExitFlag(true);
+		}
+	}
+	catch(t3d::Exception & e)
+	{
+		m_game->m_pwnd->sendMessage(WM_USER + 0, (WPARAM)&e);
 		setExitFlag(true);
 	}
 

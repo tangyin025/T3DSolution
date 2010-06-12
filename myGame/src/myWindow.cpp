@@ -1119,6 +1119,16 @@ namespace my
 		VERIFY(::InvalidateRect(m_hwnd, lpRect, bErase));
 	}
 
+	void Window::postMessage(UINT Msg, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+	{
+		VERIFY(::PostMessage(m_hwnd, Msg, wParam, lParam));
+	}
+
+	LRESULT Window::sendMessage(UINT Msg, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
+	{
+		return ::SendMessage(m_hwnd, Msg, wParam, lParam);
+	}
+
 	Application * Application::s_ptr = NULL;
 
 	LRESULT CALLBACK Application::WindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
