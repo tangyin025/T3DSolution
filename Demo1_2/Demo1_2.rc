@@ -65,7 +65,7 @@ BEGIN
     GROUPBOX        "Screen Mode",IDC_STATIC,18,66,132,78
     GROUPBOX        "Aspect Ratio",IDC_STATIC,168,66,132,78
     CONTROL         "Windowed (Desktop bpp)",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,30,84,97,10
-    CONTROL         "16Bit Full Screen (Unsupported)",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,30,102,117,10
+    CONTROL         "16Bit Full Screen",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,30,102,69,10
     CONTROL         "32Bit Full Screen",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,30,120,69,10
     CONTROL         "Stretched",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON | WS_GROUP,180,84,47,10
     CONTROL         "4 : 3",IDC_RADIO5,"Button",BS_AUTORADIOBUTTON,180,102,31,10
