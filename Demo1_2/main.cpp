@@ -324,7 +324,7 @@ public:
 
 		// 添加媒体搜索路径，建立快捷方式时要注意当前路径的位置
 		my::ResourceMgr::getSingleton().addDir(_T("."));
-		my::ResourceMgr::getSingleton().addDir(_T("../../common/medias"));
+		my::ResourceMgr::getSingleton().addDir(_T("../../common/medias/demo1_2"));
 
 		// ======================================== TODO: BEGIN ========================================
 

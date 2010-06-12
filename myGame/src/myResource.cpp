@@ -94,20 +94,17 @@ namespace my
 	{
 		_ASSERT(!fname.empty());
 
-		DirList::const_iterator dir_iter = m_dirList.begin();
-		for(; dir_iter != m_dirList.end(); dir_iter++)
+		std::basic_string<charT> full_path = findFileOrException(fname);
+
+		FILE * handle;
+		if(NULL == (handle = _tfopen(full_path.c_str(), fmode.c_str())))
 		{
-			std::basic_string<charT> full_path = combinPath(*dir_iter, fname);
-			FILE * handle;
-			if(NULL != (handle = _tfopen(full_path.c_str(), fmode.c_str())))
-			{
-				return IOStreamPtr(new FileIOStream(handle));
-			}
+			std::basic_ostringstream<charT> osstr;
+			osstr << _T("cannot open \"") << full_path << _T("\"");
+			T3D_CUSEXCEPT(osstr.str());
 		}
 
-		std::basic_ostringstream<charT> osstr;
-		osstr << _T("cannot find \"") << fname << _T("\" in resource dirs");
-		T3D_CUSEXCEPT(osstr.str());
+		return IOStreamPtr(new FileIOStream(handle));
 	}
 
 	std::basic_string<charT> ResourceMgr::findFile(const std::basic_string<charT> & fname)

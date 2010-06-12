@@ -282,6 +282,10 @@ namespace my
 		void releaseDC(HDC hdc);
 
 		void InvalidateRect(CONST RECT * lpRect = NULL, BOOL bErase = FALSE);
+
+		void postMessage(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
+
+		LRESULT sendMessage(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
 	};
 
 	typedef boost::shared_ptr<Window> WindowPtr;

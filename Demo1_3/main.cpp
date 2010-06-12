@@ -14,9 +14,24 @@ protected:
 
 	my::EulerCameraPtr m_eulerCam;
 
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	my::IndexObjectPtr m_obj;
+
+	my::ObjectPtr m_lstObj;
+
+	my::ImagePtr m_objTexture;
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 public:
 	bool doInit(void)
 	{
+		// total steps
+		const real totalSteps = 4;
+		int currentStep = 1;
+		MyLoadStatePtr loadState = getCurrentState<MyLoadState>();
+
 		// initialize fps manager
 		m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
 		m_fpsMgr->start();
@@ -33,24 +48,43 @@ public:
 		m_eulerCam->setDefaultPosition(my::Vec4<real>(-50, 50, -50));
 		m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(45), DEG_TO_RAD(0)));
 		m_eulerCam->reset();
-
-		// simulate times occupied process
-		MyLoadStatePtr loadState = getCurrentState<MyLoadState>();
-		int count = 100;
-		for(int i = 1; i <= count; i += 1)
+		if(loadState->getExitFlag())
 		{
-			// if user specified to exit application, stop any job
-			if(loadState->getExitFlag())
-			{
-				return false;
-			}
-
-			// update progress percent
-			loadState->setPercent((real)i / count);
-
-			// sleep some time as if doing the job
-			::Sleep(30);
+			return false;
 		}
+		loadState->setPercent(currentStep++ / totalSteps);
+		::Sleep(300);
+
+		// //////////////////////////////////////////////////////////////////////////////////////////
+
+		// initialize ogre obj
+		my::IOStreamPtr stream = my::ResourceMgr::getSingleton().openIOStream(_T("gun.mesh.xml"));
+		m_obj = my::IndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(stream.get()));
+		if(loadState->getExitFlag())
+		{
+			return false;
+		}
+		loadState->setPercent(currentStep++ / totalSteps);
+		::Sleep(300);
+
+		stream = my::ResourceMgr::getSingleton().openIOStream(_T("gun_tri_list.mesh.xml"));
+		m_lstObj = my::ObjectPtr(new my::ObjectFromOgreMesh(stream.get()));
+		if(loadState->getExitFlag())
+		{
+			return false;
+		}
+		loadState->setPercent(currentStep++ / totalSteps);
+		::Sleep(300);
+
+		m_objTexture = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("92fs_brigadier.jpg"))));
+		if(loadState->getExitFlag())
+		{
+			return false;
+		}
+		loadState->setPercent(currentStep++ / totalSteps);
+		::Sleep(300);
+
+		// //////////////////////////////////////////////////////////////////////////////////////////
 
 		return true;
 	}
@@ -108,6 +142,14 @@ public:
 
 		// draw default grid, with use to test distance of the scene
 		m_grid->drawZBufferRW(m_rc.get());
+
+		// //////////////////////////////////////////////////////////////////////////////////////////
+
+		m_obj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, -100)));
+
+		m_lstObj->drawWireZBufferRW(m_rc.get(), my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, -100)));
+
+		// //////////////////////////////////////////////////////////////////////////////////////////
 
 		// general information output
 		std::basic_string<charT> strTmp;
@@ -167,7 +209,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 
 		// initialize searching path
 		my::ResourceMgr::getSingleton().addDir(_T("."));
-		my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias"));
+		my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias\\demo1_3"));
 
 		// initialize configuration
 		my::Config cfg(_T("config"));

@@ -60,6 +60,8 @@ public:
 
 	void setPercent(real percent)
 	{
+		_ASSERT(0 <= percent && percent <= 1);
+
 		m_percent = percent;
 	}
 
