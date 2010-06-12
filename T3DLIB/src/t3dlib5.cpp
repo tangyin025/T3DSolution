@@ -758,6 +758,22 @@ namespace t3d
 		}
 	}
 
+	void drawScanZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		const Vec4<fixp16> & color)
+	{
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
+#include "draw_scan.hpp"
+	}
+
 	void drawScanZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -771,6 +787,24 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_32bit
+#include "draw_scan.hpp"
+	}
+
+	void drawClippedScanZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		const Vec4<fixp16> & color)
+	{
+#define __draw_clipped
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
 #include "draw_scan.hpp"
 	}
 
@@ -792,6 +826,24 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
+	void drawScanGouraudZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec4<fixp16> lc,
+		const Vec4<fixp16> & rc)
+	{
+#define __draw_gouraud
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
+#include "draw_scan.hpp"
+	}
+
 	void drawScanGouraudZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -807,6 +859,26 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_32bit
+#include "draw_scan.hpp"
+	}
+
+	void drawClippedScanGouraudZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec4<fixp16> lc,
+		const Vec4<fixp16> & rc)
+	{
+#define __draw_clipped
+#define __draw_gouraud
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
 #include "draw_scan.hpp"
 	}
 
@@ -830,6 +902,24 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
+	void drawScanTextureZBufferW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt)
+	{
+#define __draw_texture
+#define __draw_zbuffer_w
+#define __draw_16bit
+#include "draw_scan.hpp"
+	}
+
 	void drawScanTextureZBufferW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -845,6 +935,26 @@ namespace t3d
 #define __draw_texture
 #define __draw_zbuffer_w
 #define __draw_32bit
+#include "draw_scan.hpp"
+	}
+
+	void drawClippedScanTextureZBufferW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt)
+	{
+#define __draw_clipped
+#define __draw_texture
+#define __draw_zbuffer_w
+#define __draw_16bit
 #include "draw_scan.hpp"
 	}
 
@@ -868,6 +978,25 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
+	void drawScanTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt)
+	{
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
+#include "draw_scan.hpp"
+	}
+
 	void drawScanTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -884,6 +1013,27 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_32bit
+#include "draw_scan.hpp"
+	}
+
+	void drawClippedScanTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt)
+	{
+#define __draw_clipped
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
 #include "draw_scan.hpp"
 	}
 
@@ -908,6 +1058,28 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
+	void drawScanGouraudTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec4<fixp16> lc,
+		const Vec4<fixp16> & rc,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt)
+	{
+#define __draw_gouraud
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
+#include "draw_scan.hpp"
+	}
+
 	void drawScanGouraudTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -927,6 +1099,30 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_32bit
+#include "draw_scan.hpp"
+	}
+
+	void drawClippedScanGouraudTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz,
+		Vec4<fixp16> lc,
+		const Vec4<fixp16> & rc,
+		Vec2<fixp16> lt,
+		const Vec2<fixp16> & rt)
+	{
+#define __draw_clipped
+#define __draw_gouraud
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_16bit
 #include "draw_scan.hpp"
 	}
 
@@ -954,6 +1150,21 @@ namespace t3d
 #include "draw_scan.hpp"
 	}
 
+	void drawTriangleZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & color)
+	{
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanZBufferRW16
+#define __draw_clipped_func drawClippedScanZBufferRW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -966,6 +1177,23 @@ namespace t3d
 #define __draw_zbuffer_w
 #define __draw_func drawScanZBufferRW32
 #define __draw_clipped_func drawClippedScanZBufferRW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & color)
+	{
+#define __draw_clipped
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanZBufferRW16
+#define __draw_clipped_func drawClippedScanZBufferRW16
 #include "draw_triangle.hpp"
 	}
 
@@ -986,6 +1214,23 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleGouraudZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2)
+	{
+#define __draw_gouraud
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanGouraudZBufferRW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleGouraudZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1000,6 +1245,26 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_func drawScanGouraudZBufferRW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleGouraudZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2)
+	{
+#define __draw_clipped
+#define __draw_gouraud
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanGouraudZBufferRW16
+#define __draw_clipped_func drawClippedScanGouraudZBufferRW16
 #include "draw_triangle.hpp"
 	}
 
@@ -1023,6 +1288,23 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleTextureZBufferW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_texture
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleTextureZBufferW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1037,6 +1319,26 @@ namespace t3d
 #define __draw_texture
 #define __draw_zbuffer_w
 #define __draw_func drawScanTextureZBufferW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleTextureZBufferW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_clipped
+#define __draw_texture
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferW16
+#define __draw_clipped_func drawClippedScanTextureZBufferW16
 #include "draw_triangle.hpp"
 	}
 
@@ -1060,6 +1362,24 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferRW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1075,6 +1395,27 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_func drawScanTextureZBufferRW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_clipped
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferRW16
+#define __draw_clipped_func drawClippedScanTextureZBufferRW16
 #include "draw_triangle.hpp"
 	}
 
@@ -1099,6 +1440,28 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleGouraudTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_gouraud
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanGouraudTextureZBufferRW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleGouraudTextureZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1118,6 +1481,31 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_func drawScanGouraudTextureZBufferRW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleGouraudTextureZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_clipped
+#define __draw_gouraud
+#define __draw_texture
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanGouraudTextureZBufferRW16
+#define __draw_clipped_func drawClippedScanGouraudTextureZBufferRW16
 #include "draw_triangle.hpp"
 	}
 
@@ -1146,6 +1534,24 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleTexturePerspectiveLPZBufferW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_texture
+#define __draw_texture_perspective_lp
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleTexturePerspectiveLPZBufferW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1161,6 +1567,27 @@ namespace t3d
 #define __draw_texture_perspective_lp
 #define __draw_zbuffer_w
 #define __draw_func drawScanTextureZBufferW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_clipped
+#define __draw_texture
+#define __draw_texture_perspective_lp
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferW16
+#define __draw_clipped_func drawClippedScanTextureZBufferW16
 #include "draw_triangle.hpp"
 	}
 
@@ -1185,6 +1612,25 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_texture
+#define __draw_texture_perspective_lp
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferRW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleTexturePerspectiveLPZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1201,6 +1647,28 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_func drawScanTextureZBufferRW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_clipped
+#define __draw_texture
+#define __draw_texture_perspective_lp
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanTextureZBufferRW16
+#define __draw_clipped_func drawClippedScanTextureZBufferRW16
 #include "draw_triangle.hpp"
 	}
 
@@ -1226,6 +1694,29 @@ namespace t3d
 #include "draw_triangle.hpp"
 	}
 
+	void drawTriangleGouraudTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_gouraud
+#define __draw_texture
+#define __draw_texture_perspective_lp
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanGouraudTextureZBufferRW16
+#include "draw_triangle.hpp"
+	}
+
 	void drawTriangleGouraudTexturePerspectiveLPZBufferRW32(
 		SurfaceRef<uint32> surface,
 		SurfaceRef<fixp28> zbuffer,
@@ -1246,6 +1737,32 @@ namespace t3d
 #define __draw_zbuffer_r
 #define __draw_zbuffer_w
 #define __draw_func drawScanGouraudTextureZBufferRW32
+#include "draw_triangle.hpp"
+	}
+
+	void drawClippedTriangleGouraudTexturePerspectiveLPZBufferRW16(
+		SurfaceRef<uint16> surface,
+		const RECT & clipper,
+		SurfaceRef<fixp28> zbuffer,
+		ConstSurfaceRef<uint16> texture,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2,
+		const Vec4<real> & c0,
+		const Vec4<real> & c1,
+		const Vec4<real> & c2,
+		const Vec2<real> & t0,
+		const Vec2<real> & t1,
+		const Vec2<real> & t2)
+	{
+#define __draw_clipped
+#define __draw_gouraud
+#define __draw_texture
+#define __draw_texture_perspective_lp
+#define __draw_zbuffer_r
+#define __draw_zbuffer_w
+#define __draw_func drawScanGouraudTextureZBufferRW16
+#define __draw_clipped_func drawClippedScanGouraudTextureZBufferRW16
 #include "draw_triangle.hpp"
 	}
 

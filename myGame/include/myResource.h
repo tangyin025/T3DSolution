@@ -145,6 +145,8 @@ namespace my
 
 		Image(int nWidth, int nHeight, int nBPP, DWORD dwFlags = 0);
 
+		Image(int nWidth, int nHeight, int nBPP, DWORD eCompression, const DWORD* pdwBitmasks = NULL, DWORD dwFlags = 0);
+
 		int getBPP(void) const
 		{
 			return m_image.GetBPP();
