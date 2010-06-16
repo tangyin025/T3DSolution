@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "t3dlib1.h"
 #include <crtdbg.h>
-#include <boost/scoped_array.hpp>
 
 #pragma comment(lib, "DDraw.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -292,9 +291,9 @@ namespace t3d
 	{
 		_ASSERT(dwCount > 0);
 
-		boost::scoped_array<unsigned char> tmpData(new unsigned char[sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount]);
+		std::vector<unsigned char> tmpData(sizeof(RGNDATAHEADER) + sizeof(RECT) * dwCount);
 
-		LPRGNDATA pRgnd = (LPRGNDATA)tmpData.get();
+		LPRGNDATA pRgnd = (LPRGNDATA)&tmpData[0];
 		if(NULL == pRgnd)
 			T3D_CUSEXCEPT(_T("malloc RGNDATA failed"));
 
@@ -362,11 +361,9 @@ namespace t3d
 	}
 
 	ZBuffer::ZBuffer(DWORD dwWidth, DWORD dwHeight)
-		: m_buffer(new fixp28[dwWidth * dwHeight])
+		: m_buffer(dwWidth * dwHeight)
 		, m_lPitch(dwWidth * sizeof(fixp28))
 	{
-		if(NULL == m_buffer.get())
-			T3D_CUSEXCEPT(_T("create zbuffer failed"));
 	}
 
 	ZBuffer::~ZBuffer(void)
@@ -375,12 +372,12 @@ namespace t3d
 
 	const fixp28 * ZBuffer::getBuffer(void) const
 	{
-		return m_buffer.get();
+		return (fixp28 *)&m_buffer[0];
 	}
 
 	fixp28 * ZBuffer::getBuffer(void)
 	{
-		return m_buffer.get();
+		return (fixp28 *)&m_buffer[0];
 	}
 
 	LONG ZBuffer::getPitch(void)

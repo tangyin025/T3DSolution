@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "myResource.h"
 #include <sstream>
+#include <t3dlib5.h>
 #include "libc.h"
 
 #pragma comment(lib, "winmm.lib")
@@ -70,25 +71,25 @@ namespace my
 		m_dirList.clear();
 	}
 
-	static std::basic_string<charT> combinPath(const std::basic_string<charT> & dir, const std::basic_string<charT> & fname)
-	{
-		_ASSERT(!fname.empty());
+	//static std::basic_string<charT> combinPath(const std::basic_string<charT> & dir, const std::basic_string<charT> & fname)
+	//{
+	//	_ASSERT(!fname.empty());
 
-		_ASSERT(_T('/') != *(fname.begin()) || _T('\\') != *(fname.begin()));
+	//	_ASSERT(_T('/') != *(fname.begin()) || _T('\\') != *(fname.begin()));
 
-		charT back = *(dir.rbegin());
-		if(_T('/') != back || _T('\\') != back)
-		{
-			if(std::basic_string<charT>::npos != dir.rfind(_T('/')))
-			{
-				return dir + _T("/") + fname;
-			}
+	//	charT back = *(dir.rbegin());
+	//	if(_T('/') != back || _T('\\') != back)
+	//	{
+	//		if(std::basic_string<charT>::npos != dir.rfind(_T('/')))
+	//		{
+	//			return dir + _T("/") + fname;
+	//		}
 
-			return dir + _T("\\") + fname;
-		}
+	//		return dir + _T("\\") + fname;
+	//	}
 
-		return dir + fname;
-	}
+	//	return dir + fname;
+	//}
 
 	IOStreamPtr ResourceMgr::openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode /*= _T("rb")*/)
 	{
@@ -197,13 +198,9 @@ namespace my
 			T3D_CUSEXCEPT(_T("mmioDescend child failed"));
 		}
 
-		if(NULL == (buffer = boost::shared_ptr<unsigned char>((unsigned char *)malloc(child.cksize))))
-		{
-			mmioClose(hwav, 0);
-			T3D_CUSEXCEPT(_T("malloc buffer failed"));
-		}
+		buffer.resize(child.cksize);
 
-		if((LONG)child.cksize != mmioRead(hwav, (HPSTR)buffer.get(), child.cksize))
+		if((LONG)child.cksize != mmioRead(hwav, (HPSTR)&buffer[0], child.cksize))
 		{
 			mmioClose(hwav, 0);
 			T3D_CUSEXCEPT(_T("mmioRead wav buffer failed"));
@@ -247,12 +244,12 @@ namespace my
 
 		if(audioPtr1 != NULL)
 		{
-			memcpy(audioPtr1, wav->buffer.get(), audioBytes1);
+			memcpy(audioPtr1, &wav->buffer[0], audioBytes1);
 		}
 
 		if(audioPtr2 != NULL)
 		{
-			memcpy(audioPtr2, wav->buffer.get() + audioBytes1, audioBytes2);
+			memcpy(audioPtr2, &wav->buffer[0 + audioBytes1], audioBytes2);
 		}
 
 		dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);

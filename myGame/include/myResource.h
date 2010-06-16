@@ -21,7 +21,8 @@
 #pragma pop_macro("REAL_MIN")
 #pragma pop_macro("max")
 #pragma pop_macro("min")
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <vector>
 #include "mySingleton.h"
 
 namespace my
@@ -51,7 +52,7 @@ namespace my
 		virtual void * getHandle(void) = 0;
 	};
 
-	typedef boost::shared_ptr<IOStream> IOStreamPtr;
+	typedef std::tr1::shared_ptr<IOStream> IOStreamPtr;
 
 	class FileIOStream : public IOStream
 	{
@@ -102,7 +103,7 @@ namespace my
 		DirList m_dirList;
 	};
 
-	typedef boost::shared_ptr<ResourceMgr> ResourceMgrPtr;
+	typedef std::tr1::shared_ptr<ResourceMgr> ResourceMgrPtr;
 
 	class Wav
 	{
@@ -116,10 +117,10 @@ namespace my
 		MMCKINFO parent;
 		MMCKINFO child;
 		WAVEFORMATEX wavfmt;
-		boost::shared_ptr<unsigned char> buffer;
+		std::vector<unsigned char> buffer;
 	};
 
-	typedef boost::shared_ptr<Wav> WavPtr;
+	typedef std::tr1::shared_ptr<Wav> WavPtr;
 
 	t3d::DSBufferPtr createDSoundBufferForWholeWav(
 		t3d::DSound * dsound,
@@ -132,7 +133,7 @@ namespace my
 
 	class Image;
 
-	typedef boost::shared_ptr<Image> ImagePtr;
+	typedef std::tr1::shared_ptr<Image> ImagePtr;
 
 	class Image
 	{

@@ -3,7 +3,7 @@
 #define __MYSCENE_H__
 
 #include "myCommon.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "myUtility.h"
 
 namespace my
@@ -17,7 +17,7 @@ namespace my
 	//	virtual ~CustomShaderObject(void);
 	//};
 
-	//typedef boost::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
+	//typedef std::tr1::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
 
 	//typedef std::vector<CustomShaderObjectPtr> CustomShaderObjectPtrList;
 
@@ -59,7 +59,7 @@ namespace my
 
 	class BSPNode;
 
-	typedef boost::shared_ptr<BSPNode> BSPNodePtr;
+	typedef std::tr1::shared_ptr<BSPNode> BSPNodePtr;
 
 	class BSPNode
 		//: public Object

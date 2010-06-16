@@ -6,8 +6,7 @@
 #include <cmath>
 #include <list>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
+#include <memory>
 #include "myMath.h"
 
 namespace my
@@ -71,7 +70,7 @@ namespace my
 		void integrate(real duration);
 	};
 
-	typedef boost::shared_ptr<Particle> ParticlePtr;
+	typedef std::tr1::shared_ptr<Particle> ParticlePtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleForceRegistry
@@ -107,7 +106,7 @@ namespace my
 		void updateForces(real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleForceRegistry> ParticleForceRegistryPtr;
+	typedef std::tr1::shared_ptr<ParticleForceRegistry> ParticleForceRegistryPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleForceGenerator
@@ -122,7 +121,7 @@ namespace my
 		virtual void updateForce(Particle * particle, real duration) = 0;
 	};
 
-	typedef boost::shared_ptr<ParticleForceGenerator> ParticleForceGeneratorPtr;
+	typedef std::tr1::shared_ptr<ParticleForceGenerator> ParticleForceGeneratorPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleGravity
@@ -139,7 +138,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleGravity> ParticleGravityPtr;
+	typedef std::tr1::shared_ptr<ParticleGravity> ParticleGravityPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleDrag
@@ -158,7 +157,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleDrag> ParticleDragPtr;
+	typedef std::tr1::shared_ptr<ParticleDrag> ParticleDragPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleSpring
@@ -179,7 +178,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleSpring> ParticleSpringPtr;
+	typedef std::tr1::shared_ptr<ParticleSpring> ParticleSpringPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleAnchoredSpring
@@ -200,7 +199,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleAnchoredSpring> ParticleAnchoredSpringPtr;
+	typedef std::tr1::shared_ptr<ParticleAnchoredSpring> ParticleAnchoredSpringPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleBungee
@@ -221,7 +220,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleBungee> ParticleBungeePtr;
+	typedef std::tr1::shared_ptr<ParticleBungee> ParticleBungeePtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleAnchoredBungee
@@ -263,7 +262,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleBuoyancy> ParticleBuoyancyPtr;
+	typedef std::tr1::shared_ptr<ParticleBuoyancy> ParticleBuoyancyPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleFakeSpring
@@ -284,7 +283,7 @@ namespace my
 		void updateForce(Particle * particle, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleFakeSpring> ParticleFakeSpringPtr;
+	typedef std::tr1::shared_ptr<ParticleFakeSpring> ParticleFakeSpringPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleContact
@@ -313,7 +312,7 @@ namespace my
 		void resolveInterpenetration(real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleContact> ParticleContactPtr;
+	typedef std::tr1::shared_ptr<ParticleContact> ParticleContactPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleContactResolver
@@ -336,7 +335,7 @@ namespace my
 		void resolveContacts(ParticleContact * contactArray, unsigned numContacts, real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleContactResolver> ParticleContactResolverPtr;
+	typedef std::tr1::shared_ptr<ParticleContactResolver> ParticleContactResolverPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleContactGenerator
@@ -351,7 +350,7 @@ namespace my
 		virtual unsigned addContact(ParticleContact * contact, unsigned limit) const = 0;
 	};
 
-	typedef boost::shared_ptr<ParticleContactGenerator> ParticleContactGeneratorPtr;
+	typedef std::tr1::shared_ptr<ParticleContactGenerator> ParticleContactGeneratorPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleLink
@@ -372,7 +371,7 @@ namespace my
 	//	virtual unsigned addContact(ParticleContact * contact, unsigned limit) const = 0;
 	};
 
-	typedef boost::shared_ptr<ParticleLink> ParticleLinkPtr;
+	typedef std::tr1::shared_ptr<ParticleLink> ParticleLinkPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleCable
@@ -391,7 +390,7 @@ namespace my
 		unsigned addContact(ParticleContact * contact, unsigned limit) const;
 	};
 
-	typedef boost::shared_ptr<ParticleCable> ParticleCablePtr;
+	typedef std::tr1::shared_ptr<ParticleCable> ParticleCablePtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleRod
@@ -408,7 +407,7 @@ namespace my
 		unsigned addContact(ParticleContact * contact, unsigned limit) const;
 	};
 
-	typedef boost::shared_ptr<ParticleRod> ParticleRodPtr;
+	typedef std::tr1::shared_ptr<ParticleRod> ParticleRodPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleConstraint
@@ -431,7 +430,7 @@ namespace my
 	//	virtual unsigned addContact(ParticleContact * contact, unsigned limit) const = 0;
 	};
 
-	typedef boost::shared_ptr<ParticleConstraint> ParticleConstraintPtr;
+	typedef std::tr1::shared_ptr<ParticleConstraint> ParticleConstraintPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleCableConstraint
@@ -450,7 +449,7 @@ namespace my
 		unsigned addContact(ParticleContact * contact, unsigned limit) const;
 	};
 
-	typedef boost::shared_ptr<ParticleCableConstraint> ParticleCableConstraintPtr;
+	typedef std::tr1::shared_ptr<ParticleCableConstraint> ParticleCableConstraintPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleRodConstraint
@@ -467,7 +466,7 @@ namespace my
 		unsigned addContact(ParticleContact * contact, unsigned limit) const;
 	};
 
-	typedef boost::shared_ptr<ParticleRodConstraint> ParticleRodConstraintPtr;
+	typedef std::tr1::shared_ptr<ParticleRodConstraint> ParticleRodConstraintPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ParticleWorld
@@ -477,7 +476,7 @@ namespace my
 
 	typedef std::vector<my::ParticleContactGeneratorPtr> ParticleContactGeneratorPtrList;
 
-	typedef boost::shared_array<my::ParticleContact> ParticleContactArray;
+	typedef std::vector<my::ParticleContact> ParticleContactArray;
 
 	class ParticleWorld
 	{
@@ -508,7 +507,7 @@ namespace my
 		void runPhysics(real duration);
 	};
 
-	typedef boost::shared_ptr<ParticleWorld> ParticleWorldPtr;
+	typedef std::tr1::shared_ptr<ParticleWorld> ParticleWorldPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// RigidBody
@@ -650,7 +649,7 @@ namespace my
 		void integrate(real duration);
 	};
 
-	typedef boost::shared_ptr<RigidBody> RigidBodyPtr;
+	typedef std::tr1::shared_ptr<RigidBody> RigidBodyPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ForceRegistry
@@ -686,7 +685,7 @@ namespace my
 		void updateForces(real duration);
 	};
 
-	typedef boost::shared_ptr<ForceRegistry> ForceRegistryPtr;
+	typedef std::tr1::shared_ptr<ForceRegistry> ForceRegistryPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ForceGenerator

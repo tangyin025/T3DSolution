@@ -8,7 +8,7 @@
 #include <cmath>
 #include "t3dlib4.h"
 #include "t3dlib5.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace t3d
 {
@@ -1643,7 +1643,7 @@ namespace t3d
 		virtual void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void) = 0;
 	};
 
-	typedef boost::shared_ptr<RenderContext> RenderContextPtr;
+	typedef std::tr1::shared_ptr<RenderContext> RenderContextPtr;
 
 	class RenderContext16
 		: virtual public RenderContext

@@ -2,7 +2,7 @@
 #ifndef __MYSINGLETON_H__
 #define __MYSINGLETON_H__
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace my
 {
@@ -10,7 +10,7 @@ namespace my
 	class Singleton
 	{
 	protected:
-		typedef boost::shared_ptr<DRIVED_CLASS> DRIVED_CLASS_PTR;
+		typedef std::tr1::shared_ptr<DRIVED_CLASS> DRIVED_CLASS_PTR;
 
 		static DRIVED_CLASS_PTR s_ptr;
 
