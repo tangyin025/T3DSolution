@@ -748,9 +748,9 @@ namespace my
 
 	ParticleWorld::ParticleWorld(unsigned _maxContacts, unsigned _iterations /*= 0*/)
 		: resolver(_iterations)
+		, particleContactArray(maxContacts)
 		, maxContacts(_maxContacts)
 	{
-		particleContactArray = ParticleContactArray(new ParticleContact[maxContacts]);
 	}
 
 	ParticleWorld::~ParticleWorld(void)
@@ -772,7 +772,7 @@ namespace my
 	{
 		unsigned limit = maxContacts;
 
-		ParticleContact * nextContact = particleContactArray.get();
+		ParticleContact * nextContact = &particleContactArray[0];
 
 		ParticleContactGeneratorPtrList::const_iterator c_iter = particleContactGeneratorList.begin();
 		for(; c_iter != particleContactGeneratorList.end(); c_iter++)
@@ -821,7 +821,7 @@ namespace my
 			{
 				resolver.setIterations(used * 2);
 
-				resolver.resolveContacts(particleContactArray.get(), used, duration);
+				resolver.resolveContacts(&particleContactArray[0], used, duration);
 			}
 		}
 	}

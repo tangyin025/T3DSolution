@@ -8,7 +8,7 @@
 #include <atlbase.h>
 #include <crtdbg.h>
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace t3d
 {
@@ -86,7 +86,7 @@ namespace t3d
 		}
 	};
 
-	typedef boost::shared_ptr<DIKeyboard> DIKeyboardPtr;
+	typedef std::tr1::shared_ptr<DIKeyboard> DIKeyboardPtr;
 
 	class DIMouse : public DIDevice
 	{
@@ -130,7 +130,7 @@ namespace t3d
 		}
 	};
 
-	typedef boost::shared_ptr<DIMouse> DIMousePtr;
+	typedef std::tr1::shared_ptr<DIMouse> DIMousePtr;
 
 	class DIJoystick : public DIDevice
 	{
@@ -228,7 +228,7 @@ namespace t3d
 		}
 	};
 
-	typedef boost::shared_ptr<DIJoystick> DIJoystickPtr;
+	typedef std::tr1::shared_ptr<DIJoystick> DIJoystickPtr;
 
 	class DInput
 	{
@@ -259,7 +259,7 @@ namespace t3d
 			real dead_zone = 10);
 	};
 
-	typedef boost::shared_ptr<DInput> DInputPtr;
+	typedef std::tr1::shared_ptr<DInput> DInputPtr;
 }
 
 #endif // __T3DLIB2_H__

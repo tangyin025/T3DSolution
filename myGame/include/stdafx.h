@@ -9,33 +9,23 @@
 #include <t3dlib3.h>
 #include <t3dlib6.h>
 #include <list>
-#include <boost/shared_array.hpp>
-#pragma push_macro("min")
-#pragma push_macro("max")
-#define min std::min
-#define max std::max
-#pragma push_macro("REAL_MIN")
-#pragma push_macro("REAL_MAX")
-#undef REAL_MIN
-#undef REAL_MAX
-#include <atlimage.h>
-#pragma pop_macro("REAL_MAX")
-#pragma pop_macro("REAL_MIN")
-#pragma pop_macro("max")
-#pragma pop_macro("min")
-#include <boost/shared_ptr.hpp>
+#include <atltypes.h>
+#include <memory>
 #include <t3dlib4.h>
 #include <cmath>
 #include <list>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
+#include <memory>
 #include <t3dlib3.h>
 #include <cstdio>
-#include <cassert>
+#include <crtdbg.h>
 #include <list>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <mmsystem.h>
+//#include <atlimage.h>
+#include <memory>
+#include <vector>
+#include <memory>
+#include <memory>
 #include <t3dlib7.h>
 #include <map>
 #include <t3dlib1.h>
@@ -44,34 +34,29 @@
 #include <map>
 #include <deque>
 #include <stack>
-#include <boost/shared_ptr.hpp>
-#include <cassert>
+#include <memory>
+#include <crtdbg.h>
 #include <string>
 #include <vector>
 #include <map>
 #include <Windows.h>
 #include <atltypes.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <cstdio>
-#include <cassert>
-//#include <crtdbg.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
+#include <crtdbg.h>
 #include <cmath>
 #include <iostream>
-//#include <crtdbg.h>
 //#include <boost/program_options.hpp>
 #include <sstream>
-#include <mmsystem.h>
+#include <t3dlib5.h>
 #include <tinyxml.h>
 #include <tinyxml.h>
+#include <atltypes.h>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-//#include <crtdbg.h>
-//  Matching lines: 56    Matching files: 18    Total files searched: 26
+//  Matching lines: 55    Matching files: 18    Total files searched: 26
 
-#include <crtdbg.h>
 #ifdef _DEBUG
 #define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
 #endif

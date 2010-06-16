@@ -151,7 +151,7 @@ public:
 		m_characterSphere.body->calculateDerivedData();
 
 		// 保存场景（指针）
-		assert(NULL != scene);
+		_ASSERT(NULL != scene);
 		m_scene = scene;
 
 		// 初始化跟踪器
@@ -191,7 +191,7 @@ public:
 	}
 };
 
-typedef boost::shared_ptr<MyWorld> MyWorldPtr;
+typedef std::tr1::shared_ptr<MyWorld> MyWorldPtr;
 
 // ======================================== TODO: END   ========================================
 

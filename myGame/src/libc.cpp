@@ -2,8 +2,6 @@
 #include "stdafx.h"
 #include <cstdio>
 #include <crtdbg.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
 #include "libc.h"
 #include "myWindow.h"
 
