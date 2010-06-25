@@ -95,7 +95,9 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			HDC hdc = BeginPaint(hwndDlg, &ps);
 			if(NULL != m_image)
 			{
+				int mode = ::SetStretchBltMode(hdc, HALFTONE);
 				m_image->m_image.StretchBlt(hdc, imageRect.left, imageRect.top, imageRect.Width(), imageRect.Height(), SRCCOPY);
+				::SetStretchBltMode(hdc, mode);
 			}
 			else
 			{
