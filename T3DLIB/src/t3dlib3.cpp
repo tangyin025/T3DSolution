@@ -211,6 +211,7 @@ namespace t3d
 
 	DS3DListener::DS3DListener(DSBuffer * dsbuffer)
 	{
+		// must be a primary sound buffer, see DSound::getPrimaryBuffer3DListener
 		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSound3DListener, (LPVOID *)&m_ds3dlistener));
 	}
 
@@ -284,5 +285,12 @@ namespace t3d
 	DSBufferPtr DSound::createSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc)
 	{
 		return DSBufferPtr(new DSBuffer(this, pcDSBufferDesc));
+	}
+
+	DS3DListenerPtr DSound::getPrimaryBuffer3DListener(void)
+	{
+		DSBUFFERDESC dsbd = {sizeof(dsbd)};
+		dsbd.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
+		return createSoundBuffer(&dsbd)->getDS3DListener();
 	}
 }

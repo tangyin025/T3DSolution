@@ -166,6 +166,8 @@ namespace t3d
 		void setCooperativeLevel(HWND hwnd, DWORD dwLevel = CL_PRIORITY);
 
 		DSBufferPtr createSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc);
+
+		DS3DListenerPtr getPrimaryBuffer3DListener(void);
 	};
 
 	typedef std::tr1::shared_ptr<DSound> DSoundPtr;
