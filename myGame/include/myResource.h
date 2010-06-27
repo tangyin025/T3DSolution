@@ -59,6 +59,9 @@ namespace my
 		friend class ResourceMgr;
 
 	protected:
+		FILE * m_handle;
+
+	protected:
 		FileIOStream(FILE * handle);
 
 	public:
@@ -74,13 +77,15 @@ namespace my
 		long tell(void);
 
 		void * getHandle(void);
-
-	protected:
-		FILE * m_handle;
 	};
 
 	class ResourceMgr : public Singleton<ResourceMgr>
 	{
+	protected:
+		typedef std::list<std::basic_string<charT> > DirList;
+
+		DirList m_dirList;
+
 	public:
 		ResourceMgr(void);
 
@@ -96,40 +101,9 @@ namespace my
 		std::basic_string<charT> findFile(const std::basic_string<charT> & fname);
 
 		std::basic_string<charT> findFileOrException(const std::basic_string<charT> & fname);
-
-	protected:
-		typedef std::list<std::basic_string<charT> > DirList;
-
-		DirList m_dirList;
 	};
 
 	typedef std::tr1::shared_ptr<ResourceMgr> ResourceMgrPtr;
-
-	class Wav
-	{
-	public:
-		Wav(const std::basic_string<charT> & wavFilePath);
-
-		virtual ~Wav(void);
-
-	public:
-		HMMIO hwav;
-		MMCKINFO parent;
-		MMCKINFO child;
-		WAVEFORMATEX wavfmt;
-		std::vector<unsigned char> buffer;
-	};
-
-	typedef std::tr1::shared_ptr<Wav> WavPtr;
-
-	t3d::DSBufferPtr createDSoundBufferForWholeWav(
-		t3d::DSound * dsound,
-		const Wav * wav,
-		DWORD flags = DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE);
-
-	void copyWholeWavBufferToDSoundBuffer(
-		t3d::DSBuffer * dsbuffer,
-		const Wav * wav);
 
 	class Image;
 
@@ -187,6 +161,36 @@ namespace my
 
 		ImagePtr convertTo32Bits(void) const;
 	};
+
+	class Wav
+	{
+	public:
+		HMMIO hwav;
+		MMCKINFO parent;
+		MMCKINFO child;
+		WAVEFORMATEX wavfmt;
+		//std::vector<unsigned char> buffer;
+		t3d::DSBufferPtr m_dsbuffer;
+
+	public:
+		Wav(
+			t3d::DSound * dsound,
+			const std::basic_string<charT> & wavFilePath,
+			DWORD flags = DSBCAPS_CTRL3D | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE);
+
+		virtual ~Wav(void);
+	};
+
+	typedef std::tr1::shared_ptr<Wav> WavPtr;
+
+	//t3d::DSBufferPtr createDSoundBufferForWholeWav(
+	//	t3d::DSound * dsound,
+	//	const Wav * wav,
+	//	DWORD flags = DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE);
+
+	//void copyWholeWavBufferToDSoundBuffer(
+	//	t3d::DSBuffer * dsbuffer,
+	//	const Wav * wav);
 }
 
 #endif // __MYRESOURCE_H__

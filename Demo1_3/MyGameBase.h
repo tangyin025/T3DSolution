@@ -44,11 +44,6 @@ public:
 	}
 
 public:
-	virtual bool doInit(void) = 0;
-
-	virtual bool doFrame(void) = 0;
-
-public:
 	MyGameBase(void) throw();
 
 	~MyGameBase(void);
@@ -81,6 +76,9 @@ class MyLoadState
 	: public MyFrameState
 	, public my::Thread
 {
+public:
+	static const std::basic_string<charT> s_name;
+
 protected:
 	MyGameBase * m_game;
 
@@ -91,9 +89,6 @@ protected:
 	bool m_exitFlag;
 
 	my::CriticalSection m_exitFlagLock;
-
-public:
-	static const std::basic_string<charT> s_name;
 
 public:
 	void setExitFlag(bool exitFlag = true)
@@ -145,16 +140,46 @@ typedef std::tr1::shared_ptr<MyLoadState> MyLoadStatePtr;
 class MyGameState
 	: public MyFrameState
 {
-protected:
-	MyGameBase * m_game;
+	friend class MyLoadState;
 
 public:
 	static const std::basic_string<charT> s_name;
+
+protected:
+	MyGameBase * m_game;
+
+	my::FPSManagerPtr m_fpsMgr;
+
+	my::TimerPtr m_timer;
+
+	my::GridPtr m_grid;
+
+	my::EulerCameraPtr m_eulerCam;
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	my::IndexObjectPtr m_obj;
+
+	my::ObjectPtr m_lstObj;
+
+	my::ImagePtr m_objImg;
+
+	my::WavPtr m_wav;
+
+	t3d::DS3DBufferPtr m_ds3dbuffer;
+
+	t3d::DS3DListenerPtr m_ds3dListener;
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 public:
 	MyGameState(MyGameBase * game);
 
 	~MyGameState(void);
+
+	void enterState(void);
+
+	void leaveState(void);
 
 	bool doFrame(void);
 };

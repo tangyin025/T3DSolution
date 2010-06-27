@@ -153,7 +153,51 @@ namespace my
 		return full_path;
 	}
 
-	Wav::Wav(const std::basic_string<charT> & wavFilePath)
+#define FAILED_CUSEXCEPT(expr) { if( !(expr) ) T3D_CUSEXCEPT( _T(#expr) ) }
+
+	Image::Image(const std::basic_string<charT> & strFileName)
+	{
+		FAILED_CUSEXCEPT(SUCCEEDED(m_image.Load(strFileName.c_str())));
+	}
+
+	Image::Image(int nWidth, int nHeight, int nBPP, DWORD dwFlags /*= 0*/)
+	{
+		FAILED_CUSEXCEPT(m_image.Create(nWidth, nHeight, nBPP, dwFlags));
+	}
+
+	Image::Image(int nWidth, int nHeight, int nBPP, DWORD eCompression, const DWORD* pdwBitmasks /*= NULL*/, DWORD dwFlags /*= 0*/)
+	{
+		FAILED_CUSEXCEPT(m_image.CreateEx(nWidth, nHeight, nBPP, eCompression, pdwBitmasks, dwFlags));
+	}
+
+	ImagePtr Image::convertTo16Bits565(void) const
+	{
+		const DWORD dwBitmasks[] = {RGB16_RED_MASK, RGB16_GREEN_MASK, RGB16_BLUE_MASK};
+
+		ImagePtr image(new Image(getWidth(), getHeight(), 16, BI_BITFIELDS, dwBitmasks));
+
+		HDC hdc = image->getDC();
+		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
+		image->releaseDC();
+
+		return image;
+	}
+
+	ImagePtr Image::convertTo32Bits(void) const
+	{
+		ImagePtr image(new Image(getWidth(), getHeight(), 32));
+
+		HDC hdc = image->getDC();
+		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
+		image->releaseDC();
+
+		return image;
+	}
+
+	Wav::Wav(
+			t3d::DSound * dsound,
+			const std::basic_string<charT> & wavFilePath,
+			DWORD flags /*= DSBCAPS_CTRL3D | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
 		: hwav(NULL)
 	{
 		if(NULL == (hwav = mmioOpen(const_cast<charT *>(wavFilePath.c_str()), NULL, MMIO_READ | MMIO_ALLOCBUF)))
@@ -198,13 +242,47 @@ namespace my
 			T3D_CUSEXCEPT(_T("mmioDescend child failed"));
 		}
 
-		buffer.resize(child.cksize);
+		//buffer.resize(child.cksize);
 
-		if((LONG)child.cksize != mmioRead(hwav, (HPSTR)&buffer[0], child.cksize))
+		//if((LONG)child.cksize != mmioRead(hwav, (HPSTR)&buffer[0], child.cksize))
+		//{
+		//	mmioClose(hwav, 0);
+		//	T3D_CUSEXCEPT(_T("mmioRead wav buffer failed"));
+		//}
+
+		DSBUFFERDESC dsbd;
+		dsbd.dwSize = sizeof(dsbd);
+		dsbd.dwFlags = flags;
+		dsbd.dwBufferBytes = child.cksize;
+		dsbd.dwReserved = 0;
+		dsbd.lpwfxFormat = &wavfmt;
+		dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
+
+		t3d::DSBufferPtr dsbuffer = dsound->createSoundBuffer(&dsbd);
+
+		unsigned char * buffer1;
+		DWORD bytes1;
+		unsigned char * buffer2;
+		DWORD bytes2;
+		dsbuffer->lock(0, child.cksize, (LPVOID *)&buffer1, &bytes1, (LPVOID *)&buffer2, &bytes2, DSBLOCK_ENTIREBUFFER);
+
+		_ASSERT(bytes1 + bytes2 == child.cksize);
+
+		if(buffer1 != NULL && (LONG)bytes1 != mmioRead(hwav, (HPSTR)buffer1, bytes1))
 		{
 			mmioClose(hwav, 0);
 			T3D_CUSEXCEPT(_T("mmioRead wav buffer failed"));
 		}
+
+		if(buffer2 != NULL && (LONG)bytes2 != mmioRead(hwav, (HPSTR)buffer2, bytes2))
+		{
+			mmioClose(hwav, 0);
+			T3D_CUSEXCEPT(_T("mmioRead wav buffer failed"));
+		}
+
+		dsbuffer->unlock(buffer1, bytes1, buffer2, bytes2);
+
+		m_dsbuffer = dsbuffer;
 	}
 
 	Wav::~Wav(void)
@@ -212,87 +290,46 @@ namespace my
 		mmioClose(hwav, 0);
 	}
 
-	t3d::DSBufferPtr createDSoundBufferForWholeWav(
-		t3d::DSound * dsound,
-		const Wav * wav,
-		DWORD flags /*= DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
-	{
-		WAVEFORMATEX wavfmt = wav->wavfmt;
+	//t3d::DSBufferPtr createDSoundBufferForWholeWav(
+	//	t3d::DSound * dsound,
+	//	const Wav * wav,
+	//	DWORD flags /*= DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
+	//{
+	//	WAVEFORMATEX wavfmt = wav->wavfmt;
 
-		DSBUFFERDESC dsbd;
-		dsbd.dwSize = sizeof(dsbd);
-		dsbd.dwFlags = flags;
-		dsbd.dwBufferBytes = wav->child.cksize;
-		dsbd.dwReserved = 0;
-		dsbd.lpwfxFormat = &wavfmt;
-		dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
+	//	DSBUFFERDESC dsbd;
+	//	dsbd.dwSize = sizeof(dsbd);
+	//	dsbd.dwFlags = flags;
+	//	dsbd.dwBufferBytes = wav->child.cksize;
+	//	dsbd.dwReserved = 0;
+	//	dsbd.lpwfxFormat = &wavfmt;
+	//	dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
 
-		return dsound->createSoundBuffer(&dsbd);
-	}
+	//	return dsound->createSoundBuffer(&dsbd);
+	//}
 
-	void copyWholeWavBufferToDSoundBuffer(
-		t3d::DSBuffer * dsbuffer,
-		const Wav * wav)
-	{
-		unsigned char * audioPtr1;
-		DWORD audioBytes1;
-		unsigned char * audioPtr2;
-		DWORD audioBytes2;
-		dsbuffer->lock(0, wav->child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER);
+	//void copyWholeWavBufferToDSoundBuffer(
+	//	t3d::DSBuffer * dsbuffer,
+	//	const Wav * wav)
+	//{
+	//	unsigned char * audioPtr1;
+	//	DWORD audioBytes1;
+	//	unsigned char * audioPtr2;
+	//	DWORD audioBytes2;
+	//	dsbuffer->lock(0, wav->child.cksize, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER);
 
-		_ASSERT(audioBytes1 + audioBytes2 <= wav->child.cksize);
+	//	_ASSERT(audioBytes1 + audioBytes2 <= wav->child.cksize);
 
-		if(audioPtr1 != NULL)
-		{
-			memcpy(audioPtr1, &wav->buffer[0], audioBytes1);
-		}
+	//	if(audioPtr1 != NULL)
+	//	{
+	//		memcpy(audioPtr1, &wav->buffer[0], audioBytes1);
+	//	}
 
-		if(audioPtr2 != NULL)
-		{
-			memcpy(audioPtr2, &wav->buffer[0 + audioBytes1], audioBytes2);
-		}
+	//	if(audioPtr2 != NULL)
+	//	{
+	//		memcpy(audioPtr2, &wav->buffer[0 + audioBytes1], audioBytes2);
+	//	}
 
-		dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
-	}
-
-#define FAILED_CUSEXCEPT(expr) { if( !(expr) ) T3D_CUSEXCEPT( _T(#expr) ) }
-
-	Image::Image(const std::basic_string<charT> & strFileName)
-	{
-		FAILED_CUSEXCEPT(SUCCEEDED(m_image.Load(strFileName.c_str())));
-	}
-
-	Image::Image(int nWidth, int nHeight, int nBPP, DWORD dwFlags /*= 0*/)
-	{
-		FAILED_CUSEXCEPT(m_image.Create(nWidth, nHeight, nBPP, dwFlags));
-	}
-
-	Image::Image(int nWidth, int nHeight, int nBPP, DWORD eCompression, const DWORD* pdwBitmasks /*= NULL*/, DWORD dwFlags /*= 0*/)
-	{
-		FAILED_CUSEXCEPT(m_image.CreateEx(nWidth, nHeight, nBPP, eCompression, pdwBitmasks, dwFlags));
-	}
-
-	ImagePtr Image::convertTo16Bits565(void) const
-	{
-		DWORD dwBitmasks[] = {RGB16_RED_MASK, RGB16_GREEN_MASK, RGB16_BLUE_MASK};
-
-		ImagePtr image(new Image(getWidth(), getHeight(), 16, BI_BITFIELDS, dwBitmasks));
-
-		HDC hdc = image->getDC();
-		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
-		image->releaseDC();
-
-		return image;
-	}
-
-	ImagePtr Image::convertTo32Bits(void) const
-	{
-		ImagePtr image(new Image(getWidth(), getHeight(), 32));
-
-		HDC hdc = image->getDC();
-		FAILED_CUSEXCEPT(m_image.BitBlt(hdc, 0, 0));
-		image->releaseDC();
-
-		return image;
-	}
+	//	dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+	//}
 }
