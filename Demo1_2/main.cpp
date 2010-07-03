@@ -380,6 +380,7 @@ public:
 		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		//m_dsbuffer->play();
 		m_mp3 = my::Mp3Ptr(new my::Mp3(m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("i am the wind.mp3"))));
+		m_mp3->play(true);
 
 		//// 查询并创建手柄（仅测试）
 		//m_DIDeviceInstList.clear();
@@ -619,12 +620,6 @@ public:
 				mmat);
 			m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
 			m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
-		}
-
-		// 循环播放 mp3
-		if(m_mp3->WaitForThreadStopped(0))
-		{
-			m_mp3->play();
 		}
 
 		// ======================================== TODO: END   ========================================

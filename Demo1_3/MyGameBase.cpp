@@ -356,6 +356,9 @@ void MyGameState::enterState(void)
 
 	// play the wave
 	m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
+
+	// play the mp3
+	m_mp3->play(true);
 }
 
 void MyGameState::leaveState(void)
@@ -419,12 +422,6 @@ bool MyGameState::doFrame(void)
 	m_grid->drawZBufferRW(m_game->m_rc.get());
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	// play the mp3
-	if(m_mp3->WaitForThreadStopped(0))
-	{
-		m_mp3->play();
-	}
 
 	DS3DBUFFER ds3db = {sizeof(ds3db)};
 	m_ds3dbuffer->getAllParameters(&ds3db);

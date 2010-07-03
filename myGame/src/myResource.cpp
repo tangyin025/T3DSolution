@@ -445,68 +445,30 @@ namespace my
 		, m_flags(flags)
 		, m_buffer(MPEG_BUFSZ / sizeof(m_buffer[0]))
 	{
-		memset(m_events, 0, sizeof(m_events));
+
+		for(int i = 0; i < _countof(m_events); i++)
+		{
+			m_events[i] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+		}
+
+		for(int i = 0; i < _countof(m_dsnp); i++)
+		{
+			m_dsnp[i].dwOffset = 0;
+			m_dsnp[i].hEventNotify = m_events[i];
+		}
 	}
 
 	Mp3::~Mp3(void)
 	{
 		stop();
-	}
-
-	void Mp3::init(void)
-	{
-		for(int i = 0; i < _countof(m_dsnp); i++)
-		{
-			_ASSERT(NULL == m_events[i]);
-			m_dsnp[i].dwOffset = 0;
-			m_events[i] = m_dsnp[i].hEventNotify = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-		}
-
-		m_events[_countof(m_dsnp)] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-
-		mad_stream_init(&m_madStream);
-		mad_frame_init(&m_madFrame);
-		mad_synth_init(&m_madSynth);
-	}
-
-	void Mp3::clear(void)
-	{
-		mad_synth_finish(&m_madSynth);
-		mad_frame_finish(&m_madFrame);
-		mad_stream_finish(&m_madStream);
 
 		for(int i = 0; i < _countof(m_events); i++)
 		{
 			VERIFY(::CloseHandle(m_events[i]));
-			m_events[i] = NULL;
 		}
 	}
 
-	void Mp3::play(void)
-	{
-		if(NULL != m_hThread)
-		{
-			if(!WaitForThreadStopped(0))
-			{
-				return;
-			}
-
-			VERIFY(::CloseHandle(m_hThread));
-			m_hThread = NULL;
-		}
-
-		CreateThread();
-		ResumeThread();
-	}
-
-	void Mp3::stop(void)
-	{
-		_ASSERT(NULL != m_hThread);
-		VERIFY(::SetEvent(m_events[_countof(m_dsnp)]));
-		VERIFY(WaitForThreadStopped(INFINITE));
-	}
-
-	DWORD Mp3::onProc(void)
+	void Mp3::playOnce(void)
 	{
 		WAVEFORMATEX wavfmt;
 		DSBUFFERDESC dsbd;
@@ -515,18 +477,24 @@ namespace my
 		unsigned int last_samplerate = 0;
 		std::vector<unsigned char> soundBuffer;
 
-		init();
-
 		m_stream->seek(0, my::IOStream::seek_set);
+
+		mad_stream stream;
+		mad_frame frame;
+		mad_synth synth;
+
+		mad_stream_init(&stream);
+		mad_frame_init(&frame);
+		mad_synth_init(&synth);
 
 		do
 		{
-			// 从文件输入到buffer，并和stream关联
+			// get file buffer from stream
 			int remain = 0;
-			if(NULL != m_madStream.next_frame)
+			if(NULL != stream.next_frame)
 			{
-				remain = &m_buffer[0] + MPEG_BUFSZ - m_madStream.next_frame;
-				memmove(&m_buffer[0], m_madStream.next_frame, remain);
+				remain = &m_buffer[0] + MPEG_BUFSZ - stream.next_frame;
+				memmove(&m_buffer[0], stream.next_frame, remain);
 			}
 
 			int read = m_stream->read(&m_buffer[0] + remain, sizeof(m_buffer[0]), m_buffer.size() - remain);
@@ -534,13 +502,13 @@ namespace my
 			{
 				if(NULL == m_dsbuffer)
 				{
-					clear();
-					return 0;
+					goto end;
 				}
 
 				VERIFY(::SetEvent(m_events[_countof(m_dsnp)]));
 			}
 
+			// if file was too small, set remaining bytes as zero
 			if(read < MAD_BUFFER_GUARD)
 			{
 				_ASSERT(MPEG_BUFSZ - remain > MAD_BUFFER_GUARD);
@@ -548,30 +516,31 @@ namespace my
 				read = MAD_BUFFER_GUARD;
 			}
 
-			mad_stream_buffer(&m_madStream, &m_buffer[0], (remain + read) * sizeof(m_buffer[0]));
+			// attach buffer to mad stream
+			mad_stream_buffer(&stream, &m_buffer[0], (remain + read) * sizeof(m_buffer[0]));
 
 			while(true)
 			{
-				// 解析一帧音频
-				if(-1 == mad_frame_decode(&m_madFrame, &m_madStream))
+				// decode audio frame
+				if(-1 == mad_frame_decode(&frame, &stream))
 				{
-					if(!MAD_RECOVERABLE(m_madStream.error))
+					if(!MAD_RECOVERABLE(stream.error))
 					{
 						break;
 					}
 
-					switch(m_madStream.error)
+					switch(stream.error)
 					{
 					case MAD_ERROR_BADDATAPTR:
 						continue;
 
 					case MAD_ERROR_LOSTSYNC:
 						{
-							// 执行id3 tag跳帧
-							unsigned long tagsize = id3_tag_query(m_madStream.this_frame, m_madStream.bufend - m_madStream.this_frame);
+							// excute id3 tag frame skipping
+							unsigned long tagsize = id3_tag_query(stream.this_frame, stream.bufend - stream.this_frame);
 							if(tagsize > 0)
 							{
-								mad_stream_skip(&m_madStream, tagsize);
+								mad_stream_skip(&stream, tagsize);
 							}
 						}
 						continue;
@@ -581,18 +550,18 @@ namespace my
 					}
 				}
 
-				// 取出同步音频流
-				mad_synth_frame(&m_madSynth, &m_madFrame);
+				// convert frame data to pcm data
+				mad_synth_frame(&synth, &frame);
 
-				// 先将数据压入sound buffer
+				// parse dither linear pcm data to compatible format
 				audio_stats stats;
-				if(2 == m_madSynth.pcm.channels)
+				if(2 == synth.pcm.channels)
 				{
-					for(int i = 0; i < (int)m_madSynth.pcm.length; i++)
+					register signed int sample0, sample1;
+					for(int i = 0; i < (int)synth.pcm.length; i++)
 					{
-						signed int sample0, sample1;
-						sample0 = audio_linear_dither(16, m_madSynth.pcm.samples[0][i], &left_dither, &stats);
-						sample1 = audio_linear_dither(16, m_madSynth.pcm.samples[1][i], &right_dither, &stats);
+						sample0 = audio_linear_dither(16, synth.pcm.samples[0][i], &left_dither, &stats);
+						sample1 = audio_linear_dither(16, synth.pcm.samples[1][i], &right_dither, &stats);
 						soundBuffer.push_back(sample0 >> 0);
 						soundBuffer.push_back(sample0 >> 8);
 						soundBuffer.push_back(sample1 >> 0);
@@ -601,25 +570,24 @@ namespace my
 				}
 				else
 				{
-					for(int i = 0; i < (int)m_madSynth.pcm.length; i++)
+					register int sample0;
+					for(int i = 0; i < (int)synth.pcm.length; i++)
 					{
-						signed int sample0, sample1;
-						sample0 = audio_linear_dither(16, m_madSynth.pcm.samples[0][i], &left_dither, &stats);
+						sample0 = audio_linear_dither(16, synth.pcm.samples[0][i], &left_dither, &stats);
 						soundBuffer.push_back(sample0 >> 0);
 						soundBuffer.push_back(sample0 >> 8);
 					}
 				}
 
-				// 必要时创建dsbuffer，正确的方法是判断声道，码率是否改变来重建dsbuffer
-				if(last_channels != m_madSynth.pcm.channels || last_samplerate != m_madSynth.pcm.samplerate)
+				// create dsbuffer if necessary
+				if(last_channels != synth.pcm.channels || last_samplerate != synth.pcm.samplerate)
 				{
 					m_dsnotify = t3d::DSNotifyPtr();
 					m_dsbuffer = t3d::DSBufferPtr();
 
-					// 创建 dsbuffer
 					wavfmt.wFormatTag = WAVE_FORMAT_PCM;
-					wavfmt.nChannels = m_madSynth.pcm.channels;
-					wavfmt.nSamplesPerSec = m_madSynth.pcm.samplerate;
+					wavfmt.nChannels = synth.pcm.channels;
+					wavfmt.nSamplesPerSec = synth.pcm.samplerate;
 					wavfmt.wBitsPerSample = 16;
 					wavfmt.nBlockAlign = wavfmt.nChannels * wavfmt.wBitsPerSample / 8;
 					wavfmt.nAvgBytesPerSec = wavfmt.nSamplesPerSec * wavfmt.nBlockAlign;
@@ -627,7 +595,7 @@ namespace my
 
 					dsbd.dwSize = sizeof(dsbd);
 					dsbd.dwFlags = DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE | DSBCAPS_CTRLPOSITIONNOTIFY;
-					dsbd.dwBufferBytes = wavfmt.nAvgBytesPerSec * BUFFER_COUNT; // one sec * buffer count
+					dsbd.dwBufferBytes = wavfmt.nAvgBytesPerSec * BUFFER_COUNT;
 					dsbd.dwReserved = 0;
 					dsbd.lpwfxFormat = &wavfmt;
 					dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
@@ -645,7 +613,8 @@ namespace my
 					m_dsnotify->setNotificationPositions(_countof(m_dsnp), m_dsnp);
 				}
 
-				// 根据合适的情况将数据填入dsbuffer
+				// fill pcm data to dsbuffer
+				_ASSERT(NULL != m_dsbuffer);
 				if(soundBuffer.size() > wavfmt.nAvgBytesPerSec)
 				{
 					if(!m_dsbuffer->isPlaying())
@@ -674,8 +643,7 @@ namespace my
 						if(curr_event_index >= _countof(m_dsnp))
 						{
 							m_dsbuffer->stop();
-							clear();
-							return 0;
+							goto end;
 						}
 
 						DWORD next_event_index = (curr_event_index + 1) % _countof(m_dsnp);
@@ -705,8 +673,51 @@ namespace my
 				}
 			}
 		}
-		while(m_madStream.error == MAD_ERROR_BUFLEN);
+		while(stream.error == MAD_ERROR_BUFLEN);
 
-		_ASSERT(false); return 0;
+		_ASSERT(false);
+
+end:
+		mad_synth_finish(&synth);
+		mad_frame_finish(&frame);
+		mad_stream_finish(&stream);
+	}
+
+	void Mp3::play(bool loop /*= false*/)
+	{
+		if(NULL != m_hThread)
+		{
+			if(!WaitForThreadStopped(0))
+			{
+				return;
+			}
+
+			VERIFY(::CloseHandle(m_hThread));
+			m_hThread = NULL;
+		}
+
+		setLoop(loop);
+		VERIFY(::ResetEvent(m_events[_countof(m_dsnp)]));
+		CreateThread();
+		ResumeThread();
+	}
+
+	void Mp3::stop(void)
+	{
+		_ASSERT(NULL != m_hThread);
+		setLoop(false);
+		VERIFY(::SetEvent(m_events[_countof(m_dsnp)]));
+		VERIFY(WaitForThreadStopped(INFINITE));
+	}
+
+	DWORD Mp3::onProc(void)
+	{
+		do
+		{
+			playOnce();
+		}
+		while(getLoop());
+
+		return 0;
 	}
 }
