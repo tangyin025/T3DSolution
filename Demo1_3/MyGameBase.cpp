@@ -315,9 +315,7 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load mp3 file
-		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("i am the wind.mp3"))));
-		gameState->m_mp3->play();
-		gameState->m_mp3->stop();
+		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("Counting2.mp3"))));
 		setPercent(6 / processCount);
 		::Sleep(33);
 
@@ -421,6 +419,12 @@ bool MyGameState::doFrame(void)
 	m_grid->drawZBufferRW(m_game->m_rc.get());
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// play the mp3
+	if(m_mp3->WaitForThreadStopped(0))
+	{
+		m_mp3->play();
+	}
 
 	DS3DBUFFER ds3db = {sizeof(ds3db)};
 	m_ds3dbuffer->getAllParameters(&ds3db);

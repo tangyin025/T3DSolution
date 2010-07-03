@@ -47,26 +47,26 @@ namespace my
 		BOOL TryEnterCriticalSection(void);
 	};
 
-	class Event
-	{
-	protected:
-		HANDLE m_hevent;
+	//class Event
+	//{
+	//protected:
+	//	HANDLE m_hevent;
 
-	public:
-		Event(
-			LPSECURITY_ATTRIBUTES lpEventAttributes = NULL,
-			BOOL bManualReset = FALSE,
-			BOOL bInitialState = FALSE,
-			LPCTSTR lpName = NULL);
+	//public:
+	//	Event(
+	//		LPSECURITY_ATTRIBUTES lpEventAttributes = NULL,
+	//		BOOL bManualReset = FALSE,
+	//		BOOL bInitialState = FALSE,
+	//		LPCTSTR lpName = NULL);
 
-		~Event(void);
+	//	~Event(void);
 
-		void ResetEvent(void);
+	//	void ResetEvent(void);
 
-		void SetEvent(void);
+	//	void SetEvent(void);
 
-		bool WaitEvent(DWORD dwMilliseconds = INFINITE);
-	};
+	//	bool WaitEvent(DWORD dwMilliseconds = INFINITE);
+	//};
 
 	class Thread
 	{
