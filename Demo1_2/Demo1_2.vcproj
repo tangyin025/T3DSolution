@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\myGame\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\libmad\include&quot;;&quot;$(SolutionDir)\myGame\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\myGame\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\libmad\include&quot;;&quot;$(SolutionDir)\myGame\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

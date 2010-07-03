@@ -287,10 +287,10 @@ namespace t3d
 		return DSBufferPtr(new DSBuffer(this, pcDSBufferDesc));
 	}
 
-	DS3DListenerPtr DSound::getPrimaryBuffer3DListener(void)
+	DSBufferPtr DSound::getPrimarySoundBuffer(void)
 	{
 		DSBUFFERDESC dsbd = {sizeof(dsbd)};
 		dsbd.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
-		return createSoundBuffer(&dsbd)->getDS3DListener();
+		return createSoundBuffer(&dsbd);
 	}
 }

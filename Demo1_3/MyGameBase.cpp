@@ -265,7 +265,7 @@ DWORD MyLoadState::onProc(void)
 		// //////////////////////////////////////////////////////////////////////////////////////////
 
 		// report the process
-		const real processCount = 5;
+		const real processCount = 6;
 		if(getExitFlag())
 		{
 			return false;
@@ -306,12 +306,19 @@ DWORD MyLoadState::onProc(void)
 		// load wav file
 		gameState->m_wav = my::WavPtr(new my::Wav(m_game->m_dsound.get(), my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
 		gameState->m_ds3dbuffer = gameState->m_wav->m_dsbuffer->getDS3DBuffer();
-		gameState->m_ds3dListener = m_game->m_dsound->getPrimaryBuffer3DListener();
+		gameState->m_ds3dListener = m_game->m_dsound->getPrimarySoundBuffer()->getDS3DListener();
 		if(getExitFlag())
 		{
 			return false;
 		}
 		setPercent(5 / processCount);
+		::Sleep(33);
+
+		// load mp3 file
+		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("i am the wind.mp3"))));
+		gameState->m_mp3->play();
+		gameState->m_mp3->stop();
+		setPercent(6 / processCount);
 		::Sleep(33);
 
 		// //////////////////////////////////////////////////////////////////////////////////////////

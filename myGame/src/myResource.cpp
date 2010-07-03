@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "myResource.h"
 #include <sstream>
+#include <id3tag.h>
 #include <t3dlib5.h>
 #include "libc.h"
 
@@ -195,9 +196,9 @@ namespace my
 	}
 
 	Wav::Wav(
-			t3d::DSound * dsound,
-			const std::basic_string<charT> & wavFilePath,
-			DWORD flags /*= DSBCAPS_CTRL3D | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
+		t3d::DSound * dsound,
+		const std::basic_string<charT> & wavFilePath,
+		DWORD flags /*= DSBCAPS_CTRL3D | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
 		: hwav(NULL)
 	{
 		if(NULL == (hwav = mmioOpen(const_cast<charT *>(wavFilePath.c_str()), NULL, MMIO_READ | MMIO_ALLOCBUF)))
@@ -332,4 +333,254 @@ namespace my
 
 	//	dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
 	//}
+
+	Mp3::Mp3(
+		t3d::DSoundPtr dsound,
+		IOStreamPtr stream,
+		DWORD flags /*= DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
+		: m_dsound(dsound)
+		, m_stream(stream)
+		, m_flags(flags)
+		, m_buffer(MPEG_BUFSZ / sizeof(m_buffer[0]))
+	{
+		mad_stream_init(&m_madStream);
+		mad_frame_init(&m_madFrame);
+		mad_synth_init(&m_madSynth);
+	}
+
+	Mp3::~Mp3(void)
+	{
+		stop();
+	}
+
+	void Mp3::play(void)
+	{
+		CreateThread();
+		ResumeThread();
+	}
+
+	void Mp3::stop(void)
+	{
+		VERIFY(WaitForThreadStopped(INFINITE));
+	}
+
+	struct audio_dither {
+		mad_fixed_t error[3];
+		mad_fixed_t random;
+	};
+
+	struct audio_stats {
+		unsigned long clipped_samples;
+		mad_fixed_t peak_clipping;
+		mad_fixed_t peak_sample;
+	};
+
+	unsigned long prng(unsigned long state)
+	{
+		return (state * 0x0019660dL + 0x3c6ef35fL) & 0xffffffffL;
+	}
+
+	static struct audio_dither left_dither, right_dither;
+	
+	signed long audio_linear_dither(
+		unsigned int bits,
+		signed int sample,
+		struct audio_dither * dither,
+		struct audio_stats * stats)
+	{
+		unsigned int scalebits;
+		mad_fixed_t output, mask, random;
+
+		enum {
+			MIN = -MAD_F_ONE,
+			MAX =  MAD_F_ONE - 1
+		};
+
+		/* noise shape */
+		sample += dither->error[0] - dither->error[1] + dither->error[2];
+
+		dither->error[2] = dither->error[1];
+		dither->error[1] = dither->error[0] / 2;
+
+		/* bias */
+		output = sample + (1L << (MAD_F_FRACBITS + 1 - bits - 1));
+
+		scalebits = MAD_F_FRACBITS + 1 - bits;
+		mask = (1L << scalebits) - 1;
+
+		/* dither */
+		random  = prng(dither->random);
+		output += (random & mask) - (dither->random & mask);
+
+		dither->random = random;
+
+		/* clip */
+		if (output >= stats->peak_sample) {
+			if (output > MAX) {
+				++stats->clipped_samples;
+				if (output - MAX > stats->peak_clipping)
+					stats->peak_clipping = output - MAX;
+
+				output = MAX;
+
+				if (sample > MAX)
+					sample = MAX;
+			}
+			stats->peak_sample = output;
+		}
+		else if (output < -stats->peak_sample) {
+			if (output < MIN) {
+				++stats->clipped_samples;
+				if (MIN - output > stats->peak_clipping)
+					stats->peak_clipping = MIN - output;
+
+				output = MIN;
+
+				if (sample < MIN)
+					sample = MIN;
+			}
+			stats->peak_sample = -output;
+		}
+
+		/* quantize */
+		output &= ~mask;
+
+		/* error feedback */
+		dither->error[0] = sample - output;
+
+		/* scale */
+		return output >> scalebits;
+	}
+
+	DWORD Mp3::onProc(void)
+	{
+		WAVEFORMATEX wavfmt;
+		DSBUFFERDESC dsbd;
+		std::vector<unsigned char> soundBuffer;
+		HWAVEOUT hwave;
+		do
+		{
+			// 从文件输入到buffer，并和stream关联
+			int remain = 0;
+			if(NULL != m_madStream.next_frame)
+			{
+				remain = &m_buffer[0] + MPEG_BUFSZ - m_madStream.next_frame;
+				memmove(&m_buffer[0], m_madStream.next_frame, remain);
+			}
+
+			int read = m_stream->read(&m_buffer[0] + remain, sizeof(m_buffer[0]), m_buffer.size() - remain);
+			if(0 == read)
+			{
+				break;
+			}
+			else if(read < MAD_BUFFER_GUARD)
+			{
+				_ASSERT(MPEG_BUFSZ - remain > MAD_BUFFER_GUARD);
+				memset(&m_buffer[remain + read], 0, MAD_BUFFER_GUARD - read);
+				read = MAD_BUFFER_GUARD;
+			}
+
+			mad_stream_buffer(&m_madStream, &m_buffer[0], (remain + read) * sizeof(m_buffer[0]));
+
+			while(true)
+			{
+				// 解析一帧音频
+				if(-1 == mad_frame_decode(&m_madFrame, &m_madStream))
+				{
+					if(!MAD_RECOVERABLE(m_madStream.error))
+					{
+						break;
+					}
+
+					switch(m_madStream.error)
+					{
+					case MAD_ERROR_BADDATAPTR:
+						continue;
+
+					case MAD_ERROR_LOSTSYNC:
+						{
+							// 执行id3 tag跳帧
+							unsigned long tagsize = id3_tag_query(m_madStream.this_frame, m_madStream.bufend - m_madStream.this_frame);
+							if(tagsize > 0)
+							{
+								mad_stream_skip(&m_madStream, tagsize);
+							}
+						}
+						continue;
+
+					default:
+						continue;
+					}
+				}
+
+				// 取出同步音频流
+				mad_synth_frame(&m_madSynth, &m_madFrame);
+
+				// 必要时创建dsbuffer，正确的方法是判断声道，码率是否改变来重建dsbuffer
+				if(NULL == m_dsbuffer)
+				{
+					// 创建 dsbuffer
+					wavfmt.wFormatTag = WAVE_FORMAT_PCM;
+					wavfmt.nChannels = m_madSynth.pcm.channels;
+					wavfmt.nSamplesPerSec = m_madSynth.pcm.samplerate;
+					wavfmt.wBitsPerSample = 16;
+					wavfmt.nBlockAlign = wavfmt.nChannels * wavfmt.wBitsPerSample / 8;
+					wavfmt.nAvgBytesPerSec = wavfmt.nSamplesPerSec * wavfmt.nBlockAlign;
+					wavfmt.cbSize = 0;
+
+					dsbd.dwSize = sizeof(dsbd);
+					dsbd.dwFlags = DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE;
+					dsbd.dwBufferBytes = wavfmt.nAvgBytesPerSec * BUFFER_COUNT; // one sec * buffer count
+					dsbd.dwReserved = 0;
+					dsbd.lpwfxFormat = &wavfmt;
+					dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
+
+					m_dsbuffer = m_dsound->createSoundBuffer(&dsbd);
+				}
+
+				// 先将数据压入sound buffer
+				_ASSERT(2 == m_madSynth.pcm.channels);
+				struct audio_stats stats = {0};
+				for(int i = 0; i < (int)m_madSynth.pcm.length; i++)
+				{
+					signed int sample0, sample1;
+					sample0 = audio_linear_dither(16, m_madSynth.pcm.samples[0][i], &left_dither, &stats);
+					sample1 = audio_linear_dither(16, m_madSynth.pcm.samples[1][i], &right_dither, &stats);
+					soundBuffer.push_back(sample0 >> 0);
+					soundBuffer.push_back(sample0 >> 8);
+					soundBuffer.push_back(sample1 >> 0);
+					soundBuffer.push_back(sample1 >> 8);
+				}
+
+				// 根据合适的情况将数据填入dsbuffer
+				if(soundBuffer.size() > dsbd.dwBufferBytes)
+				{
+					unsigned char * audioPtr1;
+					DWORD audioBytes1;
+					unsigned char * audioPtr2;
+					DWORD audioBytes2;
+					m_dsbuffer->lock(0, dsbd.dwBufferBytes, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR | DSBLOCK_ENTIREBUFFER);
+
+					if(audioPtr1 != NULL)
+						memcpy(audioPtr1, &soundBuffer[0], audioBytes1);
+
+					if(audioPtr2 != NULL)
+						memcpy(audioPtr2, &soundBuffer[0 + audioBytes1], audioBytes2);
+
+					m_dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+
+					m_dsbuffer->play();
+
+					::Sleep(1000 * BUFFER_COUNT);
+					return 0;
+				}
+			}
+		}
+		while(m_madStream.error == MAD_ERROR_BUFLEN);
+
+		mad_synth_finish(&m_madSynth);
+		mad_frame_finish(&m_madFrame);
+		mad_stream_finish(&m_madStream);
+		return 0;
+	}
 }
