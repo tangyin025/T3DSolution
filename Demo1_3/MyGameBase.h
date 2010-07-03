@@ -166,6 +166,8 @@ protected:
 
 	my::WavPtr m_wav;
 
+	my::Mp3Ptr m_mp3;
+
 	t3d::DS3DBufferPtr m_ds3dbuffer;
 
 	t3d::DS3DListenerPtr m_ds3dListener;

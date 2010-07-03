@@ -23,7 +23,9 @@
 #pragma pop_macro("min")
 #include <memory>
 #include <vector>
+#include <mad.h>
 #include "mySingleton.h"
+#include "myWindow.h"
 
 namespace my
 {
@@ -166,10 +168,15 @@ namespace my
 	{
 	public:
 		HMMIO hwav;
+
 		MMCKINFO parent;
+
 		MMCKINFO child;
+
 		WAVEFORMATEX wavfmt;
+
 		//std::vector<unsigned char> buffer;
+
 		t3d::DSBufferPtr m_dsbuffer;
 
 	public:
@@ -191,6 +198,54 @@ namespace my
 	//void copyWholeWavBufferToDSoundBuffer(
 	//	t3d::DSBuffer * dsbuffer,
 	//	const Wav * wav);
+
+	class Mp3 : ::my::Thread
+	{
+	protected:
+		static const DWORD MPEG_BUFSZ = 40000;
+
+		static const DWORD MAX_RESAMPLEFACTOR = 6;
+
+		static const DWORD MAX_NSAMPLES = 1152 * MAX_RESAMPLEFACTOR;
+
+		static const DWORD BUFFER_COUNT = 5;
+
+	public:
+		t3d::DSoundPtr m_dsound;
+
+		t3d::DSBufferPtr m_dsbuffer;
+
+		IOStreamPtr m_stream;
+
+		DWORD m_flags;
+
+		typedef std::vector<unsigned char> FileBuffer;
+
+		FileBuffer m_buffer;
+
+	protected:
+		mad_stream m_madStream;
+
+		mad_frame m_madFrame;
+
+		mad_synth m_madSynth;
+
+	public:
+		Mp3(
+			t3d::DSoundPtr dsound,
+			IOStreamPtr fstream,
+			DWORD flags = DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE);
+
+		virtual ~Mp3(void);
+
+		void play(void);
+
+		void stop(void);
+
+		DWORD onProc(void);
+	};
+
+	typedef std::tr1::shared_ptr<Mp3> Mp3Ptr;
 }
 
 #endif // __MYRESOURCE_H__

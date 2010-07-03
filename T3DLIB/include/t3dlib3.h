@@ -167,7 +167,7 @@ namespace t3d
 
 		DSBufferPtr createSoundBuffer(LPCDSBUFFERDESC pcDSBufferDesc);
 
-		DS3DListenerPtr getPrimaryBuffer3DListener(void);
+		DSBufferPtr getPrimarySoundBuffer(void);
 	};
 
 	typedef std::tr1::shared_ptr<DSound> DSoundPtr;
