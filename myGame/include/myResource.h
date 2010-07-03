@@ -208,9 +208,9 @@ namespace my
 
 		static const DWORD MAX_NSAMPLES = 1152 * MAX_RESAMPLEFACTOR;
 
-		static const DWORD BUFFER_COUNT = 5;
+		static const DWORD BUFFER_COUNT = 2;
 
-	public:
+	protected:
 		t3d::DSoundPtr m_dsound;
 
 		t3d::DSBufferPtr m_dsbuffer;
@@ -229,12 +229,25 @@ namespace my
 
 		FileBuffer m_buffer;
 
-	protected:
-		mad_stream m_madStream;
+		bool m_loop;
 
-		mad_frame m_madFrame;
+		CriticalSection m_loopLock;
 
-		mad_synth m_madSynth;
+		void setLoop(bool loop)
+		{
+			m_loopLock.enter();
+			m_loop = loop;
+			m_loopLock.leave();
+		}
+
+		bool getLoop(void)
+		{
+			bool ret;
+			m_loopLock.enter();
+			ret = m_loop;
+			m_loopLock.leave();
+			return ret;
+		}
 
 	public:
 		Mp3(
@@ -245,12 +258,10 @@ namespace my
 		virtual ~Mp3(void);
 
 	protected:
-		void init(void);
-
-		void clear(void);
+		void playOnce(void);
 
 	public:
-		void play(void);
+		void play(bool loop = false);
 
 		void stop(void);
 
