@@ -199,7 +199,7 @@ namespace my
 	//	t3d::DSBuffer * dsbuffer,
 	//	const Wav * wav);
 
-	class Mp3 : ::my::Thread
+	class Mp3 : public ::my::Thread
 	{
 	protected:
 		static const DWORD MPEG_BUFSZ = 40000;
@@ -214,6 +214,12 @@ namespace my
 		t3d::DSoundPtr m_dsound;
 
 		t3d::DSBufferPtr m_dsbuffer;
+
+		t3d::DSNotifyPtr m_dsnotify;
+
+		DSBPOSITIONNOTIFY m_dsnp[BUFFER_COUNT];
+
+		HANDLE m_events[BUFFER_COUNT + 1];
 
 		IOStreamPtr m_stream;
 
@@ -238,6 +244,12 @@ namespace my
 
 		virtual ~Mp3(void);
 
+	protected:
+		void init(void);
+
+		void clear(void);
+
+	public:
 		void play(void);
 
 		void stop(void);

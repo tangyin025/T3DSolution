@@ -132,6 +132,23 @@ namespace t3d
 		return lVolume;
 	}
 
+	DWORD DSBuffer::getStatus(void)
+	{
+		DWORD dwStatus;
+		SUCCEEDED_VERIFY(m_dsbuffer->GetStatus(&dwStatus));
+		return dwStatus;
+	}
+
+	BOOL DSBuffer::isPlaying(void)
+	{
+		return DSBSTATUS_PLAYING & getStatus();
+	}
+
+	DSNotifyPtr DSBuffer::getDSNotify(void)
+	{
+		return DSNotifyPtr(new DSNotify(this));
+	}
+
 	DS3DBufferPtr DSBuffer::getDS3DBuffer(void)
 	{
 		return DS3DBufferPtr(new DS3DBuffer(this));
@@ -140,6 +157,20 @@ namespace t3d
 	DS3DListenerPtr DSBuffer::getDS3DListener(void)
 	{
 		return DS3DListenerPtr(new DS3DListener(this));
+	}
+
+	DSNotify::DSNotify(DSBuffer * dsbuffer)
+	{
+		FAILED_DSEXCEPT(dsbuffer->m_dsbuffer->QueryInterface(IID_IDirectSoundNotify, (LPVOID *)&m_dsnotify));
+	}
+
+	DSNotify::~DSNotify(void)
+	{
+	}
+
+	void DSNotify::setNotificationPositions(DWORD dwPositionNotifies, LPCDSBPOSITIONNOTIFY pcPositionNotifies)
+	{
+		FAILED_DSEXCEPT(m_dsnotify->SetNotificationPositions(dwPositionNotifies, pcPositionNotifies));
 	}
 
 	DS3DBuffer::DS3DBuffer(DSBuffer * dsbuffer)

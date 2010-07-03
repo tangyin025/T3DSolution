@@ -29,6 +29,10 @@ namespace t3d
 
 	class DSound;
 
+	class DSNotify;
+
+	typedef std::tr1::shared_ptr<DSNotify> DSNotifyPtr;
+
 	class DS3DBuffer;
 
 	typedef std::tr1::shared_ptr<DS3DBuffer> DS3DBufferPtr;
@@ -74,12 +78,34 @@ namespace t3d
 
 		LONG getVolume(void);
 
+		DWORD getStatus(void);
+
+		BOOL isPlaying(void);
+
+		DSNotifyPtr getDSNotify(void);
+
 		DS3DBufferPtr getDS3DBuffer(void);
 
 		DS3DListenerPtr getDS3DListener(void);
 	};
 
 	typedef std::tr1::shared_ptr<DSBuffer> DSBufferPtr;
+
+	class DSNotify
+	{
+		friend DSBuffer;
+
+	public:
+		CComPtr<IDirectSoundNotify> m_dsnotify;
+
+	protected:
+		DSNotify(DSBuffer * dsbuffer);
+
+	public:
+		virtual ~DSNotify(void);
+
+		void setNotificationPositions(DWORD dwPositionNotifies, LPCDSBPOSITIONNOTIFY pcPositionNotifies);
+	};
 
 	class DS3DBuffer
 	{

@@ -258,7 +258,8 @@ protected:
 
 	my::IndexSphereObjectPtr m_skySphere;			// 天空球
 	my::ImagePtr m_skySphere_t;						// 天空球的贴图
-	t3d::DSBufferPtr m_dsbuffer;					// 背景音乐
+	//t3d::DSBufferPtr m_dsbuffer;					// 背景音乐
+	my::Mp3Ptr m_mp3;
 
 	std::vector<DIDEVICEINSTANCE> m_DIDeviceInstList; // 手柄的 instance
 	t3d::DIJoystickPtr m_joy;						// dinput joystick，目前仅用于测试
@@ -378,6 +379,7 @@ public:
 		//m_dsbuffer = my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get());
 		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		//m_dsbuffer->play();
+		m_mp3 = my::Mp3Ptr(new my::Mp3(m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("i am the wind.mp3"))));
 
 		//// 查询并创建手柄（仅测试）
 		//m_DIDeviceInstList.clear();
@@ -617,6 +619,12 @@ public:
 				mmat);
 			m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
 			m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+		}
+
+		// 循环播放 mp3
+		if(m_mp3->WaitForThreadStopped(0))
+		{
+			m_mp3->play();
 		}
 
 		// ======================================== TODO: END   ========================================

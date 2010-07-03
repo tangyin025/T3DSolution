@@ -54,38 +54,38 @@ namespace my
 		return ::TryEnterCriticalSection(&m_section);
 	}
 
-	Event::Event(
-		LPSECURITY_ATTRIBUTES lpEventAttributes /*= NULL*/,
-		BOOL bManualReset /*= FALSE*/,
-		BOOL bInitialState /*= FALSE*/,
-		LPCTSTR lpName /*= NULL*/)
-	{
-		m_hevent = ::CreateEvent(
-			lpEventAttributes,
-			bManualReset,
-			bInitialState,
-			lpName);
-	}
+	//Event::Event(
+	//	LPSECURITY_ATTRIBUTES lpEventAttributes /*= NULL*/,
+	//	BOOL bManualReset /*= FALSE*/,
+	//	BOOL bInitialState /*= FALSE*/,
+	//	LPCTSTR lpName /*= NULL*/)
+	//{
+	//	m_hevent = ::CreateEvent(
+	//		lpEventAttributes,
+	//		bManualReset,
+	//		bInitialState,
+	//		lpName);
+	//}
 
-	Event::~Event(void)
-	{
-		::CloseHandle(m_hevent);
-	}
+	//Event::~Event(void)
+	//{
+	//	::CloseHandle(m_hevent);
+	//}
 
-	void Event::ResetEvent(void)
-	{
-		VERIFY(::ResetEvent(m_hevent));
-	}
+	//void Event::ResetEvent(void)
+	//{
+	//	VERIFY(::ResetEvent(m_hevent));
+	//}
 
-	void Event::SetEvent(void)
-	{
-		VERIFY(::SetEvent(m_hevent));
-	}
+	//void Event::SetEvent(void)
+	//{
+	//	VERIFY(::SetEvent(m_hevent));
+	//}
 
-	bool Event::WaitEvent(DWORD dwMilliseconds /*= INFINITE*/)
-	{
-		return WAIT_TIMEOUT != ::WaitForSingleObject(m_hevent, dwMilliseconds);
-	}
+	//bool Event::WaitEvent(DWORD dwMilliseconds /*= INFINITE*/)
+	//{
+	//	return WAIT_TIMEOUT != ::WaitForSingleObject(m_hevent, dwMilliseconds);
+	//}
 
 	DWORD WINAPI Thread::ThreadProc(__in LPVOID lpParameter)
 	{
