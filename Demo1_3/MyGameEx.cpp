@@ -176,7 +176,8 @@ void MyLoadState::enterState(void)
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("castle1_05.mp3"))));
+	m_mp3 = my::Mp3Ptr(new my::Mp3(
+		m_game->m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
 	m_mp3->play();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
@@ -288,8 +289,8 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load gun mesh
-		my::IOStreamPtr stream = my::ResourceMgr::getSingleton().openIOStream(_T("gun.mesh.xml"));
-		gameState->m_obj = my::IndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(stream.get()));
+		gameState->m_obj = my::IndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("gun.mesh.xml"))))));
 		if(getExitFlag())
 		{
 			return false;
@@ -298,8 +299,8 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load gun triangle list mesh
-		stream = my::ResourceMgr::getSingleton().openIOStream(_T("gun_tri_list.mesh.xml"));
-		gameState->m_lstObj = my::ObjectPtr(new my::ObjectFromOgreMesh(stream.get()));
+		gameState->m_lstObj = my::ObjectPtr(new my::ObjectFromOgreMesh(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("gun_tri_list.mesh.xml"))))));
 		if(getExitFlag())
 		{
 			return false;
@@ -308,8 +309,8 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load gun texture
-		my::ImagePtr tmpImg = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("92fs_brigadier.jpg"))));
-		gameState->m_objImg = my::ColorConversion::getSingleton().convertImage(tmpImg.get());
+		gameState->m_objImg = my::ColorConversion::getSingleton().convertImage(
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("92fs_brigadier.jpg")))));
 		if(getExitFlag())
 		{
 			return false;
@@ -318,7 +319,8 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load wav file
-		gameState->m_wav = my::WavPtr(new my::Wav(m_game->m_dsound.get(), my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
+		gameState->m_wav = my::WavPtr(new my::Wav(
+			m_game->m_dsound.get(), my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
 		gameState->m_ds3dbuffer = gameState->m_wav->m_dsbuffer->getDS3DBuffer();
 		gameState->m_ds3dListener = m_game->m_dsound->getPrimarySoundBuffer()->getDS3DListener();
 		if(getExitFlag())
@@ -329,7 +331,8 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load mp3 file
-		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("castle1_20.mp3"))));
+		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(
+			m_game->m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_20.mp3"))))));
 		setPercent(6 / processCount);
 		::Sleep(33);
 

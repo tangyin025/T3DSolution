@@ -77,7 +77,7 @@ namespace my
 
 		virtual uint32 convertColor(const t3d::Vec4<int> & color) = 0;
 
-		virtual my::ImagePtr convertImage(const my::Image * image) = 0;
+		virtual my::ImagePtr convertImage(const my::ImagePtr image) = 0;
 	};
 
 	typedef std::tr1::shared_ptr<ColorConversion> ColorConversionPtr;
@@ -89,7 +89,7 @@ namespace my
 
 		uint32 convertColor(const t3d::Vec4<int> & color);
 
-		my::ImagePtr convertImage(const my::Image * image);
+		my::ImagePtr convertImage(const my::ImagePtr image);
 	};
 
 	class ColorConversion32 : public ColorConversion
@@ -99,7 +99,7 @@ namespace my
 
 		uint32 convertColor(const t3d::Vec4<int> & color);
 
-		my::ImagePtr convertImage(const my::Image * image);
+		my::ImagePtr convertImage(const my::ImagePtr image);
 	};
 
 	class GameWnd : public Window

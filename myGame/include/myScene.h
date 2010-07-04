@@ -341,7 +341,7 @@ namespace my
 	//typedef std::vector<ObjectBasePtr> ObjectBasePtrList;
 
 	//ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
-	//	IOStream * meshStream);
+	//	IOStreamPtr meshStream);
 }
 
 #endif // __MYSCENE_H__
