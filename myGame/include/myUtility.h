@@ -775,7 +775,7 @@ namespace my
 	{
 	public:
 		ObjectFromOgreMesh(
-			IOStream * meshStream);
+			IOStreamPtr meshStream);
 
 		~ObjectFromOgreMesh(void);
 	};
@@ -1150,7 +1150,7 @@ namespace my
 	{
 	public:
 		BoneAssignmentIndexObjectFromOgreMesh(
-			IOStream * meshStream);
+			IOStreamPtr meshStream);
 
 		~BoneAssignmentIndexObjectFromOgreMesh(void);
 	};
@@ -1263,7 +1263,7 @@ namespace my
 
 	public:
 		SkeletonAnimationsFromOgreSkeleton(
-			IOStream * skeletonStream);
+			IOStreamPtr skeletonStream);
 
 		~SkeletonAnimationsFromOgreSkeleton(void);
 	};

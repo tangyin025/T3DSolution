@@ -75,7 +75,7 @@ namespace my
 			color.x, color.y, color.z);
 	}
 
-	my::ImagePtr ColorConversion16::convertImage(const my::Image * image)
+	my::ImagePtr ColorConversion16::convertImage(const my::ImagePtr image)
 	{
 		return image->convertTo16Bits565();
 	}
@@ -102,7 +102,7 @@ namespace my
 			color.x, color.y, color.z);
 	}
 
-	my::ImagePtr ColorConversion32::convertImage(const my::Image * image)
+	my::ImagePtr ColorConversion32::convertImage(const my::ImagePtr image)
 	{
 		return image->convertTo32Bits();
 	}

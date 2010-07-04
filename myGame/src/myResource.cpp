@@ -15,38 +15,45 @@ namespace my
 	{
 	}
 
-	FileIOStream::FileIOStream(FILE * handle)
-		: m_handle(handle)
+	FileStream::FileStream(const std::basic_string<charT> & fpath, const std::basic_string<charT> & fmode /*= _T("rb")*/)
+		: m_fpath(fpath)
 	{
-		_ASSERT(NULL != m_handle);
+		m_handle = _tfopen(m_fpath.c_str(), fmode.c_str());
+
+		if(NULL == m_handle)
+		{
+			std::basic_ostringstream<charT> osstr;
+			osstr << _T("cannot open \"") << m_fpath << _T("\"");
+			T3D_CUSEXCEPT(osstr.str());
+		}
 	}
 
-	FileIOStream::~FileIOStream(void)
+	FileStream::~FileStream(void)
 	{
-		fclose(m_handle);
+		VERIFY(EOF != fclose(m_handle));
 	}
 
-	size_t FileIOStream::read(void * buffer, size_t size, size_t count)
+	size_t FileStream::read(void * buffer, size_t size, size_t count)
 	{
 		return fread(buffer, size, count, m_handle);
 	}
 
-	size_t FileIOStream::write(void * buffer, size_t size, size_t count)
+	size_t FileStream::write(void * buffer, size_t size, size_t count)
 	{
 		return fwrite(buffer, size, count, m_handle);
 	}
 
-	int FileIOStream::seek(long offset, int origin)
+	int FileStream::seek(long offset, int origin)
 	{
 		return fseek(m_handle, offset, origin);
 	}
 
-	long FileIOStream::tell(void)
+	long FileStream::tell(void)
 	{
 		return ftell(m_handle);
 	}
 
-	void * FileIOStream::getHandle(void)
+	void * FileStream::getHandle(void)
 	{
 		return m_handle;
 	}
@@ -93,22 +100,22 @@ namespace my
 	//	return dir + fname;
 	//}
 
-	IOStreamPtr ResourceMgr::openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode /*= _T("rb")*/)
-	{
-		_ASSERT(!fname.empty());
+	//IOStreamPtr ResourceMgr::openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode /*= _T("rb")*/)
+	//{
+	//	_ASSERT(!fname.empty());
 
-		std::basic_string<charT> full_path = findFileOrException(fname);
+	//	std::basic_string<charT> full_path = findFileOrException(fname);
 
-		FILE * handle;
-		if(NULL == (handle = _tfopen(full_path.c_str(), fmode.c_str())))
-		{
-			std::basic_ostringstream<charT> osstr;
-			osstr << _T("cannot open \"") << full_path << _T("\"");
-			T3D_CUSEXCEPT(osstr.str());
-		}
+	//	FILE * handle;
+	//	if(NULL == (handle = _tfopen(full_path.c_str(), fmode.c_str())))
+	//	{
+	//		std::basic_ostringstream<charT> osstr;
+	//		osstr << _T("cannot open \"") << full_path << _T("\"");
+	//		T3D_CUSEXCEPT(osstr.str());
+	//	}
 
-		return IOStreamPtr(new FileIOStream(handle));
-	}
+	//	return IOStreamPtr(new FileStream(handle));
+	//}
 
 	std::basic_string<charT> ResourceMgr::findFile(const std::basic_string<charT> & fname)
 	{

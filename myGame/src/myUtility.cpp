@@ -1603,7 +1603,7 @@ namespace my
 		DEFINE_XML_ATTRIBUTE_BOOL(attr_v, elem_p, attr_v)
 
 	ObjectFromOgreMesh::ObjectFromOgreMesh(
-		IOStream * meshStream)
+		IOStreamPtr meshStream)
 	{
 		TiXmlDocument doc;
 		doc.LoadFile(static_cast<FILE *>(meshStream->getHandle()), TIXML_DEFAULT_ENCODING);
@@ -3185,7 +3185,7 @@ namespace my
 	// /////////////////////////////////////////////////////////////////////////////////////
 
 	BoneAssignmentIndexObjectFromOgreMesh::BoneAssignmentIndexObjectFromOgreMesh(
-		IOStream * meshStream)
+		IOStreamPtr meshStream)
 	{
 		TiXmlDocument doc;
 		doc.LoadFile(static_cast<FILE *>(meshStream->getHandle()), TIXML_DEFAULT_ENCODING);
@@ -3590,7 +3590,7 @@ namespace my
 	}
 
 	SkeletonAnimationsFromOgreSkeleton::SkeletonAnimationsFromOgreSkeleton(
-		IOStream * skeletonStream)
+		IOStreamPtr skeletonStream)
 	{
 		TiXmlDocument doc;
 		doc.LoadFile(static_cast<FILE *>(skeletonStream->getHandle()), TIXML_DEFAULT_ENCODING);

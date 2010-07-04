@@ -55,18 +55,19 @@ namespace my
 
 	typedef std::tr1::shared_ptr<IOStream> IOStreamPtr;
 
-	class FileIOStream : public IOStream
+	class FileStream : public IOStream
 	{
 		friend class ResourceMgr;
 
 	protected:
+		std::basic_string<charT> m_fpath;
+
 		FILE * m_handle;
 
-	protected:
-		FileIOStream(FILE * handle);
-
 	public:
-		virtual ~FileIOStream(void);
+		FileStream(const std::basic_string<charT> & fpath, const std::basic_string<charT> & fmode = _T("rb"));
+
+		virtual ~FileStream(void);
 
 	public:
 		size_t read(void * buffer, size_t size, size_t count);
@@ -79,6 +80,8 @@ namespace my
 
 		void * getHandle(void);
 	};
+
+	typedef std::tr1::shared_ptr<FileStream> FileStreamPtr;
 
 	class ResourceMgr : public Singleton<ResourceMgr>
 	{
@@ -97,7 +100,7 @@ namespace my
 
 		void clearDir(void);
 
-		IOStreamPtr openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode = _T("rb"));
+		//IOStreamPtr openIOStream(const std::basic_string<charT> & fname, const std::basic_string<charT> & fmode = _T("rb"));
 
 		std::basic_string<charT> findFile(const std::basic_string<charT> & fname);
 

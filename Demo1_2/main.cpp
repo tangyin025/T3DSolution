@@ -332,13 +332,11 @@ public:
 		// 在这个地方初始化自定义的对象
 
 		// load 场景
-		my::IOStreamPtr tmpStream;
-		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("office_tri_list.mesh.xml"));
-		m_scene = my::ObjectFromOgreMeshPtr(new my::ObjectFromOgreMesh(tmpStream.get()));
+		m_scene = my::ObjectFromOgreMeshPtr(new my::ObjectFromOgreMesh(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("office_tri_list.mesh.xml"))))));
 
-		my::ImagePtr tmpImage;
-		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png"))));
-		m_scene_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
+		m_scene_t = my::ColorConversion::getSingleton().convertImage(
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png")))));
 
 		// 创建 bsp 场景
 		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
@@ -347,18 +345,18 @@ public:
 		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
 
 		// load 角色模型
-		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres.mesh.xml"));
-		m_character = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		m_character = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_hres.mesh.xml"))))));
 
-		tmpStream = my::ResourceMgr::getSingleton().openIOStream(_T("jack_hres_hair.mesh.xml"));
-		m_character_h = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(tmpStream.get()));
+		m_character_h = my::BoneAssignmentIndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_hres_hair.mesh.xml"))))));
 
-		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png"))));
-		m_character_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
+		m_character_t = my::ColorConversion::getSingleton().convertImage(
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png")))));
 
 		// load 角色骨骼动画
-		tmpStream = my::IOStreamPtr(my::ResourceMgr::getSingleton().openIOStream(_T("jack_anim_stand.skeleton.xml")));
-		m_character_skel = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(tmpStream.get()));
+		m_character_skel = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_anim_stand.skeleton.xml"))))));
 		m_character_skel->getSkeletonAnimation("clip1").setNextAnimationName("clip2");
 		m_character_skel->getSkeletonAnimation("clip2").setNextAnimationName("clip1");
 		m_character_skel->getSkeletonAnimation("clip3").setNextAnimationName("clip4");
@@ -371,16 +369,21 @@ public:
 
 		// load 天空球
 		m_skySphere = my::IndexSphereObjectPtr(new my::IndexSphereObject(50000.0f, 20, 20, true));
-		tmpImage = my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("1316532925.jpg"))));
-		m_skySphere_t = my::ColorConversion::getSingleton().convertImage(tmpImage.get());
+
+		m_skySphere_t = my::ColorConversion::getSingleton().convertImage(
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("1316532925.jpg")))));
 
 		//// load 背景音乐
 		//my::WavPtr tmpWav(new my::Wav(my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
 		//m_dsbuffer = my::createDSoundBufferForWholeWav(m_dsound.get(), tmpWav.get());
 		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		//m_dsbuffer->play();
-		m_mp3 = my::Mp3Ptr(new my::Mp3(m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("i am the wind.mp3"))));
-		m_mp3->play(true);
+		std::basic_string<t3d::charT> mp3Path = my::ResourceMgr::getSingleton().findFile(_T("i am the wind.mp3"));
+		if(!mp3Path.empty())
+		{
+			m_mp3 = my::Mp3Ptr(new my::Mp3(m_dsound, my::IOStreamPtr(new my::FileStream(mp3Path))));
+			m_mp3->play(true);
+		}
 
 		//// 查询并创建手柄（仅测试）
 		//m_DIDeviceInstList.clear();
