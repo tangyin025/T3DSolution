@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "MyDialog.h"
 #include "resource.h"
-#include "MyGameBase.h"
+#include "MyGameEx.h"
 
 static const charT SPLASH_IMAGE_NAME[] = _T("splash.jpg");
 
@@ -67,9 +67,9 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			// initialize combo box3 with aspect ratio mode
-			VERIFY(MyGameBase::ASPECT_RATIO_STRETCHED == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("Stretch mode")));
-			VERIFY(MyGameBase::ASPECT_RATIO_STANDARD == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("4 : 3")));
-			VERIFY(MyGameBase::ASPECT_RATIO_WIDESCREEN == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("16 : 9")));
+			VERIFY(MyGameEx::ASPECT_RATIO_STRETCHED == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("Stretch mode")));
+			VERIFY(MyGameEx::ASPECT_RATIO_STANDARD == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("4 : 3")));
+			VERIFY(MyGameEx::ASPECT_RATIO_WIDESCREEN == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("16 : 9")));
 
 			// select the specified aspect ratio mode
 			if(CB_ERR == ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_SETCURSEL, m_cfg.getInt(_T("aspectratio")), 0))
@@ -124,7 +124,7 @@ INT_PTR MyDialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				m_cfg.setInt(_T("screenmode"), (my::Game::SCREEN_MODE)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO2), CB_GETCURSEL, 0, 0));
 
 				// update aspect ratio mode
-				m_cfg.setInt(_T("aspectratio"), (MyGameBase::ASPECT_RATIO)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_GETCURSEL, 0, 0));
+				m_cfg.setInt(_T("aspectratio"), (MyGameEx::ASPECT_RATIO)::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO3), CB_GETCURSEL, 0, 0));
 
 				// update save configuration option
 				m_save_configuration = ::IsDlgButtonChecked(m_hdlg, IDC_CHECK1);

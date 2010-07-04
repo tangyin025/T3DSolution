@@ -16,7 +16,7 @@ public:
 	LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 };
 
-class MyGameBase
+class MyGameEx
 	: public my::Game
 	, public MyStateChart
 {
@@ -33,20 +33,20 @@ public:
 	};
 
 public:
-	static MyGameBase * getSingletonPtr(void)
+	static MyGameEx * getSingletonPtr(void)
 	{
-		return dynamic_cast<MyGameBase *>(my::Game::getSingletonPtr());
+		return dynamic_cast<MyGameEx *>(my::Game::getSingletonPtr());
 	}
 
-	static MyGameBase & getSingleton(void)
+	static MyGameEx & getSingleton(void)
 	{
 		return * getSingletonPtr();
 	}
 
 public:
-	MyGameBase(void) throw();
+	MyGameEx(void) throw();
 
-	~MyGameBase(void);
+	~MyGameEx(void);
 
 public:
 	my::Window * newWindow(HWND hwnd);
@@ -80,7 +80,7 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	MyGameBase * m_game;
+	MyGameEx * m_game;
 
 	MyUIProgressBarBoxPtr m_progressBox;
 
@@ -90,39 +90,39 @@ protected:
 
 	my::CriticalSection m_exitFlagLock;
 
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	my::Mp3Ptr m_mp3;
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 public:
 	void setExitFlag(bool exitFlag = true)
 	{
-		m_exitFlagLock.enter();
+		my::CriticalSectionLock lock(m_exitFlagLock);
 		m_exitFlag = exitFlag;
-		m_exitFlagLock.leave();
 	}
 
 	bool getExitFlag(void)
 	{
-		m_exitFlagLock.enter();
-		bool flag = m_exitFlag;
-		m_exitFlagLock.leave();
-		return flag;
+		my::CriticalSectionLock lock(m_exitFlagLock);
+		return m_exitFlag;
 	}
 
 	void setPercent(real percent)
 	{
-		m_progressBoxLock.enter();
+		my::CriticalSectionLock lock(m_progressBoxLock);
 		m_progressBox->setPercent(percent);
-		m_progressBoxLock.leave();
 	}
 
 	real getPercent(void)
 	{
-		m_progressBoxLock.enter();
-		real percent = m_progressBox->getPercent();
-		m_progressBoxLock.leave();
-		return percent;
+		my::CriticalSectionLock lock(m_progressBoxLock);
+		return m_progressBox->getPercent();
 	}
 
 public:
-	MyLoadState(MyGameBase * game);
+	MyLoadState(MyGameEx * game);
 
 	~MyLoadState(void);
 
@@ -146,7 +146,7 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	MyGameBase * m_game;
+	MyGameEx * m_game;
 
 	my::FPSManagerPtr m_fpsMgr;
 
@@ -175,7 +175,7 @@ protected:
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 public:
-	MyGameState(MyGameBase * game);
+	MyGameState(MyGameEx * game);
 
 	~MyGameState(void);
 

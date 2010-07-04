@@ -1,7 +1,7 @@
 ﻿
 #include "stdafx.h"
 #include "MyDialog.h"
-#include "MyGameBase.h"
+#include "MyGameEx.h"
 
 int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
@@ -14,7 +14,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	InitCommonControlsEx(&InitCtrls);
 
 	// the global instance
-	MyGameBase game;
+	MyGameEx game;
 
 	try
 	{
@@ -40,7 +40,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		cfg.addInt(_T("width"), 800);
 		cfg.addInt(_T("height"), 600);
 		cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
-		cfg.addInt(_T("aspectratio"), MyGameBase::ASPECT_RATIO_STRETCHED);
+		cfg.addInt(_T("aspectratio"), MyGameEx::ASPECT_RATIO_STRETCHED);
 		cfg.load(strConfigPath.c_str());
 
 		// show configuration dialog
