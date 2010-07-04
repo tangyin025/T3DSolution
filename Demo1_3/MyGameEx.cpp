@@ -1,6 +1,6 @@
 
 #include "StdAfx.h"
-#include "MyGameBase.h"
+#include "MyGameEx.h"
 
 MyWindow::MyWindow(HWND hwnd)
 	: GameWnd(hwnd)
@@ -16,10 +16,10 @@ LRESULT MyWindow::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	switch(message)
 	{
 	case WM_CLOSE:
-		if(MyGameBase::getSingleton().getCurrentStateName() == MyLoadState::s_name)
+		if(MyGameEx::getSingleton().getCurrentStateName() == MyLoadState::s_name)
 		{
 			// for load state, there must be waiting for another thread to prepare for quiting
-			MyLoadStatePtr loadState = MyGameBase::getSingleton().getCurrentState<MyLoadState>();
+			MyLoadStatePtr loadState = MyGameEx::getSingleton().getCurrentState<MyLoadState>();
 			if(!loadState->getExitFlag())
 			{
 				loadState->setExitFlag();
@@ -40,20 +40,20 @@ LRESULT MyWindow::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 	return GameWnd::onProc(hwnd, message, wparam, lparam);
 }
 
-MyGameBase::MyGameBase(void)
+MyGameEx::MyGameEx(void)
 {
 }
 
-MyGameBase::~MyGameBase(void)
+MyGameEx::~MyGameEx(void)
 {
 }
 
-my::Window * MyGameBase::newWindow(HWND hwnd)
+my::Window * MyGameEx::newWindow(HWND hwnd)
 {
 	return new MyWindow(hwnd);
 }
 
-bool MyGameBase::onInit(const my::Config & cfg)
+bool MyGameEx::onInit(const my::Config & cfg)
 {
 	// predefine config values
 	const int cfgWidth = m_rc->getSurfaceWidth();
@@ -122,7 +122,7 @@ bool MyGameBase::onInit(const my::Config & cfg)
 	return my::Game::onInit(cfg);
 }
 
-bool MyGameBase::onFrame(void)
+bool MyGameEx::onFrame(void)
 {
 	// get current state and do frame
 	if(!getCurrentState<MyFrameState>()->doFrame())
@@ -134,7 +134,7 @@ bool MyGameBase::onFrame(void)
 	return my::Game::onFrame();
 }
 
-void MyGameBase::onShutdown(void)
+void MyGameEx::onShutdown(void)
 {
 	// get current state and do leaveState
 	getCurrentState<MyState>()->leaveState();
@@ -150,7 +150,7 @@ MyFrameState::~MyFrameState(void)
 
 const std::basic_string<charT> MyLoadState::s_name(_T("MyLoadState"));
 
-MyLoadState::MyLoadState(MyGameBase * game)
+MyLoadState::MyLoadState(MyGameEx * game)
 	: m_game(game)
 	, m_exitFlag(false)
 {
@@ -173,11 +173,24 @@ void MyLoadState::enterState(void)
 	// begin work thread here
 	CreateThread();
 	ResumeThread();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("castle1_05.mp3"))));
+	m_mp3->play();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void MyLoadState::leaveState(void)
 {
 	_ASSERT(WaitForThreadStopped(0));
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	m_mp3->stop();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 bool MyLoadState::doFrame(void)
@@ -213,9 +226,10 @@ bool MyLoadState::doFrame(void)
 	rc->fillSurface(rc->getClipperRect(), my::Color::BLACK);
 
 	// draw progress bar
-	m_progressBoxLock.enter();
-	m_progressBox->draw(rc);
-	m_progressBoxLock.leave();
+	{
+		my::CriticalSectionLock lock(m_progressBoxLock);
+		m_progressBox->draw(rc);
+	}
 
 	// general information output
 	std::basic_string<charT> strTmp;
@@ -315,7 +329,7 @@ DWORD MyLoadState::onProc(void)
 		::Sleep(33);
 
 		// load mp3 file
-		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("Counting2.mp3"))));
+		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(m_game->m_dsound, my::ResourceMgr::getSingleton().openIOStream(_T("castle1_20.mp3"))));
 		setPercent(6 / processCount);
 		::Sleep(33);
 
@@ -332,7 +346,7 @@ DWORD MyLoadState::onProc(void)
 
 const std::basic_string<charT> MyGameState::s_name(_T("MyGameState"));
 
-MyGameState::MyGameState(MyGameBase * game)
+MyGameState::MyGameState(MyGameEx * game)
 	: m_game(game)
 {
 }
@@ -354,17 +368,28 @@ void MyGameState::enterState(void)
 	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
 	m_eulerCam->reset();
 
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	// play the wave
 	m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
 
 	// play the mp3
 	m_mp3->play(true);
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void MyGameState::leaveState(void)
 {
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	// stop the wave
 	m_wav->m_dsbuffer->stop();
+
+	// stop the mp3
+	m_mp3->stop();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 bool MyGameState::doFrame(void)

@@ -2,8 +2,9 @@
 #include "stdafx.h"
 #include "myResource.h"
 #include <sstream>
-#include <id3tag.h>
 #include <t3dlib5.h>
+#include <mad.h>
+#include <id3tag.h>
 #include "libc.h"
 
 #pragma comment(lib, "winmm.lib")
@@ -445,27 +446,16 @@ namespace my
 		, m_flags(flags)
 		, m_buffer(MPEG_BUFSZ / sizeof(m_buffer[0]))
 	{
-
-		for(int i = 0; i < _countof(m_events); i++)
-		{
-			m_events[i] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-		}
-
 		for(int i = 0; i < _countof(m_dsnp); i++)
 		{
 			m_dsnp[i].dwOffset = 0;
-			m_dsnp[i].hEventNotify = m_events[i];
+			m_dsnp[i].hEventNotify = m_events[i].m_hevent;
 		}
 	}
 
 	Mp3::~Mp3(void)
 	{
 		stop();
-
-		for(int i = 0; i < _countof(m_events); i++)
-		{
-			VERIFY(::CloseHandle(m_events[i]));
-		}
 	}
 
 	void Mp3::playOnce(void)
@@ -505,7 +495,7 @@ namespace my
 					goto end;
 				}
 
-				VERIFY(::SetEvent(m_events[_countof(m_dsnp)]));
+				m_events[_countof(m_dsnp)].SetEvent();
 			}
 
 			// if file was too small, set remaining bytes as zero
@@ -594,7 +584,7 @@ namespace my
 					wavfmt.cbSize = 0;
 
 					dsbd.dwSize = sizeof(dsbd);
-					dsbd.dwFlags = DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE | DSBCAPS_CTRLPOSITIONNOTIFY;
+					dsbd.dwFlags = m_flags | DSBCAPS_CTRLPOSITIONNOTIFY;
 					dsbd.dwBufferBytes = wavfmt.nAvgBytesPerSec * BUFFER_COUNT;
 					dsbd.dwReserved = 0;
 					dsbd.lpwfxFormat = &wavfmt;
@@ -607,7 +597,7 @@ namespace my
 					for(int i = 0; i < _countof(m_dsnp); i++)
 					{
 						m_dsnp[i].dwOffset = i * wavfmt.nAvgBytesPerSec;
-						VERIFY(::ResetEvent(m_dsnp[i].hEventNotify));
+						m_events[i].ResetEvent();
 					}
 					m_dsnotify = m_dsbuffer->getDSNotify();
 					m_dsnotify->setNotificationPositions(_countof(m_dsnp), m_dsnp);
@@ -637,7 +627,8 @@ namespace my
 					}
 					else
 					{
-						DWORD wait_res = ::WaitForMultipleObjects(_countof(m_events), m_events, FALSE, INFINITE);
+						_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
+						DWORD wait_res = ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE);
 						_ASSERT(WAIT_TIMEOUT != wait_res);
 						DWORD curr_event_index = wait_res - WAIT_OBJECT_0;
 						if(curr_event_index >= _countof(m_dsnp))
@@ -697,7 +688,7 @@ end:
 		}
 
 		setLoop(loop);
-		VERIFY(::ResetEvent(m_events[_countof(m_dsnp)]));
+		m_events[_countof(m_dsnp)].ResetEvent();
 		CreateThread();
 		ResumeThread();
 	}
@@ -706,7 +697,7 @@ end:
 	{
 		_ASSERT(NULL != m_hThread);
 		setLoop(false);
-		VERIFY(::SetEvent(m_events[_countof(m_dsnp)]));
+		m_events[_countof(m_dsnp)].SetEvent();
 		VERIFY(WaitForThreadStopped(INFINITE));
 	}
 

@@ -23,7 +23,6 @@
 #pragma pop_macro("min")
 #include <memory>
 #include <vector>
-#include <mad.h>
 #include "mySingleton.h"
 #include "myWindow.h"
 
@@ -219,7 +218,7 @@ namespace my
 
 		DSBPOSITIONNOTIFY m_dsnp[BUFFER_COUNT];
 
-		HANDLE m_events[BUFFER_COUNT + 1];
+		Event m_events[BUFFER_COUNT + 1];
 
 		IOStreamPtr m_stream;
 
@@ -235,18 +234,14 @@ namespace my
 
 		void setLoop(bool loop)
 		{
-			m_loopLock.enter();
+			CriticalSectionLock lock(m_loopLock);
 			m_loop = loop;
-			m_loopLock.leave();
 		}
 
 		bool getLoop(void)
 		{
-			bool ret;
-			m_loopLock.enter();
-			ret = m_loop;
-			m_loopLock.leave();
-			return ret;
+			CriticalSectionLock lock(m_loopLock);
+			return m_loop;
 		}
 
 	public:
