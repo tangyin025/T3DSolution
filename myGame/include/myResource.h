@@ -206,14 +206,16 @@ namespace my
 	protected:
 		static const DWORD MPEG_BUFSZ = 40000;
 
-		static const DWORD MAX_RESAMPLEFACTOR = 6;
+		//static const DWORD MAX_RESAMPLEFACTOR = 6;
 
-		static const DWORD MAX_NSAMPLES = 1152 * MAX_RESAMPLEFACTOR;
+		//static const DWORD MAX_NSAMPLES = 1152 * MAX_RESAMPLEFACTOR;
 
 		static const DWORD BUFFER_COUNT = 2;
 
 	protected:
 		t3d::DSoundPtr m_dsound;
+
+		WAVEFORMATEX m_wavfmt;
 
 		t3d::DSBufferPtr m_dsbuffer;
 

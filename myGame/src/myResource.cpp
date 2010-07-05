@@ -453,6 +453,10 @@ namespace my
 		, m_flags(flags)
 		, m_buffer(MPEG_BUFSZ / sizeof(m_buffer[0]))
 	{
+		m_wavfmt.wFormatTag = WAVE_FORMAT_PCM;
+		m_wavfmt.nChannels = 0;
+		m_wavfmt.nSamplesPerSec = 0;
+
 		for(int i = 0; i < _countof(m_dsnp); i++)
 		{
 			m_dsnp[i].dwOffset = 0;
@@ -467,12 +471,9 @@ namespace my
 
 	void Mp3::playOnce(void)
 	{
-		WAVEFORMATEX wavfmt;
 		DSBUFFERDESC dsbd;
 		audio_dither left_dither, right_dither;
-		unsigned short last_channels = 0;
-		unsigned int last_samplerate = 0;
-		std::vector<unsigned char> soundBuffer;
+		std::vector<unsigned char> sbuffer;
 
 		m_stream->seek(0, my::IOStream::seek_set);
 
@@ -483,6 +484,15 @@ namespace my
 		mad_stream_init(&stream);
 		mad_frame_init(&frame);
 		mad_synth_init(&synth);
+
+		// reset notify events
+		for(int i = 0; i < _countof(m_dsnp); i++)
+		{
+			m_events[i].ResetEvent();
+		}
+
+		// set the second block position event, for first notify
+		m_events[_countof(m_dsnp) - 1].SetEvent();
 
 		do
 		{
@@ -559,10 +569,10 @@ namespace my
 					{
 						sample0 = audio_linear_dither(16, synth.pcm.samples[0][i], &left_dither, &stats);
 						sample1 = audio_linear_dither(16, synth.pcm.samples[1][i], &right_dither, &stats);
-						soundBuffer.push_back(sample0 >> 0);
-						soundBuffer.push_back(sample0 >> 8);
-						soundBuffer.push_back(sample1 >> 0);
-						soundBuffer.push_back(sample1 >> 8);
+						sbuffer.push_back(sample0 >> 0);
+						sbuffer.push_back(sample0 >> 8);
+						sbuffer.push_back(sample1 >> 0);
+						sbuffer.push_back(sample1 >> 8);
 					}
 				}
 				else
@@ -571,103 +581,87 @@ namespace my
 					for(int i = 0; i < (int)synth.pcm.length; i++)
 					{
 						sample0 = audio_linear_dither(16, synth.pcm.samples[0][i], &left_dither, &stats);
-						soundBuffer.push_back(sample0 >> 0);
-						soundBuffer.push_back(sample0 >> 8);
+						sbuffer.push_back(sample0 >> 0);
+						sbuffer.push_back(sample0 >> 8);
 					}
 				}
 
 				// create dsbuffer if necessary
-				if(last_channels != synth.pcm.channels || last_samplerate != synth.pcm.samplerate)
+				if(m_wavfmt.nChannels != synth.pcm.channels || m_wavfmt.nSamplesPerSec != synth.pcm.samplerate)
 				{
-					m_dsnotify = t3d::DSNotifyPtr();
-					m_dsbuffer = t3d::DSBufferPtr();
+					// the dsound buffer should only be create once
+					_ASSERT(NULL == m_dsnotify);
+					_ASSERT(NULL == m_dsbuffer);
 
-					wavfmt.wFormatTag = WAVE_FORMAT_PCM;
-					wavfmt.nChannels = synth.pcm.channels;
-					wavfmt.nSamplesPerSec = synth.pcm.samplerate;
-					wavfmt.wBitsPerSample = 16;
-					wavfmt.nBlockAlign = wavfmt.nChannels * wavfmt.wBitsPerSample / 8;
-					wavfmt.nAvgBytesPerSec = wavfmt.nSamplesPerSec * wavfmt.nBlockAlign;
-					wavfmt.cbSize = 0;
+					_ASSERT(WAVE_FORMAT_PCM == m_wavfmt.wFormatTag);
+					m_wavfmt.nChannels = synth.pcm.channels;
+					m_wavfmt.nSamplesPerSec = synth.pcm.samplerate;
+					m_wavfmt.wBitsPerSample = 16;
+					m_wavfmt.nBlockAlign = m_wavfmt.nChannels * m_wavfmt.wBitsPerSample / 8;
+					m_wavfmt.nAvgBytesPerSec = m_wavfmt.nSamplesPerSec * m_wavfmt.nBlockAlign;
+					m_wavfmt.cbSize = 0;
 
 					dsbd.dwSize = sizeof(dsbd);
 					dsbd.dwFlags = m_flags | DSBCAPS_CTRLPOSITIONNOTIFY;
-					dsbd.dwBufferBytes = wavfmt.nAvgBytesPerSec * BUFFER_COUNT;
+					dsbd.dwBufferBytes = m_wavfmt.nAvgBytesPerSec * BUFFER_COUNT;
 					dsbd.dwReserved = 0;
-					dsbd.lpwfxFormat = &wavfmt;
+					dsbd.lpwfxFormat = &m_wavfmt;
 					dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
 
 					m_dsbuffer = m_dsound->createSoundBuffer(&dsbd);
-					last_channels = wavfmt.nChannels;
-					last_samplerate = wavfmt.nSamplesPerSec;
 
+					// update notify positions
 					for(int i = 0; i < _countof(m_dsnp); i++)
 					{
-						m_dsnp[i].dwOffset = i * wavfmt.nAvgBytesPerSec;
-						m_events[i].ResetEvent();
+						m_dsnp[i].dwOffset = i * m_wavfmt.nAvgBytesPerSec;
 					}
+
 					m_dsnotify = m_dsbuffer->getDSNotify();
 					m_dsnotify->setNotificationPositions(_countof(m_dsnp), m_dsnp);
 				}
 
 				// fill pcm data to dsbuffer
 				_ASSERT(NULL != m_dsbuffer);
-				if(soundBuffer.size() > wavfmt.nAvgBytesPerSec)
+				if(sbuffer.size() > m_wavfmt.nAvgBytesPerSec)
 				{
+					_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
+					DWORD wait_res = ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE);
+					_ASSERT(WAIT_TIMEOUT != wait_res);
+					DWORD curr_event_index = wait_res - WAIT_OBJECT_0;
+					if(curr_event_index >= _countof(m_dsnp))
+					{
+						m_dsbuffer->stop();
+						goto end;
+					}
+
+					DWORD next_event_index = (curr_event_index + 1) % _countof(m_dsnp);
+					_ASSERT(next_event_index < _countof(m_dsnp));
+					DWORD next_position = m_dsnp[next_event_index].dwOffset;
+
+					unsigned char * audioPtr1;
+					DWORD audioBytes1;
+					unsigned char * audioPtr2;
+					DWORD audioBytes2;
+					m_dsbuffer->lock(next_position, m_wavfmt.nAvgBytesPerSec, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, 0);
+
+					if(audioPtr1 != NULL)
+						memcpy(audioPtr1, &sbuffer[0], audioBytes1);
+
+					if(audioPtr2 != NULL)
+						memcpy(audioPtr2, &sbuffer[0 + audioBytes1], audioBytes2);
+
+					m_dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
+
 					if(!m_dsbuffer->isPlaying())
 					{
-						unsigned char * audioPtr1;
-						DWORD audioBytes1;
-						unsigned char * audioPtr2;
-						DWORD audioBytes2;
-						m_dsbuffer->lock(0, wavfmt.nAvgBytesPerSec, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, 0);
-
-						if(audioPtr1 != NULL)
-							memcpy(audioPtr1, &soundBuffer[0], audioBytes1);
-
-						if(audioPtr2 != NULL)
-							memcpy(audioPtr2, &soundBuffer[0 + audioBytes1], audioBytes2);
-
-						m_dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
-
 						m_dsbuffer->play(0, DSBPLAY_LOOPING);
 					}
-					else
-					{
-						_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
-						DWORD wait_res = ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE);
-						_ASSERT(WAIT_TIMEOUT != wait_res);
-						DWORD curr_event_index = wait_res - WAIT_OBJECT_0;
-						if(curr_event_index >= _countof(m_dsnp))
-						{
-							m_dsbuffer->stop();
-							goto end;
-						}
 
-						DWORD next_event_index = (curr_event_index + 1) % _countof(m_dsnp);
-						_ASSERT(next_event_index < _countof(m_dsnp));
-						DWORD next_position = m_dsnp[next_event_index].dwOffset;
+					size_t remain = sbuffer.size() - m_wavfmt.nAvgBytesPerSec;
 
-						unsigned char * audioPtr1;
-						DWORD audioBytes1;
-						unsigned char * audioPtr2;
-						DWORD audioBytes2;
-						m_dsbuffer->lock(next_position, wavfmt.nAvgBytesPerSec, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, 0);
+					memmove(&sbuffer[0], &sbuffer[m_wavfmt.nAvgBytesPerSec], remain);
 
-						if(audioPtr1 != NULL)
-							memcpy(audioPtr1, &soundBuffer[0], audioBytes1);
-
-						if(audioPtr2 != NULL)
-							memcpy(audioPtr2, &soundBuffer[0 + audioBytes1], audioBytes2);
-
-						m_dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
-					}
-
-					size_t remain = soundBuffer.size() - wavfmt.nAvgBytesPerSec;
-
-					memmove(&soundBuffer[0], &soundBuffer[wavfmt.nAvgBytesPerSec], remain);
-
-					soundBuffer.resize(remain);
+					sbuffer.resize(remain);
 				}
 			}
 		}
@@ -710,11 +704,18 @@ end:
 
 	DWORD Mp3::onProc(void)
 	{
-		do
+		try
 		{
-			playOnce();
+			do
+			{
+				playOnce();
+			}
+			while(getLoop());
 		}
-		while(getLoop());
+		catch(t3d::Exception & e)
+		{
+			//::my::Game::getSingleton().m_pwnd->sendMessage(WM_USER + 0, (WPARAM)&e);
+		}
 
 		return 0;
 	}
