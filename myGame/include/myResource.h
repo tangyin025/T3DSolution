@@ -210,7 +210,7 @@ namespace my
 
 		//static const DWORD MAX_NSAMPLES = 1152 * MAX_RESAMPLEFACTOR;
 
-		static const DWORD BUFFER_COUNT = 3;
+		static const DWORD BLOCK_COUNT = 3;
 
 	protected:
 		t3d::DSoundPtr m_dsound;
@@ -221,11 +221,9 @@ namespace my
 
 		t3d::DSNotifyPtr m_dsnotify;
 
-		DSBPOSITIONNOTIFY m_dsnp[BUFFER_COUNT];
+		DSBPOSITIONNOTIFY m_dsnp[BLOCK_COUNT];
 
-		Event m_events[BUFFER_COUNT + 1];
-
-		DWORD m_currBlock;
+		Event m_events[BLOCK_COUNT + 1];
 
 		IOStreamPtr m_stream;
 
@@ -260,7 +258,7 @@ namespace my
 		virtual ~Mp3(void);
 
 	protected:
-		void playOnce(void);
+		bool playOnce(void);
 
 	public:
 		void play(bool loop = false);
