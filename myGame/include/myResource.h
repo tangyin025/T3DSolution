@@ -210,7 +210,7 @@ namespace my
 
 		//static const DWORD MAX_NSAMPLES = 1152 * MAX_RESAMPLEFACTOR;
 
-		static const DWORD BUFFER_COUNT = 2;
+		static const DWORD BUFFER_COUNT = 3;
 
 	protected:
 		t3d::DSoundPtr m_dsound;
@@ -224,6 +224,8 @@ namespace my
 		DSBPOSITIONNOTIFY m_dsnp[BUFFER_COUNT];
 
 		Event m_events[BUFFER_COUNT + 1];
+
+		DWORD m_currBlock;
 
 		IOStreamPtr m_stream;
 
