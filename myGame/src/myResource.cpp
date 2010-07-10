@@ -450,7 +450,6 @@ namespace my
 		DWORD flags /*= DSBCAPS_CTRLVOLUME | DSBCAPS_STATIC | DSBCAPS_LOCSOFTWARE*/)
 		: m_dsound(dsound)
 		, m_stream(stream)
-		, m_currBlock(0)
 		, m_flags(flags)
 		, m_buffer(MPEG_BUFSZ / sizeof(m_buffer[0]))
 	{
@@ -458,19 +457,25 @@ namespace my
 		m_wavfmt.nChannels = 0;
 		m_wavfmt.nSamplesPerSec = 0;
 
+		// 注意：由于优先级关系，设定第一个事件为停止事件，后面依次作为 m_dsnp 的事件
 		for(int i = 0; i < _countof(m_dsnp); i++)
 		{
 			m_dsnp[i].dwOffset = 0;
-			m_dsnp[i].hEventNotify = m_events[i].m_hevent;
+			m_dsnp[i].hEventNotify = m_events[i + 1].m_hevent;
 		}
 	}
 
 	Mp3::~Mp3(void)
 	{
-		stop();
+		if(NULL != m_hThread)
+		{
+			stop();
+
+			VERIFY(WaitForThreadStopped(INFINITE));
+		}
 	}
 
-	void Mp3::playOnce(void)
+	bool Mp3::playOnce(void)
 	{
 		DSBUFFERDESC dsbd;
 		audio_dither left_dither, right_dither;
@@ -486,32 +491,16 @@ namespace my
 		mad_frame_init(&frame);
 		mad_synth_init(&synth);
 
-		// 这里需要假定除了当前块以外，所有的块都被播放过，这样就能更新除了当前块以外的所有块 ***
+		// 初始化所有 notify
 		for(size_t i = 0; i < _countof(m_dsnp); i++)
 		{
-			if(i != m_currBlock)
-			{
-				m_events[i].SetEvent();
-			}
-			else
-			{
-				m_events[i].ResetEvent();
-			}
+			VERIFY(::ResetEvent(m_dsnp[i].hEventNotify));
 		}
 
-		// 如果已经创建了 dsbuffer，则需要重新设置当前 position
-		if(NULL != m_dsbuffer)
-		{
-			_ASSERT(NULL != m_dsnotify);
-			m_dsbuffer->setCurrentPosition(m_dsnp[m_currBlock].dwOffset);
-		}
+		// 设置默认已经开始播放的 block
+		VERIFY(::SetEvent(m_dsnp[0].hEventNotify));
 
-		// 初始化 dsound 指针
-		unsigned char * audioPtr1 = NULL;
-		DWORD audioBytes1 = 0;
-		unsigned char * audioPtr2 = NULL;
-		DWORD audioBytes2 = 0;
-
+		bool ret = false;
 		do
 		{
 			// 从 stream 获得原始声音 buffer
@@ -528,6 +517,13 @@ namespace my
 			{
 				if(NULL != m_dsbuffer)
 				{
+					// 等待缓存区播完
+					_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
+					if(WAIT_OBJECT_0 != ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE))
+					{
+						// 正常播放完成，要求继续播放
+						ret = true;
+					}
 					m_dsbuffer->stop();
 				}
 				goto end;
@@ -621,20 +617,20 @@ namespace my
 
 					dsbd.dwSize = sizeof(dsbd);
 					dsbd.dwFlags = m_flags | DSBCAPS_CTRLPOSITIONNOTIFY;
-					dsbd.dwBufferBytes = m_wavfmt.nAvgBytesPerSec * BUFFER_COUNT;
+					dsbd.dwBufferBytes = m_wavfmt.nAvgBytesPerSec * BLOCK_COUNT;
 					dsbd.dwReserved = 0;
 					dsbd.lpwfxFormat = &m_wavfmt;
 					dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
-
-					m_dsbuffer = m_dsound->createSoundBuffer(&dsbd);
-					m_dsnotify = m_dsbuffer->getDSNotify();
 
 					// 重新计算每个块的播放 position
 					for(int i = 0; i < _countof(m_dsnp); i++)
 					{
 						m_dsnp[i].dwOffset = i * m_wavfmt.nAvgBytesPerSec;
 					}
-					m_dsbuffer->setCurrentPosition(m_dsnp[m_currBlock].dwOffset);
+
+					// 创建 dsound buffer 及 dsound notify
+					m_dsbuffer = m_dsound->createSoundBuffer(&dsbd);
+					m_dsnotify = m_dsbuffer->getDSNotify();
 					m_dsnotify->setNotificationPositions(_countof(m_dsnp), m_dsnp);
 				}
 
@@ -642,25 +638,29 @@ namespace my
 				_ASSERT(NULL != m_dsbuffer);
 				if(sbuffer.size() > m_wavfmt.nAvgBytesPerSec)
 				{
-					// 等待下一块的 notify 或停止时间
-					_ASSERT(m_currBlock < _countof(m_dsnp));
-					DWORD next_block = (m_currBlock + 1) % BUFFER_COUNT;
-					_ASSERT(next_block < _countof(m_dsnp));
-					HANDLE events[2] = {m_events[next_block].m_hevent, m_events[_countof(m_dsnp)].m_hevent};
-					DWORD wait_res = ::WaitForMultipleObjects(_countof(events), events, FALSE, INFINITE);
-					//_CrtDbgReport(_CRT_WARN, NULL, NULL, "aaa", "curr: %d, next: %d \n", m_currBlock, next_block);
+					// 等待所有事件处理
+					_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
+					DWORD wait_res = ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE);
 					_ASSERT(WAIT_TIMEOUT != wait_res);
-
-					// 处理停止事件
-					if(wait_res > WAIT_OBJECT_0)
+					if(wait_res == WAIT_OBJECT_0)
 					{
+						// 是停止事件，则直接 out
 						m_dsbuffer->stop();
 						goto end;
 					}
-					_ASSERT(WAIT_OBJECT_0 == wait_res);
+
+					// 计算当前 block
+					DWORD curr_block = wait_res - WAIT_OBJECT_0 - 1;
+					_ASSERT(curr_block < _countof(m_dsnp));
+
+					// 计算需要更新 block（curr_block + 1）
+					DWORD next_block = (curr_block + 1) % _countof(m_dsnp);
 
 					// 拷贝数据缓存
-					m_dsbuffer->lock(m_dsnp[m_currBlock].dwOffset, m_wavfmt.nAvgBytesPerSec, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, 0);
+					unsigned char * audioPtr1, * audioPtr2;
+					DWORD audioBytes1, audioBytes2;
+					m_dsbuffer->lock(m_dsnp[next_block].dwOffset, m_wavfmt.nAvgBytesPerSec, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, 0);
+					_ASSERT(audioBytes1 + audioBytes2 <= m_wavfmt.nAvgBytesPerSec);
 					if(audioPtr1 != NULL)
 					{
 						memcpy(audioPtr1, &sbuffer[0], audioBytes1);
@@ -674,6 +674,8 @@ namespace my
 					// 开始播放
 					if(!m_dsbuffer->isPlaying())
 					{
+						// 重新设置当前初播放位置
+						m_dsbuffer->setCurrentPosition(m_dsnp[next_block].dwOffset);
 						m_dsbuffer->play(0, DSBPLAY_LOOPING);
 					}
 
@@ -681,9 +683,6 @@ namespace my
 					size_t remain = sbuffer.size() - m_wavfmt.nAvgBytesPerSec;
 					memmove(&sbuffer[0], &sbuffer[m_wavfmt.nAvgBytesPerSec], remain);
 					sbuffer.resize(remain);
-
-					// 更新当前块的索引
-					m_currBlock = next_block;
 				}
 			}
 		}
@@ -695,6 +694,7 @@ end:
 		mad_synth_finish(&synth);
 		mad_frame_finish(&frame);
 		mad_stream_finish(&stream);
+		return ret;
 	}
 
 	void Mp3::play(bool loop /*= false*/)
@@ -711,22 +711,14 @@ end:
 		}
 
 		setLoop(loop);
-		m_events[_countof(m_dsnp)].ResetEvent();
+		m_events[0].ResetEvent();
 		CreateThread();
 		ResumeThread();
 	}
 
 	void Mp3::stop(void)
 	{
-		if(NULL != m_hThread)
-		{
-			setLoop(false);
-			m_events[_countof(m_dsnp)].SetEvent();
-			VERIFY(WaitForThreadStopped(INFINITE));
-
-			VERIFY(::CloseHandle(m_hThread));
-			m_hThread = NULL;
-		}
+		m_events[0].SetEvent();
 	}
 
 	DWORD Mp3::onProc(void)
@@ -735,9 +727,8 @@ end:
 		{
 			do
 			{
-				playOnce();
 			}
-			while(getLoop());
+			while(playOnce() && getLoop());
 		}
 		catch(t3d::Exception & /*e*/)
 		{
