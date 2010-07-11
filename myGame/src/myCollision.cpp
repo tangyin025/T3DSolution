@@ -4,79 +4,79 @@
 
 namespace my
 {
-	// /////////////////////////////////////////////////////////////////////////////////////
-	// BoundingSphere
-	// /////////////////////////////////////////////////////////////////////////////////////
+	//// /////////////////////////////////////////////////////////////////////////////////////
+	//// BoundingSphere
+	//// /////////////////////////////////////////////////////////////////////////////////////
 
-	const t3d::Vec4<real> & BoundingSphere::getCenter(void) const
-	{
-		return center;
-	}
+	//const t3d::Vec4<real> & BoundingSphere::getCenter(void) const
+	//{
+	//	return center;
+	//}
 
-	void BoundingSphere::setCenter(const t3d::Vec4<real> & _center)
-	{
-		center = _center;
-	}
+	//void BoundingSphere::setCenter(const t3d::Vec4<real> & _center)
+	//{
+	//	center = _center;
+	//}
 
-	const real BoundingSphere::getRadius(void) const
-	{
-		return radius;
-	}
+	//const real BoundingSphere::getRadius(void) const
+	//{
+	//	return radius;
+	//}
 
-	void BoundingSphere::setRadius(real _radius)
-	{
-		radius = _radius;
-	}
+	//void BoundingSphere::setRadius(real _radius)
+	//{
+	//	radius = _radius;
+	//}
 
-	BoundingSphere::BoundingSphere(const t3d::Vec4<real> & _center, real _radius)
-		: center(_center)
-		, radius(_radius)
-	{
-	}
+	//BoundingSphere::BoundingSphere(const t3d::Vec4<real> & _center, real _radius)
+	//	: center(_center)
+	//	, radius(_radius)
+	//{
+	//}
 
-	bool BoundingSphere::overlaps(const BoundingSphere & other) const
-	{
-		return t3d::vec3LengthSquare(t3d::vec3Sub(center, other.center)) < (radius + other.radius) * (radius + other.radius);
-	}
+	//bool BoundingSphere::overlaps(const BoundingSphere & other) const
+	//{
+	//	return t3d::vec3LengthSquare(t3d::vec3Sub(center, other.center)) < (radius + other.radius) * (radius + other.radius);
+	//}
 
-	real BoundingSphere::getGrowth(const BoundingSphere & other) const
-	{
-		BoundingSphere newSphere = buildBoundingSphere(*this, other);
+	//real BoundingSphere::getGrowth(const BoundingSphere & other) const
+	//{
+	//	BoundingSphere newSphere = buildBoundingSphere(*this, other);
 
-		return newSphere.getRadius() * newSphere.getRadius() - radius * radius;
-	}
+	//	return newSphere.getRadius() * newSphere.getRadius() - radius * radius;
+	//}
 
-	real BoundingSphere::getVolumn(void) const
-	{
-		return (real)4.0 / (real)3.0 * (real)PI * radius * radius * radius;
-	}
+	//real BoundingSphere::getVolumn(void) const
+	//{
+	//	return (real)4.0 / (real)3.0 * (real)PI * radius * radius * radius;
+	//}
 
-	BoundingSphere buildBoundingSphere(const BoundingSphere & lhs, const BoundingSphere & rhs)
-	{
-		t3d::Vec4<real> centerOffset = t3d::vec3Sub(lhs.getCenter(), rhs.getCenter());
-		real distanceSquare = t3d::vec3LengthSquare(centerOffset);
-		real radiusDiff = lhs.getRadius() - rhs.getRadius();
+	//BoundingSphere buildBoundingSphere(const BoundingSphere & lhs, const BoundingSphere & rhs)
+	//{
+	//	t3d::Vec4<real> centerOffset = t3d::vec3Sub(lhs.getCenter(), rhs.getCenter());
+	//	real distanceSquare = t3d::vec3LengthSquare(centerOffset);
+	//	real radiusDiff = lhs.getRadius() - rhs.getRadius();
 
-		if(radiusDiff * radiusDiff >= distanceSquare)
-		{
-			if(lhs.getRadius() >= rhs.getRadius())
-			{
-				return BoundingSphere(lhs.getCenter(), lhs.getRadius());
-			}
-			else
-			{
-				return BoundingSphere(rhs.getCenter(), rhs.getRadius());
-			}
-		}
-		else
-		{
-			real distance = sqrt(distanceSquare);
-			real newRadius = (lhs.getRadius() + distance + rhs.getRadius()) / 2;
-			t3d::Vec4<real> newCenter = t3d::vec3Add(lhs.getCenter(), t3d::vec3Mul(centerOffset, (newRadius - lhs.getRadius()) / distance));
+	//	if(radiusDiff * radiusDiff >= distanceSquare)
+	//	{
+	//		if(lhs.getRadius() >= rhs.getRadius())
+	//		{
+	//			return BoundingSphere(lhs.getCenter(), lhs.getRadius());
+	//		}
+	//		else
+	//		{
+	//			return BoundingSphere(rhs.getCenter(), rhs.getRadius());
+	//		}
+	//	}
+	//	else
+	//	{
+	//		real distance = sqrt(distanceSquare);
+	//		real newRadius = (lhs.getRadius() + distance + rhs.getRadius()) / 2;
+	//		t3d::Vec4<real> newCenter = t3d::vec3Add(lhs.getCenter(), t3d::vec3Mul(centerOffset, (newRadius - lhs.getRadius()) / distance));
 
-			return BoundingSphere(newCenter, newRadius);
-		}
-	}
+	//		return BoundingSphere(newCenter, newRadius);
+	//	}
+	//}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// CollisionPrimitive
@@ -146,11 +146,12 @@ namespace my
 
 	bool IntersectionTests::sphereAndHalfSpace(
 		const CollisionSphere & sphere,
-		const CollisionPlane & plane)
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance)
 	{
-		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
-		return t3d::vec3Dot(plane.direction, sphere.getAxis3()) - sphere.radius <= plane.distance;
+		return t3d::vec3Dot(sphere.getAxis3(), planeNormal) - sphere.radius < planeDistance;
 	}
 
 	bool IntersectionTests::sphereAndSphere(
@@ -160,10 +161,10 @@ namespace my
 		return t3d::vec3LengthSquare(t3d::vec3Sub(sphere0.getAxis3(), sphere1.getAxis3())) < (sphere0.radius + sphere1.radius) * (sphere0.radius + sphere1.radius);
 	}
 
-	static inline real _transformToAxis(
-		const CollisionBox & box,
-		const t3d::Vec4<real> & axis)
+	static inline real calculateBoxAxisHalfProjection(const CollisionBox & box, const t3d::Vec4<real> & axis)
 	{
+		_ASSERT(t3d::vec3IsNormalized(axis));
+
 		return
 			box.halfSize.x * abs(t3d::vec3Dot(axis, box.getAxis0())) +
 			box.halfSize.y * abs(t3d::vec3Dot(axis, box.getAxis1())) +
@@ -172,11 +173,12 @@ namespace my
 
 	bool IntersectionTests::boxAndHalfSpace(
 		const CollisionBox & box,
-		const CollisionPlane & plane)
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance)
 	{
-		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
-		return t3d::vec3Dot(plane.direction, box.getAxis3()) - _transformToAxis(box, plane.direction) <= plane.distance; // ***
+		return t3d::vec3Dot(box.getAxis3(), planeNormal) - calculateBoxAxisHalfProjection(box, planeNormal) < planeDistance;
 	}
 
 	static inline bool _overlapOnAxis(
@@ -186,7 +188,7 @@ namespace my
 		const t3d::Vec4<real> & toCentre)
 	{
 		return
-			abs(t3d::vec3Dot(toCentre, axis)) < _transformToAxis(box0, axis) + _transformToAxis(box1, axis); // ***
+			abs(t3d::vec3Dot(toCentre, axis)) < calculateBoxAxisHalfProjection(box0, axis) + calculateBoxAxisHalfProjection(box1, axis); // ***
 	}
 
 	static inline bool _zeroAxisOrOverlapOnAxis(
@@ -339,26 +341,27 @@ namespace my
 
 	unsigned CollisionDetector::sphereAndHalfSpace(
 		const CollisionSphere & sphere,
-		const CollisionPlane & plane,
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance,
 		Contact * contacts,
 		unsigned limits)
 	{
 		_ASSERT(limits > 0);
 
-		t3d::Vec4<real> position = sphere.getAxis3();
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
-		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		t3d::Vec4<real> spherePosition = sphere.getAxis3();
 
-		real penetration = sphere.radius + plane.distance - t3d::vec3Dot(plane.direction, position);
+		real penetration = sphere.radius + planeDistance - t3d::vec3Dot(spherePosition, planeNormal);
 
 		if(penetration <= 0)
 		{
 			return 0;
 		}
 
-		contacts->contactNormal = plane.direction;
+		contacts->contactNormal = planeNormal;
 		contacts->penetration = penetration;
-		contacts->contactPoint = t3d::vec3Sub(position, t3d::vec3Mul(plane.direction, sphere.radius - penetration));
+		contacts->contactPoint = t3d::vec3Sub(spherePosition, t3d::vec3Mul(planeNormal, sphere.radius - penetration));
 
 		contacts->bodys[0] = sphere.body;
 		contacts->bodys[1] = NULL;
@@ -367,17 +370,18 @@ namespace my
 
 	unsigned CollisionDetector::sphereAndTruePlane(
 		const CollisionSphere & sphere,
-		const CollisionPlane & plane,
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance,
 		Contact * contacts,
 		unsigned limits)
 	{
 		_ASSERT(limits > 0);
 
-		t3d::Vec4<real> position = sphere.getAxis3();
+		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
-		_ASSERT(IS_ZERO_FLOAT(t3d::vec3Length(plane.direction) - 1));
+		t3d::Vec4<real> spherePosition = sphere.getAxis3();
 
-		real centreDistance = t3d::vec3Dot(plane.direction, position) - plane.distance;
+		real centreDistance = t3d::vec3Dot(spherePosition, planeNormal) - planeDistance;
 
 		if(centreDistance > 0)
 		{
@@ -386,7 +390,7 @@ namespace my
 				return 0;
 			}
 
-			contacts->contactNormal = plane.direction;
+			contacts->contactNormal = planeNormal;
 			contacts->penetration = sphere.radius - centreDistance;
 		}
 		else
@@ -396,10 +400,10 @@ namespace my
 				return 0;
 			}
 
-			contacts->contactNormal = t3d::vec3Neg(plane.direction);
+			contacts->contactNormal = t3d::vec3Neg(planeNormal);
 			contacts->penetration = sphere.radius + centreDistance;
 		}
-		contacts->contactPoint = t3d::vec3Sub(position, t3d::vec3Mul(plane.direction, centreDistance));
+		contacts->contactPoint = t3d::vec3Sub(spherePosition, t3d::vec3Mul(planeNormal, centreDistance));
 
 		contacts->bodys[0] = sphere.body;
 		contacts->bodys[1] = NULL;
@@ -551,81 +555,123 @@ namespace my
 
 	unsigned CollisionDetector::pointAndHalfSpace(
 		const t3d::Vec4<real> & point,
-		RigidBody * bodyForPoint,
-		const CollisionPlane & plane,
+		RigidBody * body,
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance,
 		Contact * contacts,
 		unsigned limits)
 	{
 		_ASSERT(limits > 0);
 
-		real penetration = -calculatePointPlaneDistance(point, plane.direction, plane.distance);
+		real penetration = -calculatePointPlaneDistance(point, planeNormal, planeDistance);
 
 		if(penetration <= 0)
 		{
 			return 0;
 		}
 
-		contacts->contactNormal = plane.direction;
+		contacts->contactNormal = planeNormal;
 		contacts->penetration = penetration;
-		contacts->contactPoint = t3d::vec3Add(point, t3d::vec3Mul(plane.direction, penetration * 0.5f)); // ***
+		contacts->contactPoint = t3d::vec3Add(point, t3d::vec3Mul(planeNormal, penetration * 0.5f)); // ***
 
-		contacts->bodys[0] = bodyForPoint;
+		contacts->bodys[0] = body;
 		contacts->bodys[1] = NULL;
 		return 1;
 	}
 
 	unsigned CollisionDetector::boxAndHalfSpace(
 		const CollisionBox & box,
-		const CollisionPlane & plane,
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance,
 		Contact * contacts,
 		unsigned limits)
 	{
 		unsigned res = 0;
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>( box.halfSize.x,  box.halfSize.y,  box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>( box.halfSize.x,  box.halfSize.y,  box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>(-box.halfSize.x,  box.halfSize.y,  box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>(-box.halfSize.x,  box.halfSize.y,  box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>( box.halfSize.x, -box.halfSize.y,  box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>( box.halfSize.x, -box.halfSize.y,  box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>( box.halfSize.x,  box.halfSize.y, -box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>( box.halfSize.x,  box.halfSize.y, -box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>(-box.halfSize.x, -box.halfSize.y, -box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>(-box.halfSize.x, -box.halfSize.y, -box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>( box.halfSize.x, -box.halfSize.y, -box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>( box.halfSize.x, -box.halfSize.y, -box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		if((res += pointAndHalfSpace(
-			my::Vec4<real>(-box.halfSize.x,  box.halfSize.y, -box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res)) >= limits)
+			my::Vec4<real>(-box.halfSize.x,  box.halfSize.y, -box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res)) >= limits)
 		{
 			return res;
 		}
 
 		return res += pointAndHalfSpace(
-			my::Vec4<real>(-box.halfSize.x, -box.halfSize.y,  box.halfSize.z) * box.getTransform(), box.body, plane, &contacts[res], limits - res);
+			my::Vec4<real>(-box.halfSize.x, -box.halfSize.y,  box.halfSize.z) * box.getTransform(),
+			box.body,
+			planeNormal,
+			planeDistance,
+			&contacts[res],
+			limits - res);
 	}
 
 	unsigned CollisionDetector::boxAndSphere(
@@ -915,16 +961,6 @@ namespace my
 		t3d::Vec4<real> cTwo = t3d::vec3Add(pTwo, t3d::vec3Mul(dTwo, mub));
 
 		return t3d::vec3Mul(t3d::vec3Add(cOne, cTwo), (real)0.5);
-	}
-
-	static inline real calculateBoxAxisHalfProjection(const CollisionBox & box, const t3d::Vec4<real> & axis)
-	{
-		_ASSERT(t3d::vec3IsNormalized(axis));
-
-		return
-			box.halfSize.x * abs(t3d::vec3Dot(axis, box.getAxis0())) +
-			box.halfSize.y * abs(t3d::vec3Dot(axis, box.getAxis1())) +
-			box.halfSize.z * abs(t3d::vec3Dot(axis, box.getAxis2())); // ***
 	}
 
 	static inline real calculateBoxAxisAndBoxPenetration(
