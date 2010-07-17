@@ -13,8 +13,6 @@ namespace my
 	public:
 		t3d::BoneAnimationNodeList m_boneAnimationNodeList;
 
-		std::basic_string<char> m_nextAnimationName;
-
 	public:
 		void pushBoneAnimationNode(t3d::BoneAnimationNodeList::const_reference boneAnimation);
 
@@ -46,12 +44,21 @@ namespace my
 
 		real getMaxTime(void) const;
 
+		t3d::BoneNodeList & gotoAnimation(t3d::BoneNodeList & boneNodeList, size_t root_i, real time);
+	};
+
+	class SkeletonAnimationNode : public SkeletonAnimation
+	{
+	public:
+		std::basic_string<char> m_nextAnimationName;
+
+	public:
 		void setNextAnimationName(const std::basic_string<char> & nextAnimationName);
 
 		const std::basic_string<char> & getNextAnimationName(void) const;
 	};
 
-	typedef std::map<std::basic_string<char>, SkeletonAnimation> SkeletonAnimationMap;
+	typedef std::map<std::basic_string<char>, SkeletonAnimationNode> SkeletonAnimationMap;
 
 	class SkeletonAnimationManager
 	{
@@ -91,13 +98,13 @@ namespace my
 
 		t3d::BoneNodeList & getBoneNodeList(void);
 
-		void insertSkeletonAnimation(SkeletonAnimationMap::key_type animationName, const SkeletonAnimationMap::referent_type & skeletonAnimation);
+		void insertSkeletonAnimationNode(SkeletonAnimationMap::key_type animationName, const SkeletonAnimationMap::referent_type & skeletonAnimationNode);
 
-		bool isSkeletonAnimationExistent(SkeletonAnimationMap::key_type animationName) const;
+		bool isSkeletonAnimationNodeExistent(SkeletonAnimationMap::key_type animationName) const;
 
-		const SkeletonAnimationMap::referent_type & getSkeletonAnimation(SkeletonAnimationMap::key_type animationName) const;
+		const SkeletonAnimationMap::referent_type & getSkeletonAnimationNode(SkeletonAnimationMap::key_type animationName) const;
 
-		SkeletonAnimationMap::referent_type & getSkeletonAnimation(SkeletonAnimationMap::key_type animationName);
+		SkeletonAnimationMap::referent_type & getSkeletonAnimationNode(SkeletonAnimationMap::key_type animationName);
 
 		SkeletonAnimationMap::const_iterator getSkeletonAnimationMapBegin(void) const;
 
@@ -120,7 +127,7 @@ namespace my
 		real getCurrentAnimationTime(void) const;
 
 	public:
-		const t3d::BoneNodeList & gotoAnimation(const std::basic_string<char> & animationName, real time);
+		const t3d::BoneNodeList & gotoAnimation(const std::basic_string<char> & animationName, size_t root_i, real time);
 	};
 }
 

@@ -1,4 +1,4 @@
-﻿
+
 #include "stdafx.h"
 #include "myResource.h"
 #include <sstream>
@@ -457,7 +457,7 @@ namespace my
 		m_wavfmt.nChannels = 0;
 		m_wavfmt.nSamplesPerSec = 0;
 
-		// 注意：由于优先级关系，设定第一个事件为停止事件，后面依次作为 m_dsnp 的事件
+		// NOTE: the first event of m_events array is stop event, position event is following the next
 		for(int i = 0; i < _countof(m_dsnp); i++)
 		{
 			m_dsnp[i].dwOffset = 0;
@@ -491,19 +491,19 @@ namespace my
 		mad_frame_init(&frame);
 		mad_synth_init(&synth);
 
-		// 初始化所有 notify
+		// initialize dsound position notifies
 		for(size_t i = 0; i < _countof(m_dsnp); i++)
 		{
 			VERIFY(::ResetEvent(m_dsnp[i].hEventNotify));
 		}
 
-		// 设置默认已经开始播放的 block
+		// set the default block which to begin playing
 		VERIFY(::SetEvent(m_dsnp[0].hEventNotify));
 
 		bool ret = false;
 		do
 		{
-			// 从 stream 获得原始声音 buffer
+			// read original sound source from stream
 			size_t remain = 0;
 			if(NULL != stream.next_frame)
 			{
@@ -512,16 +512,16 @@ namespace my
 			}
 			int read = m_stream->read(&m_buffer[0] + remain, sizeof(m_buffer[0]), m_buffer.size() - remain);
 
-			// 如果已经到达 stream 结尾，则结束
+			// EOF of stream
 			if(0 == read)
 			{
 				if(NULL != m_dsbuffer)
 				{
-					// 等待缓存区播完
+					// wait for dsound buffer block playing
 					_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
 					if(WAIT_OBJECT_0 != ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE))
 					{
-						// 正常播放完成，要求继续播放
+						// normal play end, need to continue if looped
 						ret = true;
 					}
 					m_dsbuffer->stop();
@@ -529,7 +529,7 @@ namespace my
 				goto end;
 			}
 
-			// 如果读出来的 buffer 太小，则将 MAD_BUFFER_GUARD 的剩余 buffer 清零
+			// fill remain buffer over MAD_BUFFER_GUARD to zero
 			if(read < MAD_BUFFER_GUARD)
 			{
 				_ASSERT(MPEG_BUFSZ - remain > MAD_BUFFER_GUARD);
@@ -600,10 +600,10 @@ namespace my
 					}
 				}
 
-				// 必要时创建 dsound buffer
+				// create platform sound devices if needed
 				if(m_wavfmt.nChannels != synth.pcm.channels || m_wavfmt.nSamplesPerSec != synth.pcm.samplerate)
 				{
-					// dsound buffer 应该只被创建一次
+					// dsound buffer should only be create once
 					_ASSERT(NULL == m_dsnotify);
 					_ASSERT(NULL == m_dsbuffer);
 
@@ -622,13 +622,13 @@ namespace my
 					dsbd.lpwfxFormat = &m_wavfmt;
 					dsbd.guid3DAlgorithm = DS3DALG_DEFAULT;
 
-					// 重新计算每个块的播放 position
+					// recalculate notify position for each block
 					for(int i = 0; i < _countof(m_dsnp); i++)
 					{
 						m_dsnp[i].dwOffset = i * m_wavfmt.nAvgBytesPerSec;
 					}
 
-					// 创建 dsound buffer 及 dsound notify
+					// create dsound buffer & notify
 					m_dsbuffer = m_dsound->createSoundBuffer(&dsbd);
 					m_dsnotify = m_dsbuffer->getDSNotify();
 					m_dsnotify->setNotificationPositions(_countof(m_dsnp), m_dsnp);
@@ -638,25 +638,25 @@ namespace my
 				_ASSERT(NULL != m_dsbuffer);
 				if(sbuffer.size() > m_wavfmt.nAvgBytesPerSec)
 				{
-					// 等待所有事件处理
+					// wait for notify event even with stop event
 					_ASSERT(sizeof(m_events) == sizeof(HANDLE) * _countof(m_events));
 					DWORD wait_res = ::WaitForMultipleObjects(_countof(m_events), reinterpret_cast<HANDLE *>(m_events), FALSE, INFINITE);
 					_ASSERT(WAIT_TIMEOUT != wait_res);
 					if(wait_res == WAIT_OBJECT_0)
 					{
-						// 是停止事件，则直接 out
+						// out if stop event occured
 						m_dsbuffer->stop();
 						goto end;
 					}
 
-					// 计算当前 block
+					// calculate current block
 					DWORD curr_block = wait_res - WAIT_OBJECT_0 - 1;
 					_ASSERT(curr_block < _countof(m_dsnp));
 
-					// 计算需要更新 block（curr_block + 1）
+					// calculate next block which need to be update
 					DWORD next_block = (curr_block + 1) % _countof(m_dsnp);
 
-					// 拷贝数据缓存
+					// decoded sound buffer copying
 					unsigned char * audioPtr1, * audioPtr2;
 					DWORD audioBytes1, audioBytes2;
 					m_dsbuffer->lock(m_dsnp[next_block].dwOffset, m_wavfmt.nAvgBytesPerSec, (LPVOID *)&audioPtr1, &audioBytes1, (LPVOID *)&audioPtr2, &audioBytes2, 0);
@@ -671,15 +671,15 @@ namespace my
 					}
 					m_dsbuffer->unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2);
 
-					// 开始播放
+					// begin play
 					if(!m_dsbuffer->isPlaying())
 					{
-						// 重新设置当前初播放位置
+						// reset play position
 						m_dsbuffer->setCurrentPosition(m_dsnp[next_block].dwOffset);
 						m_dsbuffer->play(0, DSBPLAY_LOOPING);
 					}
 
-					// 将剩余 buffer 移动到 buffer 头
+					// move remain buffer which havent been pushed into dsound buffer to header
 					size_t remain = sbuffer.size() - m_wavfmt.nAvgBytesPerSec;
 					memmove(&sbuffer[0], &sbuffer[m_wavfmt.nAvgBytesPerSec], remain);
 					sbuffer.resize(remain);

@@ -357,10 +357,10 @@ public:
 		// load 角色骨骼动画
 		m_character_skel = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(
 			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_anim_stand.skeleton.xml"))))));
-		m_character_skel->getSkeletonAnimation("clip1").setNextAnimationName("clip2");
-		m_character_skel->getSkeletonAnimation("clip2").setNextAnimationName("clip1");
-		m_character_skel->getSkeletonAnimation("clip3").setNextAnimationName("clip4");
-		m_character_skel->getSkeletonAnimation("clip4").setNextAnimationName("clip3");
+		m_character_skel->getSkeletonAnimationNode("clip1").setNextAnimationName("clip2");
+		m_character_skel->getSkeletonAnimationNode("clip2").setNextAnimationName("clip1");
+		m_character_skel->getSkeletonAnimationNode("clip3").setNextAnimationName("clip4");
+		m_character_skel->getSkeletonAnimationNode("clip4").setNextAnimationName("clip3");
 		m_character_skel->setCurrentAnimationName("clip1");
 		m_character_skel->setCurrentAnimationTime(0);
 
@@ -532,17 +532,24 @@ public:
 			}
 		}
 
-		// 绑定角色骨骼系统
-		const t3d::BoneNodeList & boneNodeList =
-			m_character_skel->gotoAnimation(m_character_skel->getCurrentAnimationName(), m_character_skel->getCurrentAnimationTime() + elapsedTime);
+		/** 将每一个 root 的子动画结合到整体
+			这个功能很重要，假定有两个子动画，一个是上半身的动作（拿枪），一个是下本身的动作（走路），
+			它们分别从属于两个 root，那么就能实现动作合并
+		*/
+		t3d::BoneIndexList::const_iterator bone_index_iter = m_character_skel->getRootIndexListBegin();
+		for(; bone_index_iter != m_character_skel->getRootIndexListEnd(); bone_index_iter++)
+		{
+			// 绑定角色骨骼系统
+			const t3d::BoneNodeList & boneNodeList =
+				m_character_skel->gotoAnimation(m_character_skel->getCurrentAnimationName(), *bone_index_iter, m_character_skel->getCurrentAnimationTime() + elapsedTime);
 
-		// 和 banding position 叠加
-		t3d::incrementBoneNodeList(
-			m_character_bone_node_list,
-			m_character_skel->getOrigBoneNodeList(),
-			boneNodeList,
-			m_character_skel->getRootIndexListBegin(),
-			m_character_skel->getRootIndexListEnd());
+			// 和 banding position 叠加
+			t3d::incrementBoneNodeList(
+				m_character_bone_node_list,
+				m_character_skel->getOrigBoneNodeList(),
+				boneNodeList,
+				*bone_index_iter);
+		}
 
 		// 获取当前动作的 transform matrix
 		t3d::updateBoneTransformListFromBoneNodeList(

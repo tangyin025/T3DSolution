@@ -170,10 +170,6 @@ void MyLoadState::enterState(void)
 	int y = clipper.top + (clipper.Height() - barHeight) / 2;
 	m_progressBox = MyUIProgressBarBoxPtr(new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight))));
 
-	// begin work thread here
-	CreateThread();
-	ResumeThread();
-
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	m_mp3 = my::Mp3Ptr(new my::Mp3(
@@ -181,6 +177,10 @@ void MyLoadState::enterState(void)
 	m_mp3->play();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// begin work thread here
+	CreateThread();
+	ResumeThread();
 }
 
 void MyLoadState::leaveState(void)

@@ -246,7 +246,7 @@ namespace t3d
 	BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneAnimationNodeList & boneAnimationNodeList,
-		size_t bone_i,
+		size_t root_i,
 		real time);
 
 	class BoneTransform

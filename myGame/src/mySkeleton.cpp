@@ -84,12 +84,27 @@ namespace my
 		return t3d::getBoneAnimationNodeListMaxTime(m_boneAnimationNodeList);
 	}
 
-	void SkeletonAnimation::setNextAnimationName(const std::basic_string<char> & nextAnimationName)
+	t3d::BoneNodeList & SkeletonAnimation::gotoAnimation(t3d::BoneNodeList & boneNodeList, size_t root_i, real time)
+	{
+		_ASSERT(boneNodeList.size() == getBoneAnimationNodeListSize());
+		_ASSERT(boneNodeList[root_i].getParent() == boneAnimationNodeAt(root_i).getParent());
+		_ASSERT(boneNodeList[root_i].getChildList() == boneAnimationNodeAt(root_i).getChildList());
+
+		t3d::updateBoneNodeListFromBoneAnimationNodeList(
+			boneNodeList,
+			getBoneAnimationNodeList(),
+			root_i,
+			time);
+
+		return boneNodeList;
+	}
+
+	void SkeletonAnimationNode::setNextAnimationName(const std::basic_string<char> & nextAnimationName)
 	{
 		m_nextAnimationName = nextAnimationName;
 	}
 
-	const std::basic_string<char> & SkeletonAnimation::getNextAnimationName(void) const
+	const std::basic_string<char> & SkeletonAnimationNode::getNextAnimationName(void) const
 	{
 		return m_nextAnimationName;
 	}
@@ -163,28 +178,28 @@ namespace my
 		return m_boneNodeList;
 	}
 
-	void SkeletonAnimationManager::insertSkeletonAnimation(SkeletonAnimationMap::key_type animationName, const SkeletonAnimationMap::referent_type & skeletonAnimation)
+	void SkeletonAnimationManager::insertSkeletonAnimationNode(SkeletonAnimationMap::key_type animationName, const SkeletonAnimationMap::referent_type & skeletonAnimationNode)
 	{
-		_ASSERT(!isSkeletonAnimationExistent(animationName));
+		_ASSERT(!isSkeletonAnimationNodeExistent(animationName));
 
-		m_skeletonAnimationMap.insert(SkeletonAnimationMap::value_type(animationName, skeletonAnimation));
+		m_skeletonAnimationMap.insert(SkeletonAnimationMap::value_type(animationName, skeletonAnimationNode));
 	}
 
-	bool SkeletonAnimationManager::isSkeletonAnimationExistent(SkeletonAnimationMap::key_type animationName) const
+	bool SkeletonAnimationManager::isSkeletonAnimationNodeExistent(SkeletonAnimationMap::key_type animationName) const
 	{
 		return m_skeletonAnimationMap.end() != m_skeletonAnimationMap.find(animationName);
 	}
 
-	const SkeletonAnimationMap::referent_type & SkeletonAnimationManager::getSkeletonAnimation(SkeletonAnimationMap::key_type animationName) const
+	const SkeletonAnimationMap::referent_type & SkeletonAnimationManager::getSkeletonAnimationNode(SkeletonAnimationMap::key_type animationName) const
 	{
-		_ASSERT(isSkeletonAnimationExistent(animationName));
+		_ASSERT(isSkeletonAnimationNodeExistent(animationName));
 
 		return m_skeletonAnimationMap.find(animationName)->second;
 	}
 
-	SkeletonAnimationMap::referent_type & SkeletonAnimationManager::getSkeletonAnimation(SkeletonAnimationMap::key_type animationName)
+	SkeletonAnimationMap::referent_type & SkeletonAnimationManager::getSkeletonAnimationNode(SkeletonAnimationMap::key_type animationName)
 	{
-		_ASSERT(isSkeletonAnimationExistent(animationName));
+		_ASSERT(isSkeletonAnimationNodeExistent(animationName));
 
 		return m_skeletonAnimationMap.find(animationName)->second;
 	}
@@ -239,38 +254,25 @@ namespace my
 		return m_currentAnimationTime;
 	}
 
-	const t3d::BoneNodeList & SkeletonAnimationManager::gotoAnimation(const std::basic_string<char> & animationName, real time)
+	const t3d::BoneNodeList & SkeletonAnimationManager::gotoAnimation(const std::basic_string<char> & animationName, size_t root_i, real time)
 	{
-		_ASSERT(isSkeletonAnimationExistent(animationName));
+		_ASSERT(isSkeletonAnimationNodeExistent(animationName));
 
-		SkeletonAnimation & skeletonAnimation = getSkeletonAnimation(animationName);
+		SkeletonAnimationNode & skeletonAnimationNode = getSkeletonAnimationNode(animationName);
 
-		_ASSERT(getBoneNodeListSize() == skeletonAnimation.getBoneAnimationNodeListSize());
+		_ASSERT(getBoneNodeListSize() == skeletonAnimationNode.getBoneAnimationNodeListSize());
 
-		_ASSERT(time >= skeletonAnimation.getMinTime());
+		_ASSERT(time >= skeletonAnimationNode.getMinTime());
 
-		if(time >= skeletonAnimation.getMaxTime())
+		if(time >= skeletonAnimationNode.getMaxTime())
 		{
-			return gotoAnimation(skeletonAnimation.getNextAnimationName(), time - skeletonAnimation.getMaxTime());
+			return gotoAnimation(skeletonAnimationNode.getNextAnimationName(), root_i, time - skeletonAnimationNode.getMaxTime());
 		}
 
 		setCurrentAnimationName(animationName);
 
 		setCurrentAnimationTime(time);
 
-		size_t i = 0;
-		for(; i < getBoneNodeListSize(); i++)
-		{
-			if(boneNodeAt(i).isRoot())
-			{
-				t3d::updateBoneNodeListFromBoneAnimationNodeList(
-					getBoneNodeList(),
-					skeletonAnimation.getBoneAnimationNodeList(),
-					i,
-					time);
-			}
-		}
-
-		return getBoneNodeList();
+		return skeletonAnimationNode.gotoAnimation(getBoneNodeList(), root_i, time);
 	}
 }
