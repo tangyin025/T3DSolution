@@ -441,18 +441,18 @@ namespace t3d
 	BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneAnimationNodeList & boneAnimationNodeList,
-		size_t bone_i,
+		size_t root_i,
 		real time)
 	{
 		_ASSERT(boneNodeList.size() == boneAnimationNodeList.size());
 
 		intersectBoneKeyFrameList(
-			boneNodeList[bone_i],
-			boneAnimationNodeList[bone_i].getBoneKeyFrameList(),
+			boneNodeList[root_i],
+			boneAnimationNodeList[root_i].getBoneKeyFrameList(),
 			time);
 
-		BoneIndexList::const_iterator bone_index_iter = boneNodeList[bone_i].getChildListBegin();
-		for(; bone_index_iter != boneNodeList[bone_i].getChildListEnd(); bone_index_iter++)
+		BoneIndexList::const_iterator bone_index_iter = boneNodeList[root_i].getChildListBegin();
+		for(; bone_index_iter != boneNodeList[root_i].getChildListEnd(); bone_index_iter++)
 		{
 			updateBoneNodeListFromBoneAnimationNodeList(
 				boneNodeList,

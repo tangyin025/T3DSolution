@@ -3667,18 +3667,16 @@ namespace my
 		{
 			DEFINE_XML_ATTRIBUTE_CHAR(animation_name, animation, name);
 
-			if(isSkeletonAnimationExistent(animation_name))
+			if(isSkeletonAnimationNodeExistent(animation_name))
 				T3D_CUSEXCEPT(_T("the animation name has already existed"));
 
 			DEFINE_XML_ATTRIBUTE_DOUBLE_SIMPLE(length, animation);
 
-			//setSkeletonAnimationNode(animation_name, SkeletonAnimationNode(animation_name, 0, (real)length));
-			insertSkeletonAnimation(animation_name, SkeletonAnimation());
+			insertSkeletonAnimationNode(animation_name, SkeletonAnimationNode());
 
-			//SkeletonAnimationNode & skeletonAnimationNode = getSkeletonAnimationNode(animation_name);
-			SkeletonAnimation & skeletonAnimation = getSkeletonAnimation(animation_name);
+			SkeletonAnimationNode & skeletonAnimationNode = getSkeletonAnimationNode(animation_name);
 
-			skeletonAnimation.setNextAnimationName(animation_name);
+			skeletonAnimationNode.setNextAnimationName(animation_name);
 
 			DEFINE_XML_ELEMENT_SIMPLE(tracks, animation);
 
@@ -3687,18 +3685,16 @@ namespace my
 			{
 				DEFINE_XML_ATTRIBUTE_CHAR_SIMPLE(bone, track);
 
-				if(getBoneIndex(bone) != skeletonAnimation.getBoneAnimationNodeListSize())
+				if(getBoneIndex(bone) != skeletonAnimationNode.getBoneAnimationNodeListSize())
 					T3D_CUSEXCEPT(_T("invalid bone animation track"));
 
-				//skeletonAnimationNode.pushBoneAnimation(BoneAnimation());
-				skeletonAnimation.pushBoneAnimationNode(t3d::BoneAnimationNode());
+				skeletonAnimationNode.pushBoneAnimationNode(t3d::BoneAnimationNode());
 
-				//BoneAnimation & boneAnimation = skeletonAnimationNode.boneAnimationAt(skeletonAnimationNode.getBoneAnimationListSize() - 1);
-				t3d::BoneAnimationNode & boneAnimationNode = skeletonAnimation.getBoneAnimationNodeList().back();
+				t3d::BoneAnimationNode & boneAnimationNode = skeletonAnimationNode.getBoneAnimationNodeList().back();
 
-//				boneAnimationNode.setParent(origBoneNodeAt(getBoneIndex(bone)).getParent());
+				boneAnimationNode.setParent(origBoneNodeAt(getBoneIndex(bone)).getParent()); // ***
 
-//				boneAnimationNode.getChildList() = origBoneNodeAt(getBoneIndex(bone)).getChildList();
+				boneAnimationNode.getChildList() = origBoneNodeAt(getBoneIndex(bone)).getChildList(); // ***
 
 				DEFINE_XML_ELEMENT_SIMPLE(keyframes, track);
 
@@ -3727,12 +3723,6 @@ namespace my
 
 					DEFINE_XML_ATTRIBUTE_DOUBLE(axis_z, axis, z);
 
-					//boneAnimation.pushBoneKeyFrame(
-					//	t3d::BoneKeyFrame(
-					//		my::Vec4<real>((real)x, (real)y, (real)-z),
-					//		t3d::buildQuatFromAngleAxis((real)-angle, t3d::vec3Normalize(my::Vec4<real>((real)axis_x, (real)axis_y, (real)-axis_z))), // ***
-					//		(real)time));
-
 					boneAnimationNode.pushBoneKeyFrame(
 						t3d::BoneKeyFrame(
 							my::Vec4<real>((real)x, (real)y, (real)-z),
@@ -3741,31 +3731,9 @@ namespace my
 				}
 			}
 
-			//if(skeletonAnimationNode.getBoneAnimationListSize() != getOrigBoneNodeListSize())
-			if(skeletonAnimation.getBoneAnimationNodeListSize() != getOrigBoneNodeListSize())
+			if(skeletonAnimationNode.getBoneAnimationNodeListSize() != getOrigBoneNodeListSize())
 				T3D_CUSEXCEPT(_T("cannot match tracks count"));
 		}
-
-		//SkeletonAnimationNodeMap::iterator skeleton_animation_iter = m_skeletonAnimationNodeMap.begin();
-		//for(; skeleton_animation_iter != m_skeletonAnimationNodeMap.end(); skeleton_animation_iter++)
-		//{
-		//	size_t i = 0;
-		//	for(; i < getOrigBoneNodeListSize(); i++)
-		//	{
-		//		BoneAnimation & boneAnimation = skeleton_animation_iter->second.boneAnimationAt(i);
-
-		//		t3d::BoneKeyFrameList::iterator bone_key_iter = boneAnimation.getBoneKeyFrameList().begin();
-		//		for(; bone_key_iter != boneAnimation.getBoneKeyFrameList().end(); bone_key_iter++)
-		//		{
-		//			bone_key_iter->setPosition(t3d::vec3Add(origBoneNodeAt(i).getPosition(), bone_key_iter->getPosition()));
-
-		//			bone_key_iter->setOrientation(origBoneNodeAt(i).getOrientation() * bone_key_iter->getOrientation());
-		//		}
-		//	}
-		//}
-
-		//if(getOrigBoneNodeListSize() >= INT_MAX)
-		//	T3D_CUSEXCEPT(_T("too large orig bone node list size"));
 
 		resizeOrigBoneInverseTransformList(getOrigBoneNodeListSize());
 
