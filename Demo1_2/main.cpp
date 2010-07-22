@@ -350,6 +350,7 @@ public:
 
 		// 创建 bsp 场景
 		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
+		//m_scene_bsp = my::buildBSPSceneWithLODTriNode(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList(), 10);
 
 		// 构造物理引擎管理器
 		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
@@ -513,6 +514,7 @@ public:
 			m_scene_t->getHeight());
 		//m_scene->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
 		m_scene_bsp->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
+		//m_scene_bsp->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
 
 		//// 绘制角色球
 		//drawSphereWireZBufferRW(

@@ -264,53 +264,42 @@ namespace my
 		real cameraHalfFov,
 		const CustomShaderObjectDrawerClass & drawer)
 	{
-		//if(!node.m_obj.getVertexList().empty())
+		real distance = calculatePointPlaneDistance(cameraPos, node.planePoint, node.planeNormal);
+
+		real angle = acos(t3d::vec3CosTheta(cameraDir, node.planeNormal));
+
+		if(distance > 0)
 		{
-			real distance = calculatePointPlaneDistance(cameraPos, node.planePoint, node.planeNormal);
-
-			real angle = acos(t3d::vec3CosTheta(cameraDir, node.planeNormal));
-
-			if(distance > 0)
+			if(angle + cameraHalfFov > DEG_TO_RAD(90))
 			{
-				if(angle + cameraHalfFov > DEG_TO_RAD(90))
+				if(NULL != node.back)
 				{
-					if(NULL != node.back)
-					{
-						drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
-					}
-
-					drawer.draw(rc, node.m_obj.get());
+					drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 
-				//node.m_customShaderObjList.draw(rc);
+				drawer.draw(rc, node.m_obj.get());
+			}
 
+			if(NULL != node.front)
+			{
+				drawBSPSceneBackToFront(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
+			}
+		}
+		else
+		{
+			if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			{
 				if(NULL != node.front)
 				{
 					drawBSPSceneBackToFront(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 			}
-			else
+
+			if(NULL != node.back)
 			{
-				if(angle - cameraHalfFov < DEG_TO_RAD(90))
-				{
-					if(NULL != node.front)
-					{
-						drawBSPSceneBackToFront(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
-					}
-				}
-
-				//node.m_customShaderObjList.draw(rc);
-
-				if(NULL != node.back)
-				{
-					drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
-				}
+				drawBSPSceneBackToFront(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 			}
 		}
-		//else
-		//{
-		//	node.m_customShaderObjList.draw(rc);
-		//}
 	}
 
 	template <class CustomShaderObjectDrawerClass>
@@ -322,53 +311,42 @@ namespace my
 		real cameraHalfFov,
 		const CustomShaderObjectDrawerClass & drawer)
 	{
-		//if(!node.m_obj.getVertexList().empty())
+		real distance = calculatePointPlaneDistance(cameraPos, node.planePoint, node.planeNormal);
+
+		real angle = acos(t3d::vec3CosTheta(cameraDir, node.planeNormal));
+
+		if(distance > 0)
 		{
-			real distance = calculatePointPlaneDistance(cameraPos, node.planePoint, node.planeNormal);
-
-			real angle = acos(t3d::vec3CosTheta(cameraDir, node.planeNormal));
-
-			if(distance > 0)
+			if(NULL != node.front)
 			{
-				if(NULL != node.front)
-				{
-					drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
-				}
-
-				//node.m_customShaderObjList.draw(rc);
-
-				if(angle + cameraHalfFov > DEG_TO_RAD(90))
-				{
-					if(NULL != node.back)
-					{
-						drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
-					}
-
-					drawer.draw(rc, node.m_obj.get());
-				}
+				drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 			}
-			else
+
+			if(angle + cameraHalfFov > DEG_TO_RAD(90))
 			{
 				if(NULL != node.back)
 				{
 					drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 
-				//node.m_customShaderObjList.draw(rc);
+				drawer.draw(rc, node.m_obj.get());
+			}
+		}
+		else
+		{
+			if(NULL != node.back)
+			{
+				drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
+			}
 
-				if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			{
+				if(NULL != node.front)
 				{
-					if(NULL != node.front)
-					{
-						drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
-					}
+					drawBSPSceneFrontToBack(rc, *node.front, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
 			}
 		}
-		//else
-		//{
-		//	node.m_customShaderObjList.draw(rc);
-		//}
 	}
 
 	void BSPNode::drawWireZBufferRW(
@@ -1822,7 +1800,7 @@ namespace my
 	//	return objPtrList;
 	//}
 
-	void TriLODNode::prepareVertexList(
+	void LODTriNode::prepareVertexList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -1845,7 +1823,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexList(
+	void LODTriNode::prepareVertexList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat) const
@@ -1869,7 +1847,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexNormalList(
+	void LODTriNode::prepareVertexNormalList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -1894,7 +1872,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexNormalList(
+	void LODTriNode::prepareVertexNormalList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat,
@@ -1921,7 +1899,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexUVList(
+	void LODTriNode::prepareVertexUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -1946,7 +1924,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexUVList(
+	void LODTriNode::prepareVertexUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat) const
@@ -1972,7 +1950,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexNormalUVList(
+	void LODTriNode::prepareVertexNormalUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -1999,7 +1977,7 @@ namespace my
 		}
 	}
 
-	void TriLODNode::prepareVertexNormalUVList(
+	void LODTriNode::prepareVertexNormalUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat,
@@ -2028,7 +2006,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexList(
+	void LODTriNodeList::prepareVertexList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -2039,7 +2017,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexList(
+	void LODTriNodeList::prepareVertexList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat) const
@@ -2051,7 +2029,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexNormalList(
+	void LODTriNodeList::prepareVertexNormalList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -2062,7 +2040,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexNormalList(
+	void LODTriNodeList::prepareVertexNormalList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat,
@@ -2075,7 +2053,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexUVList(
+	void LODTriNodeList::prepareVertexUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -2086,7 +2064,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexUVList(
+	void LODTriNodeList::prepareVertexUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat) const
@@ -2098,7 +2076,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexNormalUVList(
+	void LODTriNodeList::prepareVertexNormalUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos) const
 	{
@@ -2109,7 +2087,7 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::prepareVertexNormalUVList(
+	void LODTriNodeList::prepareVertexNormalUVList(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & cameraPos,
 		const t3d::Mat4<real> & mmat,
@@ -2122,595 +2100,576 @@ namespace my
 		}
 	}
 
-	void TriLODNodeList::drawWireZBufferRW(
+	void LODTriNodeList::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
+		prepareVertexList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListWireZBufferRW(color);
 	}
 
-	void TriLODNodeList::drawWireZBufferRW(
+	void LODTriNodeList::drawWireZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
+		prepareVertexList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListWireZBufferRW(color);
 	}
 
-	void TriLODNodeList::drawWireZBufferRWWithBackface(
+	void LODTriNodeList::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
+		prepareVertexList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListWireZBufferRWWithBackface(color);
 	}
 
-	void TriLODNodeList::drawWireZBufferRWWithBackface(
+	void LODTriNodeList::drawWireZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
+		prepareVertexList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListWireZBufferRWWithBackface(color);
 	}
 
-	void TriLODNodeList::drawZBufferRW(
+	void LODTriNodeList::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
+		prepareVertexList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListZBufferRW(color);
 	}
 
-	void TriLODNodeList::drawZBufferRW(
+	void LODTriNodeList::drawZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
+		prepareVertexList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListZBufferRW(color);
 	}
 
-	void TriLODNodeList::drawZBufferRWWithBackface(
+	void LODTriNodeList::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
+		prepareVertexList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListZBufferRWWithBackface(color);
 	}
 
-	void TriLODNodeList::drawZBufferRWWithBackface(
+	void LODTriNodeList::drawZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat) const
 	{
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
+		prepareVertexList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListZBufferRWWithBackface(color);
 	}
 
-	void TriLODNodeList::drawGouraudZBufferRW(
+	void LODTriNodeList::drawGouraudZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
+		prepareVertexNormalList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListGouraudZBufferRW();
 	}
 
-	void TriLODNodeList::drawGouraudZBufferRW(
+	void LODTriNodeList::drawGouraudZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
+		prepareVertexNormalList(rc, rc->getCameraPosition(), mmat, mrot);
 
 		rc->drawTriangleListGouraudZBufferRW();
 	}
 
-	void TriLODNodeList::drawGouraudZBufferRWWithBackface(
+	void LODTriNodeList::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
+		prepareVertexNormalList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListGouraudZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawGouraudZBufferRWWithBackface(
+	void LODTriNodeList::drawGouraudZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
+		prepareVertexNormalList(rc, rc->getCameraPosition(), mmat, mrot);
 
 		rc->drawTriangleListGouraudZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawTextureZBufferW(
+	void LODTriNodeList::drawTextureZBufferW(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTextureZBufferW();
 	}
 
-	void TriLODNodeList::drawTextureZBufferW(
+	void LODTriNodeList::drawTextureZBufferW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTextureZBufferW();
 	}
 
-	void TriLODNodeList::drawTextureZBufferWWithBackface(
+	void LODTriNodeList::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTextureZBufferWWithBackface();
 	}
 
-	void TriLODNodeList::drawTextureZBufferWWithBackface(
+	void LODTriNodeList::drawTextureZBufferWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTextureZBufferWWithBackface();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferW(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferW();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferW(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferW();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferWWithBackface(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferWWithBackface();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferWWithBackface(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferWWithBackface();
 	}
 
-	void TriLODNodeList::drawTextureZBufferRW(
+	void LODTriNodeList::drawTextureZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTextureZBufferRW();
 	}
 
-	void TriLODNodeList::drawTextureZBufferRW(
+	void LODTriNodeList::drawTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTextureZBufferRW();
 	}
 
-	void TriLODNodeList::drawTextureZBufferRWWithBackface(
+	void LODTriNodeList::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTextureZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawTextureZBufferRWWithBackface(
+	void LODTriNodeList::drawTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTextureZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferRW(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferRW();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferRW(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferRW();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferRWWithBackface(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawTexturePerspectiveLPZBufferRWWithBackface(
+	void LODTriNodeList::drawTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat) const
 	{
-		//_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
-		//rc->clearNormalList();
-		//rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexUVList(rc, rc->getCameraPosition(), mmat);
 
 		rc->drawTriangleListTexturePerspectiveLPZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawGouraudTextureZBufferRW(
+	void LODTriNodeList::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListGouraudTextureZBufferRW();
 	}
 
-	void TriLODNodeList::drawGouraudTextureZBufferRW(
+	void LODTriNodeList::drawGouraudTextureZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition(), mmat, mrot);
 
 		rc->drawTriangleListGouraudTextureZBufferRW();
 	}
 
-	void TriLODNodeList::drawGouraudTextureZBufferRWWithBackface(
+	void LODTriNodeList::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListGouraudTextureZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawGouraudTextureZBufferRWWithBackface(
+	void LODTriNodeList::drawGouraudTextureZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition(), mmat, mrot);
 
 		rc->drawTriangleListGouraudTextureZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawGouraudTexturePerspectiveLPZBufferRW(
+	void LODTriNodeList::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListGouraudTexturePerspectiveLPZBufferRW();
 	}
 
-	void TriLODNodeList::drawGouraudTexturePerspectiveLPZBufferRW(
+	void LODTriNodeList::drawGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition(), mmat, mrot);
 
 		rc->drawTriangleListGouraudTexturePerspectiveLPZBufferRW();
 	}
 
-	void TriLODNodeList::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
+	void LODTriNodeList::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd());
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd());
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition());
 
 		rc->drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface();
 	}
 
-	void TriLODNodeList::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
+	void LODTriNodeList::drawGouraudTexturePerspectiveLPZBufferRWWithBackface(
 		t3d::RenderContext * rc,
 		const t3d::Mat4<real> & mmat,
 		const t3d::Mat4<real> & mrot) const
 	{
-		_ASSERT(getVertexListSize() == getNormalListSize());
-		_ASSERT(getVertexListSize() == getUVListSize());
-
 		rc->clearVertexList();
-		rc->pushVertexList(getVertexListBegin(), getVertexListEnd(), mmat);
-
 		rc->clearNormalList();
-		rc->pushNormalList(getNormalListBegin(), getNormalListEnd(), mrot);
-
 		rc->clearUVList();
-		rc->pushUVList(getUVListBegin(), getUVListEnd());
+		prepareVertexNormalUVList(rc, rc->getCameraPosition(), mmat, mrot);
 
 		rc->drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface();
+	}
+
+	static LODTriNodePtr buildLODTriNodeInside(
+		const t3d::Vec4<real> v0,
+		const t3d::Vec4<real> v1,
+		const t3d::Vec4<real> v2,
+		const t3d::Vec4<real> n0,
+		const t3d::Vec4<real> n1,
+		const t3d::Vec4<real> n2,
+		const t3d::Vec2<real> t0,
+		const t3d::Vec2<real> t1,
+		const t3d::Vec2<real> t2,
+		real levelDistance)
+	{
+		_ASSERT(t3d::vec3Length(t3d::vec3Sub(v0, v1)) >= t3d::vec3Length(t3d::vec3Sub(v1, v2)));
+		_ASSERT(t3d::vec3Length(t3d::vec3Sub(v0, v1)) >= t3d::vec3Length(t3d::vec3Sub(v2, v0)));
+
+		real maxLength = t3d::vec3Length(t3d::vec3Sub(v0, v1));
+
+		real minDistance = levelDistance * floor(maxLength / levelDistance);
+
+		t3d::Vec4<real> v3 = t3d::vec3Mid(v0, v1);
+		t3d::Vec4<real> n3 = t3d::vec3Mid(n0, n1);
+		t3d::Vec2<real> t3 = t3d::vec2Mid(t0, t1);
+
+		LODTriNodePtr retNode(new LODTriNode());
+		retNode->pushVertex(v0);
+		retNode->pushVertex(v1);
+		retNode->pushVertex(v2);
+		retNode->pushNormal(n0);
+		retNode->pushNormal(n1);
+		retNode->pushNormal(n2);
+		retNode->pushUV(t0);
+		retNode->pushUV(t1);
+		retNode->pushUV(t2);
+		retNode->lchild = buildLODTriNode(v0, v3, v2, n0, n3, n2, t0, t3, t2, levelDistance);
+		retNode->rchild = buildLODTriNode(v3, v1, v2, n3, n1, n2, t3, t1, t2, levelDistance);
+		retNode->minDistanceSquare = minDistance * minDistance;
+
+		return retNode;
+	}
+
+	LODTriNodePtr buildLODTriNode(
+		const t3d::Vec4<real> v0,
+		const t3d::Vec4<real> v1,
+		const t3d::Vec4<real> v2,
+		const t3d::Vec4<real> n0,
+		const t3d::Vec4<real> n1,
+		const t3d::Vec4<real> n2,
+		const t3d::Vec2<real> t0,
+		const t3d::Vec2<real> t1,
+		const t3d::Vec2<real> t2,
+		real levelDistance)
+	{
+		real len01 = t3d::vec3Length(t3d::vec3Sub(v0, v1));
+		real len12 = t3d::vec3Length(t3d::vec3Sub(v1, v2));
+		real len20 = t3d::vec3Length(t3d::vec3Sub(v2, v0));
+
+		if(len01 > len12)
+		{
+			if(len01 > len20)
+			{
+				if(len01 > levelDistance)
+				{
+					return buildLODTriNodeInside(v0, v1, v2, n0, n1, n2, t0, t1, t2, levelDistance);
+				}
+			}
+			else
+			{
+				if(len20 > levelDistance)
+				{
+					return buildLODTriNodeInside(v2, v0, v1, n2, n0, n1, t2, t0, t1, levelDistance);
+				}
+			}
+		}
+		else
+		{
+			if(len12 > len20)
+			{
+				if(len12 > levelDistance)
+				{
+					return buildLODTriNodeInside(v1, v2, v0, n1, n2, n0, t1, t2, t0, levelDistance);
+				}
+			}
+			else
+			{
+				if(len20 > levelDistance)
+				{
+					return buildLODTriNodeInside(v2, v0, v1, n2, n0, n1, t2, t0, t1, levelDistance);
+				}
+			}
+		}
+
+		LODTriNodePtr retNode(new LODTriNode());
+		retNode->pushVertex(v0);
+		retNode->pushVertex(v1);
+		retNode->pushVertex(v2);
+		retNode->pushNormal(n0);
+		retNode->pushNormal(n1);
+		retNode->pushNormal(n2);
+		retNode->pushUV(t0);
+		retNode->pushUV(t1);
+		retNode->pushUV(t2);
+		retNode->minDistanceSquare = 0;
+
+		return retNode;
+	}
+
+	BSPNodePtr buildBSPSceneWithLODTriNode(
+		const t3d::VertexList & vertexList,
+		const t3d::NormalList & normalList,
+		const t3d::UVList & uvList,
+		real levelDistance)
+	{
+		if(vertexList.empty())
+			return BSPNodePtr();
+
+		_ASSERT(vertexList.size() == normalList.size());
+		_ASSERT(vertexList.size() == uvList.size());
+		_ASSERT(0 == vertexList.size() % 3);
+
+		BSPNodePtr node(new BSPNode());
+
+		t3d::VertexList lVertexList;
+		t3d::NormalList lNormalList;
+		t3d::UVList lUVList;
+
+		t3d::VertexList rVertexList;
+		t3d::NormalList rNormalList;
+		t3d::UVList rUVList;
+
+		node->planePoint = vertexList[0];
+
+		node->planeNormal = calculateTriangleNormal(vertexList[0], vertexList[1], vertexList[2]);
+
+		LODTriNodeListPtr lodTriList(new LODTriNodeList());
+
+		for(size_t i = 0; i < vertexList.size(); i += 3)
+		{
+			if(!splitTriangleVertexNormalUV(
+				lVertexList,
+				lNormalList,
+				lUVList,
+				rVertexList,
+				rNormalList,
+				rUVList,
+				vertexList[i + 0],
+				vertexList[i + 1],
+				vertexList[i + 2],
+				normalList[i + 0],
+				normalList[i + 1],
+				normalList[i + 2],
+				uvList[i + 0],
+				uvList[i + 1],
+				uvList[i + 2],
+				node->planePoint,
+				node->planeNormal))
+			{
+				lodTriList->push_back(buildLODTriNode(
+					vertexList[i + 0],
+					vertexList[i + 1],
+					vertexList[i + 2],
+					normalList[i + 0],
+					normalList[i + 1],
+					normalList[i + 2],
+					uvList[i + 0],
+					uvList[i + 1],
+					uvList[i + 2],
+					levelDistance));
+			}
+		}
+
+		_ASSERT(!lodTriList->empty());
+
+		node->m_obj = lodTriList;
+
+		node->front = buildBSPSceneWithLODTriNode(lVertexList, lNormalList, lUVList, levelDistance);
+
+		node->back = buildBSPSceneWithLODTriNode(rVertexList, rNormalList, rUVList, levelDistance);
+
+		return node;
 	}
 }
