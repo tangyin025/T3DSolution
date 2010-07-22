@@ -1016,6 +1016,8 @@ namespace my
 
 		void runPhysics(real duration);
 	};
+
+	typedef std::tr1::shared_ptr<World> WorldPtr;
 }
 
 #endif // __MYPHYSICS_H__
