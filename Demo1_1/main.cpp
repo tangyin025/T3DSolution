@@ -43,15 +43,17 @@ public:
 		}
 
 		// create the render context according to current pixel mode
-		// NOTE: it will crash the system when user changed current desktop color
-		// bit when after this application runing
-		if(ddsd.ddpfPixelFormat.dwRBitMask == RGB16_RED_MASK
+		// NOTE: it will crash the system when user changed current desktop
+		// color depth after this application runing
+		if(ddsd.ddpfPixelFormat.dwRGBBitCount == 16
+			&& ddsd.ddpfPixelFormat.dwRBitMask == RGB16_RED_MASK
 			&& ddsd.ddpfPixelFormat.dwGBitMask == RGB16_GREEN_MASK
 			&& ddsd.ddpfPixelFormat.dwBBitMask == RGB16_BLUE_MASK)
 		{
 			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
 		}
-		else if(ddsd.ddpfPixelFormat.dwRBitMask == RGB32_RED_MASK
+		else if(ddsd.ddpfPixelFormat.dwRGBBitCount == 32
+			&& ddsd.ddpfPixelFormat.dwRBitMask == RGB32_RED_MASK
 			&& ddsd.ddpfPixelFormat.dwGBitMask == RGB32_GREEN_MASK
 			&& ddsd.ddpfPixelFormat.dwBBitMask == RGB32_BLUE_MASK)
 		{

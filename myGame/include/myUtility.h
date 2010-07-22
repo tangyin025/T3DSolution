@@ -418,35 +418,32 @@ namespace my
 	// /////////////////////////////////////////////////////////////////////////////////////
 
 	class ObjectBase
-		: public t3d::VertexListContext
-		, public t3d::NormalListContext
-		, public t3d::UVListContext
 	{
 	public:
 		ObjectBase(void);
 
 		virtual ~ObjectBase(void);
 
-	public:
-		virtual size_t getTriangleCount(void) const = 0;
+	//public:
+	//	virtual size_t getTriangleCount(void) const = 0;
 
-		virtual const t3d::Vec4<real> & getTriangleVertex0(size_t i) const = 0;
+	//	virtual const t3d::Vec4<real> & getTriangleVertex0(size_t i) const = 0;
 
-		virtual const t3d::Vec4<real> & getTriangleVertex1(size_t i) const = 0;
+	//	virtual const t3d::Vec4<real> & getTriangleVertex1(size_t i) const = 0;
 
-		virtual const t3d::Vec4<real> & getTriangleVertex2(size_t i) const = 0;
+	//	virtual const t3d::Vec4<real> & getTriangleVertex2(size_t i) const = 0;
 
-		virtual const t3d::Vec4<real> & getTriangleNormal0(size_t i) const = 0;
+	//	virtual const t3d::Vec4<real> & getTriangleNormal0(size_t i) const = 0;
 
-		virtual const t3d::Vec4<real> & getTriangleNormal1(size_t i) const = 0;
+	//	virtual const t3d::Vec4<real> & getTriangleNormal1(size_t i) const = 0;
 
-		virtual const t3d::Vec4<real> & getTriangleNormal2(size_t i) const = 0;
+	//	virtual const t3d::Vec4<real> & getTriangleNormal2(size_t i) const = 0;
 
-		virtual const t3d::Vec2<real> & getTriangleUV0(size_t i) const = 0;
+	//	virtual const t3d::Vec2<real> & getTriangleUV0(size_t i) const = 0;
 
-		virtual const t3d::Vec2<real> & getTriangleUV1(size_t i) const = 0;
+	//	virtual const t3d::Vec2<real> & getTriangleUV1(size_t i) const = 0;
 
-		virtual const t3d::Vec2<real> & getTriangleUV2(size_t i) const = 0;
+	//	virtual const t3d::Vec2<real> & getTriangleUV2(size_t i) const = 0;
 
 	public:
 		virtual void drawWireZBufferRW(
@@ -598,6 +595,9 @@ namespace my
 
 	class Object
 		: public ObjectBase
+		, public t3d::VertexListContext
+		, public t3d::NormalListContext
+		, public t3d::UVListContext
 	{
 	public:
 		Object(void);
@@ -788,7 +788,10 @@ namespace my
 
 	class IndexObject
 		: public ObjectBase
+		, public t3d::VertexListContext
 		, public t3d::VertexIndexListContext
+		, public t3d::NormalListContext
+		, public t3d::UVListContext
 	{
 	public:
 		IndexObject(void);

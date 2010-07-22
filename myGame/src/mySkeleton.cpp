@@ -90,13 +90,11 @@ namespace my
 		_ASSERT(boneNodeList[root_i].getParent() == boneAnimationNodeAt(root_i).getParent());
 		_ASSERT(boneNodeList[root_i].getChildList() == boneAnimationNodeAt(root_i).getChildList());
 
-		t3d::updateBoneNodeListFromBoneAnimationNodeList(
+		return t3d::updateBoneNodeListFromBoneAnimationNodeList(
 			boneNodeList,
 			getBoneAnimationNodeList(),
 			root_i,
 			time);
-
-		return boneNodeList;
 	}
 
 	void SkeletonAnimationNode::setNextAnimationName(const std::basic_string<char> & nextAnimationName)

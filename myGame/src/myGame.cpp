@@ -235,42 +235,35 @@ namespace my
 			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
 
+		// create pixel dependency objects
+		// NOTE: some singleton object should be re-destoryed before creating, such as m_cc
+		if(ddpf.dwRGBBitCount == 16
+			&& ddpf.dwRBitMask == RGB16_RED_MASK
+			&& ddpf.dwGBitMask == RGB16_GREEN_MASK
+			&& ddpf.dwBBitMask == RGB16_BLUE_MASK)
+		{
+			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
+			m_cc = ColorConversionPtr();
+			m_cc = ColorConversionPtr(new ColorConversion16());
+		}
+		else if(ddpf.dwRGBBitCount == 32
+			&& ddpf.dwRBitMask == RGB32_RED_MASK
+			&& ddpf.dwGBitMask == RGB32_GREEN_MASK
+			&& ddpf.dwBBitMask == RGB32_BLUE_MASK)
+		{
+			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
+			m_cc = ColorConversionPtr();
+			m_cc = ColorConversionPtr(new ColorConversion32());
+		}
+		else
+		{
+			T3D_CUSEXCEPT(_T("unsupported pixel format"));
+		}
+
 		// create screen compatible back surface
 		m_backSurface = m_ddraw->createMemorySurface(cfgWidth, cfgHeight, ddpf);
 
 		m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
-
-		// create pixel dependency objects
-		// NOTE: some singleton object should be re-destoryed before creating, such as m_cc
-		switch(ddpf.dwRGBBitCount)
-		{
-		case 16:
-			if(ddpf.dwRBitMask != RGB16_RED_MASK
-				|| ddpf.dwGBitMask != RGB16_GREEN_MASK
-				|| ddpf.dwBBitMask != RGB16_BLUE_MASK)
-			{
-				T3D_CUSEXCEPT(_T("unsupported pixel format"));
-			}
-			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
-			m_cc = ColorConversionPtr();
-			m_cc = ColorConversionPtr(new ColorConversion16());
-			break;
-
-		case 32:
-			if(ddpf.dwRBitMask != RGB32_RED_MASK
-				|| ddpf.dwGBitMask != RGB32_GREEN_MASK
-				|| ddpf.dwBBitMask != RGB32_BLUE_MASK)
-			{
-				T3D_CUSEXCEPT(_T("unsupported pixel format"));
-			}
-			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
-			m_cc = ColorConversionPtr();
-			m_cc = ColorConversionPtr(new ColorConversion32());
-			break;
-
-		default:
-			T3D_CUSEXCEPT(_T("unsupported pixel format"));
-		}
 
 		// create dinput
 		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
@@ -308,7 +301,8 @@ namespace my
 		// show main window
 		m_pwnd->showWindow();
 
-		//m_pwnd->updateWindow();
+		// update window immediately
+		m_pwnd->updateWindow();
 
 		return onInit(cfg);
 	}
