@@ -3,6 +3,7 @@
 
 #include "MyState.h"
 #include "MyUI.h"
+#include <myPhysics.h>
 
 class MyWindow
 	: public my::GameWnd
@@ -139,6 +140,7 @@ typedef std::tr1::shared_ptr<MyLoadState> MyLoadStatePtr;
 
 class MyGameState
 	: public MyFrameState
+	, public my::World
 {
 	friend class MyLoadState;
 
@@ -182,6 +184,8 @@ public:
 	void enterState(void);
 
 	void leaveState(void);
+
+	unsigned generateContacts(my::Contact * contacts, unsigned limits);
 
 	bool doFrame(void);
 };
