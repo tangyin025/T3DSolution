@@ -343,11 +343,11 @@ namespace my
 	//ObjectBasePtrList buildBoneAssignmentIndexObjectPtrListFromOgreMesh(
 	//	IOStreamPtr meshStream);
 
-	class TriLODNode;
+	class LODTriNode;
 
-	typedef std::tr1::shared_ptr<TriLODNode> TriLODNodePtr;
+	typedef std::tr1::shared_ptr<LODTriNode> LODTriNodePtr;
 
-	class TriLODNode
+	class LODTriNode
 		: public t3d::VertexListContext
 		, public t3d::NormalListContext
 		, public t3d::UVListContext
@@ -355,9 +355,9 @@ namespace my
 	public:
 		real minDistanceSquare;
 
-		TriLODNodePtr lchild;
+		LODTriNodePtr lchild;
 
-		TriLODNodePtr rchild;
+		LODTriNodePtr rchild;
 
 	public:
 		void prepareVertexList(
@@ -399,9 +399,9 @@ namespace my
 			const t3d::Mat4<real> & mrot) const;
 	};
 
-	class TriLODNodeList
-		: public std::vector<TriLODNodePtr>
-		, public ObjectBase
+	class LODTriNodeList
+		: public ObjectBase
+		, public std::vector<LODTriNodePtr>
 	{
 	public:
 		void prepareVertexList(
@@ -583,6 +583,26 @@ namespace my
 			const t3d::Mat4<real> & mmat,
 			const t3d::Mat4<real> & mrot) const;
 	};
+
+	typedef std::tr1::shared_ptr<LODTriNodeList> LODTriNodeListPtr;
+
+	LODTriNodePtr buildLODTriNode(
+		const t3d::Vec4<real> v0,
+		const t3d::Vec4<real> v1,
+		const t3d::Vec4<real> v2,
+		const t3d::Vec4<real> n0,
+		const t3d::Vec4<real> n1,
+		const t3d::Vec4<real> n2,
+		const t3d::Vec2<real> t0,
+		const t3d::Vec2<real> t1,
+		const t3d::Vec2<real> t2,
+		real levelDistance);
+
+	BSPNodePtr buildBSPSceneWithLODTriNode(
+		const t3d::VertexList & vertexList,
+		const t3d::NormalList & normalList,
+		const t3d::UVList & uvList,
+		real levelDistance);
 }
 
 #endif // __MYSCENE_H__
