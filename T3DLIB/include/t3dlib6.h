@@ -910,6 +910,14 @@ namespace t3d
 	protected:
 		CAMERA m_camera;
 
+		struct
+		{
+			Vec4<real> cameraPos;
+
+			Vec4<real> cameraDir;
+
+		} m_opt;
+
 	public:
 		static Mat4<real> buildCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq = RS_ZXY);
 
@@ -942,6 +950,10 @@ namespace t3d
 		void setCameraMatrix(const Mat4<real> & mcam)
 		{
 			m_camera.mcam = mcam;
+
+			m_opt.cameraPos = calculateCameraPosition(mcam);
+
+			m_opt.cameraDir = calculateCameraDirection(mcam);
 		}
 
 		const Mat4<real> & getCameraMatrix(void) const
@@ -989,10 +1001,15 @@ namespace t3d
 			return m_camera.viewport;
 		}
 
-		//Vec4<real> getCameraPosition(void) const
-		//{
-		//	return mat3GetRow3(getCameraMatrix().inverse());
-		//}
+		const Vec4<real> & getCameraPosition(void) const
+		{
+			return m_opt.cameraPos;
+		}
+
+		const Vec4<real> & getCameraDirection(void) const
+		{
+			return m_opt.cameraDir;
+		}
 
 		const CAMERA & getCamera(void) const
 		{

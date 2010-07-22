@@ -272,6 +272,16 @@ public:
 	*/
 	virtual bool onInit(const my::Config & cfg)
 	{
+		// 初始化的时间可能较长，在主界面通知一下
+		std::basic_string<t3d::charT> strLoad(_T("Loading ..."));
+		HDC hdc = m_pwnd->getDC();
+		COLORREF oldTextColor = ::SetTextColor(hdc, RGB(255, 255, 255));
+		COLORREF oldBkColor = ::SetBkColor(hdc, RGB(0, 0, 0));
+		::DrawText(hdc, strLoad.c_str(), strLoad.length(), (LPRECT)&m_rc->getClipperRect(), DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+		::SetBkColor(hdc, oldBkColor);
+		::SetTextColor(hdc, oldTextColor);
+		m_pwnd->releaseDC(hdc);
+
 		// 初始化模拟控制台
 		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
 
@@ -540,8 +550,10 @@ public:
 		for(; bone_index_iter != m_character_skel->getRootIndexListEnd(); bone_index_iter++)
 		{
 			// 绑定角色骨骼系统
-			const t3d::BoneNodeList & boneNodeList =
-				m_character_skel->gotoAnimation(m_character_skel->getCurrentAnimationName(), *bone_index_iter, m_character_skel->getCurrentAnimationTime() + elapsedTime);
+			const t3d::BoneNodeList & boneNodeList = m_character_skel->gotoAnimation(
+				m_character_skel->getCurrentAnimationName(),
+				*bone_index_iter,
+				m_character_skel->getCurrentAnimationTime() + elapsedTime);
 
 			// 和 banding position 叠加
 			t3d::incrementBoneNodeList(
@@ -650,7 +662,7 @@ public:
 		strTmp = str_printf(_T("fps: %.1f"), 1 / elapsedTime);
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
-		t3d::Vec4<real> camPos = t3d::CameraContext::calculateCameraPosition(m_rc->getCameraMatrix());
+		t3d::Vec4<real> camPos = m_rc->getCameraPosition();
 		strTmp = str_printf(_T("cam.pos: %f, %f, %f"),
 			camPos.x, camPos.y, camPos.z);
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
