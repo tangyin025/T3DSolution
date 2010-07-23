@@ -247,32 +247,25 @@ bool MyLoadState::doFrame(void)
 	// define render context point
 	t3d::RenderContext * rc = m_game->m_rc.get();
 
-	// clear back surface with gray color
+	// clear back surface with black color
 	rc->fillSurface(rc->getClipperRect(), my::Color::BLACK);
+
+	// general information output
+	std::basic_string<charT> strTmp;
+	if(!getExitFlag())
+	{
+		m_progressBox->m_title.setText(_T("Loading ..."));
+	}
+	else
+	{
+		m_progressBox->m_title.setText(_T("Exiting ..."));
+	}
 
 	// draw progress bar
 	{
 		my::CriticalSectionLock lock(m_progressBoxLock);
 		m_progressBox->draw(rc);
 	}
-
-	// general information output
-	std::basic_string<charT> strTmp;
-	if(!getExitFlag())
-	{
-		strTmp = _T("Loading ...");
-	}
-	else
-	{
-		strTmp = _T("Exiting ...");
-	}
-	HDC hdc = m_game->m_backSurface->getDC();
-	int bkMode = ::SetBkMode(hdc, TRANSPARENT);
-	COLORREF textColor = ::SetTextColor(hdc, RGB(255, 255, 255));
-	::DrawText(hdc, strTmp.c_str(), strTmp.length(), &m_progressBox->m_titleRect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
-	::SetTextColor(hdc, textColor);
-	::SetBkMode(hdc, bkMode);
-	m_game->m_backSurface->releaseDC(hdc);
 
 	// sleep some time to set aside cpu resource to back thread
 	::Sleep(33);
