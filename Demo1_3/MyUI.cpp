@@ -2,10 +2,6 @@
 #include "StdAfx.h"
 #include "MyUI.h"
 
-MyUIElement::MyUIElement(void)
-{
-}
-
 MyUIElement::MyUIElement(const CRect & rect)
 	: m_rect(rect)
 {
@@ -15,16 +11,45 @@ MyUIElement::~MyUIElement(void)
 {
 }
 
-MyUIProgressBar::MyUIProgressBar(void)
+MyUIBox::MyUIBox(const CRect & rect, const my::Color & color /*= my::Color(0.3f, 0.3f, 0.3f)*/)
+	: MyUIElement(rect)
+	, m_color(color)
 {
 }
 
-MyUIProgressBar::MyUIProgressBar(const CRect & rect, const my::Color & color)
-	: MyUIElement()
+void MyUIBox::draw(t3d::RenderContext * rc)
+{
+	rc->fillSurface(getRect(), getColor());
+}
+
+MyUIText::MyUIText(const CRect & rect, const std::basic_string<t3d::charT> text /*= _T("")*/, const my::Color & color /*= my::Color::WHITE*/)
+	: MyUIElement(rect)
+	, m_text(text)
+	, m_color(color)
+{
+}
+
+void MyUIText::draw(t3d::RenderContext * rc)
+{
+	my::Vec4<int> vc = t3d::real_to_int(t3d::rgbaSaturate(m_color * 255, real(255)));
+	COLORREF color = RGB(vc.x, vc.y, vc.z);
+
+	HDC hdc = my::Game::getSingleton().m_backSurface->getDC();
+	COLORREF oldColor = ::SetTextColor(hdc, color);
+	int oldMode = ::SetBkMode(hdc, TRANSPARENT);
+	::DrawText(hdc, m_text.c_str(), m_text.length(), &m_rect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+	::SetTextColor(hdc, oldColor);
+	::SetBkMode(hdc, oldMode);
+	my::Game::getSingleton().m_backSurface->releaseDC(hdc);
+
+	UNREFERENCED_PARAMETER(rc);
+}
+
+MyUIProgressBar::MyUIProgressBar(const CRect & rect, const my::Color & color /*= my::Color(0.7f, 0.7f, 0.5f))*/)
+	: MyUIElement(rect)
 	, m_color(color)
 	, m_percent(0)
 {
-	setRect(rect);
 }
 
 MyUIProgressBar::~MyUIProgressBar(void)
@@ -44,18 +69,12 @@ void MyUIProgressBar::draw(t3d::RenderContext * rc)
 	}
 }
 
-MyUIProgressBarBox::MyUIProgressBarBox(
-		const CRect & rect,
-		const my::Color & color /*= my::Color(0.3f, 0.3f, 0.3f)*/,
-		const my::Color & barColor /*= my::Color(0.7f, 0.7f, 0.5f)*/)
-	: MyUIElement(rect)
-	, m_titleRect(CRect())
-	, m_color(color)
-	, m_progressBar()
+MyUIProgressBarBox::MyUIProgressBarBox(const CRect & rect)
+	: MyUIBox(rect)
+	, m_title(CRect())
+	, m_progressBar(CRect())
 {
 	setRect(rect);
-	m_progressBar.setColor(barColor);
-	m_progressBar.setPercent(0);
 }
 
 MyUIProgressBarBox::~MyUIProgressBarBox(void)
@@ -64,17 +83,20 @@ MyUIProgressBarBox::~MyUIProgressBarBox(void)
 
 void MyUIProgressBarBox::setRect(const CRect & rect)
 {
-	MyUIElement::setRect(rect);
+	MyUIBox::setRect(rect);
 
-	m_titleRect.left = m_rect.left + SIDE_BORDER;
-	m_titleRect.right = m_rect.right - SIDE_BORDER;
-	m_titleRect.top = m_rect.top + SIDE_BORDER;
-	m_titleRect.bottom = m_titleRect.top + TITLE_HEIGHT;
+	m_title.setRect(CRect(
+		m_rect.left + SIDE_BORDER,
+		m_rect.top + SIDE_BORDER,
+		m_rect.right - SIDE_BORDER,
+		m_rect.top + SIDE_BORDER + TITLE_HEIGHT));
+
+	const CRect & titleRect = m_title.getRect();
 
 	CRect progressBarRect;
 	progressBarRect.left = m_rect.left + SIDE_BORDER;
 	progressBarRect.right = m_rect.right - SIDE_BORDER;
-	progressBarRect.top = m_titleRect.bottom + (m_rect.bottom - m_titleRect.bottom - BAR_HEIGHT) / 2;
+	progressBarRect.top = titleRect.bottom + (m_rect.bottom - titleRect.bottom - BAR_HEIGHT) / 2;
 	progressBarRect.bottom = progressBarRect.top + BAR_HEIGHT;
 
 	m_progressBar.setRect(progressBarRect);
@@ -82,7 +104,9 @@ void MyUIProgressBarBox::setRect(const CRect & rect)
 
 void MyUIProgressBarBox::draw(t3d::RenderContext * rc)
 {
-	rc->fillSurface(getRect(), getColor());
+	MyUIBox::draw(rc);
+
+	m_title.draw(rc);
 
 	m_progressBar.draw(rc);
 }
