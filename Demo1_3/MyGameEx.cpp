@@ -170,10 +170,34 @@ void MyLoadState::enterState(void)
 	int y = clipper.top + (clipper.Height() - barHeight) / 2;
 	m_progressBox = MyUIProgressBarBoxPtr(new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight))));
 
+	// gain the game state obj
+	MyGameStatePtr gameState = m_game->getState<MyGameState>(MyGameState::s_name);
+
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
+	// initial load jobs
+	pushJob(MyJobPtr(new SimpleCreateObjJob<my::FPSManager>(gameState->m_fpsMgr, 0)));
+
+	pushJob(MyJobPtr(new SimpleCreateObjJob<my::Timer>(gameState->m_timer, 0)));
+
+	pushJob(MyJobPtr(new SimpleCreateObjJob<my::Grid>(gameState->m_grid, 0)));
+
+	pushJob(MyJobPtr(new SimpleCreateObjJob<my::EulerCamera>(gameState->m_eulerCam, 1)));
+
+	pushJob(MyJobPtr(new LoadBoneAssignmentIndexObjectJob(gameState->m_obj, _T("gun.mesh.xml"))));
+
+	pushJob(MyJobPtr(new LoadObjectJob(gameState->m_lstObj, _T("gun_tri_list.mesh.xml"))));
+
+	pushJob(MyJobPtr(new LoadImageJob(gameState->m_objImg, _T("92fs_brigadier.jpg"))));
+
+	pushJob(MyJobPtr(new LoadWavJob(gameState->m_wav, _T("stationthrob.wav"), m_game->m_dsound.get())));
+
+	pushJob(MyJobPtr(new LoadMp3Job(gameState->m_mp3, _T("castle1_20.mp3"), m_game->m_dsound)));
+
+	// load & play mp3 while loading
 	m_mp3 = my::Mp3Ptr(new my::Mp3(
 		m_game->m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
+
 	m_mp3->play();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
@@ -262,81 +286,37 @@ DWORD MyLoadState::onProc(void)
 	// could not catch any exceptions which was thrown from the this thread proc
 	try
 	{
-		// gain the game state obj
-		MyGameStatePtr gameState = m_game->getState<MyGameState>(MyGameState::s_name);
-
-		// create fps manager
-		gameState->m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
-
-		// create timer
-		gameState->m_timer = my::TimerPtr(new my::Timer());
-
-		// create grid
-		gameState->m_grid = my::GridPtr(new my::Grid());
-
-		// create euler camera
-		gameState->m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
-
-		// //////////////////////////////////////////////////////////////////////////////////////////
-
-		// report the process
-		const real processCount = 6;
-		if(getExitFlag())
+		// calculate total weight
+		real totalWeight = 0;
+		MyJobList::const_iterator job_iter = getJobListBegin();
+		for(; job_iter != getJobListEnd(); job_iter++)
 		{
-			return false;
+			totalWeight += (*job_iter)->getWeight();
 		}
-		setPercent(1 / processCount);
-		::Sleep(33);
 
-		// load gun mesh
-		gameState->m_obj = my::IndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(
-			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("gun.mesh.xml"))))));
-		if(getExitFlag())
+		// do all the jobs
+		real currentWeight = 0;
+		job_iter = getJobListBegin();
+		for(; job_iter != getJobListEnd(); job_iter++)
 		{
-			return false;
+			// check exit flag
+			if(getExitFlag())
+			{
+				return false;
+			}
+
+			// do job
+			if(!(*job_iter)->doJob())
+			{
+				setExitFlag();
+				return false;
+			}
+
+			// update progress bar
+			currentWeight += (*job_iter)->getWeight();
+			setPercent(currentWeight / totalWeight);
+			::Sleep(33);
 		}
-		setPercent(2 / processCount);
-		::Sleep(33);
-
-		// load gun triangle list mesh
-		gameState->m_lstObj = my::ObjectPtr(new my::ObjectFromOgreMesh(
-			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("gun_tri_list.mesh.xml"))))));
-		if(getExitFlag())
-		{
-			return false;
-		}
-		setPercent(3 / processCount);
-		::Sleep(33);
-
-		// load gun texture
-		gameState->m_objImg = my::ColorConversion::getSingleton().convertImage(
-			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("92fs_brigadier.jpg")))));
-		if(getExitFlag())
-		{
-			return false;
-		}
-		setPercent(4 / processCount);
-		::Sleep(33);
-
-		// load wav file
-		gameState->m_wav = my::WavPtr(new my::Wav(
-			m_game->m_dsound.get(), my::ResourceMgr::getSingleton().findFileOrException(_T("stationthrob.wav"))));
-		gameState->m_ds3dbuffer = gameState->m_wav->m_dsbuffer->getDS3DBuffer();
-		gameState->m_ds3dListener = m_game->m_dsound->getPrimarySoundBuffer()->getDS3DListener();
-		if(getExitFlag())
-		{
-			return false;
-		}
-		setPercent(5 / processCount);
-		::Sleep(33);
-
-		// load mp3 file
-		gameState->m_mp3 = my::Mp3Ptr(new my::Mp3(
-			m_game->m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_20.mp3"))))));
-		setPercent(6 / processCount);
-		::Sleep(33);
-
-		// //////////////////////////////////////////////////////////////////////////////////////////
 	}
 	catch(t3d::Exception & e)
 	{
@@ -373,6 +353,11 @@ void MyGameState::enterState(void)
 	m_eulerCam->reset();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// create ds3d buffer & ds3d listener
+	m_ds3dbuffer = m_wav->m_dsbuffer->getDS3DBuffer();
+
+	m_ds3dListener = m_game->m_dsound->getPrimarySoundBuffer()->getDS3DListener();
 
 	// play the wave
 	m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
