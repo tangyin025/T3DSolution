@@ -3,6 +3,7 @@
 
 #include "MyState.h"
 #include "MyUI.h"
+#include "MyProgress.h"
 #include <myPhysics.h>
 
 class MyWindow
@@ -75,6 +76,7 @@ typedef std::tr1::shared_ptr<MyFrameState> MyStateBasePtr;
 
 class MyLoadState
 	: public MyFrameState
+	, public MyProgress
 	, public my::Thread
 {
 public:
@@ -150,6 +152,8 @@ public:
 protected:
 	MyGameEx * m_game;
 
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	my::FPSManagerPtr m_fpsMgr;
 
 	my::TimerPtr m_timer;
@@ -158,11 +162,9 @@ protected:
 
 	my::EulerCameraPtr m_eulerCam;
 
-	// //////////////////////////////////////////////////////////////////////////////////////////
+	my::BoneAssignmentIndexObjectFromOgreMeshPtr m_obj;
 
-	my::IndexObjectPtr m_obj;
-
-	my::ObjectPtr m_lstObj;
+	my::ObjectFromOgreMeshPtr m_lstObj;
 
 	my::ImagePtr m_objImg;
 
