@@ -9,7 +9,7 @@
 #include <map>
 #include <deque>
 #include <stack>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 #include "myMath.h"
 #include "myResource.h"
 #include "mySkeleton.h"
@@ -43,7 +43,7 @@ namespace my
 		real m_fps;
 	};
 
-	typedef std::tr1::shared_ptr<FPSManager> FPSManagerPtr;
+	typedef boost::shared_ptr<FPSManager> FPSManagerPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Timer
@@ -75,7 +75,7 @@ namespace my
 		LARGE_INTEGER m_lastTime;
 	};
 
-	typedef std::tr1::shared_ptr<Timer> TimerPtr;
+	typedef boost::shared_ptr<Timer> TimerPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// EulerCamera
@@ -172,7 +172,7 @@ namespace my
 		real m_movSpeed;
 	};
 
-	typedef std::tr1::shared_ptr<EulerCamera> EulerCameraPtr;
+	typedef boost::shared_ptr<EulerCamera> EulerCameraPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ConsoleSimulator
@@ -202,7 +202,7 @@ namespace my
 		virtual void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
-	typedef std::tr1::shared_ptr<ConsoleSimulator> ConsoleSimulatorPtr;
+	typedef boost::shared_ptr<ConsoleSimulator> ConsoleSimulatorPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// MenuSystem
@@ -283,7 +283,7 @@ namespace my
 
 	class MenuItemNode;
 
-	typedef std::tr1::shared_ptr<MenuItemNode> MenuItemNodePtr;
+	typedef boost::shared_ptr<MenuItemNode> MenuItemNodePtr;
 
 	class Menu
 	{
@@ -365,7 +365,7 @@ namespace my
 		void draw(t3d::DDSurface * surface, int x, int y) const;
 	};
 
-	typedef std::tr1::shared_ptr<MenuSystem> MenuSystemPtr;
+	typedef boost::shared_ptr<MenuSystem> MenuSystemPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Grid
@@ -391,7 +391,7 @@ namespace my
 			const t3d::Vec4<real> & gridColor = my::Color(0.6f, 0.6f, 0.6f));
 	};
 
-	typedef std::tr1::shared_ptr<Grid> GridPtr;
+	typedef boost::shared_ptr<Grid> GridPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Material
@@ -411,7 +411,7 @@ namespace my
 		~Material(void);
 	};
 
-	typedef std::tr1::shared_ptr<Material> MaterialPtr;
+	typedef boost::shared_ptr<Material> MaterialPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ObjectBase
@@ -587,7 +587,7 @@ namespace my
 			const t3d::Mat4<real> & mrot) const = 0;
 	};
 
-	typedef std::tr1::shared_ptr<ObjectBase> ObjectBasePtr;
+	typedef boost::shared_ptr<ObjectBase> ObjectBasePtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Object
@@ -765,7 +765,7 @@ namespace my
 			const t3d::Mat4<real> & mrot) const;
 	};
 
-	typedef std::tr1::shared_ptr<Object> ObjectPtr;
+	typedef boost::shared_ptr<Object> ObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// ObjectFromOgreMesh
@@ -780,7 +780,7 @@ namespace my
 		~ObjectFromOgreMesh(void);
 	};
 
-	typedef std::tr1::shared_ptr<ObjectFromOgreMesh> ObjectFromOgreMeshPtr;
+	typedef boost::shared_ptr<ObjectFromOgreMesh> ObjectFromOgreMeshPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// IndexObject
@@ -959,7 +959,7 @@ namespace my
 			const t3d::Mat4<real> & mrot) const;
 	};
 
-	typedef std::tr1::shared_ptr<IndexObject> IndexObjectPtr;
+	typedef boost::shared_ptr<IndexObject> IndexObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// IndexPlaneObject
@@ -1000,7 +1000,7 @@ namespace my
 		~IndexPlaneObject(void);
 	};
 
-	typedef std::tr1::shared_ptr<IndexPlaneObject> IndexPlaneObjectPtr;
+	typedef boost::shared_ptr<IndexPlaneObject> IndexPlaneObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// IndexSphereObject
@@ -1018,7 +1018,7 @@ namespace my
 		~IndexSphereObject(void);
 	};
 
-	typedef std::tr1::shared_ptr<IndexSphereObject> IndexSphereObjectPtr;
+	typedef boost::shared_ptr<IndexSphereObject> IndexSphereObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// IndexCubeObject
@@ -1039,7 +1039,7 @@ namespace my
 		~IndexCubeObject(void);
 	};
 
-	typedef std::tr1::shared_ptr<IndexCubeObject> IndexCubeObjectPtr;
+	typedef boost::shared_ptr<IndexCubeObject> IndexCubeObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// IndexConeObject
@@ -1058,7 +1058,7 @@ namespace my
 		~IndexConeObject(void);
 	};
 
-	typedef std::tr1::shared_ptr<IndexConeObject> IndexConeObjectPtr;
+	typedef boost::shared_ptr<IndexConeObject> IndexConeObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// BoneAssignmentIndexObject
@@ -1143,7 +1143,7 @@ namespace my
 			const t3d::BoneTransformList & boneTransformList);
 	};
 
-	typedef std::tr1::shared_ptr<BoneAssignmentIndexObject> BoneAssignmentIndexObjectPtr;
+	typedef boost::shared_ptr<BoneAssignmentIndexObject> BoneAssignmentIndexObjectPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// BoneAssignmentIndexObjectFromOgreMesh
@@ -1158,13 +1158,13 @@ namespace my
 		~BoneAssignmentIndexObjectFromOgreMesh(void);
 	};
 
-	typedef std::tr1::shared_ptr<BoneAssignmentIndexObjectFromOgreMesh> BoneAssignmentIndexObjectFromOgreMeshPtr;
+	typedef boost::shared_ptr<BoneAssignmentIndexObjectFromOgreMesh> BoneAssignmentIndexObjectFromOgreMeshPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// SkeletonAnimationsFromOgreSkeleton
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	//typedef std::tr1::shared_ptr<SkeletonAnimationManager> SkeletonAnimationManagerPtr;
+	//typedef boost::shared_ptr<SkeletonAnimationManager> SkeletonAnimationManagerPtr;
 
 	class SkeletonAnimationsFromOgreSkeleton : public SkeletonAnimationManager
 	{
@@ -1271,7 +1271,7 @@ namespace my
 		~SkeletonAnimationsFromOgreSkeleton(void);
 	};
 
-	typedef std::tr1::shared_ptr<SkeletonAnimationsFromOgreSkeleton> SkeletonAnimationsFromOgreSkeletonPtr;
+	typedef boost::shared_ptr<SkeletonAnimationsFromOgreSkeleton> SkeletonAnimationsFromOgreSkeletonPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// DrawnHelper

@@ -72,7 +72,7 @@ public:
 	virtual bool doFrame(void) = 0;
 };
 
-typedef std::tr1::shared_ptr<MyFrameState> MyStateBasePtr;
+typedef boost::shared_ptr<MyFrameState> MyStateBasePtr;
 
 class MyLoadState
 	: public MyFrameState
@@ -138,7 +138,7 @@ public:
 	DWORD onProc(void);
 };
 
-typedef std::tr1::shared_ptr<MyLoadState> MyLoadStatePtr;
+typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 
 class MyGameState
 	: public MyFrameState
@@ -192,4 +192,4 @@ public:
 	bool doFrame(void);
 };
 
-typedef std::tr1::shared_ptr<MyGameState> MyGameStatePtr;
+typedef boost::shared_ptr<MyGameState> MyGameStatePtr;

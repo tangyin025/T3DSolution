@@ -9,7 +9,7 @@
 #include <map>
 #include <Windows.h>
 #include <atltypes.h>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 namespace my
 {
@@ -128,7 +128,7 @@ namespace my
 		virtual void save(LPCTSTR lpAppName, LPCTSTR lpKeyName, LPCTSTR lpFileName) const = 0;
 	};
 
-	typedef std::tr1::shared_ptr<ProfileBase> ProfileBasePtr;
+	typedef boost::shared_ptr<ProfileBase> ProfileBasePtr;
 
 	class ProfileInt : public ProfileBase
 	{
@@ -327,7 +327,7 @@ namespace my
 		LRESULT sendMessage(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
 	};
 
-	typedef std::tr1::shared_ptr<Window> WindowPtr;
+	typedef boost::shared_ptr<Window> WindowPtr;
 
 	typedef std::map<HWND, WindowPtr> WindowPtrMap;
 
@@ -373,7 +373,7 @@ namespace my
 		int run(void);
 	};
 
-	typedef std::tr1::shared_ptr<Application> ApplicationPtr;
+	typedef boost::shared_ptr<Application> ApplicationPtr;
 }
 
 #endif // __MYWINDOW_H__

@@ -22,7 +22,7 @@ public:
 	virtual bool doJob(void) = 0;
 };
 
-typedef std::tr1::shared_ptr<MyJob> MyJobPtr;
+typedef boost::shared_ptr<MyJob> MyJobPtr;
 
 typedef std::vector<MyJobPtr> MyJobList;
 
@@ -56,7 +56,7 @@ template <class SIMPLE_CLASS>
 class SimpleCreateObjJob : public MyJob
 {
 protected:
-	typedef std::tr1::shared_ptr<SIMPLE_CLASS> SIMPLE_CLASS_PTR;
+	typedef boost::shared_ptr<SIMPLE_CLASS> SIMPLE_CLASS_PTR;
 
 	SIMPLE_CLASS_PTR & m_ref;
 

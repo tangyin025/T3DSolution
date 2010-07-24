@@ -6,7 +6,7 @@
 #include <string>
 #include <ddraw.h>
 #include <atlbase.h>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 #include <vector>
 
 namespace t3d
@@ -46,7 +46,7 @@ namespace t3d
 		void setClipList(LPRGNDATA lpClipList);
 	};
 
-	typedef std::tr1::shared_ptr<DDClipper> DDClipperPtr;
+	typedef boost::shared_ptr<DDClipper> DDClipperPtr;
 
 	class DDSurface
 	{
@@ -83,7 +83,7 @@ namespace t3d
 		void releaseDC(HDC hdc);
 	};
 
-	typedef std::tr1::shared_ptr<DDSurface> DDSurfacePtr;
+	typedef boost::shared_ptr<DDSurface> DDSurfacePtr;
 
 	class DDraw
 	{
@@ -130,7 +130,7 @@ namespace t3d
 		DDSurfacePtr createMemorySurface(DWORD dwWidth, DWORD dwHeight);
 	};
 
-	typedef std::tr1::shared_ptr<DDraw> DDrawPtr;
+	typedef boost::shared_ptr<DDraw> DDrawPtr;
 
 	class ZBuffer
 	{
@@ -151,7 +151,7 @@ namespace t3d
 		LONG getPitch(void);
 	};
 
-	typedef std::tr1::shared_ptr<ZBuffer> ZBufferPtr;
+	typedef boost::shared_ptr<ZBuffer> ZBufferPtr;
 }
 
 #endif // __T3DLIB1_H__

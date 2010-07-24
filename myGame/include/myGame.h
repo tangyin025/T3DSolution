@@ -13,7 +13,7 @@
 #include "myResource.h"
 #include <list>
 #include <atltypes.h>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 namespace my
 {
@@ -43,7 +43,7 @@ namespace my
 		ErrorListenerPList m_listenerList;
 	};
 
-	typedef std::tr1::shared_ptr<ErrorReporter> ErrorReporterPtr;
+	typedef boost::shared_ptr<ErrorReporter> ErrorReporterPtr;
 
 //#ifdef _DEBUG
 #define REPORT_ERROR(e) my::ErrorReporter::getSingleton().report(e);
@@ -80,7 +80,7 @@ namespace my
 		virtual my::ImagePtr convertImage(const my::ImagePtr image) = 0;
 	};
 
-	typedef std::tr1::shared_ptr<ColorConversion> ColorConversionPtr;
+	typedef boost::shared_ptr<ColorConversion> ColorConversionPtr;
 
 	class ColorConversion16 : public ColorConversion
 	{
