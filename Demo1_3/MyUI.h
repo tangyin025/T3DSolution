@@ -26,7 +26,7 @@ public:
 	virtual void draw(t3d::RenderContext * rc) = 0;
 };
 
-typedef std::tr1::shared_ptr<MyUIElement> MyUIElementPtr;
+typedef boost::shared_ptr<MyUIElement> MyUIElementPtr;
 
 class MyUIBox
 	: public MyUIElement
@@ -134,7 +134,7 @@ public:
 	void draw(t3d::RenderContext * rc);
 };
 
-typedef std::tr1::shared_ptr<MyUIProgressBar> MyUIProgressBarPtr;
+typedef boost::shared_ptr<MyUIProgressBar> MyUIProgressBarPtr;
 
 class MyUIProgressBarBox
 	: public MyUIBox
@@ -173,4 +173,4 @@ public:
 	void draw(t3d::RenderContext * rc);
 };
 
-typedef std::tr1::shared_ptr<MyUIProgressBarBox> MyUIProgressBarBoxPtr;
+typedef boost::shared_ptr<MyUIProgressBarBox> MyUIProgressBarBoxPtr;

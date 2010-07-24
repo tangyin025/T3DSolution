@@ -191,7 +191,7 @@ public:
 	}
 };
 
-typedef std::tr1::shared_ptr<MyWorld> MyWorldPtr;
+typedef boost::shared_ptr<MyWorld> MyWorldPtr;
 
 // ======================================== TODO: END   ========================================
 

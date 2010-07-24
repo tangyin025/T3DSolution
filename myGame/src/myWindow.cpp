@@ -247,14 +247,14 @@ namespace my
 	{
 		_ASSERT(end() != find(lpKeyName));
 
-		return (std::tr1::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->setValue(nValue);
+		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->setValue(nValue);
 	}
 
 	int Config::getInt(LPCTSTR lpKeyName) const
 	{
 		_ASSERT(end() != find(lpKeyName));
 
-		return (std::tr1::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->getValue();
+		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->getValue();
 	}
 
 	int Config::getIntOrDefault(LPCTSTR lpKeyName, int nDefault) const
@@ -264,7 +264,7 @@ namespace my
 		{
 			return nDefault;
 		}
-		return (std::tr1::dynamic_pointer_cast<ProfileInt, ProfileBase>(profile_iter->second))->getValue();
+		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(profile_iter->second))->getValue();
 	}
 
 	void Config::addString(LPCTSTR lpKeyName, LPCTSTR lpDefault)
@@ -278,14 +278,14 @@ namespace my
 	{
 		_ASSERT(end() != find(lpKeyName));
 
-		return (std::tr1::dynamic_pointer_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->setValue(lpValue);
+		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->setValue(lpValue);
 	}
 
 	const std::basic_string<charT> & Config::getString(LPCTSTR lpKeyName) const
 	{
 		_ASSERT(end() != find(lpKeyName));
 
-		return (std::tr1::dynamic_pointer_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->getValue();
+		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->getValue();
 	}
 
 	const std::basic_string<charT> & Config::getStringOrDefault(LPCTSTR lpKeyName, const std::basic_string<charT> & strDefault) const
@@ -295,7 +295,7 @@ namespace my
 		{
 			return strDefault;
 		}
-		return (std::tr1::dynamic_pointer_cast<ProfileString, ProfileBase>(profile_iter->second))->getValue();
+		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(profile_iter->second))->getValue();
 	}
 
 	void Config::load(LPCTSTR lpFileName)

@@ -21,7 +21,7 @@
 #pragma pop_macro("REAL_MIN")
 #pragma pop_macro("max")
 #pragma pop_macro("min")
-#include <memory>
+#include <boost/shared_ptr.hpp>
 #include <vector>
 #include "mySingleton.h"
 #include "myWindow.h"
@@ -53,7 +53,7 @@ namespace my
 		virtual void * getHandle(void) = 0;
 	};
 
-	typedef std::tr1::shared_ptr<IOStream> IOStreamPtr;
+	typedef boost::shared_ptr<IOStream> IOStreamPtr;
 
 	class FileStream : public IOStream
 	{
@@ -81,7 +81,7 @@ namespace my
 		void * getHandle(void);
 	};
 
-	typedef std::tr1::shared_ptr<FileStream> FileStreamPtr;
+	typedef boost::shared_ptr<FileStream> FileStreamPtr;
 
 	class ResourceMgr : public Singleton<ResourceMgr>
 	{
@@ -107,11 +107,11 @@ namespace my
 		std::basic_string<charT> findFileOrException(const std::basic_string<charT> & fname);
 	};
 
-	typedef std::tr1::shared_ptr<ResourceMgr> ResourceMgrPtr;
+	typedef boost::shared_ptr<ResourceMgr> ResourceMgrPtr;
 
 	class Image;
 
-	typedef std::tr1::shared_ptr<Image> ImagePtr;
+	typedef boost::shared_ptr<Image> ImagePtr;
 
 	class Image
 	{
@@ -190,7 +190,7 @@ namespace my
 		virtual ~Wav(void);
 	};
 
-	typedef std::tr1::shared_ptr<Wav> WavPtr;
+	typedef boost::shared_ptr<Wav> WavPtr;
 
 	//t3d::DSBufferPtr createDSoundBufferForWholeWav(
 	//	t3d::DSound * dsound,
@@ -268,7 +268,7 @@ namespace my
 		DWORD onProc(void);
 	};
 
-	typedef std::tr1::shared_ptr<Mp3> Mp3Ptr;
+	typedef boost::shared_ptr<Mp3> Mp3Ptr;
 }
 
 #endif // __MYRESOURCE_H__

@@ -8,7 +8,7 @@
 #include <dsound.h>
 #include <mmreg.h>
 #include <atlbase.h>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 namespace t3d
 {
@@ -31,15 +31,15 @@ namespace t3d
 
 	class DSNotify;
 
-	typedef std::tr1::shared_ptr<DSNotify> DSNotifyPtr;
+	typedef boost::shared_ptr<DSNotify> DSNotifyPtr;
 
 	class DS3DBuffer;
 
-	typedef std::tr1::shared_ptr<DS3DBuffer> DS3DBufferPtr;
+	typedef boost::shared_ptr<DS3DBuffer> DS3DBufferPtr;
 
 	class DS3DListener;
 
-	typedef std::tr1::shared_ptr<DS3DListener> DS3DListenerPtr;
+	typedef boost::shared_ptr<DS3DListener> DS3DListenerPtr;
 
 	class DSBuffer
 	{
@@ -89,7 +89,7 @@ namespace t3d
 		DS3DListenerPtr getDS3DListener(void);
 	};
 
-	typedef std::tr1::shared_ptr<DSBuffer> DSBufferPtr;
+	typedef boost::shared_ptr<DSBuffer> DSBufferPtr;
 
 	class DSNotify
 	{
@@ -196,7 +196,7 @@ namespace t3d
 		DSBufferPtr getPrimarySoundBuffer(void);
 	};
 
-	typedef std::tr1::shared_ptr<DSound> DSoundPtr;
+	typedef boost::shared_ptr<DSound> DSoundPtr;
 }
 
 #endif // __T3DLIB3_H__
