@@ -813,7 +813,7 @@ public:
 
 	LRESULT OnCombo1SelChange(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 	{
-		CWindow & combo1 = GetDlgItem(IDC_COMBO1);
+		CWindow combo1 = GetDlgItem(IDC_COMBO1);
 		int nIndex = combo1.SendMessage(CB_GETCURSEL, 0, 0);
 		_ASSERT(CB_ERR != nIndex);
 		std::basic_string<charT> strTmp;

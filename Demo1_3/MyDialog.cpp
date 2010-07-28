@@ -133,7 +133,7 @@ LRESULT MyDialog::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHand
 LRESULT MyDialog::OnCombo1SelChange(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
 	// update current selected resolution to edit box
-	CWindow & combo1 = GetDlgItem(IDC_COMBO1);
+	CWindow combo1 = GetDlgItem(IDC_COMBO1);
 	int nIndex = combo1.SendMessage(CB_GETCURSEL, 0, 0);
 	_ASSERT(CB_ERR != nIndex);
 	std::basic_string<charT> strTmp;
