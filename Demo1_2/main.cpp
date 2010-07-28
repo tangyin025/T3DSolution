@@ -274,13 +274,13 @@ public:
 	{
 		// 初始化的时间可能较长，在主界面通知一下
 		std::basic_string<t3d::charT> strLoad(_T("Loading ..."));
-		HDC hdc = m_pwnd->getDC();
+		HDC hdc = m_wnd->GetDC();
 		COLORREF oldTextColor = ::SetTextColor(hdc, RGB(255, 255, 255));
 		COLORREF oldBkColor = ::SetBkColor(hdc, RGB(0, 0, 0));
 		::DrawText(hdc, strLoad.c_str(), strLoad.length(), (LPRECT)&m_rc->getClipperRect(), DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		::SetBkColor(hdc, oldBkColor);
 		::SetTextColor(hdc, oldTextColor);
-		m_pwnd->releaseDC(hdc);
+		m_wnd->ReleaseDC(hdc);
 
 		// 初始化模拟控制台
 		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
@@ -349,8 +349,8 @@ public:
 			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png")))));
 
 		// 创建 bsp 场景
-		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
-		//m_scene_bsp = my::buildBSPSceneWithLODTriNode(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList(), 10);
+		//m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
+		m_scene_bsp = my::buildBSPSceneWithLODTriNode(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList(), 10);
 
 		// 构造物理引擎管理器
 		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
@@ -709,8 +709,11 @@ public:
 };
 
 class MyDialog
-	: public my::Dialog	// 定义一个简单的 model 对话框，用来保存设置
+	: public CDialogImpl<MyDialog, CWindow>
 {
+public:
+	enum { IDD = IDD_DIALOG1 };
+
 public:
 	MyConfig m_cfg;				// 这个用来保存用户自定义设置
 
@@ -719,115 +722,121 @@ public:
 		在这个地方已经开始了模式对话框，调用方可以通过 m_nResult 会的对话框的返回值
 	*/
 	MyDialog(const MyConfig & cfg)
-		: Dialog(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), ::GetDesktopWindow())
-		, m_cfg(cfg)
+		: m_cfg(cfg)
 	{
 	}
 
-	/** 重载 onProc 函数
-		用以初始化或保存用户在界面上的设置
-	*/
-	virtual INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	BEGIN_MSG_MAP(MyDialog)
+		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+		MESSAGE_HANDLER(WM_CLOSE, OnClose)
+		COMMAND_ID_HANDLER(IDOK, OnOK)
+		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+		COMMAND_HANDLER(IDC_COMBO1, CBN_SELCHANGE, OnCombo1SelChange)
+	END_MSG_MAP()
+
+	LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		switch(uMsg)
+		// 在这里初始界面值
+		SetWindowText(_T("User Configuration"));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("320x240")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("640x480")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1024x768")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1280x800")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1280x1024")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1366x768")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1680x1050")));
+		VERIFY(CB_ERR != GetDlgItem(IDC_COMBO1).SendMessage(CB_SELECTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
+		SendMessage(WM_COMMAND, MAKEWPARAM(IDC_COMBO1, CBN_SELCHANGE), (LPARAM)GetDlgItem(IDC_COMBO1).m_hWnd);
+		switch(m_cfg.getInt(_T("screenmode")))
 		{
-		case WM_INITDIALOG:
-			// 在这里初始界面值
-			::SetWindowText(m_hdlg, _T("User Configuration"));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("320x240")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("640x480")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1024x768")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1280x800")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1280x1024")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1366x768")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_INSERTSTRING, (WPARAM)-1, (LPARAM)_T("1680x1050")));
-			VERIFY(CB_ERR != ::SendMessage(::GetDlgItem(m_hdlg, IDC_COMBO1), CB_SELECTSTRING, (WPARAM)-1, (LPARAM)_T("800x600")));
-			::SendMessage(m_hdlg, WM_COMMAND, MAKEWPARAM(IDC_COMBO1, CBN_SELCHANGE), (LPARAM)::GetDlgItem(m_hdlg, IDC_COMBO1));
-			switch(m_cfg.getInt(_T("screenmode")))
-			{
-			case my::Game::SCREEN_MODE_FULLSCREEN16:
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO2));
-				break;
-			case my::Game::SCREEN_MODE_FULLSCREEN32:
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO3));
-				break;
-			default:
-				VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO1, IDC_RADIO3, IDC_RADIO1));
-				break;
-			}
+		case my::Game::SCREEN_MODE_FULLSCREEN16:
+			VERIFY(CheckRadioButton(IDC_RADIO1, IDC_RADIO3, IDC_RADIO2));
 			break;
-
-		case WM_COMMAND:
-			switch(HIWORD(wParam))
-			{
-			case CBN_SELCHANGE:
-				{
-					int nIndex = ::SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-					_ASSERT(CB_ERR != nIndex);
-					std::basic_string<charT> strTmp;
-					strTmp.resize(::SendMessage((HWND)lParam, CB_GETLBTEXTLEN, nIndex, 0));
-					VERIFY(CB_ERR != ::SendMessage((HWND)lParam, CB_GETLBTEXT, nIndex, (LPARAM)&strTmp[0]));
-					int nWidth, nHeight;
-					VERIFY(2 == _stscanf_s(strTmp.c_str(), _T("%dx%d"), &nWidth, &nHeight));
-					VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT1, nWidth, FALSE));
-					VERIFY(::SetDlgItemInt(m_hdlg, IDC_EDIT2, nHeight, FALSE));
-					real aspectRatio = (real)nWidth / nHeight;
-					if((real)4 / 3 == aspectRatio)
-					{
-						VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO5));
-					}
-					else if((real)16 / 9 == aspectRatio)
-					{
-						VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO6));
-					}
-					else
-					{
-						VERIFY(::CheckRadioButton(m_hdlg, IDC_RADIO4, IDC_RADIO6, IDC_RADIO4));
-					}
-				}
-				break;
-
-			default:
-				switch(LOWORD(wParam))
-				{
-				case IDOK:
-					// 在这里保存界面值
-					m_cfg.setInt(_T("width"), ::GetDlgItemInt(m_hdlg, IDC_EDIT1, NULL, FALSE));
-					m_cfg.setInt(_T("height"), ::GetDlgItemInt(m_hdlg, IDC_EDIT2, NULL, FALSE));
-					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO1))
-					{
-						m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
-					}
-					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO2))
-					{
-						m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_FULLSCREEN16);
-					}
-					else
-					{
-						_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO3));
-						m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_FULLSCREEN32);
-					}
-					if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO4))
-					{
-						m_cfg.m_aspectRatio = (real)m_cfg.getInt(_T("width")) / m_cfg.getInt(_T("height"));
-					}
-					else if(::IsDlgButtonChecked(m_hdlg, IDC_RADIO5))
-					{
-						m_cfg.m_aspectRatio = (real)4 / 3;
-					}
-					else
-					{
-						_ASSERT(::IsDlgButtonChecked(m_hdlg, IDC_RADIO6));
-						m_cfg.m_aspectRatio = (real)16 / 9;
-					}
-					break;
-				}
-				break;
-			}
+		case my::Game::SCREEN_MODE_FULLSCREEN32:
+			VERIFY(CheckRadioButton(IDC_RADIO1, IDC_RADIO3, IDC_RADIO3));
+			break;
+		default:
+			VERIFY(CheckRadioButton(IDC_RADIO1, IDC_RADIO3, IDC_RADIO1));
 			break;
 		}
-		return Dialog::onProc(hwndDlg, uMsg, wParam, lParam);
+		CenterWindow();
+		return TRUE;
+	}
+
+	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		EndDialog(IDCANCEL);
+		return 0;
+	}
+
+	LRESULT OnOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+	{
+		// 在这里保存界面值
+		m_cfg.setInt(_T("width"), GetDlgItemInt(IDC_EDIT1, NULL, FALSE));
+		m_cfg.setInt(_T("height"), GetDlgItemInt(IDC_EDIT2, NULL, FALSE));
+		if(IsDlgButtonChecked(IDC_RADIO1))
+		{
+			m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
+		}
+		else if(IsDlgButtonChecked(IDC_RADIO2))
+		{
+			m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_FULLSCREEN16);
+		}
+		else
+		{
+			_ASSERT(IsDlgButtonChecked(IDC_RADIO3));
+			m_cfg.setInt(_T("screenmode"), my::Game::SCREEN_MODE_FULLSCREEN32);
+		}
+		if(IsDlgButtonChecked(IDC_RADIO4))
+		{
+			m_cfg.m_aspectRatio = (real)m_cfg.getInt(_T("width")) / m_cfg.getInt(_T("height"));
+		}
+		else if(IsDlgButtonChecked(IDC_RADIO5))
+		{
+			m_cfg.m_aspectRatio = (real)4 / 3;
+		}
+		else
+		{
+			_ASSERT(IsDlgButtonChecked(IDC_RADIO6));
+			m_cfg.m_aspectRatio = (real)16 / 9;
+		}
+		EndDialog(wID);
+		return 0;
+	}
+
+	LRESULT OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+	{
+		EndDialog(wID);
+		return 0;
+	}
+
+	LRESULT OnCombo1SelChange(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+	{
+		CWindow & combo1 = GetDlgItem(IDC_COMBO1);
+		int nIndex = combo1.SendMessage(CB_GETCURSEL, 0, 0);
+		_ASSERT(CB_ERR != nIndex);
+		std::basic_string<charT> strTmp;
+		strTmp.resize(combo1.SendMessage(CB_GETLBTEXTLEN, nIndex, 0));
+		VERIFY(CB_ERR != combo1.SendMessage(CB_GETLBTEXT, nIndex, (LPARAM)&strTmp[0]));
+		int nWidth, nHeight;
+		VERIFY(2 == _stscanf_s(strTmp.c_str(), _T("%dx%d"), &nWidth, &nHeight));
+		VERIFY(SetDlgItemInt(IDC_EDIT1, nWidth, FALSE));
+		VERIFY(SetDlgItemInt(IDC_EDIT2, nHeight, FALSE));
+		real aspectRatio = (real)nWidth / nHeight;
+		if((real)4 / 3 == aspectRatio)
+		{
+			VERIFY(CheckRadioButton(IDC_RADIO4, IDC_RADIO6, IDC_RADIO5));
+		}
+		else if((real)16 / 9 == aspectRatio)
+		{
+			VERIFY(CheckRadioButton(IDC_RADIO4, IDC_RADIO6, IDC_RADIO6));
+		}
+		else
+		{
+			VERIFY(CheckRadioButton(IDC_RADIO4, IDC_RADIO6, IDC_RADIO4));
+		}
+		return 0;
 	}
 };
 
@@ -848,22 +857,23 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	{
 		// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
 		MyDialog dlg(MyConfig(800, 600, my::Game::SCREEN_MODE_WINDOWED, (real)800 / 600));
-		return IDOK != dlg.doModel() ? 0 : game.run(dlg.m_cfg);
+		return IDOK != dlg.DoModal() ? 0 : game.run(dlg.m_cfg);
 
 		//// 下面是可运行最简单的应用程序模型
 		//my::Application app;
-		//my::Window * pwnd = app.createWindow(_T("Hello world"));
-		//pwnd->showWindow();
-		//pwnd->updateWindow();
+		//my::WindowPtr wnd(new my::Window());
+		//wnd->Create(NULL);
+		//wnd->ShowWindow(SW_SHOW);
+		//wnd->UpdateWindow();
 		//return app.run();
 
 		//// 下面是可运行最简单的游戏框架模型
-		//return my::Game().run();
+		//return my::Game().run(my::Config());
 	}
 	catch(t3d::Exception & e)
 	{
 		// 报告异常信息
-		::MessageBox(NULL != game.m_pwnd ? game.m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+		::MessageBox(NULL != game.m_wnd ? game.m_wnd->m_hWnd : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
 		exit(1);
 	}
 }

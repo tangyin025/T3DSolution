@@ -105,12 +105,13 @@ namespace my
 	class GameWnd : public Window
 	{
 	public:
-		GameWnd(HWND hwnd);
+		BEGIN_MSG_MAP(GameWnd)
+		MESSAGE_HANDLER(WM_PAINT, OnPaint)
+		END_MSG_MAP()
 
-		~GameWnd(void);
+		LRESULT OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 
-	public:
-		LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+		void OnFinalMessage(HWND hwnd);
 	};
 
 	class Game : public Application
@@ -139,7 +140,7 @@ namespace my
 
 		ResourceMgrPtr m_resourceMgr;
 
-		Window * m_pwnd;
+		WindowPtr m_wnd;
 
 		t3d::DDrawPtr m_ddraw;
 
@@ -171,15 +172,15 @@ namespace my
 		~Game(void);
 
 	public:
-		Window * newWindow(HWND hwnd);
+		virtual WindowPtr newWindow(void);
 
-		bool prepare(const Config & cfg);
+		virtual bool prepare(const Config & cfg);
 
-		//int run(LPTSTR lpCmdLine);
+		//virtual int run(LPTSTR lpCmdLine);
 
-		int run(const Config & cfg);
+		virtual int run(const Config & cfg);
 
-		void onIdle(void);
+		virtual void onIdle(void);
 
 	public:
 		virtual bool onInit(const Config & cfg);

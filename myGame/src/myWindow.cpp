@@ -29,6 +29,11 @@ namespace my
 	{
 	}
 
+	std::basic_string<charT> WinException::what(void) const throw()
+	{
+		return GetErrorCodeStr(m_code);
+	}
+
 	CriticalSection::CriticalSection(void)
 	{
 		::InitializeCriticalSection(&m_section);
@@ -316,105 +321,100 @@ namespace my
 		}
 	}
 
-	DialogMap Dialog::s_dlgMap;
+	//DialogMap Dialog::s_dlgMap;
 
-	INT_PTR CALLBACK Dialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		if(uMsg == WM_INITDIALOG)
-		{
-			Dialog * pDialog = reinterpret_cast<Dialog *>(lParam);
+	//INT_PTR CALLBACK Dialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	//{
+	//	if(uMsg == WM_INITDIALOG)
+	//	{
+	//		Dialog * pDialog = reinterpret_cast<Dialog *>(lParam);
 
-			_ASSERT(NULL == pDialog->m_hdlg);
+	//		_ASSERT(NULL == pDialog->m_hdlg);
 
-			pDialog->m_hdlg = hwndDlg;
+	//		pDialog->m_hdlg = hwndDlg;
 
-			_ASSERT(s_dlgMap.end() == s_dlgMap.find(hwndDlg));
+	//		_ASSERT(s_dlgMap.end() == s_dlgMap.find(hwndDlg));
 
-			s_dlgMap.insert(DialogMap::value_type(hwndDlg, pDialog));
-		}
+	//		s_dlgMap.insert(DialogMap::value_type(hwndDlg, pDialog));
+	//	}
 
-		DialogMap::iterator dlgIter = s_dlgMap.find(hwndDlg);
+	//	DialogMap::iterator dlgIter = s_dlgMap.find(hwndDlg);
 
-		if(dlgIter != s_dlgMap.end())
-		{
-			return dlgIter->second->onProc(hwndDlg, uMsg, wParam, lParam);
-		}
+	//	if(dlgIter != s_dlgMap.end())
+	//	{
+	//		return dlgIter->second->onProc(hwndDlg, uMsg, wParam, lParam);
+	//	}
 
-		return FALSE;
-	}
+	//	return FALSE;
+	//}
 
-	INT_PTR Dialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		_ASSERT(m_hdlg == hwndDlg);
+	//INT_PTR Dialog::onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	//{
+	//	_ASSERT(m_hdlg == hwndDlg);
 
-		switch(uMsg)
-		{
-		case WM_NCDESTROY:
-			{
-				DialogMap::iterator dlgIter = s_dlgMap.find(m_hdlg);
+	//	switch(uMsg)
+	//	{
+	//	case WM_NCDESTROY:
+	//		{
+	//			DialogMap::iterator dlgIter = s_dlgMap.find(m_hdlg);
 
-				_ASSERT(dlgIter != s_dlgMap.end());
+	//			_ASSERT(dlgIter != s_dlgMap.end());
 
-				s_dlgMap.erase(dlgIter);
+	//			s_dlgMap.erase(dlgIter);
 
-				m_hdlg = NULL;
+	//			m_hdlg = NULL;
 
-				return FALSE;
-			}
+	//			return FALSE;
+	//		}
 
-		case WM_INITDIALOG:
-			{
-				Window(hwndDlg).centerWindow();
-				return TRUE;
-			}
+	//	case WM_INITDIALOG:
+	//		{
+	//			CWindow(hwndDlg).CenterWindow();
+	//			return TRUE;
+	//		}
 
-		case WM_COMMAND:
-			switch(LOWORD(wParam))
-			{
-			case IDOK:
-			case IDCANCEL:
-				endDialog(wParam);
-				return TRUE;
-			}
-			break;
-		}
+	//	case WM_COMMAND:
+	//		switch(LOWORD(wParam))
+	//		{
+	//		case IDOK:
+	//		case IDCANCEL:
+	//			endDialog(wParam);
+	//			return TRUE;
+	//		}
+	//		break;
+	//	}
 
-		return FALSE;
-		UNREFERENCED_PARAMETER(lParam);
-	}
+	//	return FALSE;
+	//	UNREFERENCED_PARAMETER(lParam);
+	//}
 
-	Dialog::Dialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent /*= NULL*/)
-		: m_hInstance(hInstance)
-		, m_lpTemplateName(lpTemplateName)
-		, m_hWndParent(hWndParent)
-		, m_hdlg(NULL)
-	{
-	}
+	//Dialog::Dialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent /*= NULL*/)
+	//	: m_hInstance(hInstance)
+	//	, m_lpTemplateName(lpTemplateName)
+	//	, m_hWndParent(hWndParent)
+	//	, m_hdlg(NULL)
+	//{
+	//}
 
-	Dialog::~Dialog(void)
-	{
-		//_ASSERT(NULL == m_hdlg);
-	}
+	//Dialog::~Dialog(void)
+	//{
+	//	//_ASSERT(NULL == m_hdlg);
+	//}
 
-	INT_PTR Dialog::doModel(void)
-	{
-		INT_PTR nResult = ::DialogBoxParam(
-			m_hInstance, m_lpTemplateName, m_hWndParent, my::Dialog::DialogProc, (LPARAM)this);
+	//INT_PTR Dialog::doModel(void)
+	//{
+	//	INT_PTR nResult = ::DialogBoxParam(
+	//		m_hInstance, m_lpTemplateName, m_hWndParent, my::Dialog::DialogProc, (LPARAM)this);
 
-		return nResult;
-	}
+	//	return nResult;
+	//}
 
-	void Dialog::endDialog(INT_PTR nResult)
-	{
-		_ASSERT(NULL != m_hdlg);
+	//void Dialog::endDialog(INT_PTR nResult)
+	//{
+	//	_ASSERT(NULL != m_hdlg);
 
-		VERIFY(EndDialog(m_hdlg, nResult));
-	}
-
-	std::basic_string<charT> WinException::what(void) const throw()
-	{
-		return GetErrorCodeStr(m_code);
-	}
+	//	VERIFY(EndDialog(m_hdlg, nResult));
+	//}
 
 	std::basic_string<charT> Window::getWindowMessageStr(UINT message)
 	{
@@ -947,299 +947,44 @@ namespace my
 		return std::basic_string<charT>(_T("unknown window message"));
 	}
 
-	BOOL Window::isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle)
+	LONG Window::SetStyle(LONG dwStyle)
 	{
-		WNDCLASSEX wcex;
-		return ::GetClassInfoEx(moduleHandle, winClass.c_str(), &wcex);
+		return SetWindowLong(GWL_STYLE, dwStyle);
 	}
 
-	void Window::registerWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle)
+	LONG Window::SetExStyle(LONG dwExStyle)
 	{
-		WNDCLASSEX wcex;
-		wcex.cbSize = sizeof(wcex);
-		wcex.style = CS_CLASSDC;
-		wcex.lpfnWndProc = Application::WindowProc;
-		wcex.cbClsExtra = 0;
-		wcex.cbWndExtra = 0;
-		wcex.hInstance = moduleHandle;
-		wcex.hIcon = ::LoadIcon(NULL, IDI_APPLICATION);
-		wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW),
-		wcex.hbrBackground = NULL;
-		wcex.lpszMenuName = NULL;
-		wcex.lpszClassName = winClass.c_str();
-		wcex.hIconSm = ::LoadIcon(NULL, IDI_APPLICATION);
-
-		if(NULL == ::RegisterClassEx(&wcex))
-		{
-			T3D_WINEXCEPT(::GetLastError());
-		}
+		return SetWindowLong(GWL_EXSTYLE, dwExStyle);
 	}
 
-	Window::Window(HWND hwnd)
-		: m_hwnd(hwnd)
+	BOOL Window::AdjustClientRect(const CRect & rect)
 	{
-		_ASSERT(NULL != m_hwnd);
-	}
+		CRect retRect(rect);
+		if(!::AdjustWindowRectEx(&retRect, GetStyle(), NULL != GetMenu(), GetExStyle()))
+			return FALSE;
 
-	Window::~Window(void)
-	{
-		//_ASSERT(NULL == m_hwnd);
-	}
-
-	LRESULT Window::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
-	{
-		_ASSERT(hwnd == m_hwnd);
-
-		switch(message)
-		{
-		case WM_NCDESTROY:
-			{
-				WindowPtrMap & wndMap = Application::getSingleton().m_wndMap;
-
-				WindowPtrMap::iterator wndIter = wndMap.find(hwnd);
-
-				_ASSERT(wndIter != wndMap.end());
-
-				m_hwnd = NULL; // *** must be accessed before destructor
-
-				wndMap.erase(wndIter);
-
-				if(wndMap.empty())
-				{
-					::PostQuitMessage(0);
-				}
-
-				return 0;
-			}
-		}
-
-		return ::DefWindowProc(hwnd, message, wparam, lparam);
-	}
-
-	HWND Window::getHandle(void) const
-	{
-		return m_hwnd;
-	}
-
-	void Window::showWindow(int nShow /*= SW_NORMAL*/)
-	{
-		::ShowWindow(m_hwnd, nShow);
-	}
-
-	void Window::updateWindow(void)
-	{
-		VERIFY(::UpdateWindow(m_hwnd));
-	}
-
-	std::basic_string<charT> Window::getWindowText(void) const
-	{
-		std::basic_string<charT> ret;
-		ret.resize(MAX_PATH);
-		ret.resize(::GetWindowText(m_hwnd, &ret[0], ret.size()));
-
-		return ret;
-	}
-
-	void Window::setWindowText(const std::basic_string<charT> winTitle)
-	{
-		VERIFY(::SetWindowText(m_hwnd, winTitle.c_str()));
-	}
-
-	DWORD Window::getWindowStyle(void) const
-	{
-		return ::GetWindowLong(m_hwnd, GWL_STYLE);
-	}
-
-	void Window::setWindowStyle(DWORD dwStyle)
-	{
-		::SetWindowLong(m_hwnd, GWL_STYLE, (LONG)dwStyle);
-
-		//VERIFY(NULL != ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER));
-	}
-
-	DWORD Window::getWindowExStyle(void) const
-	{
-		return ::GetWindowLong(m_hwnd, GWL_EXSTYLE);
-	}
-
-	void Window::setWindowExtansionStyle(DWORD dwExStyle)
-	{
-		::SetWindowLong(m_hwnd, GWL_EXSTYLE, (LONG)dwExStyle);
-
-		//VERIFY(NULL != ::SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER));
-	}
-
-	CRect Window::getWindowRect(void) const
-	{
-		CRect rect;
-		VERIFY(::GetWindowRect(m_hwnd, &rect));
-		return rect;
-	}
-
-	void Window::setWindowRect(const CRect & rect)
-	{
-		VERIFY(::SetWindowPos(m_hwnd, HWND_TOP, rect.left, rect.top, rect.Width(), rect.Height(), 0));
-	}
-
-	CRect Window::getClientRect(void) const
-	{
-		CRect rect;
-		VERIFY(::GetClientRect(m_hwnd, &rect));
-		return rect;
-	}
-
-	void Window::adjustClientRect(const CRect & rect)
-	{
-		CRect adjustRect = rect;
-		VERIFY(::AdjustWindowRectEx(&adjustRect, getWindowStyle(), NULL != ::GetMenu(m_hwnd), getWindowExStyle()));
-		setWindowRect(adjustRect);
-	}
-
-	CRect & Window::screenToClientSelf(CRect & rect)
-	{
-		VERIFY(::ScreenToClient(m_hwnd, &rect.TopLeft()));
-		VERIFY(::ScreenToClient(m_hwnd, &rect.BottomRight()));
-		return rect;
-	}
-
-	CRect & Window::clientToScreenSelf(CRect & rect)
-	{
-		VERIFY(::ClientToScreen(m_hwnd, &rect.TopLeft()));
-		VERIFY(::ClientToScreen(m_hwnd, &rect.BottomRight()));
-		return rect;
-	}
-
-	void Window::setWindowPos(HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags)
-	{
-		VERIFY(NULL != ::SetWindowPos(m_hwnd, hWndInsertAfter, x, y, cx, cy, uFlags));
-	}
-
-	void Window::centerWindow(void)
-	{
-		HWND hWndParent = ::GetParent(getHandle());
-		if(NULL == hWndParent)
-		{
-			hWndParent = ::GetDesktopWindow();
-		}
-
-		CRect parentRect;
-		VERIFY(::GetWindowRect(hWndParent, &parentRect));
-
-		CRect windowRect = getWindowRect();
-		int x = ((parentRect.Width()) - (windowRect.Width())) / 2;
-		int y = ((parentRect.Height()) - (windowRect.Height())) / 2;
-
-		setWindowPos(NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	}
-
-	void Window::destroyWindow(void)
-	{
-		::DestroyWindow(m_hwnd);
-	}
-
-	HDC Window::getDC(void)
-	{
-		return ::GetDC(m_hwnd);
-	}
-
-	void Window::releaseDC(HDC hdc)
-	{
-		VERIFY(1 == ::ReleaseDC(m_hwnd, hdc));
-	}
-
-	void Window::InvalidateRect(CONST RECT * lpRect /*= NULL*/, BOOL bErase /*= FALSE*/)
-	{
-		VERIFY(::InvalidateRect(m_hwnd, lpRect, bErase));
-	}
-
-	void Window::postMessage(UINT Msg, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-	{
-		VERIFY(::PostMessage(m_hwnd, Msg, wParam, lParam));
-	}
-
-	LRESULT Window::sendMessage(UINT Msg, WPARAM wParam /*= 0*/, LPARAM lParam /*= 0*/)
-	{
-		return ::SendMessage(m_hwnd, Msg, wParam, lParam);
+		return SetWindowPos(NULL, &retRect, 0);
 	}
 
 	Application * Application::s_ptr = NULL;
 
-	LRESULT CALLBACK Application::WindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
-	{
-		if(NULL != s_ptr)
-		{
-			WindowPtrMap & wndMap = getSingleton().m_wndMap;
-
-			if(WM_CREATE == message)
-			{
-				_ASSERT(wndMap.end() == wndMap.find(hwnd));
-
-				wndMap.insert(WindowPtrMap::value_type(hwnd, WindowPtr(getSingleton().newWindow(hwnd))));
-			}
-
-			WindowPtrMap::iterator iter = wndMap.find(hwnd);
-
-			if(iter != wndMap.end())
-			{
-				return iter->second->onProc(hwnd, message, wparam, lparam);
-			}
-		}
-		return ::DefWindowProc(hwnd, message, wparam, lparam);
-	}
-
-	Application::Application(HINSTANCE hInstance /*= NULL*/)
+	Application::Application(HINSTANCE hInstance /*= ::GetModuleHandle(NULL)*/)
 		: m_hinst(hInstance)
 	{
 		//_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
-		if(NULL == m_hinst)
-		{
-			m_hinst = ::GetModuleHandle(NULL);
-		}
-
 		_ASSERT(NULL != m_hinst);
+
+		_ASSERT(NULL == s_ptr);
 
 		s_ptr = this;
 	}
 
 	Application::~Application(void)
 	{
-		//while(!m_wndMap.empty())
-		//{
-		//	m_wndMap.begin()->second->destroyWindow();
-		//}
+		_ASSERT(NULL != s_ptr);
 
 		s_ptr = NULL;
-	}
-
-	Window * Application::newWindow(HWND hwnd)
-	{
-		return new Window(hwnd);
-	}
-
-	void Application::onIdle(void)
-	{
-		::WaitMessage();
-	}
-
-	Window * Application::createWindow(const std::basic_string<charT> winTitle, const std::basic_string<charT> winClass)
-	{
-		if(!Window::isRegisteredWindowClass(winClass, getHandle()))
-		{
-			Window::registerWindowClass(winClass, getHandle());
-		}
-
-		HWND hwnd = ::CreateWindowEx(
-			0, winClass.c_str(), winTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, getHandle(), NULL);
-
-		if(NULL == hwnd)
-		{
-			return NULL;
-		}
-
-		_ASSERT(m_wndMap.end() != m_wndMap.find(hwnd));
-
-		return m_wndMap[hwnd].get();
 	}
 
 	HINSTANCE Application::getHandle(void) const
@@ -1258,8 +1003,8 @@ namespace my
 
 	int Application::run(void)
 	{
-		MSG msg = {0};
-
+		MSG msg;
+		msg.message = WM_NULL;
 		while(WM_QUIT != msg.message)
 		{
 			if(::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -1274,5 +1019,10 @@ namespace my
 		}
 
 		return (int)msg.wParam;
+	}
+
+	void Application::onIdle(void)
+	{
+		::WaitMessage();
 	}
 }

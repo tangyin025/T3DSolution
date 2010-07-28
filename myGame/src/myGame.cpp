@@ -107,54 +107,40 @@ namespace my
 		return image->convertTo32Bits();
 	}
 
-	GameWnd::GameWnd(HWND hwnd)
-		: Window(hwnd)
+	LRESULT GameWnd::OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 	{
+		// obtain global application object
+		Game * game = dynamic_cast<Game *>(Application::getSingletonPtr());
+
+		// back surface must be created
+		_ASSERT(NULL != game->m_backSurface);
+
+		// update the attached back surface to client area
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(&ps);
+		HDC hdcSrc = game->m_backSurface->getDC();
+		BitBlt(
+			hdc,
+			game->m_backSurfaceRect.left,
+			game->m_backSurfaceRect.top,
+			game->m_backSurfaceRect.Width(),
+			game->m_backSurfaceRect.Height(),
+			hdcSrc,
+			0,
+			0,
+			SRCCOPY);
+		game->m_backSurface->releaseDC(hdcSrc);
+		EndPaint(&ps);
+
+		return 0;
 	}
 
-	GameWnd::~GameWnd(void)
+	void GameWnd::OnFinalMessage(HWND hwnd)
 	{
-	}
-
-	LRESULT GameWnd::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
-	{
-		_ASSERT(hwnd == m_hwnd);
-
-		switch(message)
-		{
-		case WM_PAINT:
-			{
-				// obtain global application object
-				Game * game = dynamic_cast<Game *>(Application::getSingletonPtr());
-
-				// back surface must be created
-				_ASSERT(NULL != game->m_backSurface);
-
-				// update the attached back surface to client area
-				PAINTSTRUCT ps;
-				HDC hdc = BeginPaint(hwnd, &ps);
-				HDC hdcSrc = game->m_backSurface->getDC();
-				BitBlt(
-					hdc,
-					game->m_backSurfaceRect.left,
-					game->m_backSurfaceRect.top,
-					game->m_backSurfaceRect.Width(),
-					game->m_backSurfaceRect.Height(),
-					hdcSrc,
-					0,
-					0,
-					SRCCOPY);
-				game->m_backSurface->releaseDC(hdcSrc);
-				EndPaint(hwnd, &ps);
-				return 0;
-			}
-		}
-
-		return Window::onProc(hwnd, message, wparam, lparam);
+		::PostQuitMessage(0);
 	}
 
 	Game::Game(void)
-		: m_pwnd(NULL)
 	{
 	}
 
@@ -162,30 +148,26 @@ namespace my
 	{
 	}
 
-	Window * Game::newWindow(HWND hwnd)
+	WindowPtr Game::newWindow(void)
 	{
-		return new GameWnd(hwnd);
+		return WindowPtr(new GameWnd());
 	}
 
 	bool Game::prepare(const Config & cfg)
 	{
 		// create main window
-		m_pwnd = createWindow(getModuleFileName());
+		m_wnd = newWindow();
+		m_wnd->Create(NULL, Window::rcDefault, getModuleFileName().c_str());
+
+		// create ddraw object
+		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
+
+		m_ddraw->setCooperativeLevel(m_wnd->m_hWnd, t3d::DDraw::CL_NORMAL);
 
 		// predefine config values
 		const int cfgWidth = cfg.getIntOrDefault(_T("width"), 800);
 		const int cfgHeight = cfg.getIntOrDefault(_T("height"), 600);
 		const int cfgScreenmode = cfg.getIntOrDefault(_T("screenmode"), SCREEN_MODE_WINDOWED);
-
-		if(NULL == m_pwnd)
-		{
-			return false;
-		}
-
-		// create ddraw object
-		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
-
-		m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
 
 		// set back surface rect
 		m_backSurfaceRect.SetRect(0, 0, cfgWidth, cfgHeight);
@@ -194,26 +176,26 @@ namespace my
 		switch(cfgScreenmode)
 		{
 		case SCREEN_MODE_WINDOWED:
-			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_NORMAL);
-			m_pwnd->setWindowStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
-			m_pwnd->adjustClientRect(m_backSurfaceRect);
-			m_pwnd->centerWindow();
+			m_ddraw->setCooperativeLevel(m_wnd->m_hWnd, t3d::DDraw::CL_NORMAL);
+			m_wnd->SetStyle(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU);
+			VERIFY(m_wnd->AdjustClientRect(m_backSurfaceRect));
+			VERIFY(m_wnd->CenterWindow());
 			break;
 
 		case SCREEN_MODE_FULLSCREEN16:
-			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
+			m_ddraw->setCooperativeLevel(m_wnd->m_hWnd, t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfgWidth, cfgHeight, 16);
-			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->adjustClientRect(m_backSurfaceRect);
-			m_pwnd->InvalidateRect(NULL);
+			m_wnd->SetStyle(WS_POPUP | WS_VISIBLE);
+			VERIFY(m_wnd->AdjustClientRect(m_backSurfaceRect));
+			VERIFY(m_wnd->InvalidateRect(NULL));
 			break;
 
 		case SCREEN_MODE_FULLSCREEN32:
-			m_ddraw->setCooperativeLevel(m_pwnd->getHandle(), t3d::DDraw::CL_EXCLUSIVE);
+			m_ddraw->setCooperativeLevel(m_wnd->m_hWnd, t3d::DDraw::CL_EXCLUSIVE);
 			m_ddraw->setDisplayMode(cfgWidth, cfgHeight, 32);
-			m_pwnd->setWindowStyle(WS_POPUP | WS_VISIBLE);
-			m_pwnd->adjustClientRect(m_backSurfaceRect);
-			m_pwnd->InvalidateRect(NULL);
+			m_wnd->SetStyle(WS_POPUP | WS_VISIBLE);
+			VERIFY(m_wnd->AdjustClientRect(m_backSurfaceRect));
+			VERIFY(m_wnd->InvalidateRect(NULL));
 			break;
 
 		default:
@@ -226,7 +208,7 @@ namespace my
 		//// create primary surface
 		//m_primSurface = m_ddraw->createWindowSurface();
 
-		//m_primSurface->setClipper(m_ddraw->createWindowClipper(m_pwnd->getHandle()).get());
+		//m_primSurface->setClipper(m_ddraw->createWindowClipper(m_wnd->m_hWnd).get());
 
 		//DDPIXELFORMAT ddpf = m_primSurface->getPixelFormat();
 		DDPIXELFORMAT ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
@@ -271,17 +253,17 @@ namespace my
 		// create sys keyboard
 		m_keyboard = m_dinput->createSysKeyboard();
 
-		m_keyboard->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+		m_keyboard->setCooperativeLevel(m_wnd->m_hWnd, t3d::DIDevice::CL_NORMAL);
 
 		// create sys mouse
 		m_mouse = m_dinput->createSysMouse();
 
-		m_mouse->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
+		m_mouse->setCooperativeLevel(m_wnd->m_hWnd, t3d::DIDevice::CL_NORMAL);
 
 		// create dsound
 		m_dsound = t3d::DSoundPtr(new t3d::DSound());
 
-		m_dsound->setCooperativeLevel(m_pwnd->getHandle(), t3d::DSound::CL_PRIORITY);
+		m_dsound->setCooperativeLevel(m_wnd->m_hWnd, t3d::DSound::CL_PRIORITY);
 
 		// create zbuffer
 		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfgWidth, cfgHeight));
@@ -299,10 +281,10 @@ namespace my
 		m_rc->setClipperRect(m_backSurfaceRect);
 
 		// show main window
-		m_pwnd->showWindow();
+		m_wnd->ShowWindow(SW_SHOW);
 
 		// update window immediately
-		m_pwnd->updateWindow();
+		m_wnd->UpdateWindow();
 
 		return onInit(cfg);
 	}
@@ -365,19 +347,19 @@ namespace my
 		if(!onFrame())
 		{
 			// destroy window
-			m_pwnd->destroyWindow();
+			VERIFY(m_wnd->DestroyWindow());
 
-			m_pwnd = NULL;
 			return;
 		}
 
 		// swap the backup and primary surface
-		m_pwnd->InvalidateRect(&m_rc->getClipperRect(), FALSE);
+		VERIFY(m_wnd->InvalidateRect(&m_rc->getClipperRect(), FALSE));
 	}
 
 	bool Game::onInit(const Config & cfg)
 	{
 		return true;
+
 		UNREFERENCED_PARAMETER(cfg);
 	}
 
