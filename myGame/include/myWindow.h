@@ -9,6 +9,7 @@
 #include <map>
 #include <Windows.h>
 #include <atltypes.h>
+#include <atlwin.h>
 #include <boost/shared_ptr.hpp>
 
 namespace my
@@ -222,114 +223,60 @@ namespace my
 		void save(LPCTSTR lpFileName) const;
 	};
 
-	class Dialog;
+	//class Dialog;
 
-	typedef std::map<HWND, Dialog *> DialogMap;
+	//typedef std::map<HWND, Dialog *> DialogMap;
 
-	class Dialog
-	{
-	public:
-		static DialogMap s_dlgMap;
+	//class Dialog
+	//{
+	//public:
+	//	static DialogMap s_dlgMap;
 
-		static INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	//	static INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	public:
-		HINSTANCE m_hInstance;
+	//public:
+	//	HINSTANCE m_hInstance;
 
-		LPCTSTR m_lpTemplateName;
+	//	LPCTSTR m_lpTemplateName;
 
-		HWND m_hWndParent;
+	//	HWND m_hWndParent;
 
-		HWND m_hdlg;
+	//	HWND m_hdlg;
 
-	public:
-		virtual INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	//public:
+	//	virtual INT_PTR onProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	public:
-		Dialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent = NULL);
+	//public:
+	//	Dialog(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent = NULL);
 
-		~Dialog(void);
+	//	~Dialog(void);
 
-		INT_PTR doModel(void);
+	//	INT_PTR doModel(void);
 
-		void endDialog(INT_PTR nResult);
-	};
-
-	class Application;
+	//	void endDialog(INT_PTR nResult);
+	//};
 
 	class Window
+		: public CWindowImpl<Window, CWindow, CWinTraits<WS_OVERLAPPEDWINDOW, 0> >
 	{
-		friend Application;
-
 	public:
 		static std::basic_string<charT> getWindowMessageStr(UINT message);
 
-		static BOOL isRegisteredWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
+	public:
+		LONG SetStyle(LONG dwStyle);
 
-		static void registerWindowClass(const std::basic_string<charT> winClass, HINSTANCE moduleHandle);
+		LONG SetExStyle(LONG dwExStyle);
 
-	protected:
-		HWND m_hwnd;
+		BOOL AdjustClientRect(const CRect & rect);
 
 	public:
-		Window(HWND hwnd);
+		DECLARE_WND_CLASS_EX(GetWndClassName(), CS_HREDRAW | CS_VREDRAW, -1)
 
-		virtual ~Window(void);
-
-	public:
-		virtual LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-
-	public:
-		HWND getHandle(void) const;
-
-		void showWindow(int nShow = SW_NORMAL);
-
-		void updateWindow(void);
-
-		std::basic_string<charT> getWindowText(void) const;
-
-		void setWindowText(const std::basic_string<charT> winTitle);
-
-		DWORD getWindowStyle(void) const;
-
-		void setWindowStyle(DWORD dwStyle);
-
-		DWORD getWindowExStyle(void) const;
-
-		void setWindowExtansionStyle(DWORD dwExStyle);
-
-		CRect getWindowRect(void) const;
-
-		void setWindowRect(const CRect & rect);
-
-		CRect getClientRect(void) const;
-
-		void adjustClientRect(const CRect & rect);
-
-		CRect & screenToClientSelf(CRect & rect);
-
-		CRect & clientToScreenSelf(CRect & rect);
-
-		void setWindowPos(HWND hWndInsertAfter, int x, int y, int cx, int cy, UINT uFlags);
-
-		void centerWindow(void);
-
-		void destroyWindow(void);
-
-		HDC getDC(void);
-
-		void releaseDC(HDC hdc);
-
-		void InvalidateRect(CONST RECT * lpRect = NULL, BOOL bErase = FALSE);
-
-		void postMessage(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
-
-		LRESULT sendMessage(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
+		BEGIN_MSG_MAP(Window)
+		END_MSG_MAP()
 	};
 
 	typedef boost::shared_ptr<Window> WindowPtr;
-
-	typedef std::map<HWND, WindowPtr> WindowPtrMap;
 
 	class Application
 	{
@@ -346,31 +293,24 @@ namespace my
 			return * getSingletonPtr();
 		}
 
-		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-
 	public:
-		WindowPtrMap m_wndMap;
+		WindowPtr m_wnd;
 
 		HINSTANCE m_hinst;
 
 	public:
-		Application(HINSTANCE hInstance = NULL);
+		Application(HINSTANCE hInstance = ::GetModuleHandle(NULL));
 
 		virtual ~Application(void);
-
-	public:
-		virtual Window * newWindow(HWND hwnd);
-
-		virtual void onIdle(void);
-
-	public:
-		Window * createWindow(const std::basic_string<charT> winTitle, const std::basic_string<charT> winClass = _T("MY_WINDOW"));
 
 		HINSTANCE getHandle(void) const;
 
 		std::basic_string<charT> getModuleFileName(void) const;
 
 		int run(void);
+
+	public:
+		virtual void onIdle(void);
 	};
 
 	typedef boost::shared_ptr<Application> ApplicationPtr;

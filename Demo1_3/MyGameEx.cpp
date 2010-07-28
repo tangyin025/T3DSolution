@@ -2,58 +2,47 @@
 #include "StdAfx.h"
 #include "MyGameEx.h"
 
-MyWindow::MyWindow(HWND hwnd)
-	: GameWnd(hwnd)
+LRESULT MyWindow::OnClose(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 {
-}
-
-MyWindow::~MyWindow(void)
-{
-}
-
-LRESULT MyWindow::onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
-	switch(message)
+	// for load state, there must be waiting for another thread to prepare for quiting
+	if(MyGame::getSingleton().getCurrentStateName() == MyLoadState::s_name)
 	{
-	case WM_CLOSE:
-		if(MyGameEx::getSingleton().getCurrentStateName() == MyLoadState::s_name)
+		MyLoadStatePtr loadState = MyGame::getSingleton().getCurrentState<MyLoadState>();
+		if(!loadState->getExitFlag())
 		{
-			// for load state, there must be waiting for another thread to prepare for quiting
-			MyLoadStatePtr loadState = MyGameEx::getSingleton().getCurrentState<MyLoadState>();
-			if(!loadState->getExitFlag())
-			{
-				loadState->setExitFlag();
-			}
+			loadState->setExitFlag();
 			return 0;
 		}
-		break;
-
-	case WM_USER + 0:
-		{
-			// handle the exception thrown from the load state thread
-			t3d::Exception * e = reinterpret_cast<t3d::Exception *>(wparam);
-			_ASSERT(NULL != e);
-			::MessageBox(getHandle(), e->getFullDesc().c_str(), _T("Exception"), MB_OK);
-		}
-		break;
 	}
-	return GameWnd::onProc(hwnd, message, wparam, lparam);
+
+	bHandled = FALSE;
+	return 0;
 }
 
-MyGameEx::MyGameEx(void)
+LRESULT MyWindow::OnUser0(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+{
+	// handle the exception thrown from the load state thread
+	t3d::Exception * e = reinterpret_cast<t3d::Exception *>(wParam);
+	_ASSERT(NULL != e);
+	MessageBox(e->getFullDesc().c_str(), _T("Exception"), MB_OK);
+
+	return 0;
+}
+
+MyGame::MyGame(void)
 {
 }
 
-MyGameEx::~MyGameEx(void)
+MyGame::~MyGame(void)
 {
 }
 
-my::Window * MyGameEx::newWindow(HWND hwnd)
+my::WindowPtr MyGame::newWindow(void)
 {
-	return new MyWindow(hwnd);
+	return my::WindowPtr(new MyWindow());
 }
 
-bool MyGameEx::onInit(const my::Config & cfg)
+bool MyGame::onInit(const my::Config & cfg)
 {
 	// predefine config values
 	const int cfgWidth = m_rc->getSurfaceWidth();
@@ -110,10 +99,10 @@ bool MyGameEx::onInit(const my::Config & cfg)
 	m_rc->setClipperRect(clipper);
 
 	// create and add load state
-	addState(MyLoadState::s_name, MyLoadStatePtr(new MyLoadState(this)));
+	addState(MyLoadState::s_name, MyLoadStatePtr(new MyLoadState()));
 
 	// create and add game state
-	addState(MyGameState::s_name, MyGameStatePtr(new MyGameState(this)));
+	addState(MyGameState::s_name, MyGameStatePtr(new MyGameState()));
 
 	// set current state to load state
 	setCurrentState(MyLoadState::s_name);
@@ -122,7 +111,7 @@ bool MyGameEx::onInit(const my::Config & cfg)
 	return my::Game::onInit(cfg);
 }
 
-bool MyGameEx::onFrame(void)
+bool MyGame::onFrame(void)
 {
 	// get current state and do frame
 	if(!getCurrentState<MyFrameState>()->doFrame())
@@ -134,7 +123,7 @@ bool MyGameEx::onFrame(void)
 	return my::Game::onFrame();
 }
 
-void MyGameEx::onShutdown(void)
+void MyGame::onShutdown(void)
 {
 	// get current state and do leaveState
 	getCurrentState<MyState>()->leaveState();
@@ -150,9 +139,8 @@ MyFrameState::~MyFrameState(void)
 
 const std::basic_string<charT> MyLoadState::s_name(_T("MyLoadState"));
 
-MyLoadState::MyLoadState(MyGameEx * game)
-	: m_game(game)
-	, m_exitFlag(false)
+MyLoadState::MyLoadState(void)
+	: m_exitFlag(false)
 {
 }
 
@@ -165,15 +153,15 @@ void MyLoadState::enterState(void)
 	// initial progress box
 	int barWidth = 250;
 	int barHeight = 60;
-	CRect clipper = m_game->m_rc->getClipperRect();
+	CRect clipper = MyGame::getSingleton().m_rc->getClipperRect();
 	int x = clipper.left + (clipper.Width() - barWidth) / 2;
 	int y = clipper.top + (clipper.Height() - barHeight) / 2;
 	m_progressBox = MyUIProgressBarBoxPtr(new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight))));
 
-	// gain the game state obj
-	MyGameStatePtr gameState = m_game->getState<MyGameState>(MyGameState::s_name);
-
 	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// gain the game state obj
+	MyGameStatePtr gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name);
 
 	// initial load jobs
 	pushJob(MyJobPtr(new SimpleCreateObjJob<my::FPSManager>(gameState->m_fpsMgr, 0)));
@@ -190,13 +178,13 @@ void MyLoadState::enterState(void)
 
 	pushJob(MyJobPtr(new LoadImageJob(gameState->m_objImg, _T("92fs_brigadier.jpg"))));
 
-	pushJob(MyJobPtr(new LoadWavJob(gameState->m_wav, _T("stationthrob.wav"), m_game->m_dsound.get())));
+	pushJob(MyJobPtr(new LoadWavJob(gameState->m_wav, _T("stationthrob.wav"), MyGame::getSingleton().m_dsound.get())));
 
-	pushJob(MyJobPtr(new LoadMp3Job(gameState->m_mp3, _T("castle1_20.mp3"), m_game->m_dsound)));
+	pushJob(MyJobPtr(new LoadMp3Job(gameState->m_mp3, _T("castle1_20.mp3"), MyGame::getSingleton().m_dsound)));
 
 	// load & play mp3 while loading
 	m_mp3 = my::Mp3Ptr(new my::Mp3(
-		m_game->m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
+		MyGame::getSingleton().m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
 
 	m_mp3->play();
 
@@ -221,7 +209,8 @@ void MyLoadState::leaveState(void)
 bool MyLoadState::doFrame(void)
 {
 	// exit application by return false with user input 'escape'
-	if(m_game->m_keyboard->isKeyDown(DIK_ESCAPE))
+	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
+	if(keyboard->isKeyDown(DIK_ESCAPE))
 	{
 		// DO NOT USE TerminateThread HERE!
 		if(!getExitFlag())
@@ -239,13 +228,13 @@ bool MyLoadState::doFrame(void)
 		}
 		else
 		{
-			m_game->setCurrentState(MyGameState::s_name);
+			MyGame::getSingleton().setCurrentState(MyGameState::s_name);
 			return true;
 		}
 	}
 
 	// define render context point
-	t3d::RenderContext * rc = m_game->m_rc.get();
+	t3d::RenderContext * rc = MyGame::getSingleton().m_rc.get();
 
 	// clear back surface with black color
 	rc->fillSurface(rc->getClipperRect(), my::Color::BLACK);
@@ -313,7 +302,7 @@ DWORD MyLoadState::onProc(void)
 	}
 	catch(t3d::Exception & e)
 	{
-		m_game->m_pwnd->sendMessage(WM_USER + 0, (WPARAM)&e);
+		MyGame::getSingleton().m_wnd->SendMessage(WM_USER + 0, (WPARAM)&e);
 		setExitFlag(true);
 	}
 
@@ -322,9 +311,8 @@ DWORD MyLoadState::onProc(void)
 
 const std::basic_string<charT> MyGameState::s_name(_T("MyGameState"));
 
-MyGameState::MyGameState(MyGameEx * game)
-	: m_game(game)
-	, my::World(256)
+MyGameState::MyGameState(void)
+	: my::World(256)
 {
 }
 
@@ -350,7 +338,7 @@ void MyGameState::enterState(void)
 	// create ds3d buffer & ds3d listener
 	m_ds3dbuffer = m_wav->m_dsbuffer->getDS3DBuffer();
 
-	m_ds3dListener = m_game->m_dsound->getPrimarySoundBuffer()->getDS3DListener();
+	m_ds3dListener = MyGame::getSingleton().m_dsound->getPrimarySoundBuffer()->getDS3DListener();
 
 	// play the wave
 	m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
@@ -382,7 +370,7 @@ unsigned MyGameState::generateContacts(my::Contact * contacts, unsigned limits)
 bool MyGameState::doFrame(void)
 {
 	// exit application by return false with user input 'escape'
-	t3d::DIKeyboard * keyboard = m_game->m_keyboard.get();
+	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
 	if(keyboard->isKeyDown(DIK_ESCAPE))
 	{
 		return false;
@@ -405,7 +393,7 @@ bool MyGameState::doFrame(void)
 	//m_rc->setClipperRect(clipper);
 
 	// clear back surface with gray color
-	t3d::RenderContext * rc = m_game->m_rc.get();
+	t3d::RenderContext * rc = MyGame::getSingleton().m_rc.get();
 	rc->fillSurface(rc->getClipperRect(), my::Color(0.8f, 0.8f, 0.8f));
 
 	// clear zbuffer with infinite distance
@@ -418,7 +406,7 @@ bool MyGameState::doFrame(void)
 	rc->setCameraFarZ(10000);
 
 	// update euler cameras position and orientation by user input
-	m_eulerCam->update(m_game->m_keyboard.get(), m_game->m_mouse.get(), elapsedTime);
+	m_eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
 	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
 
 	// set render context lights
@@ -513,7 +501,7 @@ bool MyGameState::doFrame(void)
 
 	// general information output
 	std::basic_string<charT> strTmp;
-	HDC hdc = m_game->m_backSurface->getDC();
+	HDC hdc = MyGame::getSingleton().m_backSurface->getDC();
 
 	int textx = rc->getClipperRect().left + 10;
 	int texty = rc->getClipperRect().top + 10;
@@ -533,7 +521,7 @@ bool MyGameState::doFrame(void)
 		RAD_TO_DEG(m_eulerCam->getRotation().x), RAD_TO_DEG(m_eulerCam->getRotation().y), RAD_TO_DEG(m_eulerCam->getRotation().z));
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
-	m_game->m_backSurface->releaseDC(hdc);
+	MyGame::getSingleton().m_backSurface->releaseDC(hdc);
 
 	return true;
 }

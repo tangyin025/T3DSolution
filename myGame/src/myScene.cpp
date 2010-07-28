@@ -1806,13 +1806,10 @@ namespace my
 	{
 		_ASSERT(3 == getVertexListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexList(rc, cameraPos);
 
 			rchild->prepareVertexList(rc, cameraPos);
@@ -1830,13 +1827,10 @@ namespace my
 	{
 		_ASSERT(3 == getVertexListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexList(rc, cameraPos);
 
 			rchild->prepareVertexList(rc, cameraPos);
@@ -1854,13 +1848,10 @@ namespace my
 		_ASSERT(3 == getVertexListSize());
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexNormalList(rc, cameraPos);
 
 			rchild->prepareVertexNormalList(rc, cameraPos);
@@ -1881,13 +1872,10 @@ namespace my
 		_ASSERT(3 == getVertexListSize());
 		_ASSERT(getVertexListSize() == getNormalListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexNormalList(rc, cameraPos);
 
 			rchild->prepareVertexNormalList(rc, cameraPos);
@@ -1906,13 +1894,10 @@ namespace my
 		_ASSERT(3 == getVertexListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexUVList(rc, cameraPos);
 
 			rchild->prepareVertexUVList(rc, cameraPos);
@@ -1932,13 +1917,10 @@ namespace my
 		_ASSERT(3 == getVertexListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexUVList(rc, cameraPos);
 
 			rchild->prepareVertexUVList(rc, cameraPos);
@@ -1958,13 +1940,10 @@ namespace my
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexNormalUVList(rc, cameraPos);
 
 			rchild->prepareVertexNormalUVList(rc, cameraPos);
@@ -1987,13 +1966,10 @@ namespace my
 		_ASSERT(getVertexListSize() == getNormalListSize());
 		_ASSERT(getVertexListSize() == getUVListSize());
 
-		real distanceSquare = t3d::min(
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)),
-			t3d::vec3LengthSquare(t3d::vec3Sub(vertexAt(0), cameraPos)));
-
-		if(distanceSquare < minDistanceSquare)
+		if(NULL != lchild && t3d::vec3LengthSquare(t3d::vec3Sub(v3, cameraPos)) < minDistanceSquare)
 		{
+			_ASSERT(NULL != rchild);
+
 			lchild->prepareVertexNormalUVList(rc, cameraPos);
 
 			rchild->prepareVertexNormalUVList(rc, cameraPos);
@@ -2528,6 +2504,7 @@ namespace my
 		retNode->lchild = buildLODTriNode(v0, v3, v2, n0, n3, n2, t0, t3, t2, levelDistance);
 		retNode->rchild = buildLODTriNode(v3, v1, v2, n3, n1, n2, t3, t1, t2, levelDistance);
 		retNode->minDistanceSquare = minDistance * minDistance;
+		retNode->v3 = v3;
 
 		return retNode;
 	}
@@ -2594,6 +2571,7 @@ namespace my
 		retNode->pushUV(t1);
 		retNode->pushUV(t2);
 		retNode->minDistanceSquare = 0;
+		retNode->v3 = my::Vec4<real>::ZERO;
 
 		return retNode;
 	}

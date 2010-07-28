@@ -10,15 +10,18 @@ class MyWindow
 	: public my::GameWnd
 {
 public:
-	MyWindow(HWND hwnd);
+	BEGIN_MSG_MAP(MyWindow)
+	MESSAGE_HANDLER(WM_CLOSE, OnClose)
+	MESSAGE_HANDLER(WM_USER + 0, OnUser0)
+	CHAIN_MSG_MAP(my::GameWnd)
+	END_MSG_MAP()
 
-	~MyWindow(void);
+	LRESULT OnClose(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 
-public:
-	LRESULT onProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+	LRESULT OnUser0(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 };
 
-class MyGameEx
+class MyGame
 	: public my::Game
 	, public MyStateChart
 {
@@ -35,23 +38,23 @@ public:
 	};
 
 public:
-	static MyGameEx * getSingletonPtr(void)
+	static MyGame * getSingletonPtr(void)
 	{
-		return dynamic_cast<MyGameEx *>(my::Game::getSingletonPtr());
+		return dynamic_cast<MyGame *>(my::Game::getSingletonPtr());
 	}
 
-	static MyGameEx & getSingleton(void)
+	static MyGame & getSingleton(void)
 	{
 		return * getSingletonPtr();
 	}
 
 public:
-	MyGameEx(void) throw();
+	MyGame(void) throw();
 
-	~MyGameEx(void);
+	~MyGame(void);
 
 public:
-	my::Window * newWindow(HWND hwnd);
+	my::WindowPtr newWindow(void);
 
 	bool onInit(const my::Config & cfg);
 
@@ -83,8 +86,6 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	MyGameEx * m_game;
-
 	MyUIProgressBarBoxPtr m_progressBox;
 
 	my::CriticalSection m_progressBoxLock;
@@ -125,7 +126,7 @@ public:
 	}
 
 public:
-	MyLoadState(MyGameEx * game);
+	MyLoadState(void);
 
 	~MyLoadState(void);
 
@@ -150,7 +151,6 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	MyGameEx * m_game;
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -179,7 +179,7 @@ protected:
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 public:
-	MyGameState(MyGameEx * game);
+	MyGameState(void);
 
 	~MyGameState(void);
 

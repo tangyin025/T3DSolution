@@ -14,7 +14,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	InitCommonControlsEx(&InitCtrls);
 
 	// the global instance
-	MyGameEx game;
+	MyGame game;
 
 	try
 	{
@@ -40,13 +40,13 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		cfg.addInt(_T("width"), 800);
 		cfg.addInt(_T("height"), 600);
 		cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
-		cfg.addInt(_T("aspectratio"), MyGameEx::ASPECT_RATIO_STRETCHED);
+		cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_STRETCHED);
 		cfg.load(strConfigPath.c_str());
 
 		// show configuration dialog
 		int ret = 0;
-		MyDialog dlg(cfg, game.getHandle());
-		if(IDOK == dlg.doModel())
+		MyDialog dlg(cfg);
+		if(IDOK == dlg.DoModal())
 		{
 			// run the instance
 			if(0 == (ret = game.run(dlg.m_cfg)))
@@ -63,7 +63,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	catch(t3d::Exception & e)
 	{
 		// report error message
-		::MessageBox(NULL != game.m_pwnd ? game.m_pwnd->getHandle() : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
+		::MessageBox(NULL != game.m_wnd ? game.m_wnd->m_hWnd : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
 		exit(1);
 	}
 }
