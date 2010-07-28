@@ -2468,6 +2468,82 @@ namespace my
 		rc->drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface();
 	}
 
+	static t3d::Vec2<real> splitLODLine(
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec2<real> & ret0,
+		const t3d::Vec2<real> & ret1)
+	{
+		if(v0.x < v1.x)
+		{
+			return t3d::vec2Mid(ret0, ret1);
+		}
+		else if(v0.x > v1.x)
+		{
+			return t3d::vec2Mid(ret1, ret0);
+		}
+
+		if(v0.y < v1.y)
+		{
+			return t3d::vec2Mid(ret0, ret1);
+		}
+		else if(v0.y > v1.y)
+		{
+			return t3d::vec2Mid(ret1, ret0);
+		}
+
+		if(v0.z < v1.z)
+		{
+			return t3d::vec2Mid(ret0, ret1);
+		}
+		else if(v0.z > v1.z)
+		{
+			return t3d::vec2Mid(ret1, ret0);
+		}
+
+		_ASSERT(t3d::vec3IsEqual(v0, v1));
+
+		return t3d::vec2Mid(ret0, ret1);
+	}
+
+	static t3d::Vec4<real> splitLODLine(
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & ret0,
+		const t3d::Vec4<real> & ret1)
+	{
+		if(v0.x < v1.x)
+		{
+			return t3d::vec3Mid(ret0, ret1);
+		}
+		else if(v0.x > v1.x)
+		{
+			return t3d::vec3Mid(ret1, ret0);
+		}
+
+		if(v0.y < v1.y)
+		{
+			return t3d::vec3Mid(ret0, ret1);
+		}
+		else if(v0.y > v1.y)
+		{
+			return t3d::vec3Mid(ret1, ret0);
+		}
+
+		if(v0.z < v1.z)
+		{
+			return t3d::vec3Mid(ret0, ret1);
+		}
+		else if(v0.z > v1.z)
+		{
+			return t3d::vec3Mid(ret1, ret0);
+		}
+
+		_ASSERT(t3d::vec3IsEqual(v0, v1));
+
+		return t3d::vec3Mid(ret0, ret1);
+	}
+
 	static LODTriNodePtr buildLODTriNodeInside(
 		const t3d::Vec4<real> v0,
 		const t3d::Vec4<real> v1,
@@ -2487,9 +2563,9 @@ namespace my
 
 		real minDistance = levelDistance * floor(maxLength / levelDistance);
 
-		t3d::Vec4<real> v3 = t3d::vec3Mid(v0, v1);
-		t3d::Vec4<real> n3 = t3d::vec3Mid(n0, n1);
-		t3d::Vec2<real> t3 = t3d::vec2Mid(t0, t1);
+		t3d::Vec4<real> v3 = splitLODLine(v0, v1, v0, v1);
+		t3d::Vec4<real> n3 = splitLODLine(v0, v1, n0, n1);
+		t3d::Vec2<real> t3 = splitLODLine(v0, v1, t0, t1);
 
 		LODTriNodePtr retNode(new LODTriNode());
 		retNode->pushVertex(v0);
