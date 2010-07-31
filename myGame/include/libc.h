@@ -3,7 +3,6 @@
 #define __LIBC_H__
 
 #include "myCommon.h"
-#include <stdarg.h>
 #include <string>
 
 #if _MSC_VER < 1400

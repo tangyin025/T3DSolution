@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include <cstdio>
+#include <stdarg.h>
 #include <crtdbg.h>
 #include "libc.h"
 #include "myWindow.h"
