@@ -174,13 +174,13 @@ namespace my
 	public:
 		virtual WindowPtr newWindow(void);
 
-		virtual bool prepare(const Config & cfg);
+		bool prepare(const Config & cfg);
 
-		//virtual int run(LPTSTR lpCmdLine);
+		//int run(LPTSTR lpCmdLine);
 
-		virtual int run(const Config & cfg);
+		int run(const Config & cfg);
 
-		virtual void onIdle(void);
+		void onIdle(void);
 
 	public:
 		virtual bool onInit(const Config & cfg);

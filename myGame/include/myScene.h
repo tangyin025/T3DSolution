@@ -355,8 +355,6 @@ namespace my
 	public:
 		real minDistanceSquare;
 
-		t3d::Vec4<real> v3;
-
 		LODTriNodePtr lchild;
 
 		LODTriNodePtr rchild;
