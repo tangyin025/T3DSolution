@@ -24,7 +24,7 @@ LRESULT MyWindow::OnUser0(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandl
 	// handle the exception thrown from the load state thread
 	t3d::Exception * e = reinterpret_cast<t3d::Exception *>(wParam);
 	_ASSERT(NULL != e);
-	MessageBox(e->getFullDesc().c_str(), _T("Exception"), MB_OK);
+	MessageBox(e->getFullDesc().c_str(), _T("Exception"));
 
 	return 0;
 }
@@ -39,6 +39,7 @@ MyGame::~MyGame(void)
 
 my::WindowPtr MyGame::newWindow(void)
 {
+	// new a driver window
 	return my::WindowPtr(new MyWindow());
 }
 

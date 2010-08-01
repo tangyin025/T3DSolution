@@ -992,11 +992,11 @@ namespace my
 		return m_hinst;
 	}
 
-	std::basic_string<charT> Application::getModuleFileName(void) const
+	std::basic_string<charT> Application::getModuleFileName(void)
 	{
 		std::basic_string<charT> ret;
 		ret.resize(MAX_PATH);
-		ret.resize(::GetModuleFileName(getHandle(), &ret[0], ret.size()));
+		ret.resize(::GetModuleFileName(NULL, &ret[0], ret.size()));
 
 		return ret;
 	}
@@ -1005,6 +1005,7 @@ namespace my
 	{
 		MSG msg;
 		msg.message = WM_NULL;
+
 		while(WM_QUIT != msg.message)
 		{
 			if(::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

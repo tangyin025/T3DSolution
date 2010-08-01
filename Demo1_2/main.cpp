@@ -349,8 +349,8 @@ public:
 			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png")))));
 
 		// 创建 bsp 场景
-		//m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
-		m_scene_bsp = my::buildBSPSceneWithLODTriNode(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList(), 10);
+		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
+		//m_scene_bsp = my::buildBSPSceneWithLODTriNode(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList(), 10);
 
 		// 构造物理引擎管理器
 		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
@@ -850,30 +850,17 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-	// the global instance
-	MyGame game;
+	// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
+	MyDialog dlg(MyConfig(800, 600, my::Game::SCREEN_MODE_WINDOWED, (real)800 / 600));
+	return IDOK != dlg.DoModal() ? 0 : MyGame().run(dlg.m_cfg);
 
-	try
-	{
-		// 在这个地方读取用户自定义分辨率，屏幕设置等，详情参考 my::Game::SCREEN_MODE
-		MyDialog dlg(MyConfig(800, 600, my::Game::SCREEN_MODE_WINDOWED, (real)800 / 600));
-		return IDOK != dlg.DoModal() ? 0 : game.run(dlg.m_cfg);
+	//// 下面是可运行最简单的应用程序模型
+	//my::WindowPtr wnd(new my::Window());
+	//wnd->Create(NULL);
+	//wnd->ShowWindow(SW_SHOW);
+	//wnd->UpdateWindow();
+	//return my::Application().run();
 
-		//// 下面是可运行最简单的应用程序模型
-		//my::Application app;
-		//my::WindowPtr wnd(new my::Window());
-		//wnd->Create(NULL);
-		//wnd->ShowWindow(SW_SHOW);
-		//wnd->UpdateWindow();
-		//return app.run();
-
-		//// 下面是可运行最简单的游戏框架模型
-		//return my::Game().run(my::Config());
-	}
-	catch(t3d::Exception & e)
-	{
-		// 报告异常信息
-		::MessageBox(NULL != game.m_wnd ? game.m_wnd->m_hWnd : NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
-		exit(1);
-	}
+	//// 下面是可运行最简单的游戏框架模型
+	//return my::Game().run(my::Config());
 }

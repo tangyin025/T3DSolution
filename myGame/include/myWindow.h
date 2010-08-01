@@ -305,7 +305,7 @@ namespace my
 
 		HINSTANCE getHandle(void) const;
 
-		std::basic_string<charT> getModuleFileName(void) const;
+		static std::basic_string<charT> getModuleFileName(void);
 
 		int run(void);
 

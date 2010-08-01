@@ -727,6 +727,7 @@ end:
 		{
 			do
 			{
+				;
 			}
 			while(playOnce() && getLoop());
 		}
