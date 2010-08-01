@@ -110,8 +110,6 @@ namespace my
 		END_MSG_MAP()
 
 		LRESULT OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
-
-		void OnFinalMessage(HWND hwnd);
 	};
 
 	class Game : public Application
@@ -172,7 +170,7 @@ namespace my
 		~Game(void);
 
 	public:
-		virtual WindowPtr newWindow(void);
+		WindowPtr newWindow(void);
 
 		bool prepare(const Config & cfg);
 

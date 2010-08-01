@@ -135,11 +135,6 @@ namespace my
 		return 0;
 	}
 
-	void GameWnd::OnFinalMessage(HWND hwnd)
-	{
-		::PostQuitMessage(0);
-	}
-
 	Game::Game(void)
 	{
 	}
