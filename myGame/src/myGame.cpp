@@ -155,10 +155,6 @@ namespace my
 
 	bool Game::prepare(const Config & cfg)
 	{
-		// create main window
-		m_wnd = newWindow();
-		m_wnd->Create(NULL, Window::rcDefault, getModuleFileName().c_str());
-
 		// create ddraw object
 		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
 
@@ -318,15 +314,33 @@ namespace my
 	{
 		int res = 1;
 
-		// set up configuration
-		if(prepare(cfg))
-		{
-			// run main application
-			res = Application::run();
-		}
+		// create main window, NOTE: OnCreate process should throw any exception
+		m_wnd = newWindow();
+		m_wnd->Create(NULL, Window::rcDefault, getModuleFileName().c_str());
 
-		// do shutdown
-		onShutdown();
+		try
+		{
+			// set up configuration
+			if(prepare(cfg))
+			{
+				// run main application
+				res = Application::run();
+			}
+
+			// do shutdown
+			onShutdown();
+		}
+		catch(const t3d::Exception & e)
+		{
+			// main window must be created
+			_ASSERT(NULL != m_wnd->m_hWnd);
+
+			// report the exception
+			m_wnd->MessageBox(e.getFullDesc().c_str(), _T("Exception"));
+
+			// destory created window
+			m_wnd->DestroyWindow();
+		}
 
 		return res;
 	}
