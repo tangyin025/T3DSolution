@@ -966,6 +966,11 @@ namespace my
 		return SetWindowPos(NULL, &retRect, 0);
 	}
 
+	void Window::OnFinalMessage(HWND hwnd)
+	{
+		::PostQuitMessage(0);
+	}
+
 	Application * Application::s_ptr = NULL;
 
 	Application::Application(HINSTANCE hInstance /*= ::GetModuleHandle(NULL)*/)
@@ -999,6 +1004,11 @@ namespace my
 		ret.resize(::GetModuleFileName(NULL, &ret[0], ret.size()));
 
 		return ret;
+	}
+
+	WindowPtr Application::newWindow(void)
+	{
+		return WindowPtr(new Window());
 	}
 
 	int Application::run(void)

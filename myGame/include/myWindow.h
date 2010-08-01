@@ -274,6 +274,8 @@ namespace my
 
 		BEGIN_MSG_MAP(Window)
 		END_MSG_MAP()
+
+		void OnFinalMessage(HWND hwnd);
 	};
 
 	typedef boost::shared_ptr<Window> WindowPtr;
@@ -306,6 +308,8 @@ namespace my
 		HINSTANCE getHandle(void) const;
 
 		static std::basic_string<charT> getModuleFileName(void);
+
+		virtual WindowPtr newWindow(void);
 
 		int run(void);
 
