@@ -1,9 +1,9 @@
-﻿#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 use strict;
 
 sub convertAtDir( $ );
 
-# 这个perl程序的目的是将.sln文件及.vcproj文件从vc2008格式转换为vc2005格式
+# the purpose of this perl program is to convert the project and solution files of vc2008 to vc2005
 convertAtDir('.');
 
 sub convertFile( $ );
