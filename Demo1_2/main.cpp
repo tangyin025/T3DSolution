@@ -346,7 +346,7 @@ public:
 			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("office_tri_list.mesh.xml"))))));
 
 		m_scene_t = my::ColorConversion::getSingleton().convertImage(
-			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.png")))));
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.jpg")))));
 
 		// 创建 bsp 场景
 		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
@@ -363,7 +363,7 @@ public:
 			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_hres_hair.mesh.xml"))))));
 
 		m_character_t = my::ColorConversion::getSingleton().convertImage(
-			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.png")))));
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("jack_texture.jpg")))));
 
 		// load 角色骨骼动画
 		m_character_skel = my::SkeletonAnimationsFromOgreSkeletonPtr(new my::SkeletonAnimationsFromOgreSkeleton(

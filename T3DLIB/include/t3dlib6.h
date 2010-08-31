@@ -1957,18 +1957,18 @@ namespace t3d
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
-		const Vec4<real> & cameraPosition);
+		const Vec4<real> & eye);
 
 	void removeTriangleListBackfaceAtWorld(
 		const VertexList & vertexList,
 		ClipStateList & clipStateList,
-		const Vec4<real> & cameraPosition);
+		const Vec4<real> & eye);
 
 	void removeTriangleIndexListBackfaceAtWorld(
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
-		const Vec4<real> & cameraPosition);
+		const Vec4<real> & eye);
 
 	void transformTriangleList(
 		VertexList & vertexList,

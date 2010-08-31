@@ -47,7 +47,7 @@
 
 namespace t3d
 {
-	inline void memSet16(uint16 * dest, uint16 value, size_t count)
+	inline void memSet16(void * dest, uint16 value, size_t count)
 	{
 		__asm
 		{
@@ -58,7 +58,7 @@ namespace t3d
 		}
 	}
 
-	inline void memSet32(uint32 * dest, uint32 value, size_t count)
+	inline void memSet32(void * dest, uint32 value, size_t count)
 	{
 		__asm
 		{

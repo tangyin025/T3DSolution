@@ -217,6 +217,30 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\include\color_add_table.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\color_mul_table.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\count_scan.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\count_triangle.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\draw_scan.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\draw_triangle.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\include\stdafx.h"
 				>
 			</File>
