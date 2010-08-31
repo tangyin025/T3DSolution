@@ -11,10 +11,6 @@
 #error must define one between __draw_16bit and __draw_32bit
 #endif
 
-
-
-
-
 #ifdef __draw_clipped
 		_ASSERT(y0 >= clipper.top && y0 < clipper.bottom);
 #endif
@@ -115,9 +111,6 @@
 			}
 		}
 
-
-
-
 #undef __draw_texture
 #undef __draw_gouraud
 #undef __draw_zbuffer_r
@@ -125,6 +118,7 @@
 #undef __draw_clipped
 #undef __draw_16bit
 #undef __draw_32bit
+
 
 
 

@@ -7250,15 +7250,15 @@ namespace t3d
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
-		const Vec4<real> & cameraPosition)
+		const Vec4<real> & eye)
 	{
-		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(cameraPosition, v0)) <= 0 ? CLIP_STATE_CULLED : CLIP_STATE_NONE;
+		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) <= 0 ? CLIP_STATE_CULLED : CLIP_STATE_NONE;
 	}
 
 	void removeTriangleListBackfaceAtWorld(
 		const VertexList & vertexList,
 		ClipStateList & clipStateList,
-		const Vec4<real> & cameraPosition)
+		const Vec4<real> & eye)
 	{
 		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 
@@ -7273,7 +7273,7 @@ namespace t3d
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
-					cameraPosition);
+					eye);
 			}
 		}
 	}
@@ -7282,7 +7282,7 @@ namespace t3d
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
-		const Vec4<real> & cameraPosition)
+		const Vec4<real> & eye)
 	{
 		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
 
@@ -7297,7 +7297,7 @@ namespace t3d
 					vertexList[vertexIndexList[i * 3 + 0]],
 					vertexList[vertexIndexList[i * 3 + 1]],
 					vertexList[vertexIndexList[i * 3 + 2]],
-					cameraPosition);
+					eye);
 			}
 		}
 	}
