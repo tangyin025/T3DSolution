@@ -274,7 +274,7 @@ namespace t3d
 			const Vec4<real> & v1 = vertexList[i + 1];
 			const Vec4<real> & v2 = vertexList[i + 2];
 
-			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(point, v0));
+			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(v0, point));
 		}
 
 		return retIndicatorList;
@@ -295,7 +295,7 @@ namespace t3d
 			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
 			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
 
-			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(point, v0));
+			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(v0, point));
 		}
 
 		return retIndicatorList;
@@ -354,6 +354,34 @@ namespace t3d
 		SilhouetteEdgeList::const_iterator silhouette_edge_iter = silhouetteEdgeList.begin();
 		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
 		{
+			Vec4<real> v0, v1, v2, v3;
+			if(silhouette_edge_iter->tri0_i >= 0)
+			{
+				if(silhouette_edge_iter->tri1_i < 0)
+				{
+					v0 = silhouette_edge_iter->v0;
+					v1 = silhouette_edge_iter->v1;
+				}
+			}
+			else
+			{
+				if(silhouette_edge_iter->tri1_i >= 0)
+				{
+					v0 = silhouette_edge_iter->v1;
+					v1 = silhouette_edge_iter->v0;
+				}
+			}
+
+			v2 = vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance));
+			v3 = vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance));
+
+			retVertexList.push_back(v0);
+			retVertexList.push_back(v1);
+			retVertexList.push_back(v2);
+
+			retVertexList.push_back(v2);
+			retVertexList.push_back(v3);
+			retVertexList.push_back(v0);
 		}
 
 		return retVertexList;
@@ -367,10 +395,39 @@ namespace t3d
 		real distance)
 	{
 		_ASSERT(retVertexList.empty());
+		_ASSERT(vec3IsNormalized(direction));
 
 		SilhouetteEdgeList::const_iterator silhouette_edge_iter = silhouetteEdgeList.begin();
 		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
 		{
+			Vec4<real> v0, v1, v2, v3;
+			if(silhouette_edge_iter->tri0_i >= 0)
+			{
+				if(silhouette_edge_iter->tri1_i < 0)
+				{
+					v0 = silhouette_edge_iter->v0;
+					v1 = silhouette_edge_iter->v1;
+				}
+			}
+			else
+			{
+				if(silhouette_edge_iter->tri1_i >= 0)
+				{
+					v0 = silhouette_edge_iter->v1;
+					v1 = silhouette_edge_iter->v0;
+				}
+			}
+
+			v2 = vec3Add(v1, vec3Mul(direction, distance));
+			v3 = vec3Add(v0, vec3Mul(direction, distance));
+
+			retVertexList.push_back(v0);
+			retVertexList.push_back(v1);
+			retVertexList.push_back(v2);
+
+			retVertexList.push_back(v2);
+			retVertexList.push_back(v3);
+			retVertexList.push_back(v0);
 		}
 
 		return retVertexList;
