@@ -176,4 +176,203 @@ namespace t3d
 			}
 		}
 	}
+
+	SilhouetteEdgeList & buildSilhouetteEdgeListFromTriangleList(
+		SilhouetteEdgeList & retSilhouetteEdgeList,
+		const VertexList & vertexList)
+	{
+		_ASSERT(retSilhouetteEdgeList.empty());
+		_ASSERT(vertexList.size() % 3 == 0);
+
+		for(size_t i = 0; i < vertexList.size(); i += 3)
+		{
+			for(int j = 0; j < 3; j++)
+			{
+				const Vec4<real> & v0 = vertexList[(j + 0) % 3];
+				const Vec4<real> & v1 = vertexList[(j + 1) % 3];
+				SilhouetteEdgeList::iterator silhouette_edge_iter = retSilhouetteEdgeList.begin();
+				for(; silhouette_edge_iter != retSilhouetteEdgeList.end(); silhouette_edge_iter++)
+				{
+					if((vec3IsEqual(v0, silhouette_edge_iter->v0) && vec3IsEqual(v1, silhouette_edge_iter->v1))
+						|| (vec3IsEqual(v1, silhouette_edge_iter->v0) && vec3IsEqual(v0, silhouette_edge_iter->v1)))
+					{
+						_ASSERT(SIZE_MAX == silhouette_edge_iter->tri1_i);
+
+						silhouette_edge_iter->tri1_i = i / 3;
+					}
+				}
+
+				if(silhouette_edge_iter == retSilhouetteEdgeList.end())
+				{
+					SilhouetteEdge silhouetteEdge;
+					silhouetteEdge.v0 = v0;
+					silhouetteEdge.v1 = v1;
+					silhouetteEdge.tri0_i = i / 3;
+					silhouetteEdge.tri1_i = SIZE_MAX;
+
+					retSilhouetteEdgeList.push_back(silhouetteEdge);
+				}
+			}
+		}
+
+		return retSilhouetteEdgeList;
+	}
+
+	SilhouetteEdgeList & buildSilhouetteEdgeListFromTriangleIndexList(
+		SilhouetteEdgeList & retSilhouetteEdgeList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList)
+	{
+		_ASSERT(retSilhouetteEdgeList.empty());
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+
+		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
+		{
+			for(int j = 0; j < 3; j++)
+			{
+				const Vec4<real> & v0 = vertexList[vertexIndexList[(j + 0) % 3]];
+				const Vec4<real> & v1 = vertexList[vertexIndexList[(j + 1) % 3]];
+				SilhouetteEdgeList::iterator silhouette_edge_iter = retSilhouetteEdgeList.begin();
+				for(; silhouette_edge_iter != retSilhouetteEdgeList.end(); silhouette_edge_iter++)
+				{
+					if((vec3IsEqual(v0, silhouette_edge_iter->v0) && vec3IsEqual(v1, silhouette_edge_iter->v1))
+						|| (vec3IsEqual(v1, silhouette_edge_iter->v0) && vec3IsEqual(v0, silhouette_edge_iter->v1)))
+					{
+						_ASSERT(SIZE_MAX == silhouette_edge_iter->tri1_i);
+
+						silhouette_edge_iter->tri1_i = i / 3;
+					}
+				}
+
+				if(silhouette_edge_iter == retSilhouetteEdgeList.end())
+				{
+					SilhouetteEdge silhouetteEdge;
+					silhouetteEdge.v0 = v0;
+					silhouetteEdge.v1 = v1;
+					silhouetteEdge.tri0_i = i / 3;
+					silhouetteEdge.tri1_i = SIZE_MAX;
+
+					retSilhouetteEdgeList.push_back(silhouetteEdge);
+				}
+			}
+		}
+
+		return retSilhouetteEdgeList;
+	}
+
+	IndicatorList & buildIndicatorListFromTriangleListByPoint(
+		IndicatorList & retIndicatorList,
+		const VertexList & vertexList,
+		const Vec4<real> & point)
+	{
+		_ASSERT(vertexList.size() % 3 == 0);
+
+		retIndicatorList.resize(vertexList.size() / 3);
+		for(size_t i = 0; i < vertexList.size(); i += 3)
+		{
+			const Vec4<real> & v0 = vertexList[i + 0];
+			const Vec4<real> & v1 = vertexList[i + 1];
+			const Vec4<real> & v2 = vertexList[i + 2];
+
+			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(point, v0));
+		}
+
+		return retIndicatorList;
+	}
+
+	IndicatorList & buildIndicatorListFromTriangleIndexListByPoint(
+		IndicatorList & retIndicatorList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const Vec4<real> & point)
+	{
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+
+		retIndicatorList.resize(vertexIndexList.size() / 3);
+		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
+		{
+			const Vec4<real> & v0 = vertexList[vertexIndexList[i + 0]];
+			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
+			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
+
+			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(point, v0));
+		}
+
+		return retIndicatorList;
+	}
+
+	IndicatorList & buildIndicatorListFromTriangleListByDirection(
+		IndicatorList & retIndicatorList,
+		const VertexList & vertexList,
+		const Vec4<real> & direction)
+	{
+		_ASSERT(vertexList.size() % 3 == 0);
+
+		retIndicatorList.resize(vertexList.size() / 3);
+		for(size_t i = 0; i < vertexList.size(); i += 3)
+		{
+			const Vec4<real> & v0 = vertexList[i + 0];
+			const Vec4<real> & v1 = vertexList[i + 1];
+			const Vec4<real> & v2 = vertexList[i + 2];
+
+			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), direction);
+		}
+
+		return retIndicatorList;
+	}
+
+	IndicatorList & buildIndicatorListFromTriangleIndexListByDirection(
+		IndicatorList & retIndicatorList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const Vec4<real> & direction)
+	{
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+
+		retIndicatorList.resize(vertexIndexList.size() / 3);
+		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
+		{
+			const Vec4<real> & v0 = vertexList[vertexIndexList[i + 0]];
+			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
+			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
+
+			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), direction);
+		}
+
+		return retIndicatorList;
+	}
+
+	VertexList & buildShadowVolumeByPoint(
+		VertexList & retVertexList,
+		const SilhouetteEdgeList & silhouetteEdgeList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		_ASSERT(retVertexList.empty());
+
+		SilhouetteEdgeList::const_iterator silhouette_edge_iter = silhouetteEdgeList.begin();
+		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
+		{
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & buildShadowVolumeByDirection(
+		VertexList & retVertexList,
+		const SilhouetteEdgeList & silhouetteEdgeList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		_ASSERT(retVertexList.empty());
+
+		SilhouetteEdgeList::const_iterator silhouette_edge_iter = silhouetteEdgeList.begin();
+		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
+		{
+		}
+
+		return retVertexList;
+	}
 }
