@@ -11,6 +11,14 @@
 #error must define one between __draw_behind_depth and __draw_in_front_of_depth
 #endif
 
+#if ( !defined __draw_increment && !defined __draw_decrement )
+#error must define one between __draw_increment and __draw_decrement
+#endif
+
+#if (  defined __draw_increment &&  defined __draw_decrement )
+#error must define one between __draw_increment and __draw_decrement
+#endif
+
 #ifdef __draw_clipped
 		_ASSERT(y0 >= clipper.top && y0 < clipper.bottom);
 #endif
@@ -50,7 +58,7 @@
 				if(lz > zbuffer[y0][x0])
 #endif
 				{
-#ifdef __draw_behind_depth
+#ifdef __draw_increment
 					stencilbuff[y0][x0]++;
 #else
 					stencilbuff[y0][x0]--;
@@ -62,6 +70,8 @@
 		}
 
 #undef __draw_clipped
+#undef __draw_increment
+#undef __draw_decrement
 #undef __draw_behind_depth
 #undef __draw_in_front_of_depth
 

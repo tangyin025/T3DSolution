@@ -15,7 +15,7 @@ namespace t3d
 		}
 	}
 
-	void countScanBehindDepth(
+	void countScanIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const SurfaceRef<fixp28> & zbuffer,
 		fixp16 lx,
@@ -25,10 +25,25 @@ namespace t3d
 		fixp28 rz)
 	{
 #define __draw_behind_depth
+#define __draw_increment
 #include "count_scan.hpp"
 	}
 
-	void countClippedScanBehindDepth(
+	void countScanDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz)
+	{
+#define __draw_behind_depth
+#define __draw_decrement
+#include "count_scan.hpp"
+	}
+
+	void countClippedScanIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -39,24 +54,12 @@ namespace t3d
 		fixp28 rz)
 	{
 #define __draw_behind_depth
+#define __draw_increment
 #define __draw_clipped
 #include "count_scan.hpp"
 	}
 
-	void countScanInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_in_front_of_depth
-#include "count_scan.hpp"
-	}
-
-	void countClippedScanInFrontOfDepth(
+	void countClippedScanDecrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -66,23 +69,95 @@ namespace t3d
 		fixp28 lz,
 		fixp28 rz)
 	{
-#define __draw_in_front_of_depth
+#define __draw_behind_depth
+#define __draw_decrement
 #define __draw_clipped
 #include "count_scan.hpp"
 	}
 
-	void countTriangleBehindDepth(
+	void countScanIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz)
+	{
+#define __draw_in_front_of_depth
+#define __draw_increment
+#include "count_scan.hpp"
+	}
+
+	void countScanDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz)
+	{
+#define __draw_in_front_of_depth
+#define __draw_decrement
+#include "count_scan.hpp"
+	}
+
+	void countClippedScanIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz)
+	{
+#define __draw_in_front_of_depth
+#define __draw_increment
+#define __draw_clipped
+#include "count_scan.hpp"
+	}
+
+	void countClippedScanDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz)
+	{
+#define __draw_in_front_of_depth
+#define __draw_decrement
+#define __draw_clipped
+#include "count_scan.hpp"
+	}
+
+	void countTriangleIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const SurfaceRef<fixp28> & zbuffer,
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2)
 	{
-#define __draw_func countScanBehindDepth
+#define __draw_func countScanIncrementBehindDepth
 #include "count_triangle.hpp"
 	}
 
-	void countClippedTriangleBehindDepth(
+	void countTriangleDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2)
+	{
+#define __draw_func countScanDecrementBehindDepth
+#include "count_triangle.hpp"
+	}
+
+	void countClippedTriangleIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -91,23 +166,12 @@ namespace t3d
 		const Vec4<real> & v2)
 	{
 #define __draw_clipped
-#define __draw_func countScanBehindDepth
-#define __draw_clipped_func countClippedScanBehindDepth
+#define __draw_func countScanIncrementBehindDepth
+#define __draw_clipped_func countClippedScanIncrementBehindDepth
 #include "count_triangle.hpp"
 	}
 
-	void countTriangleInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_func countScanInFrontOfDepth
-#include "count_triangle.hpp"
-	}
-
-	void countClippedTriangleInFrontOfDepth(
+	void countClippedTriangleDecrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -116,8 +180,58 @@ namespace t3d
 		const Vec4<real> & v2)
 	{
 #define __draw_clipped
-#define __draw_func countScanInFrontOfDepth
-#define __draw_clipped_func countClippedScanInFrontOfDepth
+#define __draw_func countScanDecrementBehindDepth
+#define __draw_clipped_func countClippedScanDecrementBehindDepth
+#include "count_triangle.hpp"
+	}
+
+	void countTriangleIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2)
+	{
+#define __draw_func countScanIncrementInFrontOfDepth
+#include "count_triangle.hpp"
+	}
+
+	void countTriangleDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2)
+	{
+#define __draw_func countScanDecrementInFrontOfDepth
+#include "count_triangle.hpp"
+	}
+
+	void countClippedTriangleIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2)
+	{
+#define __draw_clipped
+#define __draw_func countScanIncrementInFrontOfDepth
+#define __draw_clipped_func countClippedScanIncrementInFrontOfDepth
+#include "count_triangle.hpp"
+	}
+
+	void countClippedTriangleDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2)
+	{
+#define __draw_clipped
+#define __draw_func countScanDecrementInFrontOfDepth
+#define __draw_clipped_func countClippedScanDecrementInFrontOfDepth
 #include "count_triangle.hpp"
 	}
 
@@ -188,25 +302,31 @@ namespace t3d
 		{
 			for(int j = 0; j < 3; j++)
 			{
-				const Vec4<real> & v0 = vertexList[(j + 0) % 3];
-				const Vec4<real> & v1 = vertexList[(j + 1) % 3];
+				const Vec4<real> & v0 = vertexList[i + (j + 0) % 3];
+				const Vec4<real> & v1 = vertexList[i + (j + 1) % 3];
 				SilhouetteEdgeList::iterator silhouette_edge_iter = retSilhouetteEdgeList.begin();
 				for(; silhouette_edge_iter != retSilhouetteEdgeList.end(); silhouette_edge_iter++)
 				{
-					if((vec3IsEqual(v0, silhouette_edge_iter->v0) && vec3IsEqual(v1, silhouette_edge_iter->v1))
-						|| (vec3IsEqual(v1, silhouette_edge_iter->v0) && vec3IsEqual(v0, silhouette_edge_iter->v1)))
+					const Vec4<real> & ev0 = vertexList[silhouette_edge_iter->v0_i];
+					const Vec4<real> & ev1 = vertexList[silhouette_edge_iter->v1_i];
+					if((vec3IsEqual(v0, ev0) && vec3IsEqual(v1, ev1))
+						|| (vec3IsEqual(v1, ev0) && vec3IsEqual(v0, ev1)))
 					{
-						_ASSERT(SIZE_MAX == silhouette_edge_iter->tri1_i);
+						if(silhouette_edge_iter->tri1_i != SIZE_MAX)
+						{
+							continue; // ***
+						}
 
 						silhouette_edge_iter->tri1_i = i / 3;
+						break;
 					}
 				}
 
 				if(silhouette_edge_iter == retSilhouetteEdgeList.end())
 				{
 					SilhouetteEdge silhouetteEdge;
-					silhouetteEdge.v0 = v0;
-					silhouetteEdge.v1 = v1;
+					silhouetteEdge.v0_i = i + (j + 0) % 3;
+					silhouetteEdge.v1_i = i + (j + 1) % 3;
 					silhouetteEdge.tri0_i = i / 3;
 					silhouetteEdge.tri1_i = SIZE_MAX;
 
@@ -230,25 +350,29 @@ namespace t3d
 		{
 			for(int j = 0; j < 3; j++)
 			{
-				const Vec4<real> & v0 = vertexList[vertexIndexList[(j + 0) % 3]];
-				const Vec4<real> & v1 = vertexList[vertexIndexList[(j + 1) % 3]];
+				size_t v0_i = vertexIndexList[i + (j + 0) % 3];
+				size_t v1_i = vertexIndexList[i + (j + 1) % 3];
 				SilhouetteEdgeList::iterator silhouette_edge_iter = retSilhouetteEdgeList.begin();
 				for(; silhouette_edge_iter != retSilhouetteEdgeList.end(); silhouette_edge_iter++)
 				{
-					if((vec3IsEqual(v0, silhouette_edge_iter->v0) && vec3IsEqual(v1, silhouette_edge_iter->v1))
-						|| (vec3IsEqual(v1, silhouette_edge_iter->v0) && vec3IsEqual(v0, silhouette_edge_iter->v1)))
+					if((v0_i == silhouette_edge_iter->v0_i && v1_i == silhouette_edge_iter->v1_i)
+						|| (v1_i == silhouette_edge_iter->v0_i && v0_i == silhouette_edge_iter->v1_i))
 					{
-						_ASSERT(SIZE_MAX == silhouette_edge_iter->tri1_i);
+						if(silhouette_edge_iter->tri1_i != SIZE_MAX)
+						{
+							continue; // ***
+						}
 
 						silhouette_edge_iter->tri1_i = i / 3;
+						break;
 					}
 				}
 
 				if(silhouette_edge_iter == retSilhouetteEdgeList.end())
 				{
 					SilhouetteEdge silhouetteEdge;
-					silhouetteEdge.v0 = v0;
-					silhouetteEdge.v1 = v1;
+					silhouetteEdge.v0_i = v0_i;
+					silhouetteEdge.v1_i = v1_i;
 					silhouetteEdge.tri0_i = i / 3;
 					silhouetteEdge.tri1_i = SIZE_MAX;
 
@@ -345,6 +469,7 @@ namespace t3d
 	VertexList & buildShadowVolumeByPoint(
 		VertexList & retVertexList,
 		const SilhouetteEdgeList & silhouetteEdgeList,
+		const VertexList & vertexList,
 		const IndicatorList & indicatorList,
 		const Vec4<real> & point,
 		real distance)
@@ -355,20 +480,30 @@ namespace t3d
 		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
 		{
 			Vec4<real> v0, v1, v2, v3;
-			if(silhouette_edge_iter->tri0_i >= 0)
+			if(indicatorList[silhouette_edge_iter->tri0_i] >= 0)
 			{
-				if(silhouette_edge_iter->tri1_i < 0)
+				if(SIZE_MAX == silhouette_edge_iter->tri1_i
+					|| indicatorList[silhouette_edge_iter->tri1_i] < 0) // ***
 				{
-					v0 = silhouette_edge_iter->v0;
-					v1 = silhouette_edge_iter->v1;
+					v0 = vertexList[silhouette_edge_iter->v0_i];
+					v1 = vertexList[silhouette_edge_iter->v1_i];
+				}
+				else
+				{
+					continue;
 				}
 			}
 			else
 			{
-				if(silhouette_edge_iter->tri1_i >= 0)
+				if(SIZE_MAX == silhouette_edge_iter->tri1_i
+					|| indicatorList[silhouette_edge_iter->tri1_i] >= 0) // ***
 				{
-					v0 = silhouette_edge_iter->v1;
-					v1 = silhouette_edge_iter->v0;
+					v0 = vertexList[silhouette_edge_iter->v1_i];
+					v1 = vertexList[silhouette_edge_iter->v0_i];
+				}
+				else
+				{
+					continue;
 				}
 			}
 
@@ -390,6 +525,7 @@ namespace t3d
 	VertexList & buildShadowVolumeByDirection(
 		VertexList & retVertexList,
 		const SilhouetteEdgeList & silhouetteEdgeList,
+		const VertexList & vertexList,
 		const IndicatorList & indicatorList,
 		const Vec4<real> & direction,
 		real distance)
@@ -401,20 +537,30 @@ namespace t3d
 		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
 		{
 			Vec4<real> v0, v1, v2, v3;
-			if(silhouette_edge_iter->tri0_i >= 0)
+			if(indicatorList[silhouette_edge_iter->tri0_i] >= 0)
 			{
-				if(silhouette_edge_iter->tri1_i < 0)
+				if(SIZE_MAX == silhouette_edge_iter->tri1_i
+					|| indicatorList[silhouette_edge_iter->tri1_i] < 0) // ***
 				{
-					v0 = silhouette_edge_iter->v0;
-					v1 = silhouette_edge_iter->v1;
+					v0 = vertexList[silhouette_edge_iter->v0_i];
+					v1 = vertexList[silhouette_edge_iter->v1_i];
+				}
+				else
+				{
+					continue;
 				}
 			}
 			else
 			{
-				if(silhouette_edge_iter->tri1_i >= 0)
+				if(SIZE_MAX == silhouette_edge_iter->tri1_i
+					|| indicatorList[silhouette_edge_iter->tri1_i] >= 0) // ***
 				{
-					v0 = silhouette_edge_iter->v1;
-					v1 = silhouette_edge_iter->v0;
+					v0 = vertexList[silhouette_edge_iter->v1_i];
+					v1 = vertexList[silhouette_edge_iter->v0_i];
+				}
+				else
+				{
+					continue;
 				}
 			}
 
