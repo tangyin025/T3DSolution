@@ -1,10 +1,11 @@
 
 #include "stdafx.h"
 #include "t3dlib8.h"
+#include "t3dlib5.h"
 
 namespace t3d
 {
-	void fillDepthStencilBuffer(
+	void fillStencilBuffer(
 		SurfaceRef<int> stencilbuff,
 		const CRect & rect,
 		int value)
@@ -235,6 +236,27 @@ namespace t3d
 #include "count_triangle.hpp"
 	}
 
+	void boundSurfaceStencilBufferColor32(
+		SurfaceRef<uint32> surface,
+		const CRect & rect,
+		SurfaceRef<int> stencilbuff,
+		const t3d::Vec4<real> & color)
+	{
+		for(int y = rect.top; y < rect.bottom; y++)
+		{
+			for(int x = rect.left; x < rect.right; x++)
+			{
+				if(stencilbuff[y][x] < 0)
+				{
+					surface[y][x] = _RGB32BIT(
+						_COLORMUL(_RGB32GETR(surface[y][x]), real_to_int(color.x)),
+						_COLORMUL(_RGB32GETG(surface[y][x]), real_to_int(color.y)),
+						_COLORMUL(_RGB32GETB(surface[y][x]), real_to_int(color.z)));
+				}
+			}
+		}
+	}
+
 	CLIP_STATE clipTriangleFrontfaceAtWorld(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
@@ -291,11 +313,11 @@ namespace t3d
 		}
 	}
 
-	SilhouetteEdgeList & buildSilhouetteEdgeListFromTriangleList(
-		SilhouetteEdgeList & retSilhouetteEdgeList,
+	ConnectionEdgeList & buildConnectionEdgeListFromTriangleList(
+		ConnectionEdgeList & retConnectionEdgeList,
 		const VertexList & vertexList)
 	{
-		_ASSERT(retSilhouetteEdgeList.empty());
+		_ASSERT(retConnectionEdgeList.empty());
 		_ASSERT(vertexList.size() % 3 == 0);
 
 		for(size_t i = 0; i < vertexList.size(); i += 3)
@@ -304,46 +326,46 @@ namespace t3d
 			{
 				const Vec4<real> & v0 = vertexList[i + (j + 0) % 3];
 				const Vec4<real> & v1 = vertexList[i + (j + 1) % 3];
-				SilhouetteEdgeList::iterator silhouette_edge_iter = retSilhouetteEdgeList.begin();
-				for(; silhouette_edge_iter != retSilhouetteEdgeList.end(); silhouette_edge_iter++)
+				ConnectionEdgeList::iterator connection_edge_iter = retConnectionEdgeList.begin();
+				for(; connection_edge_iter != retConnectionEdgeList.end(); connection_edge_iter++)
 				{
-					const Vec4<real> & ev0 = vertexList[silhouette_edge_iter->v0_i];
-					const Vec4<real> & ev1 = vertexList[silhouette_edge_iter->v1_i];
+					const Vec4<real> & ev0 = vertexList[connection_edge_iter->v0_i];
+					const Vec4<real> & ev1 = vertexList[connection_edge_iter->v1_i];
 					if((vec3IsEqual(v0, ev0) && vec3IsEqual(v1, ev1))
 						|| (vec3IsEqual(v1, ev0) && vec3IsEqual(v0, ev1)))
 					{
-						if(silhouette_edge_iter->tri1_i != SIZE_MAX)
+						if(connection_edge_iter->tri1_i != SIZE_MAX)
 						{
 							continue; // ***
 						}
 
-						silhouette_edge_iter->tri1_i = i / 3;
+						connection_edge_iter->tri1_i = i / 3;
 						break;
 					}
 				}
 
-				if(silhouette_edge_iter == retSilhouetteEdgeList.end())
+				if(retConnectionEdgeList.end() == connection_edge_iter)
 				{
-					SilhouetteEdge silhouetteEdge;
+					ConnectionEdge silhouetteEdge;
 					silhouetteEdge.v0_i = i + (j + 0) % 3;
 					silhouetteEdge.v1_i = i + (j + 1) % 3;
 					silhouetteEdge.tri0_i = i / 3;
 					silhouetteEdge.tri1_i = SIZE_MAX;
 
-					retSilhouetteEdgeList.push_back(silhouetteEdge);
+					retConnectionEdgeList.push_back(silhouetteEdge);
 				}
 			}
 		}
 
-		return retSilhouetteEdgeList;
+		return retConnectionEdgeList;
 	}
 
-	SilhouetteEdgeList & buildSilhouetteEdgeListFromTriangleIndexList(
-		SilhouetteEdgeList & retSilhouetteEdgeList,
+	ConnectionEdgeList & buildConnectionEdgeListFromTriangleIndexList(
+		ConnectionEdgeList & retConnectionEdgeList,
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList)
 	{
-		_ASSERT(retSilhouetteEdgeList.empty());
+		_ASSERT(retConnectionEdgeList.empty());
 		_ASSERT(vertexIndexList.size() % 3 == 0);
 
 		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
@@ -352,36 +374,36 @@ namespace t3d
 			{
 				size_t v0_i = vertexIndexList[i + (j + 0) % 3];
 				size_t v1_i = vertexIndexList[i + (j + 1) % 3];
-				SilhouetteEdgeList::iterator silhouette_edge_iter = retSilhouetteEdgeList.begin();
-				for(; silhouette_edge_iter != retSilhouetteEdgeList.end(); silhouette_edge_iter++)
+				ConnectionEdgeList::iterator connection_edge_iter = retConnectionEdgeList.begin();
+				for(; connection_edge_iter != retConnectionEdgeList.end(); connection_edge_iter++)
 				{
-					if((v0_i == silhouette_edge_iter->v0_i && v1_i == silhouette_edge_iter->v1_i)
-						|| (v1_i == silhouette_edge_iter->v0_i && v0_i == silhouette_edge_iter->v1_i))
+					if((v0_i == connection_edge_iter->v0_i && v1_i == connection_edge_iter->v1_i)
+						|| (v1_i == connection_edge_iter->v0_i && v0_i == connection_edge_iter->v1_i))
 					{
-						if(silhouette_edge_iter->tri1_i != SIZE_MAX)
+						if(connection_edge_iter->tri1_i != SIZE_MAX)
 						{
 							continue; // ***
 						}
 
-						silhouette_edge_iter->tri1_i = i / 3;
+						connection_edge_iter->tri1_i = i / 3;
 						break;
 					}
 				}
 
-				if(silhouette_edge_iter == retSilhouetteEdgeList.end())
+				if(retConnectionEdgeList.end() == connection_edge_iter)
 				{
-					SilhouetteEdge silhouetteEdge;
+					ConnectionEdge silhouetteEdge;
 					silhouetteEdge.v0_i = v0_i;
 					silhouetteEdge.v1_i = v1_i;
 					silhouetteEdge.tri0_i = i / 3;
 					silhouetteEdge.tri1_i = SIZE_MAX;
 
-					retSilhouetteEdgeList.push_back(silhouetteEdge);
+					retConnectionEdgeList.push_back(silhouetteEdge);
 				}
 			}
 		}
 
-		return retSilhouetteEdgeList;
+		return retConnectionEdgeList;
 	}
 
 	IndicatorList & buildIndicatorListFromTriangleListByPoint(
@@ -466,49 +488,55 @@ namespace t3d
 		return retIndicatorList;
 	}
 
+	VertexList & buildSilhouetteEdgeList(
+		VertexList & retSilhouetteEdgeList,
+		const ConnectionEdgeList & connectionEdgeList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList)
+	{
+		_ASSERT(retSilhouetteEdgeList.empty());
+
+		ConnectionEdgeList::const_iterator connection_edge_iter = connectionEdgeList.begin();
+		for(; connection_edge_iter != connectionEdgeList.end(); connection_edge_iter++)
+		{
+			if(indicatorList[connection_edge_iter->tri0_i] >= 0)
+			{
+				if(SIZE_MAX == connection_edge_iter->tri1_i
+					|| indicatorList[connection_edge_iter->tri1_i] < 0)
+				{
+					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
+					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
+				}
+			}
+			else
+			{
+				if(SIZE_MAX == connection_edge_iter->tri1_i
+					|| indicatorList[connection_edge_iter->tri1_i] >= 0)
+				{
+					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
+					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
+				}
+			}
+		}
+
+		return retSilhouetteEdgeList;
+	}
+
 	VertexList & buildShadowVolumeByPoint(
 		VertexList & retVertexList,
-		const SilhouetteEdgeList & silhouetteEdgeList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & point,
 		real distance)
 	{
 		_ASSERT(retVertexList.empty());
 
-		SilhouetteEdgeList::const_iterator silhouette_edge_iter = silhouetteEdgeList.begin();
-		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
+		for(int i = 0; i < silhouetteEdgeList.size(); i += 2)
 		{
-			Vec4<real> v0, v1, v2, v3;
-			if(indicatorList[silhouette_edge_iter->tri0_i] >= 0)
-			{
-				if(SIZE_MAX == silhouette_edge_iter->tri1_i
-					|| indicatorList[silhouette_edge_iter->tri1_i] < 0) // ***
-				{
-					v0 = vertexList[silhouette_edge_iter->v0_i];
-					v1 = vertexList[silhouette_edge_iter->v1_i];
-				}
-				else
-				{
-					continue;
-				}
-			}
-			else
-			{
-				if(SIZE_MAX == silhouette_edge_iter->tri1_i
-					|| indicatorList[silhouette_edge_iter->tri1_i] >= 0) // ***
-				{
-					v0 = vertexList[silhouette_edge_iter->v1_i];
-					v1 = vertexList[silhouette_edge_iter->v0_i];
-				}
-				else
-				{
-					continue;
-				}
-			}
+			const Vec4<real> & v0 = silhouetteEdgeList[i + 0];
+			const Vec4<real> & v1 = silhouetteEdgeList[i + 1];
 
-			v2 = vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance));
-			v3 = vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance));
+			Vec4<real> v2 = vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance));
+			Vec4<real> v3 = vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance));
 
 			retVertexList.push_back(v0);
 			retVertexList.push_back(v1);
@@ -524,48 +552,19 @@ namespace t3d
 
 	VertexList & buildShadowVolumeByDirection(
 		VertexList & retVertexList,
-		const SilhouetteEdgeList & silhouetteEdgeList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & direction,
 		real distance)
 	{
 		_ASSERT(retVertexList.empty());
-		_ASSERT(vec3IsNormalized(direction));
 
-		SilhouetteEdgeList::const_iterator silhouette_edge_iter = silhouetteEdgeList.begin();
-		for(; silhouette_edge_iter != silhouetteEdgeList.end(); silhouette_edge_iter++)
+		for(int i = 0; i < silhouetteEdgeList.size(); i += 2)
 		{
-			Vec4<real> v0, v1, v2, v3;
-			if(indicatorList[silhouette_edge_iter->tri0_i] >= 0)
-			{
-				if(SIZE_MAX == silhouette_edge_iter->tri1_i
-					|| indicatorList[silhouette_edge_iter->tri1_i] < 0) // ***
-				{
-					v0 = vertexList[silhouette_edge_iter->v0_i];
-					v1 = vertexList[silhouette_edge_iter->v1_i];
-				}
-				else
-				{
-					continue;
-				}
-			}
-			else
-			{
-				if(SIZE_MAX == silhouette_edge_iter->tri1_i
-					|| indicatorList[silhouette_edge_iter->tri1_i] >= 0) // ***
-				{
-					v0 = vertexList[silhouette_edge_iter->v1_i];
-					v1 = vertexList[silhouette_edge_iter->v0_i];
-				}
-				else
-				{
-					continue;
-				}
-			}
+			const Vec4<real> & v0 = silhouetteEdgeList[i + 0];
+			const Vec4<real> & v1 = silhouetteEdgeList[i + 1];
 
-			v2 = vec3Add(v1, vec3Mul(direction, distance));
-			v3 = vec3Add(v0, vec3Mul(direction, distance));
+			Vec4<real> v2 = vec3Add(v1, vec3Mul(direction, distance));
+			Vec4<real> v3 = vec3Add(v0, vec3Mul(direction, distance));
 
 			retVertexList.push_back(v0);
 			retVertexList.push_back(v1);

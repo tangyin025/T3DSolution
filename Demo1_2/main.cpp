@@ -9,6 +9,7 @@
 #include "myPhysics.h"			// 物理引擎
 #include "myCollision.h"		// 碰撞系统
 #include "myScene.h"			// 场景管理
+#include "t3dlib8.h"			// Shadow Volume 支持
 
 // 包含 resource
 #include "resource.h"
@@ -264,6 +265,14 @@ protected:
 	std::vector<DIDEVICEINSTANCE> m_DIDeviceInstList; // 手柄的 instance
 	t3d::DIJoystickPtr m_joy;						// dinput joystick，目前仅用于测试
 
+	// Shadow Volume 支持
+	t3d::ConnectionEdgeList m_connectionEdgeList;	// 相邻边信息，由于计算十分费时，所以最好离线计算，从文件读取
+	t3d::IndicatorList m_indicatorList;				// 临时点积列表
+	t3d::VertexList m_silhouetteEdgeList;			// 阴影边
+	t3d::VertexList m_shadowVolume;					// 用以表示 shadow volume 的三角形列表
+	t3d::VertexList m_tmpVertexList;				// 用以存放临时顶点数据
+	t3d::StencilBufferPtr m_stencilbuff;			// Stencil Buffer
+
 	// ======================================== TODO: END   ========================================
 
 public:
@@ -405,6 +414,15 @@ public:
 		//	m_joy->setCooperativeLevel(m_pwnd->getHandle(), t3d::DIDevice::CL_NORMAL);
 		//	m_joy->acquire();
 		//}
+
+		// 生成 Silhouette Edge 信息，十分费时
+		t3d::buildConnectionEdgeListFromTriangleIndexList(
+			m_connectionEdgeList,
+			m_character->getVertexList(),
+			m_character->getVertexIndexList());
+
+		// 创建 Stencil Buffer
+		m_stencilbuff = t3d::StencilBufferPtr(new t3d::StencilBuffer(m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight()));
 
 		// ======================================== TODO: END   ========================================
 
@@ -612,39 +630,158 @@ public:
 		m_character->drawGouraudTextureZBufferRW(m_rc.get(), mmat, mrot);
 		m_character_h->drawGouraudTextureZBufferRWWithBackface(m_rc.get(), mmat, mrot);
 
-		// 绘制角色阴影，hack 手法
-		if(l_pos.y - m_world->m_characterBody->getPosition().y > 30.0f)
-		{
-			/** 为什么要 l_pos.y - character.pos.y > 30.0f
-				当 l_pos（光源位置）低于角色的头顶时，对地面的投影将达到无穷远，从而导致浮点数溢出死机
-				这样做之后当光源过低时（估计这个角色不会超过 30.0f 这个单位），就不绘制阴影
-			*/
-			m_rc->clearVertexList();
-			m_rc->clearVertexIndexList();
-			pushVertexByPointProject(
-				m_rc.get(),
-				l_pos,
-				my::Vec4<real>(0, 0.5f, 0),
-				my::Vec4<real>::UNIT_Y,
-				m_character->getVertexListBegin(),
-				m_character->getVertexListEnd(),
-				mmat);
-			m_rc->pushVertexIndexList(m_character->getVertexIndexListBegin(), m_character->getVertexIndexListEnd());
-			m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+		//// 绘制角色阴影，hack 手法
+		//if(l_pos.y - m_world->m_characterBody->getPosition().y > 30.0f)
+		//{
+		//	/** 为什么要 l_pos.y - character.pos.y > 30.0f
+		//		当 l_pos（光源位置）低于角色的头顶时，对地面的投影将达到无穷远，从而导致浮点数溢出死机
+		//		这样做之后当光源过低时（估计这个角色不会超过 30.0f 这个单位），就不绘制阴影
+		//	*/
+		//	m_rc->clearVertexList();
+		//	m_rc->clearVertexIndexList();
+		//	pushVertexByPointProject(
+		//		m_rc.get(),
+		//		l_pos,
+		//		my::Vec4<real>(0, 0.5f, 0),
+		//		my::Vec4<real>::UNIT_Y,
+		//		m_character->getVertexListBegin(),
+		//		m_character->getVertexListEnd(),
+		//		mmat);
+		//	m_rc->pushVertexIndexList(m_character->getVertexIndexListBegin(), m_character->getVertexIndexListEnd());
+		//	m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
 
-			m_rc->clearVertexList();
-			m_rc->clearVertexIndexList();
-			pushVertexByPointProject(
-				m_rc.get(),
-				l_pos,
-				my::Vec4<real>(0, 0.5f, 0),
-				my::Vec4<real>::UNIT_Y,
-				m_character_h->getVertexListBegin(),
-				m_character_h->getVertexListEnd(),
-				mmat);
-			m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
-			m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+		//	m_rc->clearVertexList();
+		//	m_rc->clearVertexIndexList();
+		//	pushVertexByPointProject(
+		//		m_rc.get(),
+		//		l_pos,
+		//		my::Vec4<real>(0, 0.5f, 0),
+		//		my::Vec4<real>::UNIT_Y,
+		//		m_character_h->getVertexListBegin(),
+		//		m_character_h->getVertexListEnd(),
+		//		mmat);
+		//	m_rc->pushVertexIndexList(m_character_h->getVertexIndexListBegin(), m_character_h->getVertexIndexListEnd());
+		//	m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
+		//}
+
+		// 注意光源点的 inverse matrix, 这些部分以后将在 render contaxt 中被优化
+		t3d::Vec4<real> lightPos = l_pos.transform(mmat.inverse());
+
+		// 计算 Indicator List
+		t3d::buildIndicatorListFromTriangleIndexListByPoint(
+			m_indicatorList,
+			m_character->getVertexList(),
+			m_character->getVertexIndexList(),
+			lightPos);
+
+		// 计算 Silhouette Edge
+		m_silhouetteEdgeList.clear();
+		t3d::buildSilhouetteEdgeList(
+			m_silhouetteEdgeList,
+			m_connectionEdgeList,
+			m_character->getVertexList(),
+			m_indicatorList);
+
+		//// 渲染 Silhouette Edge
+		//m_rc->clearVertexList();
+		//m_rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end(), mmat);
+		//m_rc->drawLineListZBufferRW(my::Color::RED);
+
+		// 计算 shadow volume
+		m_shadowVolume.clear();
+		t3d::buildShadowVolumeByPoint(
+			m_shadowVolume,
+			m_silhouetteEdgeList,
+			lightPos,
+			1000);
+
+		//// 渲染 Shadow Volume
+		//m_rc->clearVertexList();
+		//m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
+		//m_rc->drawTriangleListWireZBufferRW(my::Color::RED);
+
+		// 创建 stencil buffer reference
+		t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
+		t3d::fillStencilBuffer(stencilBuffRef, m_rc->getClipperRect(), 0);
+
+		// 对 Shadow Volume 的 3d 流水线处理
+		m_tmpVertexList.clear();
+		t3d::transformVertexList(m_tmpVertexList, m_shadowVolume, mmat);
+		t3d::resetClipStateList(m_rc->getClipStateList(), m_tmpVertexList.size() / 3);
+		t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
+		m_rc->clearVertexList();
+		t3d::transformTriangleList(m_rc->getVertexList(), m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraMatrix());
+		t3d::clipTriangleListAtCamera(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCamera());
+		t3d::cameraToScreenTriangleList(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCameraProjection(), m_rc->getViewport());
+		t3d::clipTriangleListAtScreen(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getViewport());
+
+		// Count Shadow Volume
+		for(size_t i = 0; i < m_rc->getClipStateListSize(); i++)
+		{
+			switch(m_rc->clipStateAt(i))
+			{
+			case t3d::CLIP_STATE_NONE:
+				t3d::countTriangleIncrementBehindDepth(
+					stencilBuffRef,
+					m_rc->getZBufferRef28(),
+					m_rc->vertexAt(i * 3 + 0),
+					m_rc->vertexAt(i * 3 + 1),
+					m_rc->vertexAt(i * 3 + 2));
+				break;
+
+			case t3d::CLIP_STATE_SCLIPPED:
+				t3d::countClippedTriangleIncrementBehindDepth(
+					stencilBuffRef,
+					m_rc->getClipperRect(),
+					m_rc->getZBufferRef28(),
+					m_rc->vertexAt(i * 3 + 0),
+					m_rc->vertexAt(i * 3 + 1),
+					m_rc->vertexAt(i * 3 + 2));
+				break;
+			}
 		}
+
+		// 第二级流水线处理
+		t3d::resetClipStateList(m_rc->getClipStateList(), m_tmpVertexList.size() / 3);
+		t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
+		m_rc->clearVertexList();
+		t3d::transformTriangleList(m_rc->getVertexList(), m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraMatrix());
+		t3d::clipTriangleListAtCamera(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCamera());
+		t3d::cameraToScreenTriangleList(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCameraProjection(), m_rc->getViewport());
+		t3d::clipTriangleListAtScreen(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getViewport());
+
+		// Count Shadow Volume
+		for(size_t i = 0; i < m_rc->getClipStateListSize(); i++)
+		{
+			switch(m_rc->clipStateAt(i))
+			{
+			case t3d::CLIP_STATE_NONE:
+				t3d::countTriangleDecrementBehindDepth(
+					stencilBuffRef,
+					m_rc->getZBufferRef28(),
+					m_rc->vertexAt(i * 3 + 0),
+					m_rc->vertexAt(i * 3 + 1),
+					m_rc->vertexAt(i * 3 + 2));
+				break;
+
+			case t3d::CLIP_STATE_SCLIPPED:
+				t3d::countClippedTriangleDecrementBehindDepth(
+					stencilBuffRef,
+					m_rc->getClipperRect(),
+					m_rc->getZBufferRef28(),
+					m_rc->vertexAt(i * 3 + 0),
+					m_rc->vertexAt(i * 3 + 1),
+					m_rc->vertexAt(i * 3 + 2));
+				break;
+			}
+		}
+
+		// 绘制 Shadow Volume
+		t3d::boundSurfaceStencilBufferColor32(
+			m_rc->getSurfaceRef32(),
+			m_rc->getClipperRect(),
+			stencilBuffRef,
+			my::Color(97, 97, 97));
 
 		// ======================================== TODO: END   ========================================
 

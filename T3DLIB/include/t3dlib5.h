@@ -47,6 +47,14 @@
 
 namespace t3d
 {
+	extern const unsigned char color_add_table[UCHAR_MAX + 1][UCHAR_MAX + 1];
+
+	extern const unsigned char color_mul_table[UCHAR_MAX + 1][UCHAR_MAX + 1];
+
+#define _COLORADD(lhs, rhs)	color_add_table[(lhs)][(rhs)]
+
+#define _COLORMUL(lhs, rhs)	color_mul_table[(lhs)][(rhs)]
+
 	inline void memSet16(void * dest, uint16 value, size_t count)
 	{
 		__asm

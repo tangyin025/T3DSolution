@@ -5,6 +5,7 @@
 #include "MyUI.h"
 #include "MyProgress.h"
 #include <myPhysics.h>
+#include "t3dlib8.h"
 
 class MyWindow
 	: public my::GameWnd
@@ -96,7 +97,7 @@ protected:
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	my::Mp3Ptr m_mp3;
+	//my::Mp3Ptr m_mp3;
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,17 +114,17 @@ public:
 		return m_exitFlag;
 	}
 
-	void setPercent(real percent)
-	{
-		my::CriticalSectionLock lock(m_progressBoxLock);
-		m_progressBox->setPercent(percent);
-	}
+	//void setPercent(real percent)
+	//{
+	//	my::CriticalSectionLock lock(m_progressBoxLock);
+	//	m_progressBox->setPercent(percent);
+	//}
 
-	real getPercent(void)
-	{
-		my::CriticalSectionLock lock(m_progressBoxLock);
-		return m_progressBox->getPercent();
-	}
+	//real getPercent(void)
+	//{
+	//	my::CriticalSectionLock lock(m_progressBoxLock);
+	//	return m_progressBox->getPercent();
+	//}
 
 public:
 	MyLoadState(void);
@@ -162,19 +163,35 @@ protected:
 
 	my::EulerCameraPtr m_eulerCam;
 
-	my::BoneAssignmentIndexObjectFromOgreMeshPtr m_obj;
+	//my::BoneAssignmentIndexObjectFromOgreMeshPtr m_obj;
 
-	my::ObjectFromOgreMeshPtr m_lstObj;
+	//my::ObjectFromOgreMeshPtr m_lstObj;
 
-	my::ImagePtr m_objImg;
+	//my::ImagePtr m_objImg;
 
-	my::WavPtr m_wav;
+	//my::WavPtr m_wav;
 
-	t3d::DS3DBufferPtr m_ds3dbuffer;
+	//t3d::DS3DBufferPtr m_ds3dbuffer;
 
-	t3d::DS3DListenerPtr m_ds3dListener;
+	//t3d::DS3DListenerPtr m_ds3dListener;
 
-	my::Mp3Ptr m_mp3;
+	//my::Mp3Ptr m_mp3;
+
+	my::IndexPlaneObjectPtr m_plane;
+
+	my::IndexObjectPtr m_obj;
+
+	t3d::ConnectionEdgeList m_connectionEdgeList;
+
+	t3d::IndicatorList m_indicatorList;
+
+	t3d::VertexList m_silhouetteEdgeList;
+
+	t3d::VertexList m_objShadowVolume;
+
+	t3d::VertexList m_tmpVertexList;
+
+	t3d::StencilBufferPtr m_stencilbuff;
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
