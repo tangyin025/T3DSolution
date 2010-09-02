@@ -13,7 +13,7 @@ namespace t3d
 		const CRect & rect,
 		int value);
 
-	void countScanBehindDepth(
+	void countScanIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const SurfaceRef<fixp28> & zbuffer,
 		fixp16 lx,
@@ -22,7 +22,16 @@ namespace t3d
 		fixp28 lz,
 		fixp28 rz);
 
-	void countClippedScanBehindDepth(
+	void countScanDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz);
+
+	void countClippedScanIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -32,16 +41,7 @@ namespace t3d
 		fixp28 lz,
 		fixp28 rz);
 
-	void countScanInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz);
-
-	void countClippedScanInFrontOfDepth(
+	void countClippedScanDecrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -51,14 +51,59 @@ namespace t3d
 		fixp28 lz,
 		fixp28 rz);
 
-	void countTriangleBehindDepth(
+	void countScanIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz);
+
+	void countScanDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz);
+
+	void countClippedScanIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz);
+
+	void countClippedScanDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		fixp16 lx,
+		fixp16 rx,
+		int y0,
+		fixp28 lz,
+		fixp28 rz);
+
+	void countTriangleIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const SurfaceRef<fixp28> & zbuffer,
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
-	void countClippedTriangleBehindDepth(
+	void countTriangleDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2);
+
+	void countClippedTriangleIncrementBehindDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -66,14 +111,37 @@ namespace t3d
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
-	void countTriangleInFrontOfDepth(
+	void countClippedTriangleDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2);
+
+	void countTriangleIncrementInFrontOfDepth(
 		SurfaceRef<int> stencilbuff,
 		const SurfaceRef<fixp28> & zbuffer,
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
-	void countClippedTriangleInFrontOfDepth(
+	void countTriangleDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2);
+
+	void countClippedTriangleIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const Vec4<real> & v0,
+		const Vec4<real> & v1,
+		const Vec4<real> & v2);
+
+	void countClippedTriangleDecrementInFrontOfDepth(
 		SurfaceRef<int> stencilbuff,
 		const RECT & clipper,
 		const SurfaceRef<fixp28> & zbuffer,
@@ -101,8 +169,8 @@ namespace t3d
 	class SilhouetteEdge
 	{
 	public:
-		Vec4<real> v0;
-		Vec4<real> v1;
+		size_t v0_i;
+		size_t v1_i;
 		size_t tri0_i;
 		size_t tri1_i;
 	};
@@ -145,6 +213,7 @@ namespace t3d
 	VertexList & buildShadowVolumeByPoint(
 		VertexList & retVertexList,
 		const SilhouetteEdgeList & silhouetteEdgeList,
+		const VertexList & vertexList,
 		const IndicatorList & indicatorList,
 		const Vec4<real> & point,
 		real distance);
@@ -152,6 +221,7 @@ namespace t3d
 	VertexList & buildShadowVolumeByDirection(
 		VertexList & retVertexList,
 		const SilhouetteEdgeList & silhouetteEdgeList,
+		const VertexList & vertexList,
 		const IndicatorList & indicatorList,
 		const Vec4<real> & direction,
 		real distance);
