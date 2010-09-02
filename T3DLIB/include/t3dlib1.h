@@ -132,26 +132,58 @@ namespace t3d
 
 	typedef boost::shared_ptr<DDraw> DDrawPtr;
 
-	class ZBuffer
+	template <typename BUFFER_TYPE>
+	class CustomBuffer
 	{
 	public:
-		std::vector<fixp28> m_buffer;
+		std::vector<BUFFER_TYPE> m_buffer;
 
 		LONG m_lPitch;
 
 	public:
-		ZBuffer(DWORD dwWidth, DWORD dwHeight);
+		CustomBuffer(DWORD dwWidth, DWORD dwHeight)
+			: m_buffer(dwWidth * dwHeight)
+			, m_lPitch(dwWidth * sizeof(BUFFER_TYPE))
+		{
+		}
 
-		virtual ~ZBuffer(void);
+		const BUFFER_TYPE * getBuffer(void) const
+		{
+			return &m_buffer[0];
+		}
 
-		const fixp28 * getBuffer(void) const;
+		BUFFER_TYPE * getBuffer(void)
+		{
+			return &m_buffer[0];
+		}
 
-		fixp28 * getBuffer(void);
+		LONG getPitch(void) const
+		{
+			return m_lPitch;
+		}
+	};
 
-		LONG getPitch(void);
+	class ZBuffer : public CustomBuffer<fixp28>
+	{
+	public:
+		ZBuffer(DWORD dwWidth, DWORD dwHeight)
+			: CustomBuffer(dwWidth, dwHeight)
+		{
+		}
 	};
 
 	typedef boost::shared_ptr<ZBuffer> ZBufferPtr;
+
+	class StencilBuffer : public CustomBuffer<int>
+	{
+	public:
+		StencilBuffer(DWORD dwWidth, DWORD dwHeight)
+			: CustomBuffer(dwWidth, dwHeight)
+		{
+		}
+	};
+
+	typedef boost::shared_ptr<StencilBuffer> StencilBufferPtr;
 }
 
 #endif // __T3DLIB1_H__

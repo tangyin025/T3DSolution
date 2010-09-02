@@ -1838,21 +1838,34 @@ namespace t3d
 		void drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void);
 	};
 
-	void transformVertexList(
+	VertexList & transformVertexList(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const Mat4<real> & mmat);
+
+	VertexList & transformVertexListSelf(
 		VertexList & vertexList,
 		const Mat4<real> & mmat);
 
-	//void transformVertexIndexList(
-	//	VertexList & vertexList,
-	//	VertexIndexList & vertexIndexList,
-	//	const Mat4<real> & mmat);
+	VertexList & transformLineList(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Mat4<real> & mmat);
 
-	void transformLineList(
+	VertexList & transformLineListSelf(
 		VertexList & vertexList,
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat);
 
-	void transformLineIndexList(
+	VertexList & transformLineIndexList(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Mat4<real> & mmat);
+
+	VertexList & transformLineIndexListSelf(
 		VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		const ClipStateList & clipStateList,
@@ -1970,12 +1983,25 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const Vec4<real> & eye);
 
-	void transformTriangleList(
+	VertexList & transformTriangleList(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList,
+		const Mat4<real> & mmat);
+
+	VertexList & transformTriangleListSelf(
 		VertexList & vertexList,
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat);
 
-	void transformTriangleIndexList(
+	VertexList & transformTriangleIndexList(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList,
+		const Mat4<real> & mmat);
+
+	VertexList & transformTriangleIndexListSelf(
 		VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		const ClipStateList & clipStateList,

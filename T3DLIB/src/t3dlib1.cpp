@@ -359,29 +359,4 @@ namespace t3d
 		DDSurfacePtr surface(new DDSurface(this, ddsd));
 		return surface;
 	}
-
-	ZBuffer::ZBuffer(DWORD dwWidth, DWORD dwHeight)
-		: m_buffer(dwWidth * dwHeight)
-		, m_lPitch(dwWidth * sizeof(fixp28))
-	{
-	}
-
-	ZBuffer::~ZBuffer(void)
-	{
-	}
-
-	const fixp28 * ZBuffer::getBuffer(void) const
-	{
-		return (fixp28 *)&m_buffer[0];
-	}
-
-	fixp28 * ZBuffer::getBuffer(void)
-	{
-		return (fixp28 *)&m_buffer[0];
-	}
-
-	LONG ZBuffer::getPitch(void)
-	{
-		return m_lPitch;
-	}
 }

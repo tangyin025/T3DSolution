@@ -8,7 +8,7 @@
 
 namespace t3d
 {
-	void fillDepthStencilBuffer(
+	void fillStencilBuffer(
 		SurfaceRef<int> stencilbuff,
 		const CRect & rect,
 		int value);
@@ -149,6 +149,12 @@ namespace t3d
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
+	void boundSurfaceStencilBufferColor32(
+		SurfaceRef<uint32> surface,
+		const CRect & rect,
+		SurfaceRef<int> stencilbuff,
+		const t3d::Vec4<real> & color);
+
 	CLIP_STATE clipTriangleFrontfaceAtWorld(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
@@ -166,7 +172,7 @@ namespace t3d
 		ClipStateList & clipStateList,
 		const Vec4<real> & eye);
 
-	class SilhouetteEdge
+	class ConnectionEdge
 	{
 	public:
 		size_t v0_i;
@@ -175,14 +181,14 @@ namespace t3d
 		size_t tri1_i;
 	};
 
-	typedef std::vector<SilhouetteEdge> SilhouetteEdgeList;
+	typedef std::vector<ConnectionEdge> ConnectionEdgeList;
 
-	SilhouetteEdgeList & buildSilhouetteEdgeListFromTriangleList(
-		SilhouetteEdgeList & retSilhouetteEdgeList,
+	ConnectionEdgeList & buildConnectionEdgeListFromTriangleList(
+		ConnectionEdgeList & retConnectionEdgeList,
 		const VertexList & vertexList);
 
-	SilhouetteEdgeList & buildSilhouetteEdgeListFromTriangleIndexList(
-		SilhouetteEdgeList & retSilhouetteEdgeList,
+	ConnectionEdgeList & buildConnectionEdgeListFromTriangleIndexList(
+		ConnectionEdgeList & retConnectionEdgeList,
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList);
 
@@ -210,19 +216,21 @@ namespace t3d
 		const VertexIndexList & vertexIndexList,
 		const Vec4<real> & direction);
 
+	VertexList & buildSilhouetteEdgeList(
+		VertexList & retSilhouetteEdgeList,
+		const ConnectionEdgeList & connectionEdgeList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList);
+
 	VertexList & buildShadowVolumeByPoint(
 		VertexList & retVertexList,
-		const SilhouetteEdgeList & silhouetteEdgeList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & point,
 		real distance);
 
 	VertexList & buildShadowVolumeByDirection(
 		VertexList & retVertexList,
-		const SilhouetteEdgeList & silhouetteEdgeList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & direction,
 		real distance);
 }

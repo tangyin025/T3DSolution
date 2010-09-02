@@ -173,21 +173,21 @@ void MyLoadState::enterState(void)
 
 	pushJob(MyJobPtr(new SimpleCreateObjJob<my::EulerCamera>(gameState->m_eulerCam, 1)));
 
-	pushJob(MyJobPtr(new LoadBoneAssignmentIndexObjectJob(gameState->m_obj, _T("gun.mesh.xml"))));
+	//pushJob(MyJobPtr(new LoadBoneAssignmentIndexObjectJob(gameState->m_obj, _T("gun.mesh.xml"))));
 
-	pushJob(MyJobPtr(new LoadObjectJob(gameState->m_lstObj, _T("gun_tri_list.mesh.xml"))));
+	//pushJob(MyJobPtr(new LoadObjectJob(gameState->m_lstObj, _T("gun_tri_list.mesh.xml"))));
 
-	pushJob(MyJobPtr(new LoadImageJob(gameState->m_objImg, _T("92fs_brigadier.jpg"))));
+	//pushJob(MyJobPtr(new LoadImageJob(gameState->m_objImg, _T("92fs_brigadier.jpg"))));
 
-	pushJob(MyJobPtr(new LoadWavJob(gameState->m_wav, _T("stationthrob.wav"), MyGame::getSingleton().m_dsound.get())));
+	//pushJob(MyJobPtr(new LoadWavJob(gameState->m_wav, _T("stationthrob.wav"), MyGame::getSingleton().m_dsound.get())));
 
-	pushJob(MyJobPtr(new LoadMp3Job(gameState->m_mp3, _T("castle1_20.mp3"), MyGame::getSingleton().m_dsound)));
+	//pushJob(MyJobPtr(new LoadMp3Job(gameState->m_mp3, _T("castle1_20.mp3"), MyGame::getSingleton().m_dsound)));
 
-	// load & play mp3 while loading
-	m_mp3 = my::Mp3Ptr(new my::Mp3(
-		MyGame::getSingleton().m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
+	//// load & play mp3 while loading
+	//m_mp3 = my::Mp3Ptr(new my::Mp3(
+	//	MyGame::getSingleton().m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
 
-	m_mp3->play();
+	//m_mp3->play();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -202,7 +202,7 @@ void MyLoadState::leaveState(void)
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	m_mp3->stop();
+	//m_mp3->stop();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -297,7 +297,10 @@ DWORD MyLoadState::onProc(void)
 
 			// update progress bar
 			currentWeight += (*job_iter)->getWeight();
-			setPercent(currentWeight / totalWeight);
+			{
+				my::CriticalSectionLock lock(m_progressBoxLock);
+				m_progressBox->setPercent(currentWeight / totalWeight);
+			}
 			::Sleep(33);
 		}
 	}
@@ -336,16 +339,32 @@ void MyGameState::enterState(void)
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	// create ds3d buffer & ds3d listener
-	m_ds3dbuffer = m_wav->m_dsbuffer->getDS3DBuffer();
+	//// create ds3d buffer & ds3d listener
+	//m_ds3dbuffer = m_wav->m_dsbuffer->getDS3DBuffer();
 
-	m_ds3dListener = MyGame::getSingleton().m_dsound->getPrimarySoundBuffer()->getDS3DListener();
+	//m_ds3dListener = MyGame::getSingleton().m_dsound->getPrimarySoundBuffer()->getDS3DListener();
 
-	// play the wave
-	m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
+	//// play the wave
+	//m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
 
-	// play the mp3
-	m_mp3->play(true);
+	//// play the mp3
+	//m_mp3->play(true);
+
+	m_plane = my::IndexPlaneObjectPtr(new my::IndexPlaneObject(100, 100));
+
+	m_obj = my::IndexObjectPtr(new my::IndexPlaneObject(20, 20));
+
+	//m_obj = my::IndexObjectPtr(new my::IndexCubeObject(20, 20, 20));
+
+	//m_obj = my::IndexObjectPtr(new my::IndexSphereObject(10, 4, 3));
+
+	t3d::buildConnectionEdgeListFromTriangleIndexList(
+		m_connectionEdgeList,
+		m_obj->getVertexList(),
+		m_obj->getVertexIndexList());
+
+	m_stencilbuff = t3d::StencilBufferPtr(new t3d::StencilBuffer(
+		MyGame::getSingleton().m_rc->getSurfaceWidth(), MyGame::getSingleton().m_rc->getSurfaceHeight()));
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -354,11 +373,11 @@ void MyGameState::leaveState(void)
 {
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	// stop the wave
-	m_wav->m_dsbuffer->stop();
+	//// stop the wave
+	//m_wav->m_dsbuffer->stop();
 
-	// stop the mp3
-	m_mp3->stop();
+	//// stop the mp3
+	//m_mp3->stop();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -426,77 +445,190 @@ bool MyGameState::doFrame(void)
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	DS3DBUFFER ds3db = {sizeof(ds3db)};
-	m_ds3dbuffer->getAllParameters(&ds3db);
-	ds3db.vPosition.x = 0;
-	ds3db.vPosition.y = 0;
-	ds3db.vPosition.z = 0;
-	ds3db.vVelocity.x = 0;
-	ds3db.vVelocity.y = 0;
-	ds3db.vVelocity.z = 0;
-	ds3db.flMinDistance = 5;
-	ds3db.flMaxDistance = 50;
-	ds3db.dwMode = DS3DMODE_NORMAL;
-	m_ds3dbuffer->setAllParameters(&ds3db);
+	//DS3DBUFFER ds3db = {sizeof(ds3db)};
+	//m_ds3dbuffer->getAllParameters(&ds3db);
+	//ds3db.vPosition.x = 0;
+	//ds3db.vPosition.y = 0;
+	//ds3db.vPosition.z = 0;
+	//ds3db.vVelocity.x = 0;
+	//ds3db.vVelocity.y = 0;
+	//ds3db.vVelocity.z = 0;
+	//ds3db.flMinDistance = 5;
+	//ds3db.flMaxDistance = 50;
+	//ds3db.dwMode = DS3DMODE_NORMAL;
+	//m_ds3dbuffer->setAllParameters(&ds3db);
 
-	DS3DLISTENER ds3dl = {sizeof(ds3dl)};
-	m_ds3dListener->getAllParameters(&ds3dl);
-	ds3dl.vPosition.x = m_eulerCam->getPosition().x;
-	ds3dl.vPosition.y = m_eulerCam->getPosition().y;
-	ds3dl.vPosition.z = m_eulerCam->getPosition().z;
-	my::Mat4<real> camMatRot = t3d::mat4GetRotationScalePart(rc->getCameraMatrix().inverse());
-	my::Vec4<real> vfront = my::Vec4<real>::UNIT_Z.transform(camMatRot);
-	ds3dl.vOrientFront.x = vfront.x;
-	ds3dl.vOrientFront.y = vfront.y;
-	ds3dl.vOrientFront.z = vfront.z;
-	my::Vec4<real> vtop = my::Vec4<real>::UNIT_Y.transform(camMatRot);
-	ds3dl.vOrientTop.x = vtop.x;
-	ds3dl.vOrientTop.y = vtop.y;
-	ds3dl.vOrientTop.z = vtop.z;
-	ds3dl.flDistanceFactor = 1.0f;
-	ds3dl.flRolloffFactor = 0.05f;
-	ds3dl.flDopplerFactor = 0;
-	m_ds3dListener->setAllParameters(&ds3dl, DS3D_IMMEDIATE);
+	//DS3DLISTENER ds3dl = {sizeof(ds3dl)};
+	//m_ds3dListener->getAllParameters(&ds3dl);
+	//ds3dl.vPosition.x = m_eulerCam->getPosition().x;
+	//ds3dl.vPosition.y = m_eulerCam->getPosition().y;
+	//ds3dl.vPosition.z = m_eulerCam->getPosition().z;
+	//my::Mat4<real> camMatRot = t3d::mat4GetRotationScalePart(rc->getCameraMatrix().inverse());
+	//my::Vec4<real> vfront = my::Vec4<real>::UNIT_Z.transform(camMatRot);
+	//ds3dl.vOrientFront.x = vfront.x;
+	//ds3dl.vOrientFront.y = vfront.y;
+	//ds3dl.vOrientFront.z = vfront.z;
+	//my::Vec4<real> vtop = my::Vec4<real>::UNIT_Y.transform(camMatRot);
+	//ds3dl.vOrientTop.x = vtop.x;
+	//ds3dl.vOrientTop.y = vtop.y;
+	//ds3dl.vOrientTop.z = vtop.z;
+	//ds3dl.flDistanceFactor = 1.0f;
+	//ds3dl.flRolloffFactor = 0.05f;
+	//ds3dl.flDopplerFactor = 0;
+	//m_ds3dListener->setAllParameters(&ds3dl, DS3D_IMMEDIATE);
 
-	real idxZ = -50, lstZ = -50;
+	//real idxZ = -50, lstZ = -50;
 
-	rc->setTextureBuffer(m_objImg->getBits(), m_objImg->getPitch(), m_objImg->getWidth(), m_objImg->getHeight());
+	//rc->setTextureBuffer(m_objImg->getBits(), m_objImg->getPitch(), m_objImg->getWidth(), m_objImg->getHeight());
 
-	m_obj->drawWireZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+	//m_obj->drawWireZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
 
-	m_lstObj->drawWireZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+	//m_lstObj->drawWireZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
 
-	m_obj->drawZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+	//m_obj->drawZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
 
-	m_lstObj->drawZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+	//m_lstObj->drawZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
 
-	m_obj->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
+	//m_obj->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
 
-	m_lstObj->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
+	//m_lstObj->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
 
-	m_obj->drawTextureZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+	//m_obj->drawTextureZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
 
-	m_lstObj->drawTextureZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+	//m_lstObj->drawTextureZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
 
-	m_obj->drawTexturePerspectiveLPZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+	//m_obj->drawTexturePerspectiveLPZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
 
-	m_lstObj->drawTexturePerspectiveLPZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+	//m_lstObj->drawTexturePerspectiveLPZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
 
-	m_obj->drawTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+	//m_obj->drawTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
 
-	m_lstObj->drawTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+	//m_lstObj->drawTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
 
-	m_obj->drawTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
+	//m_obj->drawTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
 
-	m_lstObj->drawTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
+	//m_lstObj->drawTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
 
-	m_obj->drawGouraudTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
+	//m_obj->drawGouraudTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
 
-	m_lstObj->drawGouraudTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
+	//m_lstObj->drawGouraudTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
 
-	m_obj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
+	//m_obj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
 
-	m_lstObj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
+	//m_lstObj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
+
+	m_plane->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(0, -10, 0)), my::Mat4<real>::IDENTITY);
+
+	m_obj->drawWireZBufferRW(rc, my::Color::BLUE);
+
+	my::Vec4<real> lightPos(-30.0f, 30.0f, -30.0f);
+
+	t3d::buildIndicatorListFromTriangleIndexListByPoint(
+		m_indicatorList,
+		m_obj->getVertexList(),
+		m_obj->getVertexIndexList(),
+		lightPos);
+
+	m_silhouetteEdgeList.clear();
+	t3d::buildSilhouetteEdgeList(
+		m_silhouetteEdgeList,
+		m_connectionEdgeList,
+		m_obj->getVertexList(),
+		m_indicatorList);
+
+	m_objShadowVolume.clear();
+	t3d::buildShadowVolumeByPoint(
+		m_objShadowVolume,
+		m_silhouetteEdgeList,
+		lightPos,
+		1000);
+
+	rc->clearVertexList();
+	rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end());
+	rc->drawTriangleListWireZBufferRW(my::Color::RED);
+
+	// 创建 stencil buffer reference
+	t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
+	t3d::fillStencilBuffer(stencilBuffRef, rc->getClipperRect(), 0);
+
+	// 对 Shadow Volume 的 3d 流水线处理
+	m_tmpVertexList.clear();
+	t3d::transformVertexList(m_tmpVertexList, m_objShadowVolume, my::Mat4<real>::IDENTITY);
+	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
+	t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
+	rc->clearVertexList();
+	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
+	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
+	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
+	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
+
+	// Count Shadow Volume
+	for(size_t i = 0; i < rc->getClipStateListSize(); i++)
+	{
+		switch(rc->clipStateAt(i))
+		{
+		case t3d::CLIP_STATE_NONE:
+			t3d::countTriangleIncrementBehindDepth(
+				stencilBuffRef,
+				rc->getZBufferRef28(),
+				rc->vertexAt(i * 3 + 0),
+				rc->vertexAt(i * 3 + 1),
+				rc->vertexAt(i * 3 + 2));
+			break;
+
+		case t3d::CLIP_STATE_SCLIPPED:
+			t3d::countClippedTriangleIncrementBehindDepth(
+				stencilBuffRef,
+				rc->getClipperRect(),
+				rc->getZBufferRef28(),
+				rc->vertexAt(i * 3 + 0),
+				rc->vertexAt(i * 3 + 1),
+				rc->vertexAt(i * 3 + 2));
+			break;
+		}
+	}
+
+	// 第二级流水线处理
+	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
+	t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
+	rc->clearVertexList();
+	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
+	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
+	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
+	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
+
+	// Count Shadow Volume
+	for(size_t i = 0; i < rc->getClipStateListSize(); i++)
+	{
+		switch(rc->clipStateAt(i))
+		{
+		case t3d::CLIP_STATE_NONE:
+			t3d::countTriangleDecrementBehindDepth(
+				stencilBuffRef,
+				rc->getZBufferRef28(),
+				rc->vertexAt(i * 3 + 0),
+				rc->vertexAt(i * 3 + 1),
+				rc->vertexAt(i * 3 + 2));
+			break;
+
+		case t3d::CLIP_STATE_SCLIPPED:
+			t3d::countClippedTriangleDecrementBehindDepth(
+				stencilBuffRef,
+				rc->getClipperRect(),
+				rc->getZBufferRef28(),
+				rc->vertexAt(i * 3 + 0),
+				rc->vertexAt(i * 3 + 1),
+				rc->vertexAt(i * 3 + 2));
+			break;
+		}
+	}
+
+	// 绘制 Shadow Volume
+	t3d::boundSurfaceStencilBufferColor32(
+		rc->getSurfaceRef32(),
+		rc->getClipperRect(),
+		stencilBuffRef,
+		my::Color(97, 97, 97));
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
