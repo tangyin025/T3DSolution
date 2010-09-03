@@ -267,7 +267,9 @@ protected:
 
 	// Shadow Volume 支持
 	t3d::ConnectionEdgeList m_connectionEdgeList;	// 相邻边信息，由于计算十分费时，所以最好离线计算，从文件读取
+	t3d::ConnectionEdgeList m_connectionEdgeList2;
 	t3d::IndicatorList m_indicatorList;				// 临时点积列表
+	t3d::IndicatorList m_indicatorList2;
 	t3d::VertexList m_silhouetteEdgeList;			// 阴影边
 	t3d::VertexList m_shadowVolume;					// 用以表示 shadow volume 的三角形列表
 	t3d::VertexList m_tmpVertexList;				// 用以存放临时顶点数据
@@ -399,11 +401,6 @@ public:
 		//my::copyWholeWavBufferToDSoundBuffer(m_dsbuffer.get(), tmpWav.get());
 		//m_dsbuffer->play();
 		std::basic_string<t3d::charT> mp3Path = my::ResourceMgr::getSingleton().findFile(_T("i am the wind.mp3"));
-		if(!mp3Path.empty())
-		{
-			m_mp3 = my::Mp3Ptr(new my::Mp3(m_dsound, my::IOStreamPtr(new my::FileStream(mp3Path))));
-			m_mp3->play(true);
-		}
 
 		//// 查询并创建手柄（仅测试）
 		//m_DIDeviceInstList.clear();
@@ -421,8 +418,20 @@ public:
 			m_character->getVertexList(),
 			m_character->getVertexIndexList());
 
+		t3d::buildConnectionEdgeListFromTriangleIndexList(
+			m_connectionEdgeList2,
+			m_character_h->getVertexList(),
+			m_character_h->getVertexIndexList());
+
 		// 创建 Stencil Buffer
 		m_stencilbuff = t3d::StencilBufferPtr(new t3d::StencilBuffer(m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight()));
+
+		// 播放背景音乐
+		if(!mp3Path.empty())
+		{
+			m_mp3 = my::Mp3Ptr(new my::Mp3(m_dsound, my::IOStreamPtr(new my::FileStream(mp3Path))));
+			m_mp3->play(true);
+		}
 
 		// ======================================== TODO: END   ========================================
 
@@ -480,8 +489,8 @@ public:
 		my::Vec4<real> l_pos(-30, 30, -30);
 		l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
 		m_rc->clearLightList();
-		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
-		m_rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
+		m_rc->pushLightAmbient(my::Color(0.2f, 0.2f, 0.2f));
+		m_rc->pushLightPoint(my::Color(1, 1, 1), l_pos);
 
 		// 设置渲染上下文的 material
 		m_rc->setAmbient(my::Color::WHITE);
@@ -665,22 +674,34 @@ public:
 		//}
 
 		// 注意光源点的 inverse matrix, 这些部分以后将在 render contaxt 中被优化
-		t3d::Vec4<real> lightPos = l_pos.transform(mmat.inverse());
+		t3d::Vec4<real> l_pos_inv = l_pos.transform(mmat.inverse());
 
 		// 计算 Indicator List
 		t3d::buildIndicatorListFromTriangleIndexListByPoint(
 			m_indicatorList,
 			m_character->getVertexList(),
 			m_character->getVertexIndexList(),
-			lightPos);
+			l_pos_inv);
+
+		t3d::buildIndicatorListFromTriangleIndexListByPoint(
+			m_indicatorList2,
+			m_character_h->getVertexList(),
+			m_character_h->getVertexIndexList(),
+			l_pos_inv);
 
 		// 计算 Silhouette Edge
 		m_silhouetteEdgeList.clear();
-		t3d::buildSilhouetteEdgeList(
+		t3d::pushSilhouetteEdgeList(
 			m_silhouetteEdgeList,
 			m_connectionEdgeList,
 			m_character->getVertexList(),
 			m_indicatorList);
+
+		t3d::pushSilhouetteEdgeList(
+			m_silhouetteEdgeList,
+			m_connectionEdgeList2,
+			m_character_h->getVertexList(),
+			m_indicatorList2);
 
 		//// 渲染 Silhouette Edge
 		//m_rc->clearVertexList();
@@ -692,10 +713,10 @@ public:
 		t3d::buildShadowVolumeByPoint(
 			m_shadowVolume,
 			m_silhouetteEdgeList,
-			lightPos,
-			1000);
+			l_pos_inv,
+			300);
 
-		//// 渲染 Shadow Volume
+		//// 渲染 Shadow Volume 线框
 		//m_rc->clearVertexList();
 		//m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
 		//m_rc->drawTriangleListWireZBufferRW(my::Color::RED);
@@ -704,12 +725,11 @@ public:
 		t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
 		t3d::fillStencilBuffer(stencilBuffRef, m_rc->getClipperRect(), 0);
 
-		// 对 Shadow Volume 的 3d 流水线处理
+		// 第一级 Shadow Volume 流水线处理
 		m_tmpVertexList.clear();
 		t3d::transformVertexList(m_tmpVertexList, m_shadowVolume, mmat);
 		t3d::resetClipStateList(m_rc->getClipStateList(), m_tmpVertexList.size() / 3);
-		t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
-		m_rc->clearVertexList();
+		t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
 		t3d::transformTriangleList(m_rc->getVertexList(), m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraMatrix());
 		t3d::clipTriangleListAtCamera(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCamera());
 		t3d::cameraToScreenTriangleList(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCameraProjection(), m_rc->getViewport());
@@ -721,7 +741,7 @@ public:
 			switch(m_rc->clipStateAt(i))
 			{
 			case t3d::CLIP_STATE_NONE:
-				t3d::countTriangleIncrementBehindDepth(
+				t3d::countTriangleIncrementInFrontOfDepth(
 					stencilBuffRef,
 					m_rc->getZBufferRef28(),
 					m_rc->vertexAt(i * 3 + 0),
@@ -730,7 +750,7 @@ public:
 				break;
 
 			case t3d::CLIP_STATE_SCLIPPED:
-				t3d::countClippedTriangleIncrementBehindDepth(
+				t3d::countClippedTriangleIncrementInFrontOfDepth(
 					stencilBuffRef,
 					m_rc->getClipperRect(),
 					m_rc->getZBufferRef28(),
@@ -743,8 +763,7 @@ public:
 
 		// 第二级流水线处理
 		t3d::resetClipStateList(m_rc->getClipStateList(), m_tmpVertexList.size() / 3);
-		t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
-		m_rc->clearVertexList();
+		t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
 		t3d::transformTriangleList(m_rc->getVertexList(), m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraMatrix());
 		t3d::clipTriangleListAtCamera(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCamera());
 		t3d::cameraToScreenTriangleList(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCameraProjection(), m_rc->getViewport());
@@ -756,7 +775,7 @@ public:
 			switch(m_rc->clipStateAt(i))
 			{
 			case t3d::CLIP_STATE_NONE:
-				t3d::countTriangleDecrementBehindDepth(
+				t3d::countTriangleDecrementInFrontOfDepth(
 					stencilBuffRef,
 					m_rc->getZBufferRef28(),
 					m_rc->vertexAt(i * 3 + 0),
@@ -765,7 +784,7 @@ public:
 				break;
 
 			case t3d::CLIP_STATE_SCLIPPED:
-				t3d::countClippedTriangleDecrementBehindDepth(
+				t3d::countClippedTriangleDecrementInFrontOfDepth(
 					stencilBuffRef,
 					m_rc->getClipperRect(),
 					m_rc->getZBufferRef28(),
@@ -777,11 +796,22 @@ public:
 		}
 
 		// 绘制 Shadow Volume
-		t3d::boundSurfaceStencilBufferColor32(
-			m_rc->getSurfaceRef32(),
-			m_rc->getClipperRect(),
-			stencilBuffRef,
-			my::Color(97, 97, 97));
+		if(m_ddpf.dwRGBBitCount == 16)
+		{
+			t3d::boundSurfaceStencilBufferColor16(
+				m_rc->getSurfaceRef16(),
+				m_rc->getClipperRect(),
+				stencilBuffRef,
+				my::Color(97, 97, 97));
+		}
+		else
+		{
+			t3d::boundSurfaceStencilBufferColor32(
+				m_rc->getSurfaceRef32(),
+				m_rc->getClipperRect(),
+				stencilBuffRef,
+				my::Color(97, 97, 97));
+		}
 
 		// ======================================== TODO: END   ========================================
 

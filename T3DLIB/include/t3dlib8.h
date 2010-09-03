@@ -149,6 +149,12 @@ namespace t3d
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
+	void boundSurfaceStencilBufferColor16(
+		SurfaceRef<uint16> surface,
+		const CRect & rect,
+		SurfaceRef<int> stencilbuff,
+		const t3d::Vec4<real> & color);
+
 	void boundSurfaceStencilBufferColor32(
 		SurfaceRef<uint32> surface,
 		const CRect & rect,
@@ -216,7 +222,7 @@ namespace t3d
 		const VertexIndexList & vertexIndexList,
 		const Vec4<real> & direction);
 
-	VertexList & buildSilhouetteEdgeList(
+	VertexList & pushSilhouetteEdgeList(
 		VertexList & retSilhouetteEdgeList,
 		const ConnectionEdgeList & connectionEdgeList,
 		const VertexList & vertexList,

@@ -158,6 +158,8 @@ namespace my
 
 		t3d::DIMousePtr m_mouse;
 
+		DDPIXELFORMAT m_ddpf;
+
 		t3d::RenderContextPtr m_rc;
 
 		ColorConversionPtr m_cc;

@@ -236,6 +236,27 @@ namespace t3d
 #include "count_triangle.hpp"
 	}
 
+	void boundSurfaceStencilBufferColor16(
+		SurfaceRef<uint16> surface,
+		const CRect & rect,
+		SurfaceRef<int> stencilbuff,
+		const t3d::Vec4<real> & color)
+	{
+		for(int y = rect.top; y < rect.bottom; y++)
+		{
+			for(int x = rect.left; x < rect.right; x++)
+			{
+				if(stencilbuff[y][x] > 0)
+				{
+					surface[y][x] = _RGB16BIT_WITHOUT_RSHIFT(
+						_COLORMUL(_RGB16GETR(surface[y][x]), real_to_int(color.x)),
+						_COLORMUL(_RGB16GETG(surface[y][x]), real_to_int(color.y)),
+						_COLORMUL(_RGB16GETB(surface[y][x]), real_to_int(color.z)));
+				}
+			}
+		}
+	}
+
 	void boundSurfaceStencilBufferColor32(
 		SurfaceRef<uint32> surface,
 		const CRect & rect,
@@ -489,13 +510,13 @@ namespace t3d
 		return retIndicatorList;
 	}
 
-	VertexList & buildSilhouetteEdgeList(
+	VertexList & pushSilhouetteEdgeList(
 		VertexList & retSilhouetteEdgeList,
 		const ConnectionEdgeList & connectionEdgeList,
 		const VertexList & vertexList,
 		const IndicatorList & indicatorList)
 	{
-		_ASSERT(retSilhouetteEdgeList.empty());
+		//_ASSERT(retSilhouetteEdgeList.empty());
 
 		ConnectionEdgeList::const_iterator connection_edge_iter = connectionEdgeList.begin();
 		for(; connection_edge_iter != connectionEdgeList.end(); connection_edge_iter++)
