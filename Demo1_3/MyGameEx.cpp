@@ -350,13 +350,13 @@ void MyGameState::enterState(void)
 	//// play the mp3
 	//m_mp3->play(true);
 
-	m_plane = my::IndexPlaneObjectPtr(new my::IndexPlaneObject(100, 100));
+	m_plane = my::IndexPlaneObjectPtr(new my::IndexPlaneObject(200, 200));
 
-	m_obj = my::IndexObjectPtr(new my::IndexPlaneObject(20, 20));
+	//m_obj = my::IndexObjectPtr(new my::IndexPlaneObject(20, 20));
 
-	//m_obj = my::IndexObjectPtr(new my::IndexCubeObject(20, 20, 20));
+	m_obj = my::IndexObjectPtr(new my::IndexCubeObject(20, 20, 20));
 
-	//m_obj = my::IndexObjectPtr(new my::IndexSphereObject(10, 4, 3));
+	//m_obj = my::IndexObjectPtr(new my::IndexSphereObject(10, 20, 20));
 
 	t3d::buildConnectionEdgeListFromTriangleIndexList(
 		m_connectionEdgeList,
@@ -431,7 +431,7 @@ bool MyGameState::doFrame(void)
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);
-	l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
+	//l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
 	rc->clearLightList();
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
@@ -440,8 +440,8 @@ bool MyGameState::doFrame(void)
 	rc->setAmbient(my::Color::WHITE);
 	rc->setDiffuse(my::Color::WHITE);
 
-	// draw default grid, with use to test distance of the scene
-	m_grid->drawZBufferRW(rc);
+	//// draw default grid, with use to test distance of the scene
+	//m_grid->drawZBufferRW(rc);
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -517,81 +517,54 @@ bool MyGameState::doFrame(void)
 
 	//m_lstObj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
 
-	m_plane->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(0, -10, 0)), my::Mat4<real>::IDENTITY);
+	m_plane->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(0, -20, 0)), my::Mat4<real>::IDENTITY);
 
-	m_obj->drawWireZBufferRW(rc, my::Color::BLUE);
+	rc->setDiffuse(my::Color(0.5f, 1.0f, 0.5f));
 
-	my::Vec4<real> lightPos(-30.0f, 30.0f, -30.0f);
+	m_obj->drawGouraudZBufferRW(rc);
+
+	m_obj->drawWireZBufferRW(rc, my::Color::YELLOW);
 
 	t3d::buildIndicatorListFromTriangleIndexListByPoint(
 		m_indicatorList,
 		m_obj->getVertexList(),
 		m_obj->getVertexIndexList(),
-		lightPos);
+		l_pos);
 
 	m_silhouetteEdgeList.clear();
-	t3d::buildSilhouetteEdgeList(
+	t3d::pushSilhouetteEdgeList(
 		m_silhouetteEdgeList,
 		m_connectionEdgeList,
 		m_obj->getVertexList(),
 		m_indicatorList);
 
+	//// draw silhouette edge
+	//rc->clearVertexList();
+	//rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end());
+	//rc->drawLineListZBufferRW(my::Color::RED);
+
 	m_objShadowVolume.clear();
 	t3d::buildShadowVolumeByPoint(
 		m_objShadowVolume,
 		m_silhouetteEdgeList,
-		lightPos,
-		1000);
+		l_pos,
+		100);
 
+	// draw Shadow Volume Frame
 	rc->clearVertexList();
 	rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end());
 	rc->drawTriangleListWireZBufferRW(my::Color::RED);
+	//rc->drawTriangleListZBufferRW(my::Color::RED);
 
-	// 创建 stencil buffer reference
+	// build stencil buffer reference
 	t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
 	t3d::fillStencilBuffer(stencilBuffRef, rc->getClipperRect(), 0);
 
-	// 对 Shadow Volume 的 3d 流水线处理
+	// Shadow Volume Piple Line
 	m_tmpVertexList.clear();
 	t3d::transformVertexList(m_tmpVertexList, m_objShadowVolume, my::Mat4<real>::IDENTITY);
 	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
-	t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
-	rc->clearVertexList();
-	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
-	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
-	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
-	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
-
-	// Count Shadow Volume
-	for(size_t i = 0; i < rc->getClipStateListSize(); i++)
-	{
-		switch(rc->clipStateAt(i))
-		{
-		case t3d::CLIP_STATE_NONE:
-			t3d::countTriangleIncrementBehindDepth(
-				stencilBuffRef,
-				rc->getZBufferRef28(),
-				rc->vertexAt(i * 3 + 0),
-				rc->vertexAt(i * 3 + 1),
-				rc->vertexAt(i * 3 + 2));
-			break;
-
-		case t3d::CLIP_STATE_SCLIPPED:
-			t3d::countClippedTriangleIncrementBehindDepth(
-				stencilBuffRef,
-				rc->getClipperRect(),
-				rc->getZBufferRef28(),
-				rc->vertexAt(i * 3 + 0),
-				rc->vertexAt(i * 3 + 1),
-				rc->vertexAt(i * 3 + 2));
-			break;
-		}
-	}
-
-	// 第二级流水线处理
-	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
 	t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
-	rc->clearVertexList();
 	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
 	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
 	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
@@ -603,7 +576,7 @@ bool MyGameState::doFrame(void)
 		switch(rc->clipStateAt(i))
 		{
 		case t3d::CLIP_STATE_NONE:
-			t3d::countTriangleDecrementBehindDepth(
+			t3d::countTriangleIncrementInFrontOfDepth(
 				stencilBuffRef,
 				rc->getZBufferRef28(),
 				rc->vertexAt(i * 3 + 0),
@@ -612,7 +585,7 @@ bool MyGameState::doFrame(void)
 			break;
 
 		case t3d::CLIP_STATE_SCLIPPED:
-			t3d::countClippedTriangleDecrementBehindDepth(
+			t3d::countClippedTriangleIncrementInFrontOfDepth(
 				stencilBuffRef,
 				rc->getClipperRect(),
 				rc->getZBufferRef28(),
@@ -623,7 +596,41 @@ bool MyGameState::doFrame(void)
 		}
 	}
 
-	// 绘制 Shadow Volume
+	// 2nd Shadow Volume Piple Line
+	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
+	t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
+	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
+	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
+	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
+	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
+
+	// Count Shadow Volume
+	for(size_t i = 0; i < rc->getClipStateListSize(); i++)
+	{
+		switch(rc->clipStateAt(i))
+		{
+		case t3d::CLIP_STATE_NONE:
+			t3d::countTriangleDecrementInFrontOfDepth(
+				stencilBuffRef,
+				rc->getZBufferRef28(),
+				rc->vertexAt(i * 3 + 0),
+				rc->vertexAt(i * 3 + 1),
+				rc->vertexAt(i * 3 + 2));
+			break;
+
+		case t3d::CLIP_STATE_SCLIPPED:
+			t3d::countClippedTriangleDecrementInFrontOfDepth(
+				stencilBuffRef,
+				rc->getClipperRect(),
+				rc->getZBufferRef28(),
+				rc->vertexAt(i * 3 + 0),
+				rc->vertexAt(i * 3 + 1),
+				rc->vertexAt(i * 3 + 2));
+			break;
+		}
+	}
+
+	// Render Shadow Volume
 	t3d::boundSurfaceStencilBufferColor32(
 		rc->getSurfaceRef32(),
 		rc->getClipperRect(),

@@ -201,28 +201,28 @@ namespace my
 
 		//m_primSurface->setClipper(m_ddraw->createWindowClipper(m_wnd->m_hWnd).get());
 
-		//DDPIXELFORMAT ddpf = m_primSurface->getPixelFormat();
-		DDPIXELFORMAT ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
-		if( !(ddpf.dwFlags & DDPF_RGB) )
+		//m_ddpf = m_primSurface->getPixelFormat();
+		m_ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
+		if( !(m_ddpf.dwFlags & DDPF_RGB) )
 		{
 			T3D_CUSEXCEPT(_T("unsupported pixel format"));
 		}
 
 		// create pixel dependency objects
 		// NOTE: some singleton object should be re-destoryed before creating, such as m_cc
-		if(ddpf.dwRGBBitCount == 16
-			&& ddpf.dwRBitMask == RGB16_RED_MASK
-			&& ddpf.dwGBitMask == RGB16_GREEN_MASK
-			&& ddpf.dwBBitMask == RGB16_BLUE_MASK)
+		if(m_ddpf.dwRGBBitCount == 16
+			&& m_ddpf.dwRBitMask == RGB16_RED_MASK
+			&& m_ddpf.dwGBitMask == RGB16_GREEN_MASK
+			&& m_ddpf.dwBBitMask == RGB16_BLUE_MASK)
 		{
 			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
 			m_cc = ColorConversionPtr();
 			m_cc = ColorConversionPtr(new ColorConversion16());
 		}
-		else if(ddpf.dwRGBBitCount == 32
-			&& ddpf.dwRBitMask == RGB32_RED_MASK
-			&& ddpf.dwGBitMask == RGB32_GREEN_MASK
-			&& ddpf.dwBBitMask == RGB32_BLUE_MASK)
+		else if(m_ddpf.dwRGBBitCount == 32
+			&& m_ddpf.dwRBitMask == RGB32_RED_MASK
+			&& m_ddpf.dwGBitMask == RGB32_GREEN_MASK
+			&& m_ddpf.dwBBitMask == RGB32_BLUE_MASK)
 		{
 			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
 			m_cc = ColorConversionPtr();
@@ -234,7 +234,7 @@ namespace my
 		}
 
 		// create screen compatible back surface
-		m_backSurface = m_ddraw->createMemorySurface(cfgWidth, cfgHeight, ddpf);
+		m_backSurface = m_ddraw->createMemorySurface(cfgWidth, cfgHeight, m_ddpf);
 
 		m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
 
