@@ -246,7 +246,7 @@ namespace t3d
 		{
 			for(int x = rect.left; x < rect.right; x++)
 			{
-				if(stencilbuff[y][x] < 0)
+				if(stencilbuff[y][x] > 0)
 				{
 					surface[y][x] = _RGB32BIT(
 						_COLORMUL(_RGB32GETR(surface[y][x]), real_to_int(color.x)),
@@ -263,7 +263,7 @@ namespace t3d
 		const Vec4<real> & v2,
 		const Vec4<real> & eye)
 	{
-		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) >= 0 ? CLIP_STATE_CULLED : CLIP_STATE_NONE;
+		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) > 0 ? CLIP_STATE_CULLED : CLIP_STATE_NONE;
 	}
 
 	void removeTriangleListFrontfaceAtWorld(
@@ -326,17 +326,18 @@ namespace t3d
 			{
 				const Vec4<real> & v0 = vertexList[i + (j + 0) % 3];
 				const Vec4<real> & v1 = vertexList[i + (j + 1) % 3];
+
 				ConnectionEdgeList::iterator connection_edge_iter = retConnectionEdgeList.begin();
 				for(; connection_edge_iter != retConnectionEdgeList.end(); connection_edge_iter++)
 				{
 					const Vec4<real> & ev0 = vertexList[connection_edge_iter->v0_i];
 					const Vec4<real> & ev1 = vertexList[connection_edge_iter->v1_i];
-					if((vec3IsEqual(v0, ev0) && vec3IsEqual(v1, ev1))
-						|| (vec3IsEqual(v1, ev0) && vec3IsEqual(v0, ev1)))
+
+					if(vec3IsEqual(v1, ev0) && vec3IsEqual(v0, ev1))
 					{
 						if(connection_edge_iter->tri1_i != SIZE_MAX)
 						{
-							continue; // ***
+							_ASSERT(false); continue; // ***
 						}
 
 						connection_edge_iter->tri1_i = i / 3;
@@ -374,15 +375,15 @@ namespace t3d
 			{
 				size_t v0_i = vertexIndexList[i + (j + 0) % 3];
 				size_t v1_i = vertexIndexList[i + (j + 1) % 3];
+
 				ConnectionEdgeList::iterator connection_edge_iter = retConnectionEdgeList.begin();
 				for(; connection_edge_iter != retConnectionEdgeList.end(); connection_edge_iter++)
 				{
-					if((v0_i == connection_edge_iter->v0_i && v1_i == connection_edge_iter->v1_i)
-						|| (v1_i == connection_edge_iter->v0_i && v0_i == connection_edge_iter->v1_i))
+					if(v1_i == connection_edge_iter->v0_i && v0_i == connection_edge_iter->v1_i)
 					{
 						if(connection_edge_iter->tri1_i != SIZE_MAX)
 						{
-							continue; // ***
+							_ASSERT(false); continue; // ***
 						}
 
 						connection_edge_iter->tri1_i = i / 3;
@@ -501,8 +502,8 @@ namespace t3d
 		{
 			if(indicatorList[connection_edge_iter->tri0_i] >= 0)
 			{
-				if(SIZE_MAX == connection_edge_iter->tri1_i
-					|| indicatorList[connection_edge_iter->tri1_i] < 0)
+				if(SIZE_MAX != connection_edge_iter->tri1_i
+					&& indicatorList[connection_edge_iter->tri1_i] < 0)
 				{
 					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
 					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
