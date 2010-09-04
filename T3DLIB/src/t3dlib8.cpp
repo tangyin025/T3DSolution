@@ -278,73 +278,11 @@ namespace t3d
 		}
 	}
 
-	//CLIP_STATE clipTriangleFrontfaceAtWorld(
-	//	const Vec4<real> & v0,
-	//	const Vec4<real> & v1,
-	//	const Vec4<real> & v2,
-	//	const Vec4<real> & eye)
-	//{
-	//	return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) > 0 ? CLIP_STATE_CULLED : CLIP_STATE_NONE;
-	//}
-
-	//void removeTriangleListFrontfaceAtWorld(
-	//	const VertexList & vertexList,
-	//	ClipStateList & clipStateList,
-	//	const Vec4<real> & eye)
-	//{
-	//	_ASSERT(vertexList.size() == clipStateList.size() * 3);
-
-	//	size_t i = 0;
-	//	for(; i < clipStateList.size(); i++)
-	//	{
-	//		_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
-
-	//		if(CLIP_STATE_NONE == clipStateList[i])
-	//		{
-	//			clipStateList[i] = clipTriangleFrontfaceAtWorld(
-	//				vertexList[i * 3 + 0],
-	//				vertexList[i * 3 + 1],
-	//				vertexList[i * 3 + 2],
-	//				eye);
-	//		}
-	//	}
-	//}
-
-	//void removeTriangleIndexListFrontfaceAtWorld(
-	//	const VertexList & vertexList,
-	//	const VertexIndexList & vertexIndexList,
-	//	ClipStateList & clipStateList,
-	//	const Vec4<real> & eye)
-	//{
-	//	_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
-
-	//	size_t i = 0;
-	//	for(; i < clipStateList.size(); i++)
-	//	{
-	//		_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
-
-	//		if(CLIP_STATE_NONE == clipStateList[i])
-	//		{
-	//			clipStateList[i] = clipTriangleFrontfaceAtWorld(
-	//				vertexList[vertexIndexList[i * 3 + 0]],
-	//				vertexList[vertexIndexList[i * 3 + 1]],
-	//				vertexList[vertexIndexList[i * 3 + 2]],
-	//				eye);
-	//		}
-	//	}
-	//}
-
 	CLIP_STATE clipTriangleBackfaceAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2)
 	{
-		//Vec4<real> d1 = vec3Sub(v1, v0);
-		//Vec4<real> d2 = vec3Sub(v2, v0);
-		//d1.z = 0;
-		//d2.z = 0;
-		//return vec3Cross(d1, d2).z < 0 ? CLIP_STATE_CULLED_SCREEN : CLIP_STATE_NONE;
-
 		const Vec4<real> * pv0, * pv1, * pv2;
 
 		bool bflip = false;
@@ -380,11 +318,7 @@ namespace t3d
 			}
 		}
 
-		int y0 = real_to_int(floor(pv0->y));
-		int y1 = real_to_int(floor(pv1->y));
-		int y2 = real_to_int(floor(pv2->y));
-
-		real x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
+		real x3 = LINE2D_INTERSECT(floor(pv1->y), floor(pv0->y), floor(pv2->y), pv0->x, pv2->x);
 
 		if(pv1->x < x3)
 		{

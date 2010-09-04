@@ -524,9 +524,9 @@ bool MyGameState::doFrame(void)
 
 	rc->setDiffuse(my::Color(0.5f, 1.0f, 0.5f));
 
-	//m_obj->drawGouraudZBufferRW(rc);
+	m_obj->drawGouraudZBufferRW(rc);
 
-	m_obj->drawWireZBufferRW(rc, my::Color::YELLOW);
+	//m_obj->drawWireZBufferRW(rc, my::Color::YELLOW);
 
 	t3d::buildIndicatorListFromTriangleIndexListByPoint(
 		m_indicatorList,
@@ -541,10 +541,10 @@ bool MyGameState::doFrame(void)
 		m_obj->getVertexList(),
 		m_indicatorList);
 
-	//// draw silhouette edge
-	//rc->clearVertexList();
-	//rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end());
-	//rc->drawLineListZBufferRW(my::Color::RED);
+	// draw silhouette edge
+	rc->clearVertexList();
+	rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end());
+	rc->drawLineListZBufferRW(my::Color::RED);
 
 	m_objShadowVolume.clear();
 	t3d::buildShadowVolumeByPoint(

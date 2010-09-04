@@ -48,7 +48,7 @@
 		int y1 = real_to_int(floor(pv1->y));
 		int y2 = real_to_int(floor(pv2->y));
 
-		real x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
+		real x3 = LINE2D_INTERSECT(floor(pv1->y), floor(pv0->y), floor(pv2->y), pv0->x, pv2->x);
 
 		if(pv1->x < x3)
 		{

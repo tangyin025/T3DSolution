@@ -11,10 +11,6 @@
 #error __draw_clipped_func must be defined at __draw_clipped
 #endif
 
-
-
-
-
 		const Vec4<real> * pv0, * pv1, * pv2;
 #ifdef __draw_gouraud
 		const Vec4<real> * pc0, * pc1, * pc2;
@@ -94,7 +90,7 @@
 		int y1 = real_to_int(floor(pv1->y));
 		int y2 = real_to_int(floor(pv2->y));
 
-		real x3 = LINE2D_INTERSECT(pv1->y, pv0->y, pv2->y, pv0->x, pv2->x);
+		real x3 = LINE2D_INTERSECT(floor(pv1->y), floor(pv0->y), floor(pv2->y), pv0->x, pv2->x);
 
 		if(pv1->x < x3)
 		{
@@ -906,10 +902,6 @@
 			}
 		}
 
-
-
-
-
 #undef __draw_texture
 #undef __draw_texture_perspective_lp
 #undef __draw_gouraud
@@ -920,3 +912,8 @@
 #undef __draw_32bit
 #undef __draw_func
 #undef __draw_clipped_func
+
+
+
+
+
