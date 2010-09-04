@@ -8,6 +8,8 @@
 
 #pragma comment(lib, "winmm.lib")
 
+using t3d::real;
+
 class CMyWindow
 	: public CWindowImpl<CMyWindow, CWindow, CWinTraits<WS_OVERLAPPEDWINDOW, 0> >
 {
@@ -134,7 +136,8 @@ public:
 	void DoRender(void)
 	{
 		// clear background surface & zbuffer
-		m_rc->fillSurface(m_rc->getClipperRect(), t3d::vec3Build<t3d::real>(0.8f, 0.8f, 0.8f));
+		//m_rc->fillSurface(m_rc->getClipperRect(), t3d::vec3Build<t3d::real>(0.8f, 0.8f, 0.8f));
+		m_rc->fillSurface(m_rc->getClipperRect(), t3d::vec3Build<t3d::real>(0, 0, 0));
 		m_rc->fillZbuffer(m_rc->getClipperRect(), 0);
 
 		// definition set of fps utility
@@ -155,39 +158,59 @@ public:
 		}
 		last_time = curr_time;
 
+		// ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		// NOTE: there are still far more process could be done,
+		// such as adjust camera's position, update camera's viewport & projection, ...
+		// for more information, please refer the project "Demo1_2"
+		int count = 100000;
+		t3d::real radius = 100;
+		//for(int i = 0; i < count; i++)
+		//for(int i = 62441; i < 62449; i++)
+		int i_arr[] = {62441, 62448};
+		for(int idx = 0; idx < sizeof(i_arr) / sizeof(i_arr[0]); idx++)
+		{
+			int i = i_arr[idx];
+			t3d::Vec4<t3d::real> v0, v1, v2;
+			v0.x = m_rc->getClipperRect().Width() / 2;
+			v0.y = m_rc->getClipperRect().Height() / 2;
+			v0.z = 100;
+			v1.x = v0.x + cos(DEG_TO_RAD((t3d::real)360 / count * i)) * radius;
+			v1.y = v0.y + sin(DEG_TO_RAD((t3d::real)360 / count * i)) * radius;
+			v1.z = v0.z;
+			v2.x = v0.x + cos(DEG_TO_RAD((t3d::real)360 / count * (i + 1))) * radius;
+			v2.y = v0.y + sin(DEG_TO_RAD((t3d::real)360 / count * (i + 1))) * radius;
+			v2.z = v0.z;
+			t3d::drawClippedTriangleZBufferRW32(
+				m_rc->getSurfaceRef32(),
+				m_rc->getClipperRect(),
+				m_rc->getZBufferRef28(),
+				v0,
+				v1,
+				v2,
+				i % 2 == 0 ? t3d::Vec4<t3d::real>(255, 0, 0, 255) : t3d::Vec4<t3d::real>(0, 255, 0, 255));
+		}
+
+		//t3d::Vec4<real> v0(100, 100, 100, 1);
+		//t3d::Vec4<real> v1(100, 400, 100, 1);
+		//t3d::Vec4<real> v2(400, 400, 100, 1);
+		//t3d::Vec4<real> v3(601, 600, 100, 1);
+		//t3d::Vec4<real> v4(400, 100, 100, 1);
+		//t3d::drawClippedTriangleZBufferRW32(m_rc->getSurfaceRef32(), m_rc->getClipperRect(), m_rc->getZBufferRef28(),
+		//	v0, v1, v2, t3d::Vec4<t3d::real>(0, 255, 0, 255));
+		//t3d::drawClippedTriangleZBufferRW32(m_rc->getSurfaceRef32(), m_rc->getClipperRect(), m_rc->getZBufferRef28(),
+		//	v0, v2, v3, t3d::Vec4<t3d::real>(255, 0, 0, 255));
+		//t3d::drawClippedTriangleZBufferRW32(m_rc->getSurfaceRef32(), m_rc->getClipperRect(), m_rc->getZBufferRef28(),
+		//	v0, v3, v4, t3d::Vec4<t3d::real>(0, 255, 0, 255));
+
+		// ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		// text out the fps information
 		TCHAR buffer[MAX_PATH];
 		_stprintf_s(buffer, _T("fps: %.1f"), fps);
 		HDC hdc = m_ddsurface->getDC();
 		::TextOut(hdc, 10, 10, buffer, _tcslen(buffer));
 		m_ddsurface->releaseDC(hdc);
-
-		// NOTE: there are still far more process could be done,
-		// such as adjust camera's position, update camera's viewport & projection, ...
-		// for more information, please refer the project "Demo1_2"
-		//int count = 100000;
-		//t3d::real radius = 100;
-		//for(int i = 0; i < count; i++)
-		//{
-		//	t3d::Vec4<t3d::real> v0, v1, v2;
-		//	v0.x = m_rc->getClipperRect().Width() / 2;
-		//	v0.y = m_rc->getClipperRect().Height() / 2;
-		//	v0.z = t3d::real_to_fixp28((t3d::real)1 / 100);
-		//	v1.x = v0.x + cos(DEG_TO_RAD((t3d::real)360 / count * i)) * radius;
-		//	v1.y = v0.y + sin(DEG_TO_RAD((t3d::real)360 / count * i)) * radius;
-		//	v1.z = v0.z;
-		//	v2.x = v0.x + cos(DEG_TO_RAD((t3d::real)360 / count * (i + 1))) * radius;
-		//	v2.y = v0.y + sin(DEG_TO_RAD((t3d::real)360 / count * (i + 1))) * radius;
-		//	v2.z = v0.z;
-		//	t3d::drawClippedTriangleZBufferRW32(
-		//		m_rc->getSurfaceRef32(),
-		//		m_rc->getClipperRect(),
-		//		m_rc->getZBufferRef28(),
-		//		v0,
-		//		v1,
-		//		v2,
-		//		i % 2 == 0 ? t3d::Vec4<t3d::real>(255, 0, 0, 255) : t3d::Vec4<t3d::real>(0, 255, 0, 255));
-		//}
 	}
 };
 

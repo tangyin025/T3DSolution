@@ -724,73 +724,72 @@ public:
 		// 创建 stencil buffer reference
 		t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
 		t3d::fillStencilBuffer(stencilBuffRef, m_rc->getClipperRect(), 0);
+		t3d::RenderContext * rc = m_rc.get();
 
-		// 第一级 Shadow Volume 流水线处理
+		// Shadow Volume Piple Line
 		m_tmpVertexList.clear();
 		t3d::transformVertexList(m_tmpVertexList, m_shadowVolume, mmat);
-		t3d::resetClipStateList(m_rc->getClipStateList(), m_tmpVertexList.size() / 3);
-		t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
-		t3d::transformTriangleList(m_rc->getVertexList(), m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraMatrix());
-		t3d::clipTriangleListAtCamera(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCamera());
-		t3d::cameraToScreenTriangleList(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCameraProjection(), m_rc->getViewport());
-		t3d::clipTriangleListAtScreen(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getViewport());
+		t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
+		t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
+		t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
+		t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
+		t3d::removeTriangleListBackfaceAtScreen(rc->getVertexList(), rc->getClipStateList());
+		t3d::ClipStateList clipStateList;
+		t3d::reversalClipStateListScreenCulling(clipStateList, rc->getClipStateList());
+		t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
 		// Count Shadow Volume
-		for(size_t i = 0; i < m_rc->getClipStateListSize(); i++)
+		for(size_t i = 0; i < rc->getClipStateListSize(); i++)
 		{
-			switch(m_rc->clipStateAt(i))
+			switch(rc->clipStateAt(i))
 			{
 			case t3d::CLIP_STATE_NONE:
 				t3d::countTriangleIncrementInFrontOfDepth(
 					stencilBuffRef,
-					m_rc->getZBufferRef28(),
-					m_rc->vertexAt(i * 3 + 0),
-					m_rc->vertexAt(i * 3 + 1),
-					m_rc->vertexAt(i * 3 + 2));
+					rc->getZBufferRef28(),
+					rc->vertexAt(i * 3 + 0),
+					rc->vertexAt(i * 3 + 1),
+					rc->vertexAt(i * 3 + 2));
 				break;
 
 			case t3d::CLIP_STATE_SCLIPPED:
 				t3d::countClippedTriangleIncrementInFrontOfDepth(
 					stencilBuffRef,
-					m_rc->getClipperRect(),
-					m_rc->getZBufferRef28(),
-					m_rc->vertexAt(i * 3 + 0),
-					m_rc->vertexAt(i * 3 + 1),
-					m_rc->vertexAt(i * 3 + 2));
+					rc->getClipperRect(),
+					rc->getZBufferRef28(),
+					rc->vertexAt(i * 3 + 0),
+					rc->vertexAt(i * 3 + 1),
+					rc->vertexAt(i * 3 + 2));
 				break;
 			}
 		}
 
-		// 第二级流水线处理
-		t3d::resetClipStateList(m_rc->getClipStateList(), m_tmpVertexList.size() / 3);
-		t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraPosition());
-		t3d::transformTriangleList(m_rc->getVertexList(), m_tmpVertexList, m_rc->getClipStateList(), m_rc->getCameraMatrix());
-		t3d::clipTriangleListAtCamera(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCamera());
-		t3d::cameraToScreenTriangleList(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getCameraProjection(), m_rc->getViewport());
-		t3d::clipTriangleListAtScreen(m_rc->getVertexList(), m_rc->getClipStateList(), m_rc->getViewport());
+		// 2nd Shadow Volume Piple Line
+		rc->getClipStateList() = clipStateList;
+		t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
 		// Count Shadow Volume
-		for(size_t i = 0; i < m_rc->getClipStateListSize(); i++)
+		for(size_t i = 0; i < rc->getClipStateListSize(); i++)
 		{
-			switch(m_rc->clipStateAt(i))
+			switch(rc->clipStateAt(i))
 			{
 			case t3d::CLIP_STATE_NONE:
 				t3d::countTriangleDecrementInFrontOfDepth(
 					stencilBuffRef,
-					m_rc->getZBufferRef28(),
-					m_rc->vertexAt(i * 3 + 0),
-					m_rc->vertexAt(i * 3 + 1),
-					m_rc->vertexAt(i * 3 + 2));
+					rc->getZBufferRef28(),
+					rc->vertexAt(i * 3 + 0),
+					rc->vertexAt(i * 3 + 1),
+					rc->vertexAt(i * 3 + 2));
 				break;
 
 			case t3d::CLIP_STATE_SCLIPPED:
 				t3d::countClippedTriangleDecrementInFrontOfDepth(
 					stencilBuffRef,
-					m_rc->getClipperRect(),
-					m_rc->getZBufferRef28(),
-					m_rc->vertexAt(i * 3 + 0),
-					m_rc->vertexAt(i * 3 + 1),
-					m_rc->vertexAt(i * 3 + 2));
+					rc->getClipperRect(),
+					rc->getZBufferRef28(),
+					rc->vertexAt(i * 3 + 0),
+					rc->vertexAt(i * 3 + 1),
+					rc->vertexAt(i * 3 + 2));
 				break;
 			}
 		}
