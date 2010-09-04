@@ -354,9 +354,12 @@ void MyGameState::enterState(void)
 
 	//m_obj = my::IndexObjectPtr(new my::IndexPlaneObject(20, 20));
 
-	m_obj = my::IndexObjectPtr(new my::IndexCubeObject(20, 20, 20));
+	//m_obj = my::IndexObjectPtr(new my::IndexCubeObject(20, 20, 20));
 
 	//m_obj = my::IndexObjectPtr(new my::IndexSphereObject(10, 20, 20));
+
+	m_obj = my::IndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(
+		my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("aaa.mesh.xml"))))));
 
 	t3d::buildConnectionEdgeListFromTriangleIndexList(
 		m_connectionEdgeList,
@@ -521,7 +524,7 @@ bool MyGameState::doFrame(void)
 
 	rc->setDiffuse(my::Color(0.5f, 1.0f, 0.5f));
 
-	m_obj->drawGouraudZBufferRW(rc);
+	//m_obj->drawGouraudZBufferRW(rc);
 
 	m_obj->drawWireZBufferRW(rc, my::Color::YELLOW);
 
@@ -550,11 +553,11 @@ bool MyGameState::doFrame(void)
 		l_pos,
 		100);
 
-	// draw Shadow Volume Frame
-	rc->clearVertexList();
-	rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end());
-	rc->drawTriangleListWireZBufferRW(my::Color::RED);
-	//rc->drawTriangleListZBufferRW(my::Color::RED);
+	//// draw Shadow Volume Frame
+	//rc->clearVertexList();
+	//rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end());
+	//rc->drawTriangleListWireZBufferRW(my::Color::RED);
+	////rc->drawTriangleListZBufferRW(my::Color::RED);
 
 	// build stencil buffer reference
 	t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
@@ -564,10 +567,12 @@ bool MyGameState::doFrame(void)
 	m_tmpVertexList.clear();
 	t3d::transformVertexList(m_tmpVertexList, m_objShadowVolume, my::Mat4<real>::IDENTITY);
 	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
-	t3d::removeTriangleListBackfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
 	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
 	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
 	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
+	t3d::removeTriangleListBackfaceAtScreen(rc->getVertexList(), rc->getClipStateList());
+	t3d::ClipStateList clipStateList;
+	t3d::reversalClipStateListScreenCulling(clipStateList, rc->getClipStateList());
 	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
 	// Count Shadow Volume
@@ -597,11 +602,7 @@ bool MyGameState::doFrame(void)
 	}
 
 	// 2nd Shadow Volume Piple Line
-	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
-	t3d::removeTriangleListFrontfaceAtWorld(m_tmpVertexList, rc->getClipStateList(), rc->getCameraPosition());
-	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
-	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
-	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
+	rc->getClipStateList() = clipStateList;
 	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
 	// Count Shadow Volume
@@ -631,11 +632,22 @@ bool MyGameState::doFrame(void)
 	}
 
 	// Render Shadow Volume
-	t3d::boundSurfaceStencilBufferColor32(
-		rc->getSurfaceRef32(),
-		rc->getClipperRect(),
-		stencilBuffRef,
-		my::Color(97, 97, 97));
+	if(MyGame::getSingleton().m_ddpf.dwRGBBitCount == 16)
+	{
+		t3d::boundSurfaceStencilBufferColor16(
+			rc->getSurfaceRef16(),
+			rc->getClipperRect(),
+			stencilBuffRef,
+			my::Color(97, 97, 97));
+	}
+	else
+	{
+		t3d::boundSurfaceStencilBufferColor32(
+			rc->getSurfaceRef32(),
+			rc->getClipperRect(),
+			stencilBuffRef,
+			my::Color(97, 97, 97));
+	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 

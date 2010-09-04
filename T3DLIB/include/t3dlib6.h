@@ -1075,7 +1075,8 @@ namespace t3d
 	{
 		CLIP_STATE_NONE,
 		CLIP_STATE_CULLED,
-		CLIP_STATE_SCLIPPED
+		CLIP_STATE_SCLIPPED,
+		CLIP_STATE_CULLED_SCREEN,
 	};
 
 	typedef std::vector<CLIP_STATE> ClipStateList;
