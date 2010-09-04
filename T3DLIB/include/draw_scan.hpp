@@ -47,7 +47,7 @@
 #endif
 				x0 = clipper.left;
 			}
-#endif // __draw_clipped
+#endif
 
 #ifdef __draw_clipped
 			if(x1 > clipper.right)
@@ -75,24 +75,24 @@
 						_COLORMUL(_RGB32GETG(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.y)),
 						_COLORMUL(_RGB32GETB(texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)]), fixp16_to_int(lc.z)));
 		#endif
-	#else // __draw_texture
+	#else
 		#ifdef __draw_16bit
 					surface[y0][x0] = _RGB16BIT(fixp16_to_int(lc.x), fixp16_to_int(lc.y), fixp16_to_int(lc.z));
 		#else
 					surface[y0][x0] = _RGB32BIT(fixp16_to_int(lc.x), fixp16_to_int(lc.y), fixp16_to_int(lc.z));
 		#endif
-	#endif // __draw_texture
-#else // __draw_gouraud
+	#endif
+#else
 	#ifdef __draw_texture
 					surface[y0][x0] = texture[fixp16_to_int(lt.y)][fixp16_to_int(lt.x)];
-	#else // __draw_texture
+	#else
 		#ifdef __draw_16bit
 					surface[y0][x0] = _RGB16BIT(fixp16_to_int(color.x), fixp16_to_int(color.y), fixp16_to_int(color.z));
 		#else
 					surface[y0][x0] = _RGB32BIT(fixp16_to_int(color.x), fixp16_to_int(color.y), fixp16_to_int(color.z));
 		#endif
-	#endif // __draw_texture
-#endif // __draw_gouraud
+	#endif
+#endif
 
 #ifdef __draw_zbuffer_w
 					zbuffer[y0][x0] = lz;

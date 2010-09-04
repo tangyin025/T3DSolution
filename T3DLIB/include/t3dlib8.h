@@ -161,23 +161,6 @@ namespace t3d
 		SurfaceRef<int> stencilbuff,
 		const t3d::Vec4<real> & color);
 
-	//CLIP_STATE clipTriangleFrontfaceAtWorld(
-	//	const Vec4<real> & v0,
-	//	const Vec4<real> & v1,
-	//	const Vec4<real> & v2,
-	//	const Vec4<real> & eye);
-
-	//void removeTriangleListFrontfaceAtWorld(
-	//	const VertexList & vertexList,
-	//	ClipStateList & clipStateList,
-	//	const Vec4<real> & eye);
-
-	//void removeTriangleIndexListFrontfaceAtWorld(
-	//	const VertexList & vertexList,
-	//	const VertexIndexList & vertexIndexList,
-	//	ClipStateList & clipStateList,
-	//	const Vec4<real> & eye);
-
 	CLIP_STATE clipTriangleBackfaceAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
