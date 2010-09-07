@@ -706,7 +706,7 @@ public:
 		//// 渲染 Silhouette Edge
 		//m_rc->clearVertexList();
 		//m_rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end(), mmat);
-		//m_rc->drawLineListZBufferRW(my::Color::RED);
+		//m_rc->drawLineListZBufferRW(my::Color::YELLOW);
 
 		// 计算 shadow volume
 		m_shadowVolume.clear();
@@ -726,7 +726,7 @@ public:
 		t3d::fillStencilBuffer(stencilBuffRef, m_rc->getClipperRect(), 0);
 		t3d::RenderContext * rc = m_rc.get();
 
-		// Shadow Volume Piple Line
+		// Shadow Volume 处理流水线
 		m_tmpVertexList.clear();
 		t3d::transformVertexList(m_tmpVertexList, m_shadowVolume, mmat);
 		t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
@@ -738,61 +738,25 @@ public:
 		t3d::reversalClipStateListScreenCulling(clipStateList, rc->getClipStateList());
 		t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
-		// Count Shadow Volume
-		for(size_t i = 0; i < rc->getClipStateListSize(); i++)
-		{
-			switch(rc->clipStateAt(i))
-			{
-			case t3d::CLIP_STATE_NONE:
-				t3d::countTriangleIncrementInFrontOfDepth(
-					stencilBuffRef,
-					rc->getZBufferRef28(),
-					rc->vertexAt(i * 3 + 0),
-					rc->vertexAt(i * 3 + 1),
-					rc->vertexAt(i * 3 + 2));
-				break;
+		// 将 Shadow Volume 渲染到模板缓存（+）
+		t3d::countTriangleListIncrementInFrontOfDepth(
+			stencilBuffRef,
+			rc->getClipperRect(),
+			rc->getZBufferRef28(),
+			rc->getVertexList(),
+			rc->getClipStateList());
 
-			case t3d::CLIP_STATE_SCLIPPED:
-				t3d::countClippedTriangleIncrementInFrontOfDepth(
-					stencilBuffRef,
-					rc->getClipperRect(),
-					rc->getZBufferRef28(),
-					rc->vertexAt(i * 3 + 0),
-					rc->vertexAt(i * 3 + 1),
-					rc->vertexAt(i * 3 + 2));
-				break;
-			}
-		}
-
-		// 2nd Shadow Volume Piple Line
+		// 逆转 Shadow Volume 正反面的 Clip State
 		rc->getClipStateList() = clipStateList;
 		t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
-		// Count Shadow Volume
-		for(size_t i = 0; i < rc->getClipStateListSize(); i++)
-		{
-			switch(rc->clipStateAt(i))
-			{
-			case t3d::CLIP_STATE_NONE:
-				t3d::countTriangleDecrementInFrontOfDepth(
-					stencilBuffRef,
-					rc->getZBufferRef28(),
-					rc->vertexAt(i * 3 + 0),
-					rc->vertexAt(i * 3 + 1),
-					rc->vertexAt(i * 3 + 2));
-				break;
-
-			case t3d::CLIP_STATE_SCLIPPED:
-				t3d::countClippedTriangleDecrementInFrontOfDepth(
-					stencilBuffRef,
-					rc->getClipperRect(),
-					rc->getZBufferRef28(),
-					rc->vertexAt(i * 3 + 0),
-					rc->vertexAt(i * 3 + 1),
-					rc->vertexAt(i * 3 + 2));
-				break;
-			}
-		}
+		// 将 Shadow Volume 渲染到模板缓存（-）
+		t3d::countTriangleListDecrementInFrontOfDepth(
+			stencilBuffRef,
+			rc->getClipperRect(),
+			rc->getZBufferRef28(),
+			rc->getVertexList(),
+			rc->getClipStateList());
 
 		// 绘制 Shadow Volume
 		if(m_ddpf.dwRGBBitCount == 16)

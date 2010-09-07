@@ -236,6 +236,274 @@ namespace t3d
 #include "count_triangle.hpp"
 	}
 
+	void countTriangleListIncrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleIncrementBehindDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleIncrementBehindDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleListDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleDecrementBehindDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleDecrementBehindDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleIndexListIncrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleIncrementBehindDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleIncrementBehindDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleIndexListDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleDecrementBehindDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleDecrementBehindDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleListIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleIncrementInFrontOfDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleIncrementInFrontOfDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleListDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleDecrementInFrontOfDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleDecrementInFrontOfDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[i * 3 + 0],
+					vertexList[i * 3 + 1],
+					vertexList[i * 3 + 2]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleIndexListIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleIncrementInFrontOfDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleIncrementInFrontOfDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+			}
+		}
+	}
+
+	void countTriangleIndexListDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList)
+	{
+		for(size_t i = 0; i < clipStateList.size(); i++)
+		{
+			switch(clipStateList[i])
+			{
+			case CLIP_STATE_NONE:
+				countTriangleDecrementInFrontOfDepth(
+					stencilbuff,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+
+			case CLIP_STATE_SCLIPPED:
+				countClippedTriangleDecrementInFrontOfDepth(
+					stencilbuff,
+					clipper,
+					zbuffer,
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]);
+				break;
+			}
+		}
+	}
+
 	void boundSurfaceStencilBufferColor16(
 		SurfaceRef<uint16> surface,
 		const CRect & rect,

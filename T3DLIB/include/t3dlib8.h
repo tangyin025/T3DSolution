@@ -149,6 +149,66 @@ namespace t3d
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
+	void countTriangleListIncrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleListDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleIndexListIncrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleIndexListDecrementBehindDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleListIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleListDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleIndexListIncrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList);
+
+	void countTriangleIndexListDecrementInFrontOfDepth(
+		SurfaceRef<int> stencilbuff,
+		const RECT & clipper,
+		const SurfaceRef<fixp28> & zbuffer,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const ClipStateList & clipStateList);
+
 	void boundSurfaceStencilBufferColor16(
 		SurfaceRef<uint16> surface,
 		const CRect & rect,
