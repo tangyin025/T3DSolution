@@ -544,7 +544,7 @@ bool MyGameState::doFrame(void)
 	// draw silhouette edge
 	rc->clearVertexList();
 	rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end());
-	rc->drawLineListZBufferRW(my::Color::RED);
+	rc->drawLineListZBufferRW(my::Color::YELLOW);
 
 	m_objShadowVolume.clear();
 	t3d::buildShadowVolumeByPoint(
@@ -576,60 +576,26 @@ bool MyGameState::doFrame(void)
 	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
 	// Count Shadow Volume
-	for(size_t i = 0; i < rc->getClipStateListSize(); i++)
-	{
-		switch(rc->clipStateAt(i))
-		{
-		case t3d::CLIP_STATE_NONE:
-			t3d::countTriangleIncrementInFrontOfDepth(
-				stencilBuffRef,
-				rc->getZBufferRef28(),
-				rc->vertexAt(i * 3 + 0),
-				rc->vertexAt(i * 3 + 1),
-				rc->vertexAt(i * 3 + 2));
-			break;
 
-		case t3d::CLIP_STATE_SCLIPPED:
-			t3d::countClippedTriangleIncrementInFrontOfDepth(
-				stencilBuffRef,
-				rc->getClipperRect(),
-				rc->getZBufferRef28(),
-				rc->vertexAt(i * 3 + 0),
-				rc->vertexAt(i * 3 + 1),
-				rc->vertexAt(i * 3 + 2));
-			break;
-		}
-	}
+	// Count Shadow Volume
+	t3d::countTriangleListIncrementInFrontOfDepth(
+		stencilBuffRef,
+		rc->getClipperRect(),
+		rc->getZBufferRef28(),
+		rc->getVertexList(),
+		rc->getClipStateList());
 
 	// 2nd Shadow Volume Piple Line
 	rc->getClipStateList() = clipStateList;
 	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
 
 	// Count Shadow Volume
-	for(size_t i = 0; i < rc->getClipStateListSize(); i++)
-	{
-		switch(rc->clipStateAt(i))
-		{
-		case t3d::CLIP_STATE_NONE:
-			t3d::countTriangleDecrementInFrontOfDepth(
-				stencilBuffRef,
-				rc->getZBufferRef28(),
-				rc->vertexAt(i * 3 + 0),
-				rc->vertexAt(i * 3 + 1),
-				rc->vertexAt(i * 3 + 2));
-			break;
-
-		case t3d::CLIP_STATE_SCLIPPED:
-			t3d::countClippedTriangleDecrementInFrontOfDepth(
-				stencilBuffRef,
-				rc->getClipperRect(),
-				rc->getZBufferRef28(),
-				rc->vertexAt(i * 3 + 0),
-				rc->vertexAt(i * 3 + 1),
-				rc->vertexAt(i * 3 + 2));
-			break;
-		}
-	}
+	t3d::countTriangleListDecrementInFrontOfDepth(
+		stencilBuffRef,
+		rc->getClipperRect(),
+		rc->getZBufferRef28(),
+		rc->getVertexList(),
+		rc->getClipStateList());
 
 	// Render Shadow Volume
 	if(MyGame::getSingleton().m_ddpf.dwRGBBitCount == 16)
