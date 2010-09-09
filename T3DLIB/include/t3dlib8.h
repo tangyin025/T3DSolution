@@ -3,7 +3,6 @@
 #define __T3DLIB8_H__
 
 #include "t3dcommon.h"
-#include "t3dlib5.h"
 #include "t3dlib6.h"
 
 namespace t3d

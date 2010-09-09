@@ -5,7 +5,9 @@
 #include "t3dcommon.h"
 #include <crtdbg.h>
 #include <cmath>
+#ifdef T3DLIB_REPORT_PRECISION_ERROR
 #include <iostream>
+#endif
 
 #define IR(f)				((t3d::uint32 &)(f))
 #define IS_NAN(f)			((IR(f) & 0x7f800000) == 0x7f800000)
