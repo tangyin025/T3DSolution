@@ -3,7 +3,7 @@
  */
 
 #include <t3dlib1.h>
-#include <t3dlib6.h>
+#include <t3dlib9.h>
 #include <atlwin.h>
 
 #pragma comment(lib, "winmm.lib")

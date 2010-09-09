@@ -5,7 +5,7 @@
 #include "myCommon.h"
 #include <t3dlib1.h>
 #include <t3dlib2.h>
-#include <t3dlib6.h>
+#include <t3dlib9.h>
 #include <map>
 #include <deque>
 #include <stack>

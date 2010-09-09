@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "t3dlib8.h"
-#include "t3dlib5.h"
 
 namespace t3d
 {
