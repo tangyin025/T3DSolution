@@ -248,7 +248,7 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat);
 
-	CLIP_STATE clipTriangleAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -256,7 +256,7 @@ namespace t3d
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -264,13 +264,13 @@ namespace t3d
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleAtCameraFarZ(
+	CLIP_STATE zClipTriangleAtCameraFarZ(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
 		const CAMERA & camera);
 
-	CLIP_STATE clipTriangleAtCamera(
+	CLIP_STATE zClipTriangleAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -278,12 +278,12 @@ namespace t3d
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleListAtCamera(
+	void zClipTriangleListAtCamera(
 		VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera);
 
-	CLIP_STATE clipTriangleIndexAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexAtCameraNearZDouble(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -292,7 +292,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexAtCameraNearZSingle(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -301,7 +301,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	//CLIP_STATE clipTriangleIndexAtCameraFarZ(
+	//CLIP_STATE zClipTriangleIndexAtCameraFarZ(
 	//	VertexList & vertexList,
 	//	size_t v0_i,
 	//	size_t v1_i,
@@ -310,7 +310,7 @@ namespace t3d
 	//	VertexIndexList & retVertexIndexList,
 	//	ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexAtCamera(
+	CLIP_STATE zClipTriangleIndexAtCamera(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -319,7 +319,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleIndexListAtCamera(
+	void zClipTriangleIndexListAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -338,18 +338,18 @@ namespace t3d
 		const Vec2<real> & projection,
 		const CRect & viewport);
 
-	CLIP_STATE clipTriangleAtScreen(
+	CLIP_STATE sClipTriangleAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
 		const CRect & viewport);
 
-	void clipTriangleListAtScreen(
+	void sClipTriangleListAtScreen(
 		const VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CRect & viewport);
 
-	void clipTriangleIndexListAtScreen(
+	void sClipTriangleIndexListAtScreen(
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -440,7 +440,7 @@ namespace t3d
 		const MATERIAL & material,
 		ColorList & retColorList);
 
-	CLIP_STATE clipTriangleGouraudAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleGouraudAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -452,7 +452,7 @@ namespace t3d
 		ColorList & retColorList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleGouraudAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleGouraudAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -464,7 +464,7 @@ namespace t3d
 		ColorList & retColorList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleGouraudAtCamera(
+	CLIP_STATE zClipTriangleGouraudAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -476,13 +476,13 @@ namespace t3d
 		ColorList & retColorList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleListGouraudAtCamera(
+	void zClipTriangleListGouraudAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera);
 
-	CLIP_STATE clipTriangleIndexGouraudAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexGouraudAtCameraNearZDouble(
 		VertexList & vertexList,
 		ColorList & colorList,
 		size_t v0_i,
@@ -492,7 +492,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexGouraudAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexGouraudAtCameraNearZSingle(
 		VertexList & vertexList,
 		ColorList & colorList,
 		size_t v0_i,
@@ -502,7 +502,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexGouraudAtCamera(
+	CLIP_STATE zClipTriangleIndexGouraudAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		size_t v0_i,
@@ -512,7 +512,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleIndexListGouraudAtCamera(
+	void zClipTriangleIndexListGouraudAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ColorList & colorList,
@@ -553,7 +553,7 @@ namespace t3d
 		const ColorList & colorList,
 		const ClipStateList & clipStateList);
 
-	CLIP_STATE clipTriangleTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleTextureAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -565,7 +565,7 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleTextureAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -577,7 +577,7 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleTextureAtCamera(
+	CLIP_STATE zClipTriangleTextureAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -589,13 +589,13 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleListTextureAtCamera(
+	void zClipTriangleListTextureAtCamera(
 		VertexList & vertexList,
 		UVList & uvList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera);
 
-	CLIP_STATE clipTriangleIndexTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexTextureAtCameraNearZDouble(
 		VertexList & vertexList,
 		UVList & uvList,
 		size_t v0_i,
@@ -605,7 +605,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexTextureAtCameraNearZSingle(
 		VertexList & vertexList,
 		UVList & uvList,
 		size_t v0_i,
@@ -615,7 +615,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexTextureAtCamera(
+	CLIP_STATE zClipTriangleIndexTextureAtCamera(
 		VertexList & vertexList,
 		UVList & uvList,
 		size_t v0_i,
@@ -625,7 +625,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleIndexListTextureAtCamera(
+	void zClipTriangleIndexListTextureAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		UVList & uvList,
@@ -800,7 +800,7 @@ namespace t3d
 		const UVList & uvList,
 		const ClipStateList & clipStateList);
 
-	CLIP_STATE clipTriangleGouraudTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleGouraudTextureAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -816,7 +816,7 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleGouraudTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleGouraudTextureAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -832,7 +832,7 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleGouraudTextureAtCamera(
+	CLIP_STATE zClipTriangleGouraudTextureAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -848,14 +848,14 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleListGouraudTextureAtCamera(
+	void zClipTriangleListGouraudTextureAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera);
 
-	CLIP_STATE clipTriangleIndexGouraudTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexGouraudTextureAtCameraNearZDouble(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -866,7 +866,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexGouraudTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexGouraudTextureAtCameraNearZSingle(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -877,7 +877,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexGouraudTextureAtCamera(
+	CLIP_STATE zClipTriangleIndexGouraudTextureAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -888,7 +888,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	void clipTriangleIndexListGouraudTextureAtCamera(
+	void zClipTriangleIndexListGouraudTextureAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ColorList & colorList,

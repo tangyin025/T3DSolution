@@ -706,7 +706,7 @@ namespace t3d
 		return transformVertexListSelf(vertexList, mmat);
 	}
 
-	CLIP_STATE clipTriangleAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -732,7 +732,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -763,7 +763,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleAtCameraFarZ(
+	CLIP_STATE zClipTriangleAtCameraFarZ(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -772,7 +772,7 @@ namespace t3d
 		return v0.z < camera.fz || v1.z < camera.fz || v2.z < camera.fz ? CLIP_STATE_NONE : CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleAtCamera(
+	CLIP_STATE zClipTriangleAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -780,7 +780,7 @@ namespace t3d
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(v0, v1, v2, camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(v0, v1, v2, camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -799,7 +799,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleAtCameraNearZSingle(v2, v0, v1, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZSingle(v2, v0, v1, camera, retVertexList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -814,22 +814,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleAtCameraNearZSingle(v2, v0, v1, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZSingle(v2, v0, v1, camera, retVertexList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleAtCameraNearZSingle(v1, v2, v0, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZSingle(v1, v2, v0, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v0, v1, v2, camera, retVertexList, retClipStateList);
 				}
 			}
 		}
@@ -847,7 +847,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleAtCameraNearZDouble(v1, v2, v0, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v1, v2, v0, camera, retVertexList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -869,7 +869,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleAtCameraNearZDouble(v2, v0, v1, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v2, v0, v1, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -887,22 +887,22 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleAtCameraNearZSingle(v0, v1, v2, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZSingle(v0, v1, v2, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleAtCameraNearZDouble(v1, v2, v0, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v1, v2, v0, camera, retVertexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleAtCameraNearZDouble(v1, v2, v0, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v1, v2, v0, camera, retVertexList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleAtCameraNearZDouble(v2, v0, v1, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v2, v0, v1, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -917,7 +917,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleAtCameraNearZDouble(v2, v0, v1, camera, retVertexList, retClipStateList);
+					return zClipTriangleAtCameraNearZDouble(v2, v0, v1, camera, retVertexList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -931,7 +931,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleListAtCamera(
+	void zClipTriangleListAtCamera(
 		VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
@@ -945,7 +945,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleAtCamera(
+				CLIP_STATE state = zClipTriangleAtCamera(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
@@ -960,7 +960,7 @@ namespace t3d
 		_ASSERT(vertexList.size() == clipStateList.size() * 3);
 	}
 
-	CLIP_STATE clipTriangleIndexAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexAtCameraNearZDouble(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -993,7 +993,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexAtCameraNearZSingle(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -1031,7 +1031,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	//CLIP_STATE clipTriangleIndexAtCameraFarZ(
+	//CLIP_STATE zClipTriangleIndexAtCameraFarZ(
 	//	VertexList & vertexList,
 	//	size_t v0_i,
 	//	size_t v1_i,
@@ -1040,7 +1040,7 @@ namespace t3d
 	//	VertexIndexList & retVertexIndexList,
 	//	ClipStateList & retClipStateList);
 
-	CLIP_STATE clipTriangleIndexAtCamera(
+	CLIP_STATE zClipTriangleIndexAtCamera(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -1049,7 +1049,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -1068,7 +1068,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexAtCameraNearZSingle(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZSingle(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -1083,22 +1083,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexAtCameraNearZSingle(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZSingle(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZSingle(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZSingle(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 		}
@@ -1116,7 +1116,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -1138,7 +1138,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -1156,22 +1156,22 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZSingle(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZSingle(vertexList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -1186,7 +1186,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexAtCameraNearZDouble(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexAtCameraNearZDouble(vertexList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -1200,7 +1200,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleIndexListAtCamera(
+	void zClipTriangleIndexListAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -1215,7 +1215,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleIndexAtCamera(
+				CLIP_STATE state = zClipTriangleIndexAtCamera(
 					vertexList,
 					vertexIndexList[i * 3 + 0],
 					vertexIndexList[i * 3 + 1],
@@ -1280,7 +1280,7 @@ namespace t3d
 		UNREFERENCED_PARAMETER(clipStateList);
 	}
 
-	CLIP_STATE clipTriangleAtScreen(
+	CLIP_STATE sClipTriangleAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -1313,7 +1313,7 @@ namespace t3d
 		return CLIP_STATE_NONE;
 	}
 
-	void clipTriangleListAtScreen(
+	void sClipTriangleListAtScreen(
 		const VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CRect & viewport)
@@ -1327,7 +1327,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				clipStateList[i] = clipTriangleAtScreen(
+				clipStateList[i] = sClipTriangleAtScreen(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
@@ -1336,7 +1336,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleIndexListAtScreen(
+	void sClipTriangleIndexListAtScreen(
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -1351,7 +1351,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				clipStateList[i] = clipTriangleAtScreen(
+				clipStateList[i] = sClipTriangleAtScreen(
 					vertexList[vertexIndexList[i * 3 + 0]],
 					vertexList[vertexIndexList[i * 3 + 1]],
 					vertexList[vertexIndexList[i * 3 + 2]],
@@ -1760,7 +1760,7 @@ namespace t3d
 		}
 	}
 
-	CLIP_STATE clipTriangleGouraudAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleGouraudAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -1795,7 +1795,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleGouraudAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleGouraudAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -1838,7 +1838,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleGouraudAtCamera(
+	CLIP_STATE zClipTriangleGouraudAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -1850,7 +1850,7 @@ namespace t3d
 		ColorList & retColorList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(v0, v1, v2, camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(v0, v1, v2, camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -1869,7 +1869,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleGouraudAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -1884,22 +1884,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleGouraudAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZSingle(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZSingle(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, camera, retVertexList, retColorList, retClipStateList);
 				}
 			}
 		}
@@ -1917,7 +1917,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -1939,7 +1939,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -1957,22 +1957,22 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZSingle(v0, v1, v2, c0, c1, c2, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZSingle(v0, v1, v2, c0, c1, c2, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, camera, retVertexList, retColorList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -1987,7 +1987,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
+					return zClipTriangleGouraudAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, camera, retVertexList, retColorList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -2001,7 +2001,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleListGouraudAtCamera(
+	void zClipTriangleListGouraudAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		ClipStateList & clipStateList,
@@ -2017,7 +2017,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleGouraudAtCamera(
+				CLIP_STATE state = zClipTriangleGouraudAtCamera(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
@@ -2037,7 +2037,7 @@ namespace t3d
 		_ASSERT(colorList.size() == clipStateList.size() * 3);
 	}
 
-	CLIP_STATE clipTriangleIndexGouraudAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexGouraudAtCameraNearZDouble(
 		VertexList & vertexList,
 		ColorList & colorList,
 		size_t v0_i,
@@ -2073,7 +2073,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexGouraudAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexGouraudAtCameraNearZSingle(
 		VertexList & vertexList,
 		ColorList & colorList,
 		size_t v0_i,
@@ -2114,7 +2114,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexGouraudAtCamera(
+	CLIP_STATE zClipTriangleIndexGouraudAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		size_t v0_i,
@@ -2124,7 +2124,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -2143,7 +2143,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -2158,22 +2158,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 		}
@@ -2191,7 +2191,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -2213,7 +2213,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -2231,22 +2231,22 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZSingle(vertexList, colorList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -2261,7 +2261,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudAtCameraNearZDouble(vertexList, colorList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -2275,7 +2275,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleIndexListGouraudAtCamera(
+	void zClipTriangleIndexListGouraudAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ColorList & colorList,
@@ -2292,7 +2292,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleIndexGouraudAtCamera(
+				CLIP_STATE state = zClipTriangleIndexGouraudAtCamera(
 					vertexList,
 					colorList,
 					vertexIndexList[i * 3 + 0],
@@ -2488,7 +2488,7 @@ namespace t3d
 		}
 	}
 
-	CLIP_STATE clipTriangleTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleTextureAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -2523,7 +2523,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleTextureAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -2566,7 +2566,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleTextureAtCamera(
+	CLIP_STATE zClipTriangleTextureAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -2578,7 +2578,7 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(v0, v1, v2, camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(v0, v1, v2, camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -2597,7 +2597,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleTextureAtCameraNearZSingle(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZSingle(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -2612,22 +2612,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleTextureAtCameraNearZSingle(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZSingle(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZSingle(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZSingle(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v0, v1, v2, t0, t1, t2, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v0, v1, v2, t0, t1, t2, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v0, v1, v2, t0, t1, t2, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v0, v1, v2, t0, t1, t2, camera, retVertexList, retUVList, retClipStateList);
 				}
 			}
 		}
@@ -2645,7 +2645,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -2667,7 +2667,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -2685,22 +2685,22 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZSingle(v0, v1, v2, t0, t1, t2, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZSingle(v0, v1, v2, t0, t1, t2, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v1, v2, v0, t1, t2, t0, camera, retVertexList, retUVList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -2715,7 +2715,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleTextureAtCameraNearZDouble(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
+					return zClipTriangleTextureAtCameraNearZDouble(v2, v0, v1, t2, t0, t1, camera, retVertexList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -2729,7 +2729,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleListTextureAtCamera(
+	void zClipTriangleListTextureAtCamera(
 		VertexList & vertexList,
 		UVList & uvList,
 		ClipStateList & clipStateList,
@@ -2745,7 +2745,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleTextureAtCamera(
+				CLIP_STATE state = zClipTriangleTextureAtCamera(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
@@ -2765,7 +2765,7 @@ namespace t3d
 		_ASSERT(uvList.size() == clipStateList.size() * 3);
 	}
 
-	CLIP_STATE clipTriangleIndexTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexTextureAtCameraNearZDouble(
 		VertexList & vertexList,
 		UVList & uvList,
 		size_t v0_i,
@@ -2801,7 +2801,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexTextureAtCameraNearZSingle(
 		VertexList & vertexList,
 		UVList & uvList,
 		size_t v0_i,
@@ -2842,7 +2842,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexTextureAtCamera(
+	CLIP_STATE zClipTriangleIndexTextureAtCamera(
 		VertexList & vertexList,
 		UVList & uvList,
 		size_t v0_i,
@@ -2852,7 +2852,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -2871,7 +2871,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -2886,22 +2886,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 		}
@@ -2919,7 +2919,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -2941,7 +2941,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -2959,22 +2959,22 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZSingle(vertexList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -2989,7 +2989,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexTextureAtCameraNearZDouble(vertexList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -3003,7 +3003,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleIndexListTextureAtCamera(
+	void zClipTriangleIndexListTextureAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		UVList & uvList,
@@ -3020,7 +3020,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleIndexTextureAtCamera(
+				CLIP_STATE state = zClipTriangleIndexTextureAtCamera(
 					vertexList,
 					uvList,
 					vertexIndexList[i * 3 + 0],
@@ -3814,7 +3814,7 @@ namespace t3d
 		}
 	}
 
-	CLIP_STATE clipTriangleGouraudTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleGouraudTextureAtCameraNearZDouble(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -3858,7 +3858,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleGouraudTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleGouraudTextureAtCameraNearZSingle(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		Vec4<real> v2,
@@ -3913,7 +3913,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleGouraudTextureAtCamera(
+	CLIP_STATE zClipTriangleGouraudTextureAtCamera(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
@@ -3929,7 +3929,7 @@ namespace t3d
 		UVList & retUVList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(v0, v1, v2, camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(v0, v1, v2, camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -3948,7 +3948,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleGouraudTextureAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -3963,22 +3963,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleGouraudTextureAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZSingle(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZSingle(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZSingle(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, t0, t1, t2, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, t0, t1, t2, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, t0, t1, t2, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v0, v1, v2, c0, c1, c2, t0, t1, t2, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 			}
 		}
@@ -3996,7 +3996,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
@@ -4018,7 +4018,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -4036,22 +4036,22 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZSingle(v0, v1, v2, c0, c1, c2, t0, t1, t2, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZSingle(v0, v1, v2, c0, c1, c2, t0, t1, t2, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v1, v2, v0, c1, c2, c0, t1, t2, t0, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 			}
 			else if(v1.z == camera.nz)
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -4066,7 +4066,7 @@ namespace t3d
 			{
 				if(v2.z > camera.nz)
 				{
-					return clipTriangleGouraudTextureAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
+					return zClipTriangleGouraudTextureAtCameraNearZDouble(v2, v0, v1, c2, c0, c1, t2, t0, t1, camera, retVertexList, retColorList, retUVList, retClipStateList);
 				}
 				else if(v2.z == camera.nz)
 				{
@@ -4080,7 +4080,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleListGouraudTextureAtCamera(
+	void zClipTriangleListGouraudTextureAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -4098,7 +4098,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleGouraudTextureAtCamera(
+				CLIP_STATE state = zClipTriangleGouraudTextureAtCamera(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
@@ -4123,7 +4123,7 @@ namespace t3d
 		_ASSERT(uvList.size() == clipStateList.size() * 3);
 	}
 
-	CLIP_STATE clipTriangleIndexGouraudTextureAtCameraNearZDouble(
+	CLIP_STATE zClipTriangleIndexGouraudTextureAtCameraNearZDouble(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -4162,7 +4162,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexGouraudTextureAtCameraNearZSingle(
+	CLIP_STATE zClipTriangleIndexGouraudTextureAtCameraNearZSingle(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -4206,7 +4206,7 @@ namespace t3d
 		return CLIP_STATE_CULLED;
 	}
 
-	CLIP_STATE clipTriangleIndexGouraudTextureAtCamera(
+	CLIP_STATE zClipTriangleIndexGouraudTextureAtCamera(
 		VertexList & vertexList,
 		ColorList & colorList,
 		UVList & uvList,
@@ -4217,7 +4217,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList)
 	{
-		if(CLIP_STATE_CULLED == clipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
+		if(CLIP_STATE_CULLED == zClipTriangleAtCameraFarZ(vertexList[v0_i], vertexList[v1_i], vertexList[v2_i], camera))
 		{
 			return CLIP_STATE_CULLED;
 		}
@@ -4236,7 +4236,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -4251,22 +4251,22 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 		}
@@ -4284,7 +4284,7 @@ namespace t3d
 				}
 				else
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
@@ -4306,7 +4306,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -4324,22 +4324,22 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZSingle(vertexList, colorList, uvList, v0_i, v1_i, v2_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v1_i, v2_i, v0_i, camera, retVertexIndexList, retClipStateList);
 				}
 			}
 			else if(vertexList[v1_i].z == camera.nz)
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -4354,7 +4354,7 @@ namespace t3d
 			{
 				if(vertexList[v2_i].z > camera.nz)
 				{
-					return clipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
+					return zClipTriangleIndexGouraudTextureAtCameraNearZDouble(vertexList, colorList, uvList, v2_i, v0_i, v1_i, camera, retVertexIndexList, retClipStateList);
 				}
 				else if(vertexList[v2_i].z == camera.nz)
 				{
@@ -4368,7 +4368,7 @@ namespace t3d
 		}
 	}
 
-	void clipTriangleIndexListGouraudTextureAtCamera(
+	void zClipTriangleIndexListGouraudTextureAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ColorList & colorList,
@@ -4387,7 +4387,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipTriangleIndexGouraudTextureAtCamera(
+				CLIP_STATE state = zClipTriangleIndexGouraudTextureAtCamera(
 					vertexList,
 					colorList,
 					uvList,
