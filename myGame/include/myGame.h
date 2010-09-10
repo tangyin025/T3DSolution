@@ -166,6 +166,8 @@ namespace my
 
 		t3d::ZBufferPtr m_zbuff;
 
+		t3d::StencilBufferPtr m_stencilBuff;
+
 	public:
 		Game(void);
 

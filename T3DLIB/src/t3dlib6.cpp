@@ -576,13 +576,13 @@ namespace t3d
 		}
 	}
 
-	CLIP_STATE clipTriangleBackfaceAtWorld(
+	bool cullTriangleBackfaceAtWorld(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,
 		const Vec4<real> & eye)
 	{
-		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) <= 0 ? CLIP_STATE_CULLED : CLIP_STATE_NONE;
+		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) <= 0;
 	}
 
 	void removeTriangleListBackfaceAtWorld(
@@ -597,13 +597,14 @@ namespace t3d
 		{
 			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
-			if(CLIP_STATE_NONE == clipStateList[i])
-			{
-				clipStateList[i] = clipTriangleBackfaceAtWorld(
+			if(CLIP_STATE_NONE == clipStateList[i]
+				&& cullTriangleBackfaceAtWorld(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
 					vertexList[i * 3 + 2],
-					eye);
+					eye))
+			{
+				clipStateList[i] = CLIP_STATE_CULLED;
 			}
 		}
 	}
@@ -621,13 +622,14 @@ namespace t3d
 		{
 			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
-			if(CLIP_STATE_NONE == clipStateList[i])
-			{
-				clipStateList[i] = clipTriangleBackfaceAtWorld(
+			if(CLIP_STATE_NONE == clipStateList[i]
+				&& cullTriangleBackfaceAtWorld(
 					vertexList[vertexIndexList[i * 3 + 0]],
 					vertexList[vertexIndexList[i * 3 + 1]],
 					vertexList[vertexIndexList[i * 3 + 2]],
-					eye);
+					eye))
+			{
+				clipStateList[i] = CLIP_STATE_CULLED;
 			}
 		}
 	}

@@ -272,8 +272,6 @@ protected:
 	t3d::IndicatorList m_indicatorList2;
 	t3d::VertexList m_silhouetteEdgeList;			// 阴影边
 	t3d::VertexList m_shadowVolume;					// 用以表示 shadow volume 的三角形列表
-	t3d::VertexList m_tmpVertexList;				// 用以存放临时顶点数据
-	t3d::StencilBufferPtr m_stencilbuff;			// Stencil Buffer
 
 	// ======================================== TODO: END   ========================================
 
@@ -423,9 +421,6 @@ public:
 			m_character_h->getVertexList(),
 			m_character_h->getVertexIndexList());
 
-		// 创建 Stencil Buffer
-		m_stencilbuff = t3d::StencilBufferPtr(new t3d::StencilBuffer(m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight()));
-
 		// 播放背景音乐
 		if(!mp3Path.empty())
 		{
@@ -474,6 +469,9 @@ public:
 
 		//// 清理 zbuffer
 		//m_rc->fillZbuffer(m_rc->getClipperRect(), 0);
+
+		// 清理 stencil buffer
+		m_rc->fillStencilBuffer(m_rc->getClipperRect(), 0);
 
 		// 设置渲染上下文的 camera
 		m_rc->setViewport(m_rc->getClipperRect());
@@ -721,60 +719,10 @@ public:
 		//m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
 		//m_rc->drawTriangleListWireZBufferRW(my::Color::RED);
 
-		// 创建 stencil buffer reference
-		t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
-		t3d::fillStencilBuffer(stencilBuffRef, m_rc->getClipperRect(), 0);
-		t3d::RenderContext * rc = m_rc.get();
-
-		// Shadow Volume 处理流水线
-		m_tmpVertexList.clear();
-		t3d::transformVertexList(m_tmpVertexList, m_shadowVolume, mmat);
-		t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
-		t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
-		t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
-		t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
-		t3d::removeTriangleListBackfaceAtScreen(rc->getVertexList(), rc->getClipStateList());
-		t3d::ClipStateList clipStateList;
-		t3d::reversalClipStateListScreenCulling(clipStateList, rc->getClipStateList());
-		t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
-
-		// 将 Shadow Volume 渲染到模板缓存（+）
-		t3d::countTriangleListIncrementInFrontOfDepth(
-			stencilBuffRef,
-			rc->getClipperRect(),
-			rc->getZBufferRef28(),
-			rc->getVertexList(),
-			rc->getClipStateList());
-
-		// 逆转 Shadow Volume 正反面的 Clip State
-		rc->getClipStateList() = clipStateList;
-		t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
-
-		// 将 Shadow Volume 渲染到模板缓存（-）
-		t3d::countTriangleListDecrementInFrontOfDepth(
-			stencilBuffRef,
-			rc->getClipperRect(),
-			rc->getZBufferRef28(),
-			rc->getVertexList(),
-			rc->getClipStateList());
-
 		// 绘制 Shadow Volume
-		if(m_ddpf.dwRGBBitCount == 16)
-		{
-			t3d::boundSurfaceStencilBufferColor16(
-				m_rc->getSurfaceRef16(),
-				m_rc->getClipperRect(),
-				stencilBuffRef,
-				my::Color(97, 97, 97));
-		}
-		else
-		{
-			t3d::boundSurfaceStencilBufferColor32(
-				m_rc->getSurfaceRef32(),
-				m_rc->getClipperRect(),
-				stencilBuffRef,
-				my::Color(97, 97, 97));
-		}
+		m_rc->clearVertexList();
+		m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
+		m_rc->drawTriangleListShadowVolumnZPass(my::Color(0.39f, 0.39f, 0.39f));
 
 		// ======================================== TODO: END   ========================================
 

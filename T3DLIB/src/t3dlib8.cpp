@@ -516,9 +516,9 @@ namespace t3d
 				if(stencilbuff[y][x] > 0)
 				{
 					surface[y][x] = _RGB16BIT_WITHOUT_RSHIFT(
-						_COLORMUL(_RGB16GETR(surface[y][x]), real_to_int(color.x)),
-						_COLORMUL(_RGB16GETG(surface[y][x]), real_to_int(color.y)),
-						_COLORMUL(_RGB16GETB(surface[y][x]), real_to_int(color.z)));
+						_COLORMUL(_RGB16GETR(surface[y][x]), real_to_int(color.x * 255)),
+						_COLORMUL(_RGB16GETG(surface[y][x]), real_to_int(color.y * 255)),
+						_COLORMUL(_RGB16GETB(surface[y][x]), real_to_int(color.z * 255)));
 				}
 			}
 		}
@@ -537,15 +537,15 @@ namespace t3d
 				if(stencilbuff[y][x] > 0)
 				{
 					surface[y][x] = _RGB32BIT(
-						_COLORMUL(_RGB32GETR(surface[y][x]), real_to_int(color.x)),
-						_COLORMUL(_RGB32GETG(surface[y][x]), real_to_int(color.y)),
-						_COLORMUL(_RGB32GETB(surface[y][x]), real_to_int(color.z)));
+						_COLORMUL(_RGB32GETR(surface[y][x]), real_to_int(color.x * 255)),
+						_COLORMUL(_RGB32GETG(surface[y][x]), real_to_int(color.y * 255)),
+						_COLORMUL(_RGB32GETB(surface[y][x]), real_to_int(color.z * 255)));
 				}
 			}
 		}
 	}
 
-	CLIP_STATE clipTriangleBackfaceAtScreen(
+	bool cullTriangleBackfaceAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2)
@@ -592,7 +592,7 @@ namespace t3d
 			bflip = !bflip;
 		}
 
-		return bflip ? CLIP_STATE_CULLED_SCREEN : CLIP_STATE_NONE;
+		return bflip;
 	}
 
 	void removeTriangleListBackfaceAtScreen(
@@ -606,12 +606,40 @@ namespace t3d
 		{
 			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
 
-			if(CLIP_STATE_NONE == clipStateList[i])
-			{
-				clipStateList[i] = clipTriangleBackfaceAtScreen(
+			_ASSERT(CLIP_STATE_CULLED_SCREEN != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i]
+				&& cullTriangleBackfaceAtScreen(
 					vertexList[i * 3 + 0],
 					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
+					vertexList[i * 3 + 2]))
+			{
+				clipStateList[i] = CLIP_STATE_CULLED_SCREEN;
+			}
+		}
+	}
+
+	void removeTriangleIndexListBackfaceAtScreen(
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		ClipStateList & clipStateList)
+	{
+		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
+
+		size_t i = 0;
+		for(; i < clipStateList.size(); i++)
+		{
+			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
+
+			_ASSERT(CLIP_STATE_CULLED_SCREEN != clipStateList[i]);
+
+			if(CLIP_STATE_NONE == clipStateList[i]
+				&& cullTriangleBackfaceAtScreen(
+					vertexList[vertexIndexList[i * 3 + 0]],
+					vertexList[vertexIndexList[i * 3 + 1]],
+					vertexList[vertexIndexList[i * 3 + 2]]))
+			{
+				clipStateList[i] = CLIP_STATE_CULLED_SCREEN;
 			}
 		}
 	}

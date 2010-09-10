@@ -4,6 +4,7 @@
 
 #include "t3dcommon.h"
 #include "t3dlib6.h"
+#include "t3dlib8.h"
 
 namespace t3d
 {
@@ -529,12 +530,12 @@ namespace t3d
 	public:
 		SurfaceRef<uint16> getSurfaceRef16(void) const
 		{
-			return SurfaceRef<uint16>(static_cast<uint16*>(m_surfaceBuffer), m_surfacePitch);
+			return SurfaceRef<uint16>(reinterpret_cast<uint16*>(m_surfaceBuffer), m_surfacePitch);
 		}
 
 		SurfaceRef<uint32> getSurfaceRef32(void) const
 		{
-			return SurfaceRef<uint32>(static_cast<uint32*>(m_surfaceBuffer), m_surfacePitch);
+			return SurfaceRef<uint32>(reinterpret_cast<uint32*>(m_surfaceBuffer), m_surfacePitch);
 		}
 	};
 
@@ -601,7 +602,74 @@ namespace t3d
 	public:
 		SurfaceRef<fixp28> getZBufferRef28(void) const
 		{
-			return SurfaceRef<fixp28>(static_cast<fixp28*>(m_zbufferBuffer), m_zbufferPitch);
+			return SurfaceRef<fixp28>(reinterpret_cast<fixp28*>(m_zbufferBuffer), m_zbufferPitch);
+		}
+	};
+
+	class StencilBufferContext
+	{
+	protected:
+		void * m_stencilBuffer;
+
+		LONG m_stencilPitch;
+
+		DWORD m_stencilWidth;
+
+		DWORD m_stencilHeight;
+
+	public:
+		void setStencilBuffer(void * pbuffer)
+		{
+			m_stencilBuffer = pbuffer;
+		}
+
+		void setStencilBuffer(void * pbuffer, LONG pitch, DWORD width, DWORD height)
+		{
+			setStencilBuffer(pbuffer);
+			setStencilPitch(pitch);
+			setStencilWidth(width);
+			setStencilHeight(height);
+		}
+
+		void * getStencilBuffer(void) const
+		{
+			return m_stencilBuffer;
+		}
+
+		void setStencilPitch(LONG pitch)
+		{
+			m_stencilPitch = pitch;
+		}
+
+		LONG getStencilPitch(void) const
+		{
+			return m_stencilPitch;
+		}
+
+		void setStencilWidth(DWORD width)
+		{
+			m_stencilWidth = width;
+		}
+
+		DWORD getStencilWidth(void) const
+		{
+			return m_stencilWidth;
+		}
+
+		void setStencilHeight(DWORD height)
+		{
+			m_stencilHeight = height;
+		}
+
+		DWORD getStencilHeight(void) const
+		{
+			return m_stencilHeight;
+		}
+
+	public:
+		SurfaceRef<int> getStencilBufferRef(void) const
+		{
+			return SurfaceRef<int>(reinterpret_cast<int*>(m_stencilBuffer), m_stencilPitch);
 		}
 	};
 
@@ -668,12 +736,12 @@ namespace t3d
 	public:
 		SurfaceRef<uint16> getTextureRef16(void) const
 		{
-			return SurfaceRef<uint16>(static_cast<uint16*>(m_textureBuffer), m_texturePitch);
+			return SurfaceRef<uint16>(reinterpret_cast<uint16*>(m_textureBuffer), m_texturePitch);
 		}
 
 		SurfaceRef<uint32> getTextureRef32(void) const
 		{
-			return SurfaceRef<uint32>(static_cast<uint32*>(m_textureBuffer), m_texturePitch);
+			return SurfaceRef<uint32>(reinterpret_cast<uint32*>(m_textureBuffer), m_texturePitch);
 		}
 	};
 
@@ -1099,6 +1167,7 @@ namespace t3d
 		, public ColorListContext
 		, public SurfaceContext
 		, public ZBufferContext
+		, public StencilBufferContext
 		, public TextureContext
 		, public ClipperContext
 		, public MaterialContext
@@ -1107,6 +1176,8 @@ namespace t3d
 		//, public TriangleStateListContext
 		, public ClipStateListContext
 	{
+	protected:
+		ClipStateList m_clipStateList2nd;
 	};
 
 	//class RenderLineListZBufferRW
@@ -1504,8 +1575,14 @@ namespace t3d
 	public:
 		void fillZbuffer(const CRect & rect, real value_inv);
 
+		void fillStencilBuffer(const CRect & rect, int value);
+
 	public:
 		virtual void fillSurface(const CRect & rect, const Vec4<real> & color) = 0;
+
+		virtual void drawTriangleListShadowVolumnZPass(const Vec4<real> & color) = 0;
+
+		virtual void drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color) = 0;
 
 	public:
 		virtual void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color) = 0;
@@ -1597,6 +1674,10 @@ namespace t3d
 	public:
 		void fillSurface(const CRect & rect, const Vec4<real> & color);
 
+		void drawTriangleListShadowVolumnZPass(const Vec4<real> & color);
+
+		void drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color);
+
 	public:
 		void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color);
 
@@ -1684,6 +1765,10 @@ namespace t3d
 	{
 	public:
 		void fillSurface(const CRect & rect, const Vec4<real> & color);
+
+		void drawTriangleListShadowVolumnZPass(const Vec4<real> & color);
+
+		void drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color);
 
 	public:
 		void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color);

@@ -22,16 +22,6 @@ namespace t3d
 
 	typedef std::vector<Vec4<real> > ColorList;
 
-	enum CLIP_STATE
-	{
-		CLIP_STATE_NONE,
-		CLIP_STATE_CULLED,
-		CLIP_STATE_SCLIPPED,
-		CLIP_STATE_CULLED_SCREEN,
-	};
-
-	typedef std::vector<CLIP_STATE> ClipStateList;
-
 	struct MATERIAL
 	{
 		Vec4<real> ambient;
@@ -78,6 +68,16 @@ namespace t3d
 		real fz;
 		CRect viewport;
 	};
+
+	enum CLIP_STATE
+	{
+		CLIP_STATE_NONE,
+		CLIP_STATE_CULLED,
+		CLIP_STATE_SCLIPPED,
+		CLIP_STATE_CULLED_SCREEN,
+	};
+
+	typedef std::vector<CLIP_STATE> ClipStateList;
 
 	VertexList & transformVertexList(
 		VertexList & retVertexList,
@@ -207,7 +207,7 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Vec4<real> & color);
 
-	CLIP_STATE clipTriangleBackfaceAtWorld(
+	bool cullTriangleBackfaceAtWorld(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2,

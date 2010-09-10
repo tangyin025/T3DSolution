@@ -238,6 +238,16 @@ namespace my
 
 		m_backSurface->setClipper(m_ddraw->createMemoryClipper(&m_backSurfaceRect, 1).get());
 
+		// save back surface & zbuffer to render context
+		DDSURFACEDESC2 ddsd = m_backSurface->lock();
+
+		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
+
+		m_backSurface->unlock();
+
+		// set back surface rect to render context clipper
+		m_rc->setClipperRect(m_backSurfaceRect);
+
 		// create dinput
 		m_dinput = t3d::DInputPtr(new t3d::DInput(getHandle()));
 
@@ -259,17 +269,12 @@ namespace my
 		// create zbuffer
 		m_zbuff = t3d::ZBufferPtr(new t3d::ZBuffer(cfgWidth, cfgHeight));
 
-		// save back surface & zbuffer to render context
-		DDSURFACEDESC2 ddsd = m_backSurface->lock();
-
-		m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
-
-		m_backSurface->unlock();
-
 		m_rc->setZBufferBuffer(m_zbuff->getBuffer(), m_zbuff->getPitch(), m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
 
-		// set back surface rect to render context clipper
-		m_rc->setClipperRect(m_backSurfaceRect);
+		// create stencil buffer
+		m_stencilBuff = t3d::StencilBufferPtr(new t3d::StencilBuffer(cfgWidth, cfgHeight));
+
+		m_rc->setStencilBuffer(m_stencilBuff->getBuffer(), m_stencilBuff->getPitch(), m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
 
 		// show main window
 		m_wnd->ShowWindow(SW_SHOW);
