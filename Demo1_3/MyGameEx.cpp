@@ -366,9 +366,6 @@ void MyGameState::enterState(void)
 		m_obj->getVertexList(),
 		m_obj->getVertexIndexList());
 
-	m_stencilbuff = t3d::StencilBufferPtr(new t3d::StencilBuffer(
-		MyGame::getSingleton().m_rc->getSurfaceWidth(), MyGame::getSingleton().m_rc->getSurfaceHeight()));
-
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
@@ -421,6 +418,9 @@ bool MyGameState::doFrame(void)
 
 	// clear zbuffer with infinite distance
 	rc->fillZbuffer(rc->getClipperRect(), 0);
+
+	// clear stencil buffer with zero
+	rc->fillStencilBuffer(rc->getClipperRect(), 0);
 
 	// set render context camera
 	rc->setViewport(rc->getClipperRect());
@@ -559,61 +559,10 @@ bool MyGameState::doFrame(void)
 	//rc->drawTriangleListWireZBufferRW(my::Color::RED);
 	////rc->drawTriangleListZBufferRW(my::Color::RED);
 
-	// build stencil buffer reference
-	t3d::SurfaceRef<int> stencilBuffRef(m_stencilbuff->getBuffer(), m_stencilbuff->getPitch());
-	t3d::fillStencilBuffer(stencilBuffRef, rc->getClipperRect(), 0);
-
-	// Shadow Volume Piple Line
-	m_tmpVertexList.clear();
-	t3d::transformVertexList(m_tmpVertexList, m_objShadowVolume, my::Mat4<real>::IDENTITY);
-	t3d::resetClipStateList(rc->getClipStateList(), m_tmpVertexList.size() / 3);
-	t3d::transformTriangleList(rc->getVertexList(), m_tmpVertexList, rc->getClipStateList(), rc->getCameraMatrix());
-	t3d::clipTriangleListAtCamera(rc->getVertexList(), rc->getClipStateList(), rc->getCamera());
-	t3d::cameraToScreenTriangleList(rc->getVertexList(), rc->getClipStateList(), rc->getCameraProjection(), rc->getViewport());
-	t3d::removeTriangleListBackfaceAtScreen(rc->getVertexList(), rc->getClipStateList());
-	t3d::ClipStateList clipStateList;
-	t3d::reversalClipStateListScreenCulling(clipStateList, rc->getClipStateList());
-	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
-
-	// Count Shadow Volume
-
-	// Count Shadow Volume
-	t3d::countTriangleListIncrementInFrontOfDepth(
-		stencilBuffRef,
-		rc->getClipperRect(),
-		rc->getZBufferRef28(),
-		rc->getVertexList(),
-		rc->getClipStateList());
-
-	// 2nd Shadow Volume Piple Line
-	rc->getClipStateList() = clipStateList;
-	t3d::clipTriangleListAtScreen(rc->getVertexList(), rc->getClipStateList(), rc->getViewport());
-
-	// Count Shadow Volume
-	t3d::countTriangleListDecrementInFrontOfDepth(
-		stencilBuffRef,
-		rc->getClipperRect(),
-		rc->getZBufferRef28(),
-		rc->getVertexList(),
-		rc->getClipStateList());
-
-	// Render Shadow Volume
-	if(MyGame::getSingleton().m_ddpf.dwRGBBitCount == 16)
-	{
-		t3d::boundSurfaceStencilBufferColor16(
-			rc->getSurfaceRef16(),
-			rc->getClipperRect(),
-			stencilBuffRef,
-			my::Color(97, 97, 97));
-	}
-	else
-	{
-		t3d::boundSurfaceStencilBufferColor32(
-			rc->getSurfaceRef32(),
-			rc->getClipperRect(),
-			stencilBuffRef,
-			my::Color(97, 97, 97));
-	}
+	// draw Shadow Volume
+	rc->clearVertexList();
+	rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end(), my::Mat4<real>::IDENTITY);
+	rc->drawTriangleListShadowVolumnZPass(my::Color(0.39f, 0.39f, 0.39f));
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 

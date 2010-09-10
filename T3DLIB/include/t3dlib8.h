@@ -220,13 +220,18 @@ namespace t3d
 		SurfaceRef<int> stencilbuff,
 		const t3d::Vec4<real> & color);
 
-	CLIP_STATE clipTriangleBackfaceAtScreen(
+	bool cullTriangleBackfaceAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const Vec4<real> & v2);
 
 	void removeTriangleListBackfaceAtScreen(
 		const VertexList & vertexList,
+		ClipStateList & clipStateList);
+
+	void removeTriangleIndexListBackfaceAtScreen(
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList);
 
 	ClipStateList & reversalClipStateListScreenCulling(

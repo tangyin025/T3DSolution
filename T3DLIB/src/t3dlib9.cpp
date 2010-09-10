@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "t3dlib9.h"
 
+#pragma warning(disable: 4244)
+
 namespace t3d
 {
 	LIGHT LightListContext::buildLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
@@ -5221,11 +5223,46 @@ namespace t3d
 		fillZBuffer28(getZBufferRef28(), m_clipper & rect, value_inv);
 	}
 
+	void RenderContext::fillStencilBuffer(const CRect & rect, int value)
+	{
+		t3d::fillStencilBuffer(getStencilBufferRef(), rect, value);
+	}
+
 	void RenderContext16::fillSurface(const CRect & rect, const Vec4<real> & color)
 	{
 		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		fillSurface16(getSurfaceRef16(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext16::drawTriangleListShadowVolumnZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleListBackfaceAtScreen(getVertexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		countTriangleListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList());
+		clipTriangleListAtScreen(getVertexList(), m_clipStateList2nd, getViewport());
+		countTriangleListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor16(getSurfaceRef16(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext16::drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleIndexListBackfaceAtScreen(getVertexList(), getVertexIndexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		countTriangleIndexListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList());
+		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), m_clipStateList2nd, getViewport());
+		countTriangleIndexListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor16(getSurfaceRef16(), getClipperRect(), getStencilBufferRef(), color);
 	}
 
 	void RenderContext16::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
@@ -5975,6 +6012,36 @@ namespace t3d
 		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
 		fillSurface32(getSurfaceRef32(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext32::drawTriangleListShadowVolumnZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleListBackfaceAtScreen(getVertexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		clipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		countTriangleListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList());
+		clipTriangleListAtScreen(getVertexList(), m_clipStateList2nd, getViewport());
+		countTriangleListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor32(getSurfaceRef32(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		clipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleIndexListBackfaceAtScreen(getVertexList(), getVertexIndexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		countTriangleIndexListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList());
+		clipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), m_clipStateList2nd, getViewport());
+		countTriangleIndexListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor32(getSurfaceRef32(), getClipperRect(), getStencilBufferRef(), color);
 	}
 
 	void RenderContext32::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
