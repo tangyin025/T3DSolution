@@ -288,13 +288,13 @@ namespace t3d
 		const VertexList & vertexList,
 		const IndicatorList & indicatorList);
 
-	VertexList & buildShadowVolumeByPoint(
+	VertexList & buildUncappedShadowVolumeByPoint(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & point,
 		real distance);
 
-	VertexList & buildShadowVolumeByDirection(
+	VertexList & buildUncappedShadowVolumeByDirection(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & direction,

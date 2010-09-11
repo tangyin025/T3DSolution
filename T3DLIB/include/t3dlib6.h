@@ -79,6 +79,12 @@ namespace t3d
 
 	typedef std::vector<CLIP_STATE> ClipStateList;
 
+	inline void resetClipStateList(ClipStateList & clipStateList, size_t size, CLIP_STATE state = CLIP_STATE_NONE)
+	{
+		clipStateList.clear();
+		clipStateList.resize(size, state);
+	}
+
 	VertexList & transformVertexList(
 		VertexList & retVertexList,
 		const VertexList & vertexList,

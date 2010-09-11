@@ -708,7 +708,7 @@ public:
 
 		// 计算 shadow volume
 		m_shadowVolume.clear();
-		t3d::buildShadowVolumeByPoint(
+		t3d::buildUncappedShadowVolumeByPoint(
 			m_shadowVolume,
 			m_silhouetteEdgeList,
 			l_pos_inv,
@@ -722,7 +722,7 @@ public:
 		// 绘制 Shadow Volume
 		m_rc->clearVertexList();
 		m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
-		m_rc->drawTriangleListShadowVolumnZPass(my::Color(0.39f, 0.39f, 0.39f));
+		m_rc->drawTriangleListShadowVolumeZPass(my::Color(0.39f, 0.39f, 0.39f));
 
 		// ======================================== TODO: END   ========================================
 

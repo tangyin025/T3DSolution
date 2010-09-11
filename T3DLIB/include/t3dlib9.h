@@ -1028,55 +1028,6 @@ namespace t3d
 		}
 	};
 
-	//enum TRI_STATE
-	//{
-	//	TS_ACTIVE,
-	//	TS_CULLED,
-	//	TS_CLIPPED,
-	//	//TS_LARGE_CLIPPED,
-	//	TS_BACKFACE,
-	//};
-
-	//typedef std::vector<TRI_STATE> TriStateList;
-
-	//class TriangleStateListContext
-	//{
-	//protected:
-	//	TriStateList m_triStateList;
-
-	//public:
-	//	static bool isTriVisible(TRI_STATE state);
-
-	//public:
-	//	const TriStateList & getTriStateList(void) const;
-
-	//	TriStateList & getTriStateList(void);
-
-	//	void pushTriState(TRI_STATE state);
-
-	//	void pushTriStateList(TriStateList::const_iterator begin, TriStateList::const_iterator end);
-
-	//	void clearTriStateList(void);
-
-	//	void resizeTriStateList(TriStateList::size_type size);
-
-	//	void resizeTriStateList(TriStateList::size_type size, TriStateList::const_reference state);
-
-	//	TriStateList::size_type getTriStateListSize(void) const;
-
-	//	TriStateList::reference triStateAt(TriStateList::size_type i);
-
-	//	TriStateList::const_reference triStateAt(TriStateList::size_type i) const;
-
-	//	TriStateList::iterator getTriStateListBegin();
-
-	//	TriStateList::const_iterator getTriStateListBegin() const;
-
-	//	TriStateList::iterator getTriStateListEnd();
-
-	//	TriStateList::const_iterator getTriStateListEnd() const;
-	//};
-
 	class ClipStateListContext
 	{
 	protected:
@@ -1153,12 +1104,6 @@ namespace t3d
 		}
 	};
 
-	inline void resetClipStateList(ClipStateList & clipStateList, size_t size, CLIP_STATE state = CLIP_STATE_NONE)
-	{
-		clipStateList.clear();
-		clipStateList.resize(size, state);
-	}
-
 	class TriangleContext
 		: public VertexListContext
 		, public VertexIndexListContext
@@ -1173,399 +1118,14 @@ namespace t3d
 		, public MaterialContext
 		, public LightListContext
 		, public CameraContext
-		//, public TriangleStateListContext
 		, public ClipStateListContext
 	{
 	protected:
 		ClipStateList m_clipStateList2nd;
 	};
 
-	//class RenderLineListZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	TRI_STATE zClipLineAtCamera(const size_t index);
-
-	//	TRI_STATE sClipLineAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawLineList16(const Vec4<real> & color);
-
-	//	void drawLineList32(const Vec4<real> & color);
-	//};
-
-	//class RenderLineIndexListZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	TRI_STATE zClipLineAtCamera(const size_t index);
-
-	//	TRI_STATE sClipLineAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawLineIndexList16(const Vec4<real> & color);
-
-	//	void drawLineIndexList32(const Vec4<real> & color);
-	//};
-
-	//class RenderTriangleListWireZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleList16(const Vec4<real> & color);
-
-	//	void drawTriangleList32(const Vec4<real> & color);
-
-	//	void drawTriangleListWithoutThird16(const Vec4<real> & color);
-
-	//	void drawTriangleListWithoutThird32(const Vec4<real> & color);
-	//};
-
-	//class RenderTriangleIndexListWireZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleIndexList16(const Vec4<real> & color);
-
-	//	void drawTriangleIndexList32(const Vec4<real> & color);
-
-	//	void drawTriangleIndexListWithoutThird16(const Vec4<real> & color);
-
-	//	void drawTriangleIndexListWithoutThird32(const Vec4<real> & color);
-	//};
-
-	//class RenderTriangleListZBufferRW
-	//	: public RenderTriangleListWireZBufferRW
-	//{
-	//public:
-	//	void drawTriangleList16(const Vec4<real> & color);
-
-	//	void drawTriangleList32(const Vec4<real> & color);
-	//};
-
-	//class RenderTriangleIndexListZBufferRW
-	//	: public RenderTriangleIndexListWireZBufferRW
-	//{
-	//public:
-	//	void drawTriangleIndexList16(const Vec4<real> & color);
-
-	//	void drawTriangleIndexList32(const Vec4<real> & color);
-	//};
-
-	//class RenderTriangleListGouraudZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void lightAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleList16(void);
-
-	//	void drawTriangleList32(void);
-	//};
-
-	//class RenderTriangleIndexListGouraudZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void lightAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleIndexList16(void);
-
-	//	void drawTriangleIndexList32(void);
-	//};
-
-	//class RenderTriangleListTextureZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleListZBufferW16(void);
-
-	//	void drawTriangleListZBufferW32(void);
-
-	//	void drawTriangleList16(void);
-
-	//	void drawTriangleList32(void);
-	//};
-
-	//class RenderTriangleIndexListTextureZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleIndexListZBufferW16(void);
-
-	//	void drawTriangleIndexListZBufferW32(void);
-
-	//	void drawTriangleIndexList16(void);
-
-	//	void drawTriangleIndexList32(void);
-	//};
-
-	//class RenderTriangleListTexturePerspectiveLPZBufferRW
-	//	: public RenderTriangleListTextureZBufferRW
-	//{
-	//public:
-	//	void drawTriangleListZBufferW16(void);
-
-	//	void drawTriangleListZBufferW32(void);
-
-	//	void drawTriangleList16(void);
-
-	//	void drawTriangleList32(void);
-	//};
-
-	//class RenderTriangleIndexListTexturePerspectiveLPZBufferRW
-	//	: public RenderTriangleIndexListTextureZBufferRW
-	//{
-	//public:
-	//	void drawTriangleIndexListZBufferW16(void);
-
-	//	void drawTriangleIndexListZBufferW32(void);
-
-	//	void drawTriangleIndexList16(void);
-
-	//	void drawTriangleIndexList32(void);
-	//};
-
-	//class RenderTriangleListGouraudTextureZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void lightAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleList16(void);
-
-	//	void drawTriangleList32(void);
-	//};
-
-	//class RenderTriangleIndexListGouraudTextureZBufferRW
-	//	: public TriangleContext
-	//{
-	//protected:
-	//	void zClipTriangleAtCameraNearZDouble(const size_t index, DWORD clip_mask_nz);
-
-	//	void zClipTriangleAtCameraNearZSingle(const size_t index, DWORD clip_mask_nz);
-
-	//	TRI_STATE zClipTriangleAtCamera(const size_t index);
-
-	//	TRI_STATE sClipTriangleAtScreen(const size_t index);
-
-	//public:
-	//	void reset(void);
-
-	//	void removeBackfaceAtWorld(void);
-
-	//	void lightAtWorld(void);
-
-	//	void worldToCamera(void);
-
-	//	void zClipAtCamera(void);
-
-	//	void cameraToScreen(void);
-
-	//	void sClipAtScreen(void);
-
-	//	void drawTriangleIndexList16(void);
-
-	//	void drawTriangleIndexList32(void);
-	//};
-
-	//class RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
-	//	: public RenderTriangleListGouraudTextureZBufferRW
-	//{
-	//public:
-	//	void drawTriangleList16(void);
-
-	//	void drawTriangleList32(void);
-	//};
-
-	//class RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW
-	//	: public RenderTriangleIndexListGouraudTextureZBufferRW
-	//{
-	//public:
-	//	void drawTriangleIndexList16(void);
-
-	//	void drawTriangleIndexList32(void);
-	//};
-
 	class RenderContext
 		: public TriangleContext
-		//, public RenderLineListZBufferRW
-		//, public RenderLineIndexListZBufferRW
-		//, public RenderTriangleListZBufferRW
-		//, public RenderTriangleIndexListZBufferRW
-		//, public RenderTriangleListGouraudZBufferRW
-		//, public RenderTriangleIndexListGouraudZBufferRW
-		//, public RenderTriangleListTexturePerspectiveLPZBufferRW
-		//, public RenderTriangleIndexListTexturePerspectiveLPZBufferRW
-		//, public RenderTriangleListGouraudTexturePerspectiveLPZBufferRW
-		//, public RenderTriangleIndexListGouraudTexturePerspectiveLPZBufferRW
 	{
 	public:
 		RenderContext(void);
@@ -1580,9 +1140,14 @@ namespace t3d
 	public:
 		virtual void fillSurface(const CRect & rect, const Vec4<real> & color) = 0;
 
-		virtual void drawTriangleListShadowVolumnZPass(const Vec4<real> & color) = 0;
+	public:
+		virtual void drawTriangleListShadowVolumeZPass(const Vec4<real> & color) = 0;
 
-		virtual void drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color) = 0;
+		virtual void drawTriangleIndexListShadowVolumeZPass(const Vec4<real> & color) = 0;
+
+		virtual void drawTriangleListShadowVolumeZFail(const Vec4<real> & color) = 0;
+
+		virtual void drawTriangleIndexListShadowVolumeZFail(const Vec4<real> & color) = 0;
 
 	public:
 		virtual void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color) = 0;
@@ -1674,9 +1239,14 @@ namespace t3d
 	public:
 		void fillSurface(const CRect & rect, const Vec4<real> & color);
 
-		void drawTriangleListShadowVolumnZPass(const Vec4<real> & color);
+	public:
+		void drawTriangleListShadowVolumeZPass(const Vec4<real> & color);
 
-		void drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color);
+		void drawTriangleIndexListShadowVolumeZPass(const Vec4<real> & color);
+
+		void drawTriangleListShadowVolumeZFail(const Vec4<real> & color);
+
+		void drawTriangleIndexListShadowVolumeZFail(const Vec4<real> & color);
 
 	public:
 		void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color);
@@ -1766,9 +1336,14 @@ namespace t3d
 	public:
 		void fillSurface(const CRect & rect, const Vec4<real> & color);
 
-		void drawTriangleListShadowVolumnZPass(const Vec4<real> & color);
+	public:
+		void drawTriangleListShadowVolumeZPass(const Vec4<real> & color);
 
-		void drawTriangleIndexListShadowVolumnZPass(const Vec4<real> & color);
+		void drawTriangleIndexListShadowVolumeZPass(const Vec4<real> & color);
+
+		void drawTriangleListShadowVolumeZFail(const Vec4<real> & color);
+
+		void drawTriangleIndexListShadowVolumeZFail(const Vec4<real> & color);
 
 	public:
 		void drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color);
