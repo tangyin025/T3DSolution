@@ -547,8 +547,11 @@ bool MyGameState::doFrame(void)
 	rc->drawLineListZBufferRW(my::Color::YELLOW);
 
 	m_objShadowVolume.clear();
-	t3d::buildUncappedShadowVolumeByPoint(
+	t3d::pushTriangleIndexListCappedShadowVolumeByPoint(
 		m_objShadowVolume,
+		m_obj->getVertexList(),
+		m_obj->getVertexIndexList(),
+		m_indicatorList,
 		m_silhouetteEdgeList,
 		l_pos,
 		100);
@@ -562,7 +565,8 @@ bool MyGameState::doFrame(void)
 	// draw Shadow Volume
 	rc->clearVertexList();
 	rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end(), my::Mat4<real>::IDENTITY);
-	rc->drawTriangleListShadowVolumeZPass(my::Color(0.39f, 0.39f, 0.39f));
+	//rc->drawTriangleListShadowVolumeZPass(my::Color(0.39f, 0.39f, 0.39f));
+	rc->drawTriangleListShadowVolumeZFail(my::Color(0.39f, 0.39f, 0.39f));
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 

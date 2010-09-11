@@ -708,7 +708,7 @@ public:
 
 		// 计算 shadow volume
 		m_shadowVolume.clear();
-		t3d::buildUncappedShadowVolumeByPoint(
+		t3d::pushUncappedShadowVolumeByPoint(
 			m_shadowVolume,
 			m_silhouetteEdgeList,
 			l_pos_inv,

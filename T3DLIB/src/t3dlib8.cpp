@@ -9,7 +9,7 @@ namespace t3d
 		const CRect & rect,
 		int value)
 	{
-		for(int i = rect.top; i < rect.bottom; i++)
+		for(LONG i = rect.top; i < rect.bottom; i++)
 		{
 			memSet32((int *)&stencilbuff[i][rect.left], value, rect.Width());
 		}
@@ -780,7 +780,7 @@ namespace t3d
 			const Vec4<real> & v1 = vertexList[i + 1];
 			const Vec4<real> & v2 = vertexList[i + 2];
 
-			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(v0, point));
+			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByPoint(v0, v1, v2, point);
 		}
 
 		return retIndicatorList;
@@ -801,7 +801,7 @@ namespace t3d
 			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
 			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
 
-			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(v0, point));
+			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByPoint(v0, v1, v2, point);
 		}
 
 		return retIndicatorList;
@@ -821,7 +821,7 @@ namespace t3d
 			const Vec4<real> & v1 = vertexList[i + 1];
 			const Vec4<real> & v2 = vertexList[i + 2];
 
-			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), direction);
+			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByDirection(v0, v1, v2, direction);
 		}
 
 		return retIndicatorList;
@@ -842,7 +842,7 @@ namespace t3d
 			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
 			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
 
-			retIndicatorList[i / 3] = vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), direction);
+			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByDirection(v0, v1, v2, direction);
 		}
 
 		return retIndicatorList;
@@ -859,10 +859,10 @@ namespace t3d
 		ConnectionEdgeList::const_iterator connection_edge_iter = connectionEdgeList.begin();
 		for(; connection_edge_iter != connectionEdgeList.end(); connection_edge_iter++)
 		{
-			if(indicatorList[connection_edge_iter->tri0_i] >= 0)
+			if(IndicatorList::isBack(indicatorList[connection_edge_iter->tri0_i]))
 			{
 				if(SIZE_MAX != connection_edge_iter->tri1_i
-					&& indicatorList[connection_edge_iter->tri1_i] < 0)
+					&& !IndicatorList::isBack(indicatorList[connection_edge_iter->tri1_i]))
 				{
 					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
 					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
@@ -871,7 +871,7 @@ namespace t3d
 			else
 			{
 				if(SIZE_MAX == connection_edge_iter->tri1_i
-					|| indicatorList[connection_edge_iter->tri1_i] >= 0)
+					|| IndicatorList::isBack(indicatorList[connection_edge_iter->tri1_i]))
 				{
 					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
 					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
@@ -882,15 +882,15 @@ namespace t3d
 		return retSilhouetteEdgeList;
 	}
 
-	VertexList & buildUncappedShadowVolumeByPoint(
+	VertexList & pushUncappedShadowVolumeByPoint(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & point,
 		real distance)
 	{
-		_ASSERT(retVertexList.empty());
+		//_ASSERT(retVertexList.empty());
 
-		for(int i = 0; i < silhouetteEdgeList.size(); i += 2)
+		for(size_t i = 0; i < silhouetteEdgeList.size(); i += 2)
 		{
 			const Vec4<real> & v0 = silhouetteEdgeList[i + 0];
 			const Vec4<real> & v1 = silhouetteEdgeList[i + 1];
@@ -910,15 +910,17 @@ namespace t3d
 		return retVertexList;
 	}
 
-	VertexList & buildUncappedShadowVolumeByDirection(
+	VertexList & pushUncappedShadowVolumeByDirection(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & direction,
 		real distance)
 	{
-		_ASSERT(retVertexList.empty());
+		//_ASSERT(retVertexList.empty());
 
-		for(int i = 0; i < silhouetteEdgeList.size(); i += 2)
+		_ASSERT(vec3IsNormalized(direction));
+
+		for(size_t i = 0; i < silhouetteEdgeList.size(); i += 2)
 		{
 			const Vec4<real> & v0 = silhouetteEdgeList[i + 0];
 			const Vec4<real> & v1 = silhouetteEdgeList[i + 1];
@@ -936,5 +938,335 @@ namespace t3d
 		}
 
 		return retVertexList;
+	}
+
+	VertexList & pushTriangleListFrontCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		_ASSERT(vertexList.size() % 3 == 0);
+		_ASSERT(vertexList.size() / 3 == indicatorList.size());
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(!IndicatorList::isBack(indicatorList[i]))
+			{
+				retVertexList.push_back(vertexList[i * 3 + 0]);
+				retVertexList.push_back(vertexList[i * 3 + 1]);
+				retVertexList.push_back(vertexList[i * 3 + 2]);
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleIndexListFrontCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(!IndicatorList::isBack(indicatorList[i]))
+			{
+				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 0]]);
+				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 1]]);
+				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 2]]);
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleListBackCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		_ASSERT(vertexList.size() % 3 == 0);
+		_ASSERT(vertexList.size() / 3 == indicatorList.size());
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(IndicatorList::isBack(indicatorList[i]))
+			{
+				const Vec4<real> & v0 = vertexList[i * 3 + 0];
+				const Vec4<real> & v1 = vertexList[i * 3 + 1];
+				const Vec4<real> & v2 = vertexList[i * 3 + 2];
+
+				retVertexList.push_back(vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance)));
+				retVertexList.push_back(vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance)));
+				retVertexList.push_back(vec3Add(v2, vec3Mul(vec3Normalize(vec3Sub(v2, point)), distance)));
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleIndexListBackCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(IndicatorList::isBack(indicatorList[i]))
+			{
+				const Vec4<real> & v0 = vertexList[vertexIndexList[i * 3 + 0]];
+				const Vec4<real> & v1 = vertexList[vertexIndexList[i * 3 + 1]];
+				const Vec4<real> & v2 = vertexList[vertexIndexList[i * 3 + 2]];
+
+				retVertexList.push_back(vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance)));
+				retVertexList.push_back(vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance)));
+				retVertexList.push_back(vec3Add(v2, vec3Mul(vec3Normalize(vec3Sub(v2, point)), distance)));
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleListFrontCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		_ASSERT(vertexList.size() % 3 == 0);
+		_ASSERT(vertexList.size() / 3 == indicatorList.size());
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(!IndicatorList::isBack(indicatorList[i]))
+			{
+				retVertexList.push_back(vertexList[i * 3 + 0]);
+				retVertexList.push_back(vertexList[i * 3 + 1]);
+				retVertexList.push_back(vertexList[i * 3 + 2]);
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleIndexListFrontCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(!IndicatorList::isBack(indicatorList[i]))
+			{
+				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 0]]);
+				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 1]]);
+				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 2]]);
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleListBackCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		_ASSERT(vertexList.size() % 3 == 0);
+		_ASSERT(vertexList.size() / 3 == indicatorList.size());
+
+		_ASSERT(vec3IsNormalized(direction));
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(IndicatorList::isBack(indicatorList[i]))
+			{
+				const Vec4<real> & v0 = vertexList[i * 3 + 0];
+				const Vec4<real> & v1 = vertexList[i * 3 + 1];
+				const Vec4<real> & v2 = vertexList[i * 3 + 2];
+
+				retVertexList.push_back(vec3Add(v0, vec3Mul(direction, distance)));
+				retVertexList.push_back(vec3Add(v1, vec3Mul(direction, distance)));
+				retVertexList.push_back(vec3Add(v2, vec3Mul(direction, distance)));
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleIndexListBackCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		_ASSERT(vertexIndexList.size() % 3 == 0);
+		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
+
+		_ASSERT(vec3IsNormalized(direction));
+
+		for(size_t i = 0; i < indicatorList.size(); i++)
+		{
+			if(IndicatorList::isBack(indicatorList[i]))
+			{
+				const Vec4<real> & v0 = vertexList[vertexIndexList[i * 3 + 0]];
+				const Vec4<real> & v1 = vertexList[vertexIndexList[i * 3 + 1]];
+				const Vec4<real> & v2 = vertexList[vertexIndexList[i * 3 + 2]];
+
+				retVertexList.push_back(vec3Add(v0, vec3Mul(direction, distance)));
+				retVertexList.push_back(vec3Add(v1, vec3Mul(direction, distance)));
+				retVertexList.push_back(vec3Add(v2, vec3Mul(direction, distance)));
+			}
+		}
+
+		return retVertexList;
+	}
+
+	VertexList & pushTriangleListCappedShadowVolumeByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		pushTriangleListFrontCapByPoint(
+			retVertexList,
+			vertexList,
+			indicatorList,
+			point,
+			distance);
+
+		pushUncappedShadowVolumeByPoint(
+			retVertexList,
+			silhouetteEdgeList,
+			point,
+			distance);
+
+		return pushTriangleListBackCapByPoint(
+			retVertexList,
+			vertexList,
+			indicatorList,
+			point,
+			distance);
+	}
+
+	VertexList & pushTriangleIndexListCappedShadowVolumeByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & point,
+		real distance)
+	{
+		pushTriangleIndexListFrontCapByPoint(
+			retVertexList,
+			vertexList,
+			vertexIndexList,
+			indicatorList,
+			point,
+			distance);
+
+		pushUncappedShadowVolumeByPoint(
+			retVertexList,
+			silhouetteEdgeList,
+			point,
+			distance);
+
+		return pushTriangleIndexListBackCapByPoint(
+			retVertexList,
+			vertexList,
+			vertexIndexList,
+			indicatorList,
+			point,
+			distance);
+	}
+
+	VertexList & pushTriangleListCappedShadowVolumeByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		pushTriangleListFrontCapByDirection(
+			retVertexList,
+			vertexList,
+			indicatorList,
+			direction,
+			distance);
+
+		pushUncappedShadowVolumeByDirection(
+			retVertexList,
+			silhouetteEdgeList,
+			direction,
+			distance);
+
+		return pushTriangleListBackCapByDirection(
+			retVertexList,
+			vertexList,
+			indicatorList,
+			direction,
+			distance);
+	}
+
+	VertexList & pushTriangleIndexListCappedShadowVolumeByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & direction,
+		real distance)
+	{
+		pushTriangleIndexListFrontCapByDirection(
+			retVertexList,
+			vertexList,
+			vertexIndexList,
+			indicatorList,
+			direction,
+			distance);
+
+		pushUncappedShadowVolumeByDirection(
+			retVertexList,
+			silhouetteEdgeList,
+			direction,
+			distance);
+
+		return pushTriangleIndexListBackCapByDirection(
+			retVertexList,
+			vertexList,
+			vertexIndexList,
+			indicatorList,
+			direction,
+			distance);
 	}
 }
