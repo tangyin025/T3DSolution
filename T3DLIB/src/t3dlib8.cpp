@@ -882,7 +882,7 @@ namespace t3d
 		return retSilhouetteEdgeList;
 	}
 
-	VertexList & buildShadowVolumeByPoint(
+	VertexList & buildUncappedShadowVolumeByPoint(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & point,
@@ -910,7 +910,7 @@ namespace t3d
 		return retVertexList;
 	}
 
-	VertexList & buildShadowVolumeByDirection(
+	VertexList & buildUncappedShadowVolumeByDirection(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & direction,
