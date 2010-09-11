@@ -258,7 +258,37 @@ namespace t3d
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList);
 
-	typedef std::vector<real> IndicatorList;
+	class IndicatorList : public std::vector<real>
+	{
+	public:
+		static bool isBack(real indicator)
+		{
+			return indicator > 0;
+		}
+
+		static bool isFront(real indicator)
+		{
+			return indicator < 0;
+		}
+
+		static real buildTriangleIndicatorByPoint(
+			const Vec4<real> & v0,
+			const Vec4<real> & v1,
+			const Vec4<real> & v2,
+			const Vec4<real> & point)
+		{
+			return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(v0, point));
+		}
+
+		static real buildTriangleIndicatorByDirection(
+			const Vec4<real> & v0,
+			const Vec4<real> & v1,
+			const Vec4<real> & v2,
+			const Vec4<real> & direction)
+		{
+			return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), direction);
+		}
+	};
 
 	IndicatorList & buildIndicatorListFromTriangleListByPoint(
 		IndicatorList & retIndicatorList,
@@ -288,14 +318,108 @@ namespace t3d
 		const VertexList & vertexList,
 		const IndicatorList & indicatorList);
 
-	VertexList & buildUncappedShadowVolumeByPoint(
+	VertexList & pushUncappedShadowVolumeByPoint(
 		VertexList & retVertexList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & point,
 		real distance);
 
-	VertexList & buildUncappedShadowVolumeByDirection(
+	VertexList & pushUncappedShadowVolumeByDirection(
 		VertexList & retVertexList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & direction,
+		real distance);
+
+	VertexList & pushTriangleListFrontCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance);
+
+	VertexList & pushTriangleIndexListFrontCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance);
+
+	VertexList & pushTriangleListBackCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance);
+
+	VertexList & pushTriangleIndexListBackCapByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & point,
+		real distance);
+
+	VertexList & pushTriangleListFrontCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance);
+
+	VertexList & pushTriangleIndexListFrontCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance);
+
+	VertexList & pushTriangleListBackCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance);
+
+	VertexList & pushTriangleIndexListBackCapByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const Vec4<real> & direction,
+		real distance);
+
+	VertexList & pushTriangleListCappedShadowVolumeByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & point,
+		real distance);
+
+	VertexList & pushTriangleIndexListCappedShadowVolumeByPoint(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & point,
+		real distance);
+
+	VertexList & pushTriangleListCappedShadowVolumeByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const IndicatorList & indicatorList,
+		const VertexList & silhouetteEdgeList,
+		const Vec4<real> & direction,
+		real distance);
+
+	VertexList & pushTriangleIndexListCappedShadowVolumeByDirection(
+		VertexList & retVertexList,
+		const VertexList & vertexList,
+		const VertexIndexList & vertexIndexList,
+		const IndicatorList & indicatorList,
 		const VertexList & silhouetteEdgeList,
 		const Vec4<real> & direction,
 		real distance);

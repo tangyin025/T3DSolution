@@ -53,7 +53,7 @@
 			for(; x0 < x1; x0++)
 			{
 #ifdef __draw_behind_depth
-				if(lz < zbuffer[y0][x0])
+				if(lz <= zbuffer[y0][x0])
 #else
 				if(lz > zbuffer[y0][x0])
 #endif

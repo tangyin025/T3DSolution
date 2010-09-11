@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "t3dlib6.h"
+#include "t3dlib8.h"
 #include "t3dlib9.h"
 
 #define CLIP_MASK_V0	0x01
@@ -582,7 +583,7 @@ namespace t3d
 		const Vec4<real> & v2,
 		const Vec4<real> & eye)
 	{
-		return vec3Dot(vec3Cross(vec3Sub(v1, v0), vec3Sub(v2, v0)), vec3Sub(eye, v0)) <= 0;
+		return !IndicatorList::isFront(IndicatorList::buildTriangleIndicatorByPoint(v0, v1, v2, eye));
 	}
 
 	void removeTriangleListBackfaceAtWorld(
