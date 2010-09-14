@@ -36,7 +36,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	cfg.addInt(_T("width"), 800);
 	cfg.addInt(_T("height"), 600);
 	cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
-	cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_STRETCHED);
+	cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_WIDESCREEN);
 	cfg.load(strConfigPath.c_str());
 
 	// show configuration dialog

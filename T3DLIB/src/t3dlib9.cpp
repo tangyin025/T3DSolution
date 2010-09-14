@@ -306,9 +306,9 @@ namespace t3d
 	{
 		resetClipStateList(getClipStateList(), getVertexListSize() / 2);
 		transformLineListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
-		clipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		zClipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
 		cameraToScreenLineList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
-		clipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		sClipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
 		drawLineListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
@@ -316,9 +316,9 @@ namespace t3d
 	{
 		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 2);
 		transformLineIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
-		clipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		zClipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
 		cameraToScreenLineIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
-		clipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		sClipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
 		drawLineIndexListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
@@ -823,9 +823,9 @@ namespace t3d
 	{
 		resetClipStateList(getClipStateList(), getVertexListSize() / 2);
 		transformLineListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
-		clipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		zClipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
 		cameraToScreenLineList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
-		clipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		sClipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
 		drawLineListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
@@ -833,9 +833,9 @@ namespace t3d
 	{
 		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 2);
 		transformLineIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
-		clipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		zClipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
 		cameraToScreenLineIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
-		clipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		sClipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
 		drawLineIndexListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
