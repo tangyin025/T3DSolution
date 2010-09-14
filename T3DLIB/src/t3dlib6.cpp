@@ -108,7 +108,7 @@ namespace t3d
 		return transformVertexListSelf(vertexList, mmat);
 	}
 
-	CLIP_STATE clipLineAtCamera(
+	CLIP_STATE zClipLineAtCamera(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		const CAMERA & camera,
@@ -168,7 +168,7 @@ namespace t3d
 		}
 	}
 
-	void clipLineListAtCamera(
+	void zClipLineListAtCamera(
 		VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera)
@@ -183,9 +183,9 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				// NOTE: clipLineAtCamera will change the length of clipStateList,
+				// NOTE: zClipLineAtCamera will change the length of clipStateList,
 				//	so take care of invalid reference of clipStateList[i]
-				CLIP_STATE state = clipLineAtCamera(
+				CLIP_STATE state = zClipLineAtCamera(
 					vertexList[i * 2 + 0], vertexList[i * 2 + 1], camera, vertexList, clipStateList);
 
 				clipStateList[i] = state; // ***
@@ -195,7 +195,7 @@ namespace t3d
 		_ASSERT(vertexList.size() == clipStateList.size() * 2);
 	}
 
-	CLIP_STATE clipLineIndexAtCamera(
+	CLIP_STATE zClipLineIndexAtCamera(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -258,7 +258,7 @@ namespace t3d
 		}
 	}
 
-	void clipLineIndexListAtCamera(
+	void zClipLineIndexListAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -274,7 +274,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				CLIP_STATE state = clipLineIndexAtCamera(
+				CLIP_STATE state = zClipLineIndexAtCamera(
 					vertexList, vertexIndexList[i * 2 + 0], vertexIndexList[i * 2 + 1], camera, vertexIndexList, clipStateList);
 
 				clipStateList[i] = state;
@@ -342,7 +342,7 @@ namespace t3d
 		UNREFERENCED_PARAMETER(clipStateList);
 	}
 
-	CLIP_STATE clipLineAtScreen(
+	CLIP_STATE sClipLineAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const CRect & viewport)
@@ -374,7 +374,7 @@ namespace t3d
 		return CLIP_STATE_NONE;
 	}
 
-	void clipLineListAtScreen(
+	void sClipLineListAtScreen(
 		const VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CRect & viewport)
@@ -388,7 +388,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				clipStateList[i] = clipLineAtScreen(
+				clipStateList[i] = sClipLineAtScreen(
 					vertexList[i * 2 + 0],
 					vertexList[i * 2 + 1],
 					viewport);
@@ -396,7 +396,7 @@ namespace t3d
 		}
 	}
 
-	void clipLineIndexListAtScreen(
+	void sClipLineIndexListAtScreen(
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -411,7 +411,7 @@ namespace t3d
 
 			if(CLIP_STATE_NONE == clipStateList[i])
 			{
-				clipStateList[i] = clipLineAtScreen(
+				clipStateList[i] = sClipLineAtScreen(
 					vertexList[vertexIndexList[i * 2 + 0]],
 					vertexList[vertexIndexList[i * 2 + 1]],
 					viewport);

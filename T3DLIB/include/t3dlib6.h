@@ -118,19 +118,19 @@ namespace t3d
 		const ClipStateList & clipStateList,
 		const Mat4<real> & mmat);
 
-	CLIP_STATE clipLineAtCamera(
+	CLIP_STATE zClipLineAtCamera(
 		Vec4<real> v0,
 		Vec4<real> v1,
 		const CAMERA & camera,
 		VertexList & retVertexList,
 		ClipStateList & retClipStateList);
 
-	void clipLineListAtCamera(
+	void zClipLineListAtCamera(
 		VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CAMERA & camera);
 
-	CLIP_STATE clipLineIndexAtCamera(
+	CLIP_STATE zClipLineIndexAtCamera(
 		VertexList & vertexList,
 		size_t v0_i,
 		size_t v1_i,
@@ -138,7 +138,7 @@ namespace t3d
 		VertexIndexList & retVertexIndexList,
 		ClipStateList & retClipStateList);
 
-	void clipLineIndexListAtCamera(
+	void zClipLineIndexListAtCamera(
 		VertexList & vertexList,
 		VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
@@ -163,17 +163,17 @@ namespace t3d
 		const Vec2<real> & projection,
 		const CRect & viewport);
 
-	CLIP_STATE clipLineAtScreen(
+	CLIP_STATE sClipLineAtScreen(
 		const Vec4<real> & v0,
 		const Vec4<real> & v1,
 		const CRect & viewport);
 
-	void clipLineListAtScreen(
+	void sClipLineListAtScreen(
 		const VertexList & vertexList,
 		ClipStateList & clipStateList,
 		const CRect & viewport);
 
-	void clipLineIndexListAtScreen(
+	void sClipLineIndexListAtScreen(
 		const VertexList & vertexList,
 		const VertexIndexList & vertexIndexList,
 		ClipStateList & clipStateList,
