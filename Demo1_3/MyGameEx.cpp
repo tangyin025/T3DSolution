@@ -173,36 +173,21 @@ void MyLoadState::enterState(void)
 
 	pushJob(MyJobPtr(new SimpleCreateObjJob<my::EulerCamera>(gameState->m_eulerCam, 1)));
 
-	//pushJob(MyJobPtr(new LoadBoneAssignmentIndexObjectJob(gameState->m_obj, _T("gun.mesh.xml"))));
-
-	//pushJob(MyJobPtr(new LoadObjectJob(gameState->m_lstObj, _T("gun_tri_list.mesh.xml"))));
-
-	//pushJob(MyJobPtr(new LoadImageJob(gameState->m_objImg, _T("92fs_brigadier.jpg"))));
-
-	//pushJob(MyJobPtr(new LoadWavJob(gameState->m_wav, _T("stationthrob.wav"), MyGame::getSingleton().m_dsound.get())));
-
-	//pushJob(MyJobPtr(new LoadMp3Job(gameState->m_mp3, _T("castle1_20.mp3"), MyGame::getSingleton().m_dsound)));
-
-	//// load & play mp3 while loading
-	//m_mp3 = my::Mp3Ptr(new my::Mp3(
-	//	MyGame::getSingleton().m_dsound, my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("castle1_05.mp3"))))));
-
-	//m_mp3->play();
-
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	// begin work thread here
+	// create loading thread
 	CreateThread();
+
+	// resume loading thread
 	ResumeThread();
 }
 
 void MyLoadState::leaveState(void)
 {
+	// make sure the loading thread must be stopped
 	_ASSERT(WaitForThreadStopped(0));
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	//m_mp3->stop();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -277,6 +262,9 @@ DWORD MyLoadState::onProc(void)
 			totalWeight += (*job_iter)->getWeight();
 		}
 
+		// make sure the total weight must greater than zero
+		_ASSERT(totalWeight > 0);
+
 		// do all the jobs
 		real currentWeight = 0;
 		job_iter = getJobListBegin();
@@ -326,6 +314,8 @@ MyGameState::~MyGameState(void)
 
 void MyGameState::enterState(void)
 {
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	// start fps manager
 	m_fpsMgr->start();
 
@@ -337,34 +327,16 @@ void MyGameState::enterState(void)
 	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
 	m_eulerCam->reset();
 
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	//// create ds3d buffer & ds3d listener
-	//m_ds3dbuffer = m_wav->m_dsbuffer->getDS3DBuffer();
-
-	//m_ds3dListener = MyGame::getSingleton().m_dsound->getPrimarySoundBuffer()->getDS3DListener();
-
-	//// play the wave
-	//m_wav->m_dsbuffer->play(0, DSBPLAY_LOOPING);
-
-	//// play the mp3
-	//m_mp3->play(true);
-
-	m_plane = my::IndexPlaneObjectPtr(new my::IndexPlaneObject(200, 200));
-
-	//m_obj = my::IndexObjectPtr(new my::IndexPlaneObject(20, 20));
-
-	//m_obj = my::IndexObjectPtr(new my::IndexCubeObject(20, 20, 20));
-
-	//m_obj = my::IndexObjectPtr(new my::IndexSphereObject(10, 20, 20));
-
-	m_obj = my::IndexObjectPtr(new my::BoneAssignmentIndexObjectFromOgreMesh(
-		my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("aaa.mesh.xml"))))));
-
-	t3d::buildConnectionEdgeListFromTriangleIndexList(
-		m_connectionEdgeList,
-		m_obj->getVertexList(),
-		m_obj->getVertexIndexList());
+#ifdef _DEBUG
+	// clear all surface to test software rendering clipper
+	CRect clipper = MyGame::getSingleton().m_rc->getClipperRect();
+	MyGame::getSingleton().m_rc->setClipperRect(MyGame::getSingleton().m_backSurfaceRect);
+	MyGame::getSingleton().m_rc->fillSurface(MyGame::getSingleton().m_backSurfaceRect, my::Color::WHITE);
+	MyGame::getSingleton().m_rc->fillZbuffer(MyGame::getSingleton().m_backSurfaceRect, 0);
+	MyGame::getSingleton().m_rc->fillStencilBuffer(MyGame::getSingleton().m_backSurfaceRect, 0);
+	MyGame::getSingleton().m_rc->setClipperRect(clipper);
+	MyGame::getSingleton().m_wnd->InvalidateRect(NULL);
+#endif
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -373,22 +345,25 @@ void MyGameState::leaveState(void)
 {
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	//// stop the wave
-	//m_wav->m_dsbuffer->stop();
-
-	//// stop the mp3
-	//m_mp3->stop();
-
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 unsigned MyGameState::generateContacts(my::Contact * contacts, unsigned limits)
 {
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	return 0;
 }
 
 bool MyGameState::doFrame(void)
 {
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// obtain render context pointer
+	t3d::RenderContext * rc = MyGame::getSingleton().m_rc.get();
+
 	// exit application by return false with user input 'escape'
 	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
 	if(keyboard->isKeyDown(DIK_ESCAPE))
@@ -404,16 +379,17 @@ bool MyGameState::doFrame(void)
 	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
 	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
-	//// here i created the clipper region smaller than the window, only used to test the clipper bug
-	//// because of the software simulating, the algorithm of cutting polygon is implemented by software,
-	//// so the unstrong algorithm will lead edge overflow, and even crash the application
-	//// reducing the clipper region will somehow avoid this phenomenon
-	//CRect clipper(m_rback);
-	//clipper.DeflateRect(10, 10);
-	//m_rc->setClipperRect(clipper);
+#ifdef _DEBUG
+	// here i created the clipper region smaller than the window, only used to test the clipper bug
+	// because of the software simulating, the algorithm of cutting polygon is implemented by software,
+	// so the unstrong algorithm will lead edge overflow, and even crash the application
+	// reducing the clipper region will somehow avoid this phenomenon
+	CRect clipper(MyGame::getSingleton().m_backSurfaceRect);
+	clipper.DeflateRect(10, 10);
+	rc->setClipperRect(clipper);
+#endif
 
 	// clear back surface with gray color
-	t3d::RenderContext * rc = MyGame::getSingleton().m_rc.get();
 	rc->fillSurface(rc->getClipperRect(), my::Color(0.8f, 0.8f, 0.8f));
 
 	// clear zbuffer with infinite distance
@@ -443,132 +419,8 @@ bool MyGameState::doFrame(void)
 	rc->setAmbient(my::Color::WHITE);
 	rc->setDiffuse(my::Color::WHITE);
 
-	//// draw default grid, with use to test distance of the scene
-	//m_grid->drawZBufferRW(rc);
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	//DS3DBUFFER ds3db = {sizeof(ds3db)};
-	//m_ds3dbuffer->getAllParameters(&ds3db);
-	//ds3db.vPosition.x = 0;
-	//ds3db.vPosition.y = 0;
-	//ds3db.vPosition.z = 0;
-	//ds3db.vVelocity.x = 0;
-	//ds3db.vVelocity.y = 0;
-	//ds3db.vVelocity.z = 0;
-	//ds3db.flMinDistance = 5;
-	//ds3db.flMaxDistance = 50;
-	//ds3db.dwMode = DS3DMODE_NORMAL;
-	//m_ds3dbuffer->setAllParameters(&ds3db);
-
-	//DS3DLISTENER ds3dl = {sizeof(ds3dl)};
-	//m_ds3dListener->getAllParameters(&ds3dl);
-	//ds3dl.vPosition.x = m_eulerCam->getPosition().x;
-	//ds3dl.vPosition.y = m_eulerCam->getPosition().y;
-	//ds3dl.vPosition.z = m_eulerCam->getPosition().z;
-	//my::Mat4<real> camMatRot = t3d::mat4GetRotationScalePart(rc->getCameraMatrix().inverse());
-	//my::Vec4<real> vfront = my::Vec4<real>::UNIT_Z.transform(camMatRot);
-	//ds3dl.vOrientFront.x = vfront.x;
-	//ds3dl.vOrientFront.y = vfront.y;
-	//ds3dl.vOrientFront.z = vfront.z;
-	//my::Vec4<real> vtop = my::Vec4<real>::UNIT_Y.transform(camMatRot);
-	//ds3dl.vOrientTop.x = vtop.x;
-	//ds3dl.vOrientTop.y = vtop.y;
-	//ds3dl.vOrientTop.z = vtop.z;
-	//ds3dl.flDistanceFactor = 1.0f;
-	//ds3dl.flRolloffFactor = 0.05f;
-	//ds3dl.flDopplerFactor = 0;
-	//m_ds3dListener->setAllParameters(&ds3dl, DS3D_IMMEDIATE);
-
-	//real idxZ = -50, lstZ = -50;
-
-	//rc->setTextureBuffer(m_objImg->getBits(), m_objImg->getPitch(), m_objImg->getWidth(), m_objImg->getHeight());
-
-	//m_obj->drawWireZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
-
-	//m_lstObj->drawWireZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
-
-	//m_obj->drawZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
-
-	//m_lstObj->drawZBufferRW(rc, my::Color::BLUE, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
-
-	//m_obj->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
-
-	//m_lstObj->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
-
-	//m_obj->drawTextureZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
-
-	//m_lstObj->drawTextureZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
-
-	//m_obj->drawTexturePerspectiveLPZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
-
-	//m_lstObj->drawTexturePerspectiveLPZBufferW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
-
-	//m_obj->drawTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
-
-	//m_lstObj->drawTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
-
-	//m_obj->drawTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)));
-
-	//m_lstObj->drawTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)));
-
-	//m_obj->drawGouraudTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
-
-	//m_lstObj->drawGouraudTextureZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
-
-	//m_obj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(10, 0, idxZ += 10)), my::Mat4<real>::IDENTITY);
-
-	//m_lstObj->drawGouraudTexturePerspectiveLPZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(-10, 0, lstZ += 10)), my::Mat4<real>::IDENTITY);
-
-	m_plane->drawGouraudZBufferRW(rc, t3d::mat3Mov(my::Vec4<real>(0, -20, 0)), my::Mat4<real>::IDENTITY);
-
-	rc->setDiffuse(my::Color(0.5f, 1.0f, 0.5f));
-
-	m_obj->drawGouraudZBufferRW(rc);
-
-	//m_obj->drawWireZBufferRW(rc, my::Color::YELLOW);
-
-	t3d::buildIndicatorListFromTriangleIndexListByPoint(
-		m_indicatorList,
-		m_obj->getVertexList(),
-		m_obj->getVertexIndexList(),
-		l_pos);
-
-	m_silhouetteEdgeList.clear();
-	t3d::pushSilhouetteEdgeList(
-		m_silhouetteEdgeList,
-		m_connectionEdgeList,
-		m_obj->getVertexList(),
-		m_indicatorList);
-
-	// draw silhouette edge
-	rc->clearVertexList();
-	rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end());
-	rc->drawLineListZBufferRW(my::Color::YELLOW);
-
-	m_objShadowVolume.clear();
-	t3d::pushTriangleIndexListCappedShadowVolumeByPoint(
-		m_objShadowVolume,
-		m_obj->getVertexList(),
-		m_obj->getVertexIndexList(),
-		m_indicatorList,
-		m_silhouetteEdgeList,
-		l_pos,
-		100);
-
-	//// draw Shadow Volume Frame
-	//rc->clearVertexList();
-	//rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end());
-	//rc->drawTriangleListWireZBufferRW(my::Color::RED);
-	////rc->drawTriangleListZBufferRW(my::Color::RED);
-
-	// draw Shadow Volume
-	rc->clearVertexList();
-	rc->pushVertexList(m_objShadowVolume.begin(), m_objShadowVolume.end(), my::Mat4<real>::IDENTITY);
-	//rc->drawTriangleListShadowVolumeZPass(my::Color(0.39f, 0.39f, 0.39f));
-	rc->drawTriangleListShadowVolumeZFail(my::Color(0.39f, 0.39f, 0.39f));
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
+	// draw default grid, with use to test distance of the scene
+	m_grid->drawZBufferRW(rc);
 
 	// general information output
 	std::basic_string<charT> strTmp;
@@ -593,6 +445,8 @@ bool MyGameState::doFrame(void)
 	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 	MyGame::getSingleton().m_backSurface->releaseDC(hdc);
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	return true;
 }

@@ -200,27 +200,29 @@ namespace my
 	public:
 		Config(LPCTSTR lpAppName = _T("Config"));
 
-	public:
-		void addInt(LPCTSTR lpKeyName, int nDefault);
-
-		void setInt(LPCTSTR lpKeyName, int nValue);
-
-		int getInt(LPCTSTR lpKeyName) const;
-
-		int getIntOrDefault(LPCTSTR lpKeyName, int nDefault) const;
-
-		void addString(LPCTSTR lpKeyName, LPCTSTR lpDefault);
-
-		void setString(LPCTSTR lpKeyName, LPCTSTR lpValue);
-
-		const std::basic_string<charT> & getString(LPCTSTR lpKeyName) const;
-
-		const std::basic_string<charT> & getStringOrDefault(LPCTSTR lpKeyName, const std::basic_string<charT> & strDefault) const;
+		virtual ~Config(void);
 
 	public:
-		void load(LPCTSTR lpFileName);
+		void addInt(const std::basic_string<t3d::charT> & keyName, int nDefault);
 
-		void save(LPCTSTR lpFileName) const;
+		void setInt(const std::basic_string<t3d::charT> & keyName, int nValue);
+
+		int getInt(const std::basic_string<t3d::charT> & keyName) const;
+
+		int getIntOrDefault(const std::basic_string<t3d::charT> & keyName, int nDefault) const;
+
+		void addString(const std::basic_string<t3d::charT> & keyName, LPCTSTR lpDefault);
+
+		void setString(const std::basic_string<t3d::charT> & keyName, LPCTSTR lpValue);
+
+		const std::basic_string<charT> & getString(const std::basic_string<t3d::charT> & keyName) const;
+
+		const std::basic_string<charT> & getStringOrDefault(const std::basic_string<t3d::charT> & keyName, const std::basic_string<charT> & strDefault) const;
+
+	public:
+		void load(const std::basic_string<charT> & fileName);
+
+		void save(const std::basic_string<charT> & fileName) const;
 	};
 
 	//class Dialog;
