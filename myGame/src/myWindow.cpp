@@ -241,30 +241,34 @@ namespace my
 	{
 	}
 
-	void Config::addInt(LPCTSTR lpKeyName, int nDefault)
+	Config::~Config(void)
 	{
-		_ASSERT(end() == find(lpKeyName));
-
-		insert(value_type(lpKeyName, ProfileBasePtr(new ProfileInt(nDefault))));
 	}
 
-	void Config::setInt(LPCTSTR lpKeyName, int nValue)
+	void Config::addInt(const std::basic_string<t3d::charT> & keyName, int nDefault)
 	{
-		_ASSERT(end() != find(lpKeyName));
+		_ASSERT(end() == find(keyName));
 
-		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->setValue(nValue);
+		insert(value_type(keyName, ProfileBasePtr(new ProfileInt(nDefault))));
 	}
 
-	int Config::getInt(LPCTSTR lpKeyName) const
+	void Config::setInt(const std::basic_string<t3d::charT> & keyName, int nValue)
 	{
-		_ASSERT(end() != find(lpKeyName));
+		_ASSERT(end() != find(keyName));
 
-		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(lpKeyName)->second))->getValue();
+		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(keyName)->second))->setValue(nValue);
 	}
 
-	int Config::getIntOrDefault(LPCTSTR lpKeyName, int nDefault) const
+	int Config::getInt(const std::basic_string<t3d::charT> & keyName) const
 	{
-		const_iterator profile_iter = find(lpKeyName);
+		_ASSERT(end() != find(keyName));
+
+		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(find(keyName)->second))->getValue();
+	}
+
+	int Config::getIntOrDefault(const std::basic_string<t3d::charT> & keyName, int nDefault) const
+	{
+		const_iterator profile_iter = find(keyName);
 		if(end() == profile_iter)
 		{
 			return nDefault;
@@ -272,30 +276,30 @@ namespace my
 		return (boost::dynamic_pointer_cast<ProfileInt, ProfileBase>(profile_iter->second))->getValue();
 	}
 
-	void Config::addString(LPCTSTR lpKeyName, LPCTSTR lpDefault)
+	void Config::addString(const std::basic_string<t3d::charT> & keyName, LPCTSTR lpDefault)
 	{
-		_ASSERT(end() == find(lpKeyName));
+		_ASSERT(end() == find(keyName));
 
-		insert(value_type(lpKeyName, ProfileBasePtr(new ProfileString(lpDefault))));
+		insert(value_type(keyName, ProfileBasePtr(new ProfileString(lpDefault))));
 	}
 
-	void Config::setString(LPCTSTR lpKeyName, LPCTSTR lpValue)
+	void Config::setString(const std::basic_string<t3d::charT> & keyName, LPCTSTR lpValue)
 	{
-		_ASSERT(end() != find(lpKeyName));
+		_ASSERT(end() != find(keyName));
 
-		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->setValue(lpValue);
+		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(find(keyName)->second))->setValue(lpValue);
 	}
 
-	const std::basic_string<charT> & Config::getString(LPCTSTR lpKeyName) const
+	const std::basic_string<charT> & Config::getString(const std::basic_string<t3d::charT> & keyName) const
 	{
-		_ASSERT(end() != find(lpKeyName));
+		_ASSERT(end() != find(keyName));
 
-		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(find(lpKeyName)->second))->getValue();
+		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(find(keyName)->second))->getValue();
 	}
 
-	const std::basic_string<charT> & Config::getStringOrDefault(LPCTSTR lpKeyName, const std::basic_string<charT> & strDefault) const
+	const std::basic_string<charT> & Config::getStringOrDefault(const std::basic_string<t3d::charT> & keyName, const std::basic_string<charT> & strDefault) const
 	{
-		const_iterator profile_iter = find(lpKeyName);
+		const_iterator profile_iter = find(keyName);
 		if(end() == profile_iter)
 		{
 			return strDefault;
@@ -303,21 +307,25 @@ namespace my
 		return (boost::dynamic_pointer_cast<ProfileString, ProfileBase>(profile_iter->second))->getValue();
 	}
 
-	void Config::load(LPCTSTR lpFileName)
+	void Config::load(const std::basic_string<charT> & fileName)
 	{
+		_ASSERT(!fileName.empty());
+
 		iterator profile_iter = begin();
 		for(; profile_iter != end(); profile_iter++)
 		{
-			profile_iter->second->load(getAppName().c_str(), profile_iter->first.c_str(), lpFileName);
+			profile_iter->second->load(getAppName().c_str(), profile_iter->first.c_str(), fileName.c_str());
 		}
 	}
 
-	void Config::save(LPCTSTR lpFileName) const
+	void Config::save(const std::basic_string<charT> & fileName) const
 	{
+		_ASSERT(!fileName.empty());
+
 		const_iterator profile_iter = begin();
 		for(; profile_iter != end(); profile_iter++)
 		{
-			profile_iter->second->save(getAppName().c_str(), profile_iter->first.c_str(), lpFileName);
+			profile_iter->second->save(getAppName().c_str(), profile_iter->first.c_str(), fileName.c_str());
 		}
 	}
 

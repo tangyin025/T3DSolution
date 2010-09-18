@@ -5,6 +5,30 @@
 #include <atlwin.h>
 #include "resource.h"
 
+class MyConfig : public my::Config
+{
+protected:
+	std::basic_string<t3d::charT> m_cfgPath;
+
+public:
+	void SetConfigPath(const std::basic_string<t3d::charT> & path)
+	{
+		m_cfgPath = path;
+	}
+
+	const std::basic_string<t3d::charT> & GetConfigPath(void) const
+	{
+		return m_cfgPath;
+	}
+
+public:
+	MyConfig(void);
+
+	void Load(void);
+
+	void Save(void);
+};
+
 class MyDialog
 	: public CDialogImpl<MyDialog, CWindow>
 {
@@ -12,14 +36,14 @@ public:
 	enum { IDD = IDD_DIALOG1 };
 
 public:
-	my::Config m_cfg;
+	MyConfig m_cfg;
 
 	int m_save_configuration;
 
 	my::ImagePtr m_image;
 
 public:
-	MyDialog(const my::Config & cfg);
+	MyDialog(void);
 
 	BEGIN_MSG_MAP(MyDialog)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)

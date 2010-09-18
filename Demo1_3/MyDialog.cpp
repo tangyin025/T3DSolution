@@ -3,9 +3,22 @@
 #include "MyDialog.h"
 #include "MyGameEx.h"
 
-MyDialog::MyDialog(const my::Config & cfg)
-	: m_cfg(cfg)
-	, m_save_configuration(BST_UNCHECKED)
+MyConfig::MyConfig(void)
+{
+}
+
+void MyConfig::Load(void)
+{
+	Config::load(m_cfgPath);
+}
+
+void MyConfig::Save(void)
+{
+	Config::save(m_cfgPath);
+}
+
+MyDialog::MyDialog(void)
+	: m_save_configuration(BST_UNCHECKED)
 {
 }
 

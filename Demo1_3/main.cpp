@@ -27,21 +27,22 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	}
 	strConfigPath = strCurrentDir + strConfigPath.substr(lpos, rpos - lpos) + _T(".ini");
 
+	// initialize configuration
+	MyDialog dlg;
+	dlg.m_cfg.SetConfigPath(strConfigPath);
+	dlg.m_cfg.setAppName(_T("config"));
+	dlg.m_cfg.addInt(_T("width"), 800);
+	dlg.m_cfg.addInt(_T("height"), 600);
+	dlg.m_cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
+	dlg.m_cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_WIDESCREEN);
+	dlg.m_cfg.Load();
+
 	// initialize searching path
 	my::ResourceMgr::getSingleton().addDir(_T("."));
 	my::ResourceMgr::getSingleton().addDir(_T("..\\..\\Common\\medias\\demo1_3"));
 
-	// initialize configuration
-	my::Config cfg(_T("config"));
-	cfg.addInt(_T("width"), 800);
-	cfg.addInt(_T("height"), 600);
-	cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
-	cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_WIDESCREEN);
-	cfg.load(strConfigPath.c_str());
-
 	// show configuration dialog
 	int ret = 0;
-	MyDialog dlg(cfg);
 	if(IDOK == dlg.DoModal())
 	{
 		// run the instance
@@ -50,7 +51,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 			if(BST_CHECKED == dlg.m_save_configuration)
 			{
 				// save configuration to user profile
-				cfg.save(strConfigPath.c_str());
+				dlg.m_cfg.Save();
 			}
 		}
 	}
