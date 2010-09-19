@@ -589,8 +589,10 @@ namespace my
 	{
 	}
 
-	unsigned ParticleCable::addContact(ParticleContact * contact, unsigned limit) const
+	unsigned ParticleCable::addContact(ParticleContact * contacts, unsigned limits) const
 	{
+		_ASSERT(limits > 0);
+
 		real length = currentLength();
 
 		if(length < maxLength)
@@ -598,16 +600,14 @@ namespace my
 			return 0;
 		}
 
-		contact->particles[0] = particles[0];
-		contact->particles[1] = particles[1];
+		contacts->particles[0] = particles[0];
+		contacts->particles[1] = particles[1];
 
-		contact->contactNormal = t3d::vec3Normalize(
+		contacts->contactNormal = t3d::vec3Normalize(
 			t3d::vec3Sub(particles[1]->getPosition(), particles[0]->getPosition()));
-		contact->penetration = length - maxLength;
-		contact->restitution = restitution;
+		contacts->penetration = length - maxLength;
+		contacts->restitution = restitution;
 		return 1;
-
-		UNREFERENCED_PARAMETER(limit);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -620,8 +620,10 @@ namespace my
 	{
 	}
 
-	unsigned ParticleRod::addContact(ParticleContact * contact, unsigned limit) const
+	unsigned ParticleRod::addContact(ParticleContact * contacts, unsigned limits) const
 	{
+		_ASSERT(limits > 0);
+
 		real currentLength = ParticleRod::currentLength();
 
 		if(currentLength == length)
@@ -629,26 +631,24 @@ namespace my
 			return 0;
 		}
 
-		contact->particles[0] = particles[0];
-		contact->particles[1] = particles[1];
+		contacts->particles[0] = particles[0];
+		contacts->particles[1] = particles[1];
 
 		if(currentLength > length)
 		{
-			contact->contactNormal = t3d::vec3Normalize(
+			contacts->contactNormal = t3d::vec3Normalize(
 				t3d::vec3Sub(particles[1]->getPosition(), particles[0]->getPosition()));
-			contact->penetration = currentLength - length;
+			contacts->penetration = currentLength - length;
 		}
 		else
 		{
-			contact->contactNormal = t3d::vec3Normalize(
+			contacts->contactNormal = t3d::vec3Normalize(
 				t3d::vec3Sub(particles[0]->getPosition(), particles[1]->getPosition()));
-			contact->penetration = length - currentLength;
+			contacts->penetration = length - currentLength;
 		}
 
-		contact->restitution = 0;
+		contacts->restitution = 0;
 		return 1;
-
-		UNREFERENCED_PARAMETER(limit);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -680,8 +680,10 @@ namespace my
 	{
 	}
 
-	unsigned ParticleCableConstraint::addContact(ParticleContact * contact, unsigned limit) const
+	unsigned ParticleCableConstraint::addContact(ParticleContact * contacts, unsigned limits) const
 	{
+		_ASSERT(limits > 0);
+
 		real length = currentLength();
 
 		if(length < maxLength)
@@ -689,16 +691,14 @@ namespace my
 			return 0;
 		}
 
-		contact->particles[0] = particle;
-		contact->particles[1] = NULL;
+		contacts->particles[0] = particle;
+		contacts->particles[1] = NULL;
 
-		contact->contactNormal = t3d::vec3Normalize(
+		contacts->contactNormal = t3d::vec3Normalize(
 			t3d::vec3Sub(anchor, particle->getPosition()));
-		contact->penetration = length - maxLength;
-		contact->restitution = restitution;
+		contacts->penetration = length - maxLength;
+		contacts->restitution = restitution;
 		return 1;
-
-		UNREFERENCED_PARAMETER(limit);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -711,8 +711,10 @@ namespace my
 	{
 	}
 
-	unsigned ParticleRodConstraint::addContact(ParticleContact * contact, unsigned limit) const
+	unsigned ParticleRodConstraint::addContact(ParticleContact * contacts, unsigned limits) const
 	{
+		_ASSERT(limits > 0);
+
 		real currentLength = ParticleRodConstraint::currentLength();
 
 		if(currentLength == length)
@@ -720,26 +722,24 @@ namespace my
 			return 0;
 		}
 
-		contact->particles[0] = particle;
-		contact->particles[1] = NULL;
+		contacts->particles[0] = particle;
+		contacts->particles[1] = NULL;
 
 		if(currentLength > length)
 		{
-			contact->contactNormal = t3d::vec3Normalize(
+			contacts->contactNormal = t3d::vec3Normalize(
 				t3d::vec3Sub(anchor, particle->getPosition()));
-			contact->penetration = currentLength - length;
+			contacts->penetration = currentLength - length;
 		}
 		else
 		{
-			contact->contactNormal = t3d::vec3Normalize(
+			contacts->contactNormal = t3d::vec3Normalize(
 				t3d::vec3Sub(particle->getPosition(), anchor));
-			contact->penetration = length - currentLength;
+			contacts->penetration = length - currentLength;
 		}
 
-		contact->restitution = 0;
+		contacts->restitution = 0;
 		return 1;
-
-		UNREFERENCED_PARAMETER(limit);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -768,34 +768,6 @@ namespace my
 		}
 	}
 
-	unsigned ParticleWorld::generateContacts(void)
-	{
-		unsigned limit = maxContacts;
-
-		ParticleContact * nextContact = &particleContactArray[0];
-
-		ParticleContactGeneratorPtrList::const_iterator c_iter = particleContactGeneratorList.begin();
-		for(; c_iter != particleContactGeneratorList.end(); c_iter++)
-		{
-			_ASSERT((*c_iter) != NULL);
-
-			unsigned used = (*c_iter)->addContact(nextContact, limit);
-
-			limit -= used;
-
-			nextContact += used;
-
-			_ASSERT(limit >= 0);
-
-			if(limit <= 0)
-			{
-				break;
-			}
-		}
-
-		return maxContacts - limit;
-	}
-
 	void ParticleWorld::integrate(real duration)
 	{
 		ParticlePtrList::iterator p_iter = particleList.begin();
@@ -807,13 +779,28 @@ namespace my
 		}
 	}
 
+	unsigned ParticleWorld::generateContacts(ParticleContact * contacts, unsigned limits)
+	{
+		_ASSERT(limits > 0);
+
+		unsigned used = 0;
+
+		ParticleContactGeneratorPtrList::const_iterator c_iter = particleContactGeneratorList.begin();
+		for(; c_iter != particleContactGeneratorList.end() && limits > used; c_iter++)
+		{
+			used += (*c_iter)->addContact(&contacts[used], limits - used);
+		}
+
+		return used;
+	}
+
 	void ParticleWorld::runPhysics(real duration)
 	{
 		registry.updateForces(duration);
 
 		integrate(duration);
 
-		unsigned used = generateContacts();
+		unsigned used = generateContacts(&particleContactArray[0], maxContacts);
 
 		if(0 != used)
 		{
