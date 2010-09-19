@@ -130,7 +130,6 @@ typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 
 class MyGameState
 	: public MyFrameState
-	, public my::World
 {
 	friend class MyLoadState;
 
@@ -159,8 +158,6 @@ public:
 	void enterState(void);
 
 	void leaveState(void);
-
-	unsigned generateContacts(my::Contact * contacts, unsigned limits);
 
 	bool doFrame(void);
 };
