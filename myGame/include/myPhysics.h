@@ -347,7 +347,7 @@ namespace my
 		virtual ~ParticleContactGenerator(void);
 
 	public:
-		virtual unsigned addContact(ParticleContact * contact, unsigned limit) const = 0;
+		virtual unsigned addContact(ParticleContact * contacts, unsigned limits) const = 0;
 	};
 
 	typedef boost::shared_ptr<ParticleContactGenerator> ParticleContactGeneratorPtr;
@@ -368,7 +368,7 @@ namespace my
 		real currentLength() const;
 
 	//public:
-	//	virtual unsigned addContact(ParticleContact * contact, unsigned limit) const = 0;
+	//	virtual unsigned addContact(ParticleContact * contacts, unsigned limits) const = 0;
 	};
 
 	typedef boost::shared_ptr<ParticleLink> ParticleLinkPtr;
@@ -387,7 +387,7 @@ namespace my
 	public:
 		ParticleCable(Particle * particle0, Particle * particle1, real _maxLength, real _restitution);
 
-		unsigned addContact(ParticleContact * contact, unsigned limit) const;
+		unsigned addContact(ParticleContact * contacts, unsigned limits) const;
 	};
 
 	typedef boost::shared_ptr<ParticleCable> ParticleCablePtr;
@@ -404,7 +404,7 @@ namespace my
 	public:
 		ParticleRod(Particle * particle0, Particle * particle1, real _length);
 
-		unsigned addContact(ParticleContact * contact, unsigned limit) const;
+		unsigned addContact(ParticleContact * contacts, unsigned limits) const;
 	};
 
 	typedef boost::shared_ptr<ParticleRod> ParticleRodPtr;
@@ -427,7 +427,7 @@ namespace my
 		real currentLength() const;
 
 	//public:
-	//	virtual unsigned addContact(ParticleContact * contact, unsigned limit) const = 0;
+	//	virtual unsigned addContact(ParticleContact * contacts, unsigned limits) const = 0;
 	};
 
 	typedef boost::shared_ptr<ParticleConstraint> ParticleConstraintPtr;
@@ -446,7 +446,7 @@ namespace my
 	public:
 		ParticleCableConstraint(Particle * particle, const my::Vec4<real> & anchor, real _maxLength, real _restitution);
 
-		unsigned addContact(ParticleContact * contact, unsigned limit) const;
+		unsigned addContact(ParticleContact * contacts, unsigned limits) const;
 	};
 
 	typedef boost::shared_ptr<ParticleCableConstraint> ParticleCableConstraintPtr;
@@ -463,7 +463,7 @@ namespace my
 	public:
 		ParticleRodConstraint(Particle * particle, const my::Vec4<real> & anchor, real _length);
 
-		unsigned addContact(ParticleContact * contact, unsigned limit) const;
+		unsigned addContact(ParticleContact * contacts, unsigned limits) const;
 	};
 
 	typedef boost::shared_ptr<ParticleRodConstraint> ParticleRodConstraintPtr;
@@ -500,9 +500,9 @@ namespace my
 
 		virtual void startFrame(void);
 
-		virtual unsigned generateContacts(void);
-
 		virtual void integrate(real duration);
+
+		virtual unsigned generateContacts(ParticleContact * contacts, unsigned limits);
 
 		void runPhysics(real duration);
 	};
