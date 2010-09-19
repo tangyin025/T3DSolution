@@ -304,7 +304,6 @@ DWORD MyLoadState::onProc(void)
 const std::basic_string<charT> MyGameState::s_name(_T("MyGameState"));
 
 MyGameState::MyGameState(void)
-	: my::World(256)
 {
 }
 
@@ -326,17 +325,17 @@ void MyGameState::enterState(void)
 	m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
 	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
 	m_eulerCam->reset();
-
-#ifdef _DEBUG
-	// clear all surface to test software rendering clipper
-	CRect clipper = MyGame::getSingleton().m_rc->getClipperRect();
-	MyGame::getSingleton().m_rc->setClipperRect(MyGame::getSingleton().m_backSurfaceRect);
-	MyGame::getSingleton().m_rc->fillSurface(MyGame::getSingleton().m_backSurfaceRect, my::Color::WHITE);
-	MyGame::getSingleton().m_rc->fillZbuffer(MyGame::getSingleton().m_backSurfaceRect, 0);
-	MyGame::getSingleton().m_rc->fillStencilBuffer(MyGame::getSingleton().m_backSurfaceRect, 0);
-	MyGame::getSingleton().m_rc->setClipperRect(clipper);
-	MyGame::getSingleton().m_wnd->InvalidateRect(NULL);
-#endif
+//
+//#ifdef _DEBUG
+//	// clear all surface to test software rendering clipper
+//	CRect clipper = MyGame::getSingleton().m_rc->getClipperRect();
+//	MyGame::getSingleton().m_rc->setClipperRect(MyGame::getSingleton().m_backSurfaceRect);
+//	MyGame::getSingleton().m_rc->fillSurface(MyGame::getSingleton().m_backSurfaceRect, my::Color::WHITE);
+//	MyGame::getSingleton().m_rc->fillZbuffer(MyGame::getSingleton().m_backSurfaceRect, 0);
+//	MyGame::getSingleton().m_rc->fillStencilBuffer(MyGame::getSingleton().m_backSurfaceRect, 0);
+//	MyGame::getSingleton().m_rc->setClipperRect(clipper);
+//	MyGame::getSingleton().m_wnd->InvalidateRect(NULL);
+//#endif
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -346,15 +345,6 @@ void MyGameState::leaveState(void)
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
-}
-
-unsigned MyGameState::generateContacts(my::Contact * contacts, unsigned limits)
-{
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	return 0;
 }
 
 bool MyGameState::doFrame(void)
@@ -378,16 +368,16 @@ bool MyGameState::doFrame(void)
 	// the high precision timer, witch calculate time interval between last frame by cpu count
 	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
 	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
-
-#ifdef _DEBUG
-	// here i created the clipper region smaller than the window, only used to test the clipper bug
-	// because of the software simulating, the algorithm of cutting polygon is implemented by software,
-	// so the unstrong algorithm will lead edge overflow, and even crash the application
-	// reducing the clipper region will somehow avoid this phenomenon
-	CRect clipper(MyGame::getSingleton().m_backSurfaceRect);
-	clipper.DeflateRect(10, 10);
-	rc->setClipperRect(clipper);
-#endif
+//
+//#ifdef _DEBUG
+//	// here i created the clipper region smaller than the window, only used to test the clipper bug
+//	// because of the software simulating, the algorithm of cutting polygon is implemented by software,
+//	// so the unstrong algorithm will lead edge overflow, and even crash the application
+//	// reducing the clipper region will somehow avoid this phenomenon
+//	CRect clipper(MyGame::getSingleton().m_backSurfaceRect);
+//	clipper.DeflateRect(10, 10);
+//	rc->setClipperRect(clipper);
+//#endif
 
 	// clear back surface with gray color
 	rc->fillSurface(rc->getClipperRect(), my::Color(0.8f, 0.8f, 0.8f));
