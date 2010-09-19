@@ -12,96 +12,14 @@ namespace my
 	// Particle
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	void Particle::setPosition(const t3d::Vec4<real> & _position)
+	Particle::Particle(void)
 	{
-		position = _position;
-	}
-
-	void Particle::addPosition(const t3d::Vec4<real> & _position)
-	{
-		t3d::vec3AddSelf(position, _position);
-	}
-
-	const t3d::Vec4<real> & Particle::getPosition(void) const
-	{
-		return position;
-	}
-
-	void Particle::setVelocity(const t3d::Vec4<real> & _velocity)
-	{
-		velocity = _velocity;
-	}
-
-	void Particle::addVelocity(const t3d::Vec4<real> & _velocity)
-	{
-		t3d::vec3AddSelf(velocity, _velocity);
-	}
-
-	const t3d::Vec4<real> & Particle::getVelocity(void) const
-	{
-		return velocity;
-	}
-
-	void Particle::setAcceleration(const t3d::Vec4<real> & _acceleration)
-	{
-		acceleration = _acceleration;
-	}
-
-	const t3d::Vec4<real> & Particle::getAcceleration(void) const
-	{
-		return acceleration;
-	}
-
-	void Particle::addForce(const t3d::Vec4<real> & force)
-	{
-		t3d::vec3AddSelf(forceAccum, force);
-	}
-
-	const t3d::Vec4<real> & Particle::getAccumlator(void) const
-	{
-		return forceAccum;
-	}
-
-	void Particle::clearAccumulator(void)
-	{
-		forceAccum = my::Vec4<real>::ZERO;
-	}
-
-	void Particle::setDamping(real _damping)
-	{
-		damping = _damping;
-	}
-
-	real Particle::getDamping(void) const
-	{
-		return damping;
-	}
-
-	void Particle::setInverseMass(real _inverseMass)
-	{
-		inverseMass = _inverseMass;
-	}
-
-	real Particle::getInverseMass(void) const
-	{
-		return inverseMass;
-	}
-
-	void Particle::setMass(real mass)
-	{
-		_ASSERT(!IS_ZERO_FLOAT(mass));
-
-		inverseMass = 1 / mass;
-	}
-
-	real Particle::getMass(void) const
-	{
-		if(inverseMass == 0)
-		{
-			return REAL_MAX;
-		}
-
-		return 1 / inverseMass;
+		setPosition(my::Vec4<real>::ZERO);
+		setVelocity(my::Vec4<real>::ZERO);
+		setAcceleration(my::Vec4<real>::ZERO);
+		clearAccumulator();
+		setDamping(1);
+		setInverseMass(1);
 	}
 
 	bool Particle::hasFiniteMass(void) const
@@ -501,7 +419,7 @@ namespace my
 	// ParticleContactResolver
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	ParticleContactResolver::ParticleContactResolver(unsigned _iterations)
+	ParticleContactResolver::ParticleContactResolver(unsigned _iterations /*= 0*/)
 		: iterations(_iterations)
 	{
 	}
@@ -817,6 +735,30 @@ namespace my
 	// RigidBody
 	// /////////////////////////////////////////////////////////////////////////////////////
 
+	RigidBody::RigidBody(void)
+	{
+		setInverseMass(1);
+		setPosition(my::Vec4<real>::ZERO);
+		setOrientation(my::Quat<real>::IDENTITY);
+		setVelocity(my::Vec4<real>::ZERO);
+		setRotation(my::Vec4<real>::ZERO);
+		//t3d::Mat4<real> transform;
+		//t3d::Mat4<real> rotationTransform;
+		setInverseInertialTensor(my::Mat4<real>::IDENTITY);
+		//t3d::Mat4<real> inverseInertiaTensorWorld;
+		setAcceleration(my::Vec4<real>::ZERO);
+		clearAccumulator();
+		clearTorqueAccumulator();
+		//t3d::Vec4<real> resultingAcc;
+		//t3d::Vec4<real> resultingAngularAcc;
+		setDamping(1);
+		setAngularDamping(1);
+		//real motion;
+		setAwake(true);
+		setCanSleep(true);
+		calculateDerivedData();
+	}
+
 	static inline t3d::Mat4<real> _transformInertiaTensor(
 		const t3d::Mat4<real> & inertiaTensor,
 		const t3d::Mat4<real> & transformMat)
@@ -882,187 +824,6 @@ namespace my
 		inverseInertiaTensorWorld = _transformInertiaTensor(inverseInertiaTensor, transform); // ***
 	}
 
-	void RigidBody::setMass(real mass)
-	{
-		_ASSERT(!IS_ZERO_FLOAT(mass));
-
-		inverseMass = 1 / mass;
-	}
-
-	real RigidBody::getMass(void) const
-	{
-		if(inverseMass == 0)
-		{
-			return REAL_MAX;
-		}
-
-		return 1 / inverseMass;
-	}
-
-	void RigidBody::setInverseMass(real _inverseMass)
-	{
-		inverseMass = _inverseMass;
-	}
-
-	real RigidBody::getInverseMass(void) const
-	{
-		return inverseMass;
-	}
-
-	void RigidBody::setPosition(const t3d::Vec4<real> & _position)
-	{
-		position = _position;
-	}
-
-	void RigidBody::addPosition(const t3d::Vec4<real> & _position)
-	{
-		t3d::vec3AddSelf(position, _position);
-	}
-
-	const t3d::Vec4<real> & RigidBody::getPosition(void) const
-	{
-		return position;
-	}
-
-	void RigidBody::setOrientation(const t3d::Quat<real> & _orientation)
-	{
-		orientation = _orientation;
-	}
-
-	void RigidBody::addOrientation(const t3d::Vec4<real> & _rotation) // ***
-	{
-		t3d::quatAddAngularVelocitySelf(orientation, _rotation);
-	}
-
-	const t3d::Quat<real> & RigidBody::getOrientation(void) const
-	{
-		return orientation;
-	}
-
-	void RigidBody::setVelocity(const t3d::Vec4<real> & _velocity)
-	{
-		velocity = _velocity;
-	}
-
-	const t3d::Vec4<real> & RigidBody::getVelocity(void) const
-	{
-		return velocity;
-	}
-
-	void RigidBody::addVelocity(const t3d::Vec4<real> & _velocity)
-	{
-		t3d::vec3AddSelf(velocity, _velocity);
-	}
-
-	void RigidBody::setRotation(const t3d::Vec4<real> & _rotation)
-	{
-		rotation = _rotation;
-	}
-
-	const t3d::Vec4<real> & RigidBody::getRotation(void) const
-	{
-		return rotation;
-	}
-
-	void RigidBody::addRotation(const t3d::Vec4<real> & _rotation)
-	{
-		t3d::vec3AddSelf(rotation, _rotation);
-	}
-
-	const t3d::Mat4<real> & RigidBody::getTransform(void) const
-	{
-		return transform;
-	}
-
-	t3d::Mat4<real> RigidBody::getInverseTransform(void) const
-	{
-		return transform.inverse();
-	}
-
-	const t3d::Mat4<real> & RigidBody::getRotationTransform(void) const
-	{
-		return rotationTransform;
-	}
-
-	t3d::Mat4<real> RigidBody::getInverseRotationTransform(void) const
-	{
-		return rotationTransform.inverse();
-	}
-
-	void RigidBody::setInertialTensor(const t3d::Mat4<real> & inertialTensor)
-	{
-		_ASSERT(!IS_ZERO_FLOAT(inertialTensor.determinant()));
-
-		inverseInertiaTensor = inertialTensor.inverse();
-	}
-
-	t3d::Mat4<real> RigidBody::getInertialTensor(void) const
-	{
-		_ASSERT(!IS_ZERO_FLOAT(inverseInertiaTensor.determinant()));
-
-		return inverseInertiaTensor.inverse();
-	}
-
-	void RigidBody::setInverseInertialTensor(const t3d::Mat4<real> & _inverseInertiaTensor)
-	{
-		inverseInertiaTensor = _inverseInertiaTensor;
-	}
-
-	const t3d::Mat4<real> & RigidBody::getInverseInertialTensor(void) const
-	{
-		return inverseInertiaTensor;
-	}
-
-	void RigidBody::setAcceleration(const t3d::Vec4<real> & _acceleration)
-	{
-		acceleration = _acceleration;
-	}
-
-	const t3d::Vec4<real> & RigidBody::getAcceleration(void) const
-	{
-		return acceleration;
-	}
-
-	void RigidBody::addForce(const t3d::Vec4<real> & force)
-	{
-		t3d::vec3AddSelf(forceAccum, force);
-	}
-
-	void RigidBody::addTorque(const t3d::Vec4<real> & torque)
-	{
-		t3d::vec3AddSelf(torqueAccum, torque);
-	}
-
-	const t3d::Vec4<real> & RigidBody::getResultingAcc(void) const
-	{
-		return resultingAcc;
-	}
-
-	const t3d::Vec4<real> & RigidBody::getResultingAngularAcc(void) const
-	{
-		return resultingAngularAcc;
-	}
-
-	void RigidBody::setDamping(real _damping)
-	{
-		damping = _damping;
-	}
-
-	real RigidBody::getDamping(void) const
-	{
-		return damping;
-	}
-
-	void RigidBody::setAngularDamping(real _angularDamping)
-	{
-		angularDamping = _angularDamping;
-	}
-
-	real RigidBody::getAngularDamping(void) const
-	{
-		return angularDamping;
-	}
-
 	void RigidBody::setAwake(bool _isAwake /*= true*/)
 	{
 		isAwake = _isAwake;
@@ -1116,13 +877,6 @@ namespace my
 		addForce(force);
 
 		addTorque(t3d::vec3Cross(t3d::vec3Sub(point, position), force));
-	}
-
-	void RigidBody::clearAccumulator(void)
-	{
-		forceAccum = my::Vec4<real>::ZERO;
-
-		torqueAccum = my::Vec4<real>::ZERO;
 	}
 
 	bool RigidBody::hasFiniteMass(void) const
@@ -2185,6 +1939,8 @@ namespace my
 			_ASSERT((*b_iter != NULL));
 
 			(*b_iter)->clearAccumulator();
+
+			(*b_iter)->clearTorqueAccumulator();
 		}
 	}
 

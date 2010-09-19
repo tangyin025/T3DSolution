@@ -133,8 +133,7 @@ public:
 
 		// 设置 body 的质量及一些参、系数
 		m_characterSphere.body->setMass(characterSphereMass);
-		real coeff = 0.4f * m_characterSphere.body->getMass() * m_characterSphere.radius * m_characterSphere.radius;
-		m_characterSphere.body->setInertialTensor(my::calculateInertiaTensor(coeff, coeff, coeff));
+		m_characterSphere.body->setInertialTensor(my::calculateSphereInertiaTensor(characterSphereMass, m_characterSphere.radius));
 		m_characterSphere.body->setDamping(0.95f);
 		//m_characterSphere.body->setAngularDamping(0.8f);
 		m_characterSphere.body->setAngularDamping(0); // 这样可以不让角色球旋转
