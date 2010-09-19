@@ -248,6 +248,14 @@ namespace my
 	}
 
 	template <typename elem_t>
+	inline t3d::Mat4<elem_t> calculateSphereInertiaTensor(elem_t radius, elem_t mass)
+	{
+		elem_t coeff = 0.4f * mass * radius * radius;
+
+		return calculateInertiaTensor(coeff, coeff, coeff);
+	}
+
+	template <typename elem_t>
 	inline t3d::Mat4<elem_t> calculateBlockInertiaTensor(const t3d::Vec4<elem_t> & halfSizes, elem_t mass)
 	{
 		Vec4<elem_t> squares = vec3Mul(halfSizes, halfSizes);

@@ -31,39 +31,100 @@ namespace my
 		real inverseMass;
 
 	public:
-		void setPosition(const t3d::Vec4<real> & _position);
+		void setPosition(const t3d::Vec4<real> & _position)
+		{
+			position = _position;
+		}
 
-		void addPosition(const t3d::Vec4<real> & _position);
+		void addPosition(const t3d::Vec4<real> & _position)
+		{
+			t3d::vec3AddSelf(position, _position);
+		}
 
-		const t3d::Vec4<real> & getPosition(void) const;
+		const t3d::Vec4<real> & getPosition(void) const
+		{
+			return position;
+		}
 
-		void setVelocity(const t3d::Vec4<real> & _velocity);
+		void setVelocity(const t3d::Vec4<real> & _velocity)
+		{
+			velocity = _velocity;
+		}
 
-		void addVelocity(const t3d::Vec4<real> & _velocity);
+		void addVelocity(const t3d::Vec4<real> & _velocity)
+		{
+			t3d::vec3AddSelf(velocity, _velocity);
+		}
 
-		const t3d::Vec4<real> & getVelocity(void) const;
+		const t3d::Vec4<real> & getVelocity(void) const
+		{
+			return velocity;
+		}
 
-		void setAcceleration(const t3d::Vec4<real> & _acceleration);
+		void setAcceleration(const t3d::Vec4<real> & _acceleration)
+		{
+			acceleration = _acceleration;
+		}
 
-		const t3d::Vec4<real> & getAcceleration(void) const;
+		const t3d::Vec4<real> & getAcceleration(void) const
+		{
+			return acceleration;
+		}
 
-		void addForce(const t3d::Vec4<real> & force);
+		void addForce(const t3d::Vec4<real> & force)
+		{
+			t3d::vec3AddSelf(forceAccum, force);
+		}
 
-		const t3d::Vec4<real> & getAccumlator(void) const;
+		const t3d::Vec4<real> & getAccumlator(void) const
+		{
+			return forceAccum;
+		}
 
-		void clearAccumulator(void);
+		void clearAccumulator(void)
+		{
+			forceAccum = my::Vec4<real>::ZERO;
+		}
 
-		void setDamping(real _damping);
+		void setDamping(real _damping)
+		{
+			damping = _damping;
+		}
 
-		real getDamping(void) const;
+		real getDamping(void) const
+		{
+			return damping;
+		}
 
-		void setInverseMass(real _inverseMass);
+		void setInverseMass(real _inverseMass)
+		{
+			inverseMass = _inverseMass;
+		}
 
-		real getInverseMass(void) const;
+		real getInverseMass(void) const
+		{
+			return inverseMass;
+		}
 
-		void setMass(real mass);
+		void setMass(real mass)
+		{
+			_ASSERT(!IS_ZERO_FLOAT(mass));
 
-		real getMass(void) const;
+			inverseMass = 1 / mass;
+		}
+
+		real getMass(void) const
+		{
+			if(inverseMass == 0)
+			{
+				return REAL_MAX;
+			}
+
+			return 1 / inverseMass;
+		}
+
+	public:
+		Particle(void);
 
 		bool hasFiniteMass(void) const;
 
@@ -326,7 +387,7 @@ namespace my
 		unsigned iterationsUsed;
 
 	public:
-		ParticleContactResolver(unsigned _iterations);
+		ParticleContactResolver(unsigned _iterations = 0);
 
 		void setIterations(unsigned _iterations);
 
@@ -366,9 +427,6 @@ namespace my
 
 	protected:
 		real currentLength() const;
-
-	//public:
-	//	virtual unsigned addContact(ParticleContact * contacts, unsigned limits) const = 0;
 	};
 
 	typedef boost::shared_ptr<ParticleLink> ParticleLinkPtr;
@@ -425,9 +483,6 @@ namespace my
 
 	protected:
 		real currentLength() const;
-
-	//public:
-	//	virtual unsigned addContact(ParticleContact * contacts, unsigned limits) const = 0;
 	};
 
 	typedef boost::shared_ptr<ParticleConstraint> ParticleConstraintPtr;
@@ -515,8 +570,7 @@ namespace my
 
 	class RigidBody
 	{
-	//protected:
-	public:
+	protected:
 		real inverseMass;
 
 		t3d::Vec4<real> position;
@@ -558,75 +612,211 @@ namespace my
 		static real sleepEpsilon;
 
 	public:
+		void setMass(real mass)
+		{
+			_ASSERT(!IS_ZERO_FLOAT(mass));
+
+			inverseMass = 1 / mass;
+		}
+
+		real getMass(void) const
+		{
+			if(inverseMass == 0)
+			{
+				return REAL_MAX;
+			}
+
+			return 1 / inverseMass;
+		}
+
+		void setInverseMass(real _inverseMass)
+		{
+			inverseMass = _inverseMass;
+		}
+
+		real getInverseMass(void) const
+		{
+			return inverseMass;
+		}
+
+		void setPosition(const t3d::Vec4<real> & _position)
+		{
+			position = _position;
+		}
+
+		void addPosition(const t3d::Vec4<real> & _position)
+		{
+			t3d::vec3AddSelf(position, _position);
+		}
+
+		const t3d::Vec4<real> & getPosition(void) const
+		{
+			return position;
+		}
+
+		void setOrientation(const t3d::Quat<real> & _orientation)
+		{
+			orientation = _orientation;
+		}
+
+		void addOrientation(const t3d::Vec4<real> & _rotation) // ***
+		{
+			t3d::quatAddAngularVelocitySelf(orientation, _rotation);
+		}
+
+		const t3d::Quat<real> & getOrientation(void) const
+		{
+			return orientation;
+		}
+
+		void setVelocity(const t3d::Vec4<real> & _velocity)
+		{
+			velocity = _velocity;
+		}
+
+		const t3d::Vec4<real> & getVelocity(void) const
+		{
+			return velocity;
+		}
+
+		void addVelocity(const t3d::Vec4<real> & _velocity)
+		{
+			t3d::vec3AddSelf(velocity, _velocity);
+		}
+
+		void setRotation(const t3d::Vec4<real> & _rotation)
+		{
+			rotation = _rotation;
+		}
+
+		const t3d::Vec4<real> & getRotation(void) const
+		{
+			return rotation;
+		}
+
+		void addRotation(const t3d::Vec4<real> & _rotation)
+		{
+			t3d::vec3AddSelf(rotation, _rotation);
+		}
+
+		const t3d::Mat4<real> & getTransform(void) const
+		{
+			return transform;
+		}
+
+		t3d::Mat4<real> getInverseTransform(void) const
+		{
+			return transform.inverse();
+		}
+
+		const t3d::Mat4<real> & getRotationTransform(void) const
+		{
+			return rotationTransform;
+		}
+
+		t3d::Mat4<real> getInverseRotationTransform(void) const
+		{
+			return rotationTransform.inverse();
+		}
+
+		void setInertialTensor(const t3d::Mat4<real> & inertialTensor)
+		{
+			_ASSERT(!IS_ZERO_FLOAT(inertialTensor.determinant()));
+
+			inverseInertiaTensor = inertialTensor.inverse();
+		}
+
+		t3d::Mat4<real> getInertialTensor(void) const
+		{
+			_ASSERT(!IS_ZERO_FLOAT(inverseInertiaTensor.determinant()));
+
+			return inverseInertiaTensor.inverse();
+		}
+
+		void setInverseInertialTensor(const t3d::Mat4<real> & _inverseInertiaTensor)
+		{
+			inverseInertiaTensor = _inverseInertiaTensor;
+		}
+
+		const t3d::Mat4<real> & getInverseInertialTensor(void) const
+		{
+			return inverseInertiaTensor;
+		}
+
+		void setAcceleration(const t3d::Vec4<real> & _acceleration)
+		{
+			acceleration = _acceleration;
+		}
+
+		const t3d::Vec4<real> & getAcceleration(void) const
+		{
+			return acceleration;
+		}
+
+		void addForce(const t3d::Vec4<real> & force)
+		{
+			t3d::vec3AddSelf(forceAccum, force);
+		}
+
+		const t3d::Vec4<real> & getAccumulator(void) const
+		{
+			return forceAccum;
+		}
+
+		void clearAccumulator(void)
+		{
+			forceAccum = my::Vec4<real>::ZERO;
+		}
+
+		void addTorque(const t3d::Vec4<real> & torque)
+		{
+			t3d::vec3AddSelf(torqueAccum, torque);
+		}
+
+		const t3d::Vec4<real> & getTorqueAccumulator(void) const
+		{
+			return torqueAccum;
+		}
+
+		void clearTorqueAccumulator(void)
+		{
+			torqueAccum = my::Vec4<real>::ZERO;
+		}
+
+		const t3d::Vec4<real> & getResultingAcc(void) const
+		{
+			return resultingAcc;
+		}
+
+		const t3d::Vec4<real> & getResultingAngularAcc(void) const
+		{
+			return resultingAngularAcc;
+		}
+
+		void setDamping(real _damping)
+		{
+			damping = _damping;
+		}
+
+		real getDamping(void) const
+		{
+			return damping;
+		}
+
+		void setAngularDamping(real _angularDamping)
+		{
+			angularDamping = _angularDamping;
+		}
+
+		real getAngularDamping(void) const
+		{
+			return angularDamping;
+		}
+
+	public:
+		RigidBody(void);
+
 		void calculateDerivedData(void);
-
-		void setMass(real mass);
-
-		real getMass(void) const;
-
-		void setInverseMass(real _inverseMass);
-
-		real getInverseMass(void) const;
-
-		void setPosition(const t3d::Vec4<real> & _position);
-
-		void addPosition(const t3d::Vec4<real> & _position);
-
-		const t3d::Vec4<real> & getPosition(void) const;
-
-		void setOrientation(const t3d::Quat<real> & _orientation);
-
-		void addOrientation(const t3d::Vec4<real> & _rotation); // ***
-
-		const t3d::Quat<real> & getOrientation(void) const;
-
-		void setVelocity(const t3d::Vec4<real> & _velocity);
-
-		const t3d::Vec4<real> & getVelocity(void) const;
-
-		void addVelocity(const t3d::Vec4<real> & _velocity);
-
-		void setRotation(const t3d::Vec4<real> & _rotation);
-
-		const t3d::Vec4<real> & getRotation(void) const;
-
-		void addRotation(const t3d::Vec4<real> & _rotation);
-
-		const t3d::Mat4<real> & getTransform(void) const;
-
-		t3d::Mat4<real> getInverseTransform(void) const;
-
-		const t3d::Mat4<real> & getRotationTransform(void) const;
-
-		t3d::Mat4<real> getInverseRotationTransform(void) const;
-
-		void setInertialTensor(const t3d::Mat4<real> & inertialTensor);
-
-		t3d::Mat4<real> getInertialTensor(void) const;
-
-		void setInverseInertialTensor(const t3d::Mat4<real> & _inverseInertiaTensor);
-
-		const t3d::Mat4<real> & getInverseInertialTensor(void) const;
-
-		void setAcceleration(const t3d::Vec4<real> & _acceleration);
-
-		const t3d::Vec4<real> & getAcceleration(void) const;
-
-		void addForce(const t3d::Vec4<real> & force);
-
-		void addTorque(const t3d::Vec4<real> & torque);
-
-		const t3d::Vec4<real> & getResultingAcc(void) const;
-
-		const t3d::Vec4<real> & getResultingAngularAcc(void) const;
-
-		void setDamping(real _damping);
-
-		real getDamping(void) const;
-
-		void setAngularDamping(real _angularDamping);
-
-		real getAngularDamping(void) const;
 
 		void setAwake(bool _isAwake = true);
 
@@ -641,8 +831,6 @@ namespace my
 		static real getSleepEpsilon();
 
 		void addForceAtPoint(const t3d::Vec4<real> & force, const t3d::Vec4<real> & point);
-
-		void clearAccumulator(void);
 
 		bool hasFiniteMass(void) const;
 
