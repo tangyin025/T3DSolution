@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 #include "myPhysics.h"
+#include "myGame.h"
+#include "libc.h"
 
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(P) (P)
@@ -753,6 +755,7 @@ namespace my
 		//t3d::Vec4<real> resultingAngularAcc;
 		setDamping(1);
 		setAngularDamping(1);
+		setSleepEpsilon(0.3);
 		//real motion;
 		setAwake(true);
 		setCanSleep(true);
@@ -860,18 +863,6 @@ namespace my
 		return canSleep;
 	}
 
-	real RigidBody::sleepEpsilon = 0.3f;
-
-	void RigidBody::setSleepEpsilon(real _sleepEpsilon)
-	{
-		sleepEpsilon = _sleepEpsilon;
-	}
-
-	real RigidBody::getSleepEpsilon()
-	{
-		return sleepEpsilon;
-	}
-
 	void RigidBody::addForceAtPoint(const t3d::Vec4<real> & force, const t3d::Vec4<real> & point)
 	{
 		addForce(force);
@@ -929,6 +920,8 @@ namespace my
 			real bias = pow((real)0.5, duration);
 
 			motion = bias * motion + (1 - bias) * currentMotion;
+
+//REPORT_ERROR(str_printf(_T("motion: %.2f"), motion));
 
 			if(motion < sleepEpsilon)
 			{

@@ -603,13 +603,13 @@ namespace my
 
 		real angularDamping;
 
+		real sleepEpsilon;
+
 		real motion;
 
 		bool isAwake;
 
 		bool canSleep;
-
-		static real sleepEpsilon;
 
 	public:
 		void setMass(real mass)
@@ -813,6 +813,16 @@ namespace my
 			return angularDamping;
 		}
 
+		void setSleepEpsilon(real _sleepEpsilon)
+		{
+			sleepEpsilon = _sleepEpsilon;
+		}
+
+		real getSleepEpsilon(void) const
+		{
+			return sleepEpsilon;
+		}
+
 	public:
 		RigidBody(void);
 
@@ -825,10 +835,6 @@ namespace my
 		void setCanSleep(bool _canSleep = true);
 
 		bool getCanSleep(void) const;
-
-		static void setSleepEpsilon(real _sleepEpsilon);
-
-		static real getSleepEpsilon();
 
 		void addForceAtPoint(const t3d::Vec4<real> & force, const t3d::Vec4<real> & point);
 
@@ -1180,7 +1186,8 @@ namespace my
 
 	class World
 	{
-	protected:
+	//protected:
+	public:
 		RigidBodyPtrList bodyList;
 
 		ForceRegistry registry;

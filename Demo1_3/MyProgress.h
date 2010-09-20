@@ -52,6 +52,14 @@ public:
 	virtual ~MyProgress(void);
 };
 
+class EmptyJob : public MyJob
+{
+public:
+	EmptyJob(real weight = 1);
+
+	bool doJob(void);
+};
+
 template <class SIMPLE_CLASS>
 class SimpleCreateObjJob : public MyJob
 {
@@ -61,7 +69,7 @@ protected:
 	SIMPLE_CLASS_PTR & m_ref;
 
 public:
-	SimpleCreateObjJob(SIMPLE_CLASS_PTR & ref, real weight = 1)
+	SimpleCreateObjJob(SIMPLE_CLASS_PTR & ref, real weight = 0)
 		: MyJob(weight)
 		, m_ref(ref)
 	{
@@ -83,7 +91,7 @@ protected:
 	const std::basic_string<t3d::charT> m_str;
 
 public:
-	LoadBoneAssignmentIndexObjectJob(my::BoneAssignmentIndexObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> & str, real weight = 1);
+	LoadBoneAssignmentIndexObjectJob(my::BoneAssignmentIndexObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> & str, real weight = 0);
 
 	bool doJob(void);
 };
@@ -96,7 +104,7 @@ protected:
 	const std::basic_string<t3d::charT> m_str;
 
 public:
-	LoadObjectJob(my::ObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> str, real weight = 1);
+	LoadObjectJob(my::ObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> str, real weight = 0);
 
 	bool doJob(void);
 };
@@ -109,7 +117,7 @@ protected:
 	const std::basic_string<t3d::charT> m_str;
 
 public:
-	LoadImageJob(my::ImagePtr & ref, const std::basic_string<t3d::charT> str, real weight = 1);
+	LoadImageJob(my::ImagePtr & ref, const std::basic_string<t3d::charT> str, real weight = 0);
 
 	bool doJob(void);
 };
@@ -124,7 +132,7 @@ protected:
 	t3d::DSound * m_dsound;
 
 public:
-	LoadWavJob(my::WavPtr & ref, const std::basic_string<t3d::charT> str, t3d::DSound * dsound, real weight = 1);
+	LoadWavJob(my::WavPtr & ref, const std::basic_string<t3d::charT> str, t3d::DSound * dsound, real weight = 0);
 
 	bool doJob(void);
 };
@@ -139,7 +147,7 @@ protected:
 	t3d::DSoundPtr m_dsound;
 
 public:
-	LoadMp3Job(my::Mp3Ptr & ref, const std::basic_string<t3d::charT> str, t3d::DSoundPtr dsound, real weight = 1);
+	LoadMp3Job(my::Mp3Ptr & ref, const std::basic_string<t3d::charT> str, t3d::DSoundPtr dsound, real weight = 0);
 
 	bool doJob(void);
 };

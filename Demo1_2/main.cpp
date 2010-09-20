@@ -126,29 +126,29 @@ public:
 		m_characterBody = bodyList.back().get();
 
 		// 设置角色球的偏移量、半径等
-		m_characterSphere.offset = my::Mat4<real>::IDENTITY;
-		m_characterSphere.rotationOffset = my::Mat4<real>::IDENTITY;
-		m_characterSphere.radius = characterSphereRadius;
-		m_characterSphere.body = m_characterBody;
+		m_characterSphere.setOffset(my::Mat4<real>::IDENTITY);
+		m_characterSphere.setRotationOffset(my::Mat4<real>::IDENTITY);
+		m_characterSphere.setRadius(characterSphereRadius);
+		m_characterSphere.setRigidBody(m_characterBody);
 
 		// 设置 body 的质量及一些参、系数
-		m_characterSphere.body->setMass(characterSphereMass);
-		m_characterSphere.body->setInertialTensor(my::calculateSphereInertiaTensor(characterSphereMass, m_characterSphere.radius));
-		m_characterSphere.body->setDamping(0.95f);
-		//m_characterSphere.body->setAngularDamping(0.8f);
-		m_characterSphere.body->setAngularDamping(0); // 这样可以不让角色球旋转
-		m_characterSphere.body->setAcceleration(my::Vec4<real>(0, -10.0f, 0));
+		m_characterBody->setMass(characterSphereMass);
+		m_characterBody->setInertialTensor(my::calculateSphereInertiaTensor(characterSphereMass, characterSphereRadius));
+		m_characterBody->setDamping(0.95f);
+		//m_characterBody->setAngularDamping(0.8f);
+		m_characterBody->setAngularDamping(0); // 这样可以不让角色球旋转
+		m_characterBody->setAcceleration(my::Vec4<real>(0, -10.0f, 0));
 
 		// 初始化角色的位置
-		m_characterSphere.body->setPosition(my::Vec4<real>(0, 30, 0));
-		m_characterSphere.body->setOrientation(my::Quat<real>::IDENTITY);
-		m_characterSphere.body->setVelocity(my::Vec4<real>::ZERO);
-		m_characterSphere.body->setRotation(my::Vec4<real>::ZERO);
-		m_characterSphere.body->setCanSleep();
-		m_characterSphere.body->setAwake();
+		m_characterBody->setPosition(my::Vec4<real>(0, 30, 0));
+		m_characterBody->setOrientation(my::Quat<real>::IDENTITY);
+		m_characterBody->setVelocity(my::Vec4<real>::ZERO);
+		m_characterBody->setRotation(my::Vec4<real>::ZERO);
+		m_characterBody->setCanSleep();
+		m_characterBody->setAwake();
 
 		// 不要忘记更新角色球的 transform
-		m_characterSphere.body->calculateDerivedData();
+		m_characterBody->calculateDerivedData();
 
 		// 保存场景（指针）
 		_ASSERT(NULL != scene);

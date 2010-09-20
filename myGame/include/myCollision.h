@@ -226,14 +226,17 @@ namespace my
 	// CollisionPrimitive
 	// /////////////////////////////////////////////////////////////////////////////////////
 
+	class IntersectionTests;
+
+	class CollisionDetector;
+
 	class CollisionPrimitive
 	{
-		friend class IntersectionTests;
+		friend IntersectionTests;
 
-		friend class CollisionDetector;
+		friend CollisionDetector;
 
-	//protected:
-	public:
+	protected:
 		RigidBody * body;
 
 		t3d::Mat4<real> offset;
@@ -245,28 +248,91 @@ namespace my
 		t3d::Mat4<real> rotationTransform;
 
 	public:
+		void setRigidBody(RigidBody * _body)
+		{
+			body = _body;
+		}
+
+		RigidBody * getRigidBody(void) const
+		{
+			return body;
+		}
+
+		void setOffset(const t3d::Mat4<real> & _offset)
+		{
+			offset = _offset;
+		}
+
+		const t3d::Mat4<real> & getOffset(void) const
+		{
+			return offset;
+		}
+
+		void setRotationOffset(const t3d::Mat4<real> & _rotationOffset)
+		{
+			rotationOffset = _rotationOffset;
+		}
+
+		const t3d::Mat4<real> & getRotationOffset(void) const
+		{
+			return rotationOffset;
+		}
+
+		void setTransform(const t3d::Mat4<real> & _transform)
+		{
+			transform = _transform;
+		}
+
+		const t3d::Mat4<real> & getTransform(void) const
+		{
+			return transform;
+		}
+
+		t3d::Vec4<real> getTransformAxis0(void) const
+		{
+			return t3d::mat3GetRow0(transform);
+		}
+
+		t3d::Vec4<real> getTransformAxis1(void) const
+		{
+			return t3d::mat3GetRow1(transform);
+		}
+
+		t3d::Vec4<real> getTransformAxis2(void) const
+		{
+			return t3d::mat3GetRow2(transform);
+		}
+
+		t3d::Vec4<real> getTransformAxis3(void) const
+		{
+			return t3d::mat3GetRow3(transform);
+		}
+
+		t3d::Vec4<real> getTransformAxisN(size_t axis_i) const
+		{
+			return t3d::mat3GetRowN(transform, axis_i);
+		}
+
+		void setRotationTransform(const t3d::Mat4<real> & _rotationTransform)
+		{
+			rotationTransform = _rotationTransform;
+		}
+
+		const t3d::Mat4<real> & getRotationTransform(void) const
+		{
+			return rotationTransform;
+		}
+
+	public:
+		CollisionPrimitive(
+			RigidBody * _body,
+			const t3d::Mat4<real> & _offset,
+			const t3d::Mat4<real> & _rotationOffset);
+
 		virtual ~CollisionPrimitive(void);
 
 	public:
 		virtual void calculateInternals(void);
-
-		t3d::Vec4<real> getAxis0(void) const;
-
-		t3d::Vec4<real> getAxis1(void) const;
-
-		t3d::Vec4<real> getAxis2(void) const;
-
-		t3d::Vec4<real> getAxis3(void) const;
-
-		t3d::Vec4<real> getAxis(size_t axis_i) const;
-
-		const t3d::Mat4<real> & getTransform(void) const;
-
-		t3d::Mat4<real> getInverseTransform(void) const;
-
-		const t3d::Mat4<real> & getRotationTransform(void) const;
-
-		t3d::Mat4<real> getInverseRotationTransform(void) const;
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -275,8 +341,32 @@ namespace my
 
 	class CollisionSphere : public CollisionPrimitive
 	{
-	public:
+		friend IntersectionTests;
+
+		friend CollisionDetector;
+
+	protected:
 		real radius;
+
+	public:
+		void setRadius(real _radius)
+		{
+			radius = _radius;
+		}
+
+		real getRadius(void) const
+		{
+			return radius;
+		}
+
+	public:
+		CollisionSphere(
+			real _radius,
+			RigidBody * _body,
+			const t3d::Mat4<real> & _offset,
+			const t3d::Mat4<real> & _rotationOffset);
+
+		CollisionSphere(void);
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -285,8 +375,32 @@ namespace my
 
 	class CollisionBox : public CollisionPrimitive
 	{
-	public:
+		friend IntersectionTests;
+
+		friend CollisionDetector;
+
+	protected:
 		t3d::Vec4<real> halfSize;
+
+	public:
+		void setHalfSize(const t3d::Vec4<real> & _halfSize)
+		{
+			halfSize = _halfSize;
+		}
+
+		const t3d::Vec4<real> & getHalfSize(void) const
+		{
+			return halfSize;
+		}
+
+	public:
+		CollisionBox(
+			const t3d::Vec4<real> & _halfSize,
+			RigidBody * _body,
+			const t3d::Mat4<real> & _offset,
+			const t3d::Mat4<real> & _rotationOffset);
+
+		CollisionBox(void);
 	};
 
 	//// /////////////////////////////////////////////////////////////////////////////////////
@@ -317,10 +431,24 @@ namespace my
 			const CollisionSphere & sphere0,
 			const CollisionSphere & sphere1);
 
+		static real calculateBoxAxisHalfProjection(const CollisionBox & box, const t3d::Vec4<real> & axis);
+
 		static bool boxAndHalfSpace(
 			const CollisionBox & box,
 			const t3d::Vec4<real> & planeNormal,
 			real planeDistance);
+
+		static bool _overlapOnAxis(
+			const CollisionBox & box0,
+			const CollisionBox & box1,
+			const t3d::Vec4<real> & axis,
+			const t3d::Vec4<real> & toCentre);
+
+		static bool _zeroAxisOrOverlapOnAxis(
+			const CollisionBox & box0,
+			const CollisionBox & box1,
+			const t3d::Vec4<real> & axis,
+			const t3d::Vec4<real> & toCentre);
 
 		static bool boxAndBox(
 			const CollisionBox & box0,
@@ -415,6 +543,37 @@ namespace my
 			const CollisionBox & box,
 			const t3d::Vec4<real> & point,
 			RigidBody * bodyForPoint,
+			Contact * contacts,
+			unsigned limits);
+
+		static real calculateBoxAxisAndBoxPenetration(
+			const CollisionBox & box0,
+			const t3d::Vec4<real> & axis,
+			const CollisionBox & box1);
+
+		static t3d::Vec4<real> findPointFromBoxByDirection(const CollisionBox & box, const t3d::Vec4<real> & dir);
+
+		static bool _tryBoxAxisAndBox(
+			const CollisionBox & box0,
+			const t3d::Vec4<real> & axis,
+			const CollisionBox & box1,
+			unsigned index,
+			real & smallestPenetration,
+			unsigned & smallestIndex);
+
+		static bool _zeroAxisOrTryBoxAxisAndBox(
+			const CollisionBox & box0,
+			const t3d::Vec4<real> & axis,
+			const CollisionBox & box1,
+			unsigned index,
+			real & smallestPenetration,
+			unsigned & smallestIndex);
+
+		static unsigned _detectorBoxAxisAndBoxPoint(
+			const CollisionBox & box0,
+			const t3d::Vec4<real> & axis,
+			const CollisionBox & box1,
+			real penetration,
 			Contact * contacts,
 			unsigned limits);
 

@@ -1,11 +1,9 @@
 
 #pragma once
 
-#include "myPhysics.h"
-
 class MyWorld : public my::World
 {
-protected:
+public:
 	my::CollisionSphere m_characterSphere;
 
 	struct
@@ -15,6 +13,8 @@ protected:
 		t3d::real distance;
 	}
 	m_groundPlane;
+
+	my::RigidBodyPtr m_characterBody;
 
 public:
 	MyWorld(void);
@@ -26,3 +26,5 @@ protected:
 
 	unsigned generateContacts(my::Contact * contacts, unsigned limits);
 };
+
+typedef boost::shared_ptr<MyWorld> MyWorldPtr;

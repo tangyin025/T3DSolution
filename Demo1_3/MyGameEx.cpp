@@ -159,21 +159,26 @@ void MyLoadState::enterState(void)
 	int y = clipper.top + (clipper.Height() - barHeight) / 2;
 	m_progressBox = MyUIProgressBarBoxPtr(new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight))));
 
-	// //////////////////////////////////////////////////////////////////////////////////////////
+	//// //////////////////////////////////////////////////////////////////////////////////////////
 
-	// gain the game state obj
-	MyGameStatePtr gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name);
+	//// gain the game state obj
+	//MyGameStatePtr gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name);
 
-	// initial load jobs
-	pushJob(MyJobPtr(new SimpleCreateObjJob<my::FPSManager>(gameState->m_fpsMgr, 0)));
+	//// initial load jobs
+	//pushJob(MyJobPtr(new SimpleCreateObjJob<my::FPSManager>(gameState->m_fpsMgr)));
 
-	pushJob(MyJobPtr(new SimpleCreateObjJob<my::Timer>(gameState->m_timer, 0)));
+	//pushJob(MyJobPtr(new SimpleCreateObjJob<my::Timer>(gameState->m_timer)));
 
-	pushJob(MyJobPtr(new SimpleCreateObjJob<my::Grid>(gameState->m_grid, 0)));
+	//pushJob(MyJobPtr(new SimpleCreateObjJob<my::Grid>(gameState->m_grid)));
 
-	pushJob(MyJobPtr(new SimpleCreateObjJob<my::EulerCamera>(gameState->m_eulerCam, 1)));
+	//pushJob(MyJobPtr(new SimpleCreateObjJob<my::EulerCamera>(gameState->m_eulerCam)));
 
-	// //////////////////////////////////////////////////////////////////////////////////////////
+	//pushJob(MyJobPtr(new SimpleCreateObjJob<MyWorld>(gameState->m_phyWorld)));
+
+	//// //////////////////////////////////////////////////////////////////////////////////////////
+
+	//// at lease do an empty job with weight = 1
+	//pushJob(MyJobPtr(new EmptyJob()));
 
 	// create loading thread
 	CreateThread();
@@ -254,43 +259,43 @@ DWORD MyLoadState::onProc(void)
 	// could not catch any exceptions which was thrown from the this thread proc
 	try
 	{
-		// calculate total weight
-		real totalWeight = 0;
-		MyJobList::const_iterator job_iter = getJobListBegin();
-		for(; job_iter != getJobListEnd(); job_iter++)
-		{
-			totalWeight += (*job_iter)->getWeight();
-		}
+		//// calculate total weight
+		//real totalWeight = 0;
+		//MyJobList::const_iterator job_iter = getJobListBegin();
+		//for(; job_iter != getJobListEnd(); job_iter++)
+		//{
+		//	totalWeight += (*job_iter)->getWeight();
+		//}
 
-		// make sure the total weight must greater than zero
-		_ASSERT(totalWeight > 0);
+		//// make sure the total weight must greater than zero
+		//_ASSERT(totalWeight > 0);
 
-		// do all the jobs
-		real currentWeight = 0;
-		job_iter = getJobListBegin();
-		for(; job_iter != getJobListEnd(); job_iter++)
-		{
-			// check exit flag
-			if(getExitFlag())
-			{
-				return false;
-			}
+		//// do all the jobs
+		//real currentWeight = 0;
+		//job_iter = getJobListBegin();
+		//for(; job_iter != getJobListEnd(); job_iter++)
+		//{
+		//	// check exit flag
+		//	if(getExitFlag())
+		//	{
+		//		return false;
+		//	}
 
-			// do job
-			if(!(*job_iter)->doJob())
-			{
-				setExitFlag();
-				return false;
-			}
+		//	// do job
+		//	if(!(*job_iter)->doJob())
+		//	{
+		//		setExitFlag();
+		//		return false;
+		//	}
 
-			// update progress bar
-			currentWeight += (*job_iter)->getWeight();
-			{
-				my::CriticalSectionLock lock(m_progressBoxLock);
-				m_progressBox->setPercent(currentWeight / totalWeight);
-			}
-			::Sleep(33);
-		}
+		//	// update progress bar
+		//	currentWeight += (*job_iter)->getWeight();
+		//	{
+		//		my::CriticalSectionLock lock(m_progressBoxLock);
+		//		m_progressBox->setPercent(currentWeight / totalWeight);
+		//	}
+		//	::Sleep(33);
+		//}
 	}
 	catch(t3d::Exception & e)
 	{
@@ -314,17 +319,6 @@ MyGameState::~MyGameState(void)
 void MyGameState::enterState(void)
 {
 	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	// start fps manager
-	m_fpsMgr->start();
-
-	// start timer
-	m_timer->start();
-
-	// reset eular camera !!!
-	m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
-	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
-	m_eulerCam->reset();
 //
 //#ifdef _DEBUG
 //	// clear all surface to test software rendering clipper
@@ -336,6 +330,26 @@ void MyGameState::enterState(void)
 //	MyGame::getSingleton().m_rc->setClipperRect(clipper);
 //	MyGame::getSingleton().m_wnd->InvalidateRect(NULL);
 //#endif
+
+	// create and start fps manager
+	m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
+	m_fpsMgr->start();
+
+	// create and start timer
+	m_timer = my::TimerPtr(new my::Timer());
+	m_timer->start();
+
+	// create grid
+	m_grid = my::GridPtr(new my::Grid(100, 10));
+
+	// create eular camera
+	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
+	m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
+	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
+	m_eulerCam->reset();
+
+	// create physical world
+	m_phyWorld = MyWorldPtr(new MyWorld());
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -411,6 +425,12 @@ bool MyGameState::doFrame(void)
 
 	// draw default grid, with use to test distance of the scene
 	m_grid->drawZBufferRW(rc);
+
+	// step physics world
+	m_phyWorld->runPhysics(elapsedTime);
+
+	// draw character body
+	drawSphereWireZBufferRW(rc, m_phyWorld->m_characterSphere.getRadius(), my::Color::RED, m_phyWorld->m_characterBody->getTransform());
 
 	// general information output
 	std::basic_string<charT> strTmp;

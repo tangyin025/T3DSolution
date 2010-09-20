@@ -1686,7 +1686,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetRow(const Mat4<elem_t> & rhs, size_t row_i)
+	inline Vec4<elem_t> mat3GetRowN(const Mat4<elem_t> & rhs, size_t row_i)
 	{
 		switch(row_i)
 		{
