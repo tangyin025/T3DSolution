@@ -54,7 +54,19 @@ MyProgress::~MyProgress(void)
 {
 }
 
-LoadBoneAssignmentIndexObjectJob::LoadBoneAssignmentIndexObjectJob(my::BoneAssignmentIndexObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> & str, real weight /*= 1*/)
+EmptyJob::EmptyJob(real weight /*= 1*/)
+	: MyJob(weight)
+{
+}
+
+bool EmptyJob::doJob(void)
+{
+	::Sleep(33);
+
+	return true;
+}
+
+LoadBoneAssignmentIndexObjectJob::LoadBoneAssignmentIndexObjectJob(my::BoneAssignmentIndexObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> & str, real weight /*= 0*/)
 	: MyJob(weight)
 	, m_ref(ref)
 	, m_str(str)
@@ -69,7 +81,7 @@ bool LoadBoneAssignmentIndexObjectJob::doJob(void)
 	return true;
 }
 
-LoadObjectJob::LoadObjectJob(my::ObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> str, real weight /*= 1*/)
+LoadObjectJob::LoadObjectJob(my::ObjectFromOgreMeshPtr & ref, const std::basic_string<t3d::charT> str, real weight /*= 0*/)
 	: MyJob(weight)
 	, m_ref(ref)
 	, m_str(str)
@@ -84,7 +96,7 @@ bool LoadObjectJob::doJob(void)
 	return true;
 }
 
-LoadImageJob::LoadImageJob(my::ImagePtr & ref, const std::basic_string<t3d::charT> str, real weight /*= 1*/)
+LoadImageJob::LoadImageJob(my::ImagePtr & ref, const std::basic_string<t3d::charT> str, real weight /*= 0*/)
 	: MyJob(weight)
 	, m_ref(ref)
 	, m_str(str)
@@ -99,7 +111,7 @@ bool LoadImageJob::doJob(void)
 	return true;
 }
 
-LoadWavJob::LoadWavJob(my::WavPtr & ref, const std::basic_string<t3d::charT> str, t3d::DSound * dsound, real weight /*= 1*/)
+LoadWavJob::LoadWavJob(my::WavPtr & ref, const std::basic_string<t3d::charT> str, t3d::DSound * dsound, real weight /*= 0*/)
 	: MyJob(weight)
 	, m_ref(ref)
 	, m_str(str)
@@ -115,7 +127,7 @@ bool LoadWavJob::doJob(void)
 	return true;
 }
 
-LoadMp3Job::LoadMp3Job(my::Mp3Ptr & ref, const std::basic_string<t3d::charT> str, t3d::DSoundPtr dsound, real weight /*= 1*/)
+LoadMp3Job::LoadMp3Job(my::Mp3Ptr & ref, const std::basic_string<t3d::charT> str, t3d::DSoundPtr dsound, real weight /*= 0*/)
 	: MyJob(weight)
 	, m_ref(ref)
 	, m_str(str)

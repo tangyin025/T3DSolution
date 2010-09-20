@@ -5,7 +5,7 @@
 #include "MyUI.h"
 #include "MyProgress.h"
 #include <myPhysics.h>
-#include "t3dlib8.h"
+#include "MyWorld.h"
 
 class MyWindow
 	: public my::GameWnd
@@ -130,6 +130,7 @@ typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 
 class MyGameState
 	: public MyFrameState
+	, public my::DrawnHelper
 {
 	friend class MyLoadState;
 
@@ -147,6 +148,8 @@ protected:
 	my::GridPtr m_grid;
 
 	my::EulerCameraPtr m_eulerCam;
+
+	MyWorldPtr m_phyWorld;
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
