@@ -30,33 +30,39 @@ MyWorld::MyWorld(void)
 MyWorld::~MyWorld(void)
 {
 }
-//
-//void MyWorld::integrate(real duration)
-//{
-//	// call parent implementation to update body list integration
-//	my::World::integrate(duration);
-//
-//	// update collision sphere transform by attached body
-//	m_characterSphere.calculateInternals();
-//}
-//
-//unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
-//{
-//	unsigned used = 0;
-//
-//	// collision detect
-//	used += my::CollisionDetector::sphereAndHalfSpace(m_characterSphere, m_groundPlane.normal, m_groundPlane.distance, &contacts[used], limits - used);
-//
-//	// must set friction and restitution after my::CollisionDetector !!!
-//	for(unsigned i = 0; i < used; i++)
-//	{
-//		contacts[i].friction = 10.0f; //0.9f;
-//
-//		contacts[i].restitution = 0; //0.6f;
-//	}
-//
-//	return used;
-//}
+
+void MyWorld::integrate(real duration)
+{
+	my::World::integrate(duration);
+
+	m_characterSphere.calculateInternals();
+}
+
+unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
+{
+	unsigned used = 0;
+
+	used += my::CollisionDetector::sphereAndHalfSpace(m_characterSphere, m_groundPlane.normal, m_groundPlane.distance, &contacts[used], limits - used);
+
+	for(unsigned i = 0; i < used; i++)
+	{
+		contacts[i].friction = 10.0f; //0.9f;
+
+		contacts[i].restitution = 0; //0.6f;
+	}
+
+	return used;
+}
+
+void MyWorld::integrateParticle(real duration)
+{
+	return my::ParticleWorld::integrate(duration);
+}
+
+unsigned MyWorld::generateContactsParticle(my::ParticleContact * contacts, unsigned limits)
+{
+	return my::ParticleWorld::generateContacts(contacts, limits);
+}
 
 void MyWorld::runPhysics(real duration)
 {
@@ -66,9 +72,9 @@ void MyWorld::runPhysics(real duration)
 
 	my::World::registry.updateForces(duration);
 
-	my::World::integrate(duration);
+	integrate(duration);
 
-	unsigned usedContacts = my::World::generateContacts(&contactList[0], my::World::maxContacts);
+	unsigned usedContacts = generateContacts(&contactList[0], my::World::maxContacts);
 
 	my::World::resolver.setPositionIterations(usedContacts * 4);
 
@@ -82,9 +88,9 @@ void MyWorld::runPhysics(real duration)
 
 	my::ParticleWorld::registry.updateForces(duration);
 
-	my::ParticleWorld::integrate(duration);
+	integrateParticle(duration);
 
-	unsigned used = my::ParticleWorld::generateContacts(&particleContactArray[0], my::ParticleWorld::maxContacts);
+	unsigned used = generateContactsParticle(&particleContactArray[0], my::ParticleWorld::maxContacts);
 
 	my::ParticleWorld::resolver.setIterations(used * 2);
 
