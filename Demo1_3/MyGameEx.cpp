@@ -430,7 +430,11 @@ bool MyGameState::doFrame(void)
 	m_phyWorld->runPhysics(elapsedTime);
 
 	// draw character body
-	drawSphereWireZBufferRW(rc, m_phyWorld->m_characterSphere.getRadius(), my::Color::RED, m_phyWorld->m_characterBody->getTransform());
+	drawSphereWireZBufferRW(
+		rc,
+		m_phyWorld->m_characterSphere.getRadius(),
+		m_phyWorld->m_characterBody->getAwake() ? my::Color::RED : t3d::vec3Mul(my::Color::RED, 0.7f),
+		m_phyWorld->m_characterBody->getTransform());
 
 	// general information output
 	std::basic_string<charT> strTmp;

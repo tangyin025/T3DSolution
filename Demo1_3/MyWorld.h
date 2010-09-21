@@ -1,7 +1,9 @@
 
 #pragma once
 
-class MyWorld : public my::World
+class MyWorld
+	: public my::World
+	, public my::ParticleWorld
 {
 public:
 	my::CollisionSphere m_characterSphere;
@@ -21,10 +23,11 @@ public:
 
 	~MyWorld(void);
 
-protected:
-	void integrate(real duration);
+	//void integrate(real duration);
 
-	unsigned generateContacts(my::Contact * contacts, unsigned limits);
+	//unsigned generateContacts(my::Contact * contacts, unsigned limits);
+
+	void runPhysics(real duration);
 };
 
 typedef boost::shared_ptr<MyWorld> MyWorldPtr;

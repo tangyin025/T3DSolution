@@ -549,7 +549,7 @@ namespace my
 		unsigned maxContacts;
 
 	public:
-		ParticleWorld(unsigned _maxContacts, unsigned _iterations = 0);
+		ParticleWorld(unsigned _maxContacts = 256, unsigned _iterations = 0);
 
 		virtual ~ParticleWorld(void);
 
@@ -1207,7 +1207,7 @@ namespace my
 
 		virtual void integrate(real duration);
 
-		virtual unsigned generateContacts(Contact * contacts, unsigned limits) = 0;
+		virtual unsigned generateContacts(Contact * contacts, unsigned limits);
 
 		void runPhysics(real duration);
 	};
