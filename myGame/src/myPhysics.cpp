@@ -666,9 +666,9 @@ namespace my
 	// ParticleWorld
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	ParticleWorld::ParticleWorld(unsigned _maxContacts, unsigned _iterations /*= 0*/)
+	ParticleWorld::ParticleWorld(unsigned _maxContacts /*= 256*/, unsigned _iterations /*= 0*/)
 		: resolver(_iterations)
-		, particleContactArray(maxContacts)
+		, particleContactArray(_maxContacts)
 		, maxContacts(_maxContacts)
 	{
 	}
@@ -716,21 +716,17 @@ namespace my
 
 	void ParticleWorld::runPhysics(real duration)
 	{
+		startFrame();
+
 		registry.updateForces(duration);
 
 		integrate(duration);
 
 		unsigned used = generateContacts(&particleContactArray[0], maxContacts);
 
-		if(0 != used)
-		{
-			if(0 != resolver.getIterations())
-			{
-				resolver.setIterations(used * 2);
+		resolver.setIterations(used * 2);
 
-				resolver.resolveContacts(&particleContactArray[0], used, duration);
-			}
-		}
+		resolver.resolveContacts(&particleContactArray[0], used, duration);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -1946,6 +1942,11 @@ namespace my
 
 			(*b_iter)->integrate(duration);
 		}
+	}
+
+	unsigned World::generateContacts(Contact * contacts, unsigned limits)
+	{
+		return 0;
 	}
 
 	void World::runPhysics(real duration)
