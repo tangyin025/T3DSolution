@@ -23,9 +23,13 @@ public:
 
 	~MyWorld(void);
 
-	//void integrate(real duration);
+	void integrate(real duration);
 
-	//unsigned generateContacts(my::Contact * contacts, unsigned limits);
+	unsigned generateContacts(my::Contact * contacts, unsigned limits);
+
+	void integrateParticle(real duration);
+
+	unsigned generateContactsParticle(my::ParticleContact * contacts, unsigned limits);
 
 	void runPhysics(real duration);
 };
