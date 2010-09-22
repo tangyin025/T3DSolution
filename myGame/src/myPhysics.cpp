@@ -1682,7 +1682,7 @@ namespace my
 		}
 	}
 
-	static inline void _updateContactPenetration(
+	void ContactResolver::_updateContactPenetration(
 		Contact & contact,
 		const t3d::Vec4<real> & relativeContactPosition,
 		const t3d::Vec4<real> & linearChange,
@@ -1783,7 +1783,7 @@ namespace my
 		UNREFERENCED_PARAMETER(duration);
 	}
 
-	static inline void _updateContactVelocity(
+	void ContactResolver::_updateContactVelocity(
 		Contact & contact,
 		const t3d::Vec4<real> & relativeContactPosition,
 		const t3d::Vec4<real> & velocityChange,

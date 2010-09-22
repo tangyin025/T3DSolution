@@ -6,7 +6,7 @@ class MyWorld
 	, public my::ParticleWorld
 {
 public:
-	my::CollisionSphere m_characterSphere;
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	struct
 	{
@@ -16,7 +16,25 @@ public:
 	}
 	m_groundPlane;
 
-	my::RigidBodyPtr m_characterBody;
+	struct
+	{
+		my::RigidBodyPtr body;
+
+		my::CollisionSphere sphere;
+	}
+	m_character;
+
+	struct
+	{
+		my::ParticlePtr particle;
+
+		my::ParticleAnchoredSpringPtr spring;
+
+		my::ParticleCableConstraintPtr cable;
+	}
+	m_viewpoint;
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 public:
 	MyWorld(void);
