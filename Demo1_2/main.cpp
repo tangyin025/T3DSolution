@@ -777,11 +777,11 @@ public:
 	*/
 	virtual void onReport(const std::basic_string<charT> & info)
 	{
-		// 将错误信息打印到控制台模拟器，这里稍微作了判断以防止答应重复信息
-		if(m_consoleSim->m_lines.empty() || info != m_consoleSim->m_lines.back())
-		{
+		//// 将错误信息打印到控制台模拟器，这里稍微作了判断以防止答应重复信息
+		//if(m_consoleSim->m_lines.empty() || info != m_consoleSim->m_lines.back())
+		//{
 			m_consoleSim->report(info);
-		}
+		//}
 	}
 };
 

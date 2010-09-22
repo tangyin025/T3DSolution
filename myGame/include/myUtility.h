@@ -23,6 +23,17 @@ namespace my
 
 	class FPSManager
 	{
+	protected:
+		DWORD interval_time;
+
+		DWORD last_time;
+
+		DWORD past_time;
+
+		DWORD past_frames;
+
+		real m_fps;
+
 	public:
 		FPSManager(void);
 
@@ -34,13 +45,6 @@ namespace my
 		real getFPS(void);
 
 		DWORD getLastUpdateTime(void);
-
-	protected:
-		DWORD interval_time;
-		DWORD last_time;
-		DWORD past_time;
-		DWORD past_frames;
-		real m_fps;
 	};
 
 	typedef boost::shared_ptr<FPSManager> FPSManagerPtr;
@@ -180,13 +184,12 @@ namespace my
 
 	class ConsoleSimulator
 	{
-	//protected:
-	public:
+	protected:
 		int m_step;
 
 		size_t m_maxLine;
 
-		typedef std::deque</*const*/ std::basic_string<charT> > StringDeque; // *** stlport unsupport deque<const type>
+		typedef std::deque<std::basic_string<charT> > StringDeque;
 
 		StringDeque m_lines;
 
@@ -204,168 +207,168 @@ namespace my
 
 	typedef boost::shared_ptr<ConsoleSimulator> ConsoleSimulatorPtr;
 
-	// /////////////////////////////////////////////////////////////////////////////////////
-	// MenuSystem
-	// /////////////////////////////////////////////////////////////////////////////////////
+	//// /////////////////////////////////////////////////////////////////////////////////////
+	//// MenuSystem
+	//// /////////////////////////////////////////////////////////////////////////////////////
 
-	class MenuItemArrow
-	{
-	protected:
-		int m_width;
+	//class MenuItemArrow
+	//{
+	//protected:
+	//	int m_width;
 
-		int m_height;
+	//	int m_height;
 
-	public:
-		MenuItemArrow(int width = ::GetSystemMetrics(SM_CYMENU), int height = ::GetSystemMetrics(SM_CYMENU));
+	//public:
+	//	MenuItemArrow(int width = ::GetSystemMetrics(SM_CYMENU), int height = ::GetSystemMetrics(SM_CYMENU));
 
-		void setWidth(int width);
+	//	void setWidth(int width);
 
-		int getWidth(void) const;
+	//	int getWidth(void) const;
 
-		void setHeight(int height);
+	//	void setHeight(int height);
 
-		int getHeight(void) const;
+	//	int getHeight(void) const;
 
-		void draw(t3d::DDSurface * surface, int x, int y) const;
-	};
+	//	void draw(t3d::DDSurface * surface, int x, int y) const;
+	//};
 
-	class MenuItemCheck
-	{
-	protected:
-		int m_width;
+	//class MenuItemCheck
+	//{
+	//protected:
+	//	int m_width;
 
-		int m_height;
+	//	int m_height;
 
-	public:
-		MenuItemCheck(int width = ::GetSystemMetrics(SM_CYMENU), int height = ::GetSystemMetrics(SM_CYMENU));
+	//public:
+	//	MenuItemCheck(int width = ::GetSystemMetrics(SM_CYMENU), int height = ::GetSystemMetrics(SM_CYMENU));
 
-		void setWidth(int width);
+	//	void setWidth(int width);
 
-		int getWidth(void) const;
+	//	int getWidth(void) const;
 
-		void setHeight(int height);
+	//	void setHeight(int height);
 
-		int getHeight(void) const;
+	//	int getHeight(void) const;
 
-		void draw(t3d::DDSurface * surface, int x, int y) const;
-	};
+	//	void draw(t3d::DDSurface * surface, int x, int y) const;
+	//};
 
-	class MenuItem
-	{
-	protected:
-		MenuItemArrow m_arrow;
+	//class MenuItem
+	//{
+	//protected:
+	//	MenuItemArrow m_arrow;
 
-		MenuItemCheck m_check;
+	//	MenuItemCheck m_check;
 
-		std::basic_string<charT> m_text;
+	//	std::basic_string<charT> m_text;
 
-		int m_width;
+	//	int m_width;
 
-		int m_height;
+	//	int m_height;
 
-	public:
-		MenuItem(const std::basic_string<charT> & text, int width, int height = ::GetSystemMetrics(SM_CYMENU));
+	//public:
+	//	MenuItem(const std::basic_string<charT> & text, int width, int height = ::GetSystemMetrics(SM_CYMENU));
 
-		void setText(const std::basic_string<charT> & text);
+	//	void setText(const std::basic_string<charT> & text);
 
-		const std::basic_string<charT> & getText(void) const;
+	//	const std::basic_string<charT> & getText(void) const;
 
-		void setWidth(int width);
+	//	void setWidth(int width);
 
-		int getWidth(void) const;
+	//	int getWidth(void) const;
 
-		void setHeight(int height);
+	//	void setHeight(int height);
 
-		int getHeight(void) const;
+	//	int getHeight(void) const;
 
-		void draw(t3d::DDSurface * surface, int x, int y, bool arrow = false, bool check = false) const;
-	};
+	//	void draw(t3d::DDSurface * surface, int x, int y, bool arrow = false, bool check = false) const;
+	//};
 
-	class MenuItemNode;
+	//class MenuItemNode;
 
-	typedef boost::shared_ptr<MenuItemNode> MenuItemNodePtr;
+	//typedef boost::shared_ptr<MenuItemNode> MenuItemNodePtr;
 
-	class Menu
-	{
-	public:
-		enum MenuCheckType
-		{
-			SingleCheckType,
-			MultiCheckType
-		};
+	//class Menu
+	//{
+	//public:
+	//	enum MenuCheckType
+	//	{
+	//		SingleCheckType,
+	//		MultiCheckType
+	//	};
 
-	protected:
-		typedef std::vector<MenuItemNodePtr> MenuItemNodePtrList;
+	//protected:
+	//	typedef std::vector<MenuItemNodePtr> MenuItemNodePtrList;
 
-		MenuItemNodePtrList m_items;
+	//	MenuItemNodePtrList m_items;
 
-		int m_width;
+	//	int m_width;
 
-		MenuCheckType m_checkType;
+	//	MenuCheckType m_checkType;
 
-	public:
-		Menu(int width);
+	//public:
+	//	Menu(int width);
 
-		size_t createMenuItemNode(const std::basic_string<charT> & itemText, int itemHeight = ::GetSystemMetrics(SM_CYMENU));
+	//	size_t createMenuItemNode(const std::basic_string<charT> & itemText, int itemHeight = ::GetSystemMetrics(SM_CYMENU));
 
-		MenuItemNodePtr getMenuItemNode(size_t item_i) const;
+	//	MenuItemNodePtr getMenuItemNode(size_t item_i) const;
 
-		MenuItemNodePtr getMenuItemNode(const std::basic_string<charT> & itemText) const;
+	//	MenuItemNodePtr getMenuItemNode(const std::basic_string<charT> & itemText) const;
 
-		size_t getMenuItemNodeCount(void) const;
+	//	size_t getMenuItemNodeCount(void) const;
 
-		int getWidth(void) const;
+	//	int getWidth(void) const;
 
-		int getHeight(void) const;
+	//	int getHeight(void) const;
 
-		void setCheckType(MenuCheckType checkType);
+	//	void setCheckType(MenuCheckType checkType);
 
-		MenuCheckType getCheckType(void) const;
+	//	MenuCheckType getCheckType(void) const;
 
-		void singleCheckItemNode(size_t item_i);
+	//	void singleCheckItemNode(size_t item_i);
 
-		void draw(t3d::DDSurface * surface, int x, int y) const;
-	};
+	//	void draw(t3d::DDSurface * surface, int x, int y) const;
+	//};
 
-	class MenuItemNode : public MenuItem
-	{
-	protected:
-		Menu m_subMenu;
+	//class MenuItemNode : public MenuItem
+	//{
+	//protected:
+	//	Menu m_subMenu;
 
-		bool m_checked;
+	//	bool m_checked;
 
-	public:
-		MenuItemNode(const std::basic_string<charT> & text, int width, int height = ::GetSystemMetrics(SM_CYMENU));
+	//public:
+	//	MenuItemNode(const std::basic_string<charT> & text, int width, int height = ::GetSystemMetrics(SM_CYMENU));
 
-		Menu & getSubMenu(void);
+	//	Menu & getSubMenu(void);
 
-		const Menu & getSubMenu(void) const;
+	//	const Menu & getSubMenu(void) const;
 
-		void setCheck(bool checked);
+	//	void setCheck(bool checked);
 
-		bool getCheck(void) const;
+	//	bool getCheck(void) const;
 
-		void draw(t3d::DDSurface * surface, int x, int y) const;
-	};
+	//	void draw(t3d::DDSurface * surface, int x, int y) const;
+	//};
 
-	class MenuSystem : public Menu
-	{
-	protected:
-		typedef std::vector<Menu *> PMenuStack;
+	//class MenuSystem : public Menu
+	//{
+	//protected:
+	//	typedef std::vector<Menu *> PMenuStack;
 
-		PMenuStack m_menuStack;
+	//	PMenuStack m_menuStack;
 
-	public:
-		MenuSystem(int width);
+	//public:
+	//	MenuSystem(int width);
 
-		void selectMenuItemNode(size_t item_i);
+	//	void selectMenuItemNode(size_t item_i);
 
-		void onKeyRelease(UINT vkcode);
+	//	void onKeyRelease(UINT vkcode);
 
-		void draw(t3d::DDSurface * surface, int x, int y) const;
-	};
+	//	void draw(t3d::DDSurface * surface, int x, int y) const;
+	//};
 
-	typedef boost::shared_ptr<MenuSystem> MenuSystemPtr;
+	//typedef boost::shared_ptr<MenuSystem> MenuSystemPtr;
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Grid

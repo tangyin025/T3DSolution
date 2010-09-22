@@ -1,6 +1,7 @@
 
 #include "StdAfx.h"
 #include "MyWorld.h"
+#include "MyGameEx.h"
 
 MyWorld::MyWorld(void)
 	: my::World(256)
@@ -57,6 +58,21 @@ void MyWorld::startFrame(void)
 	my::World::startFrame();
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	MyGameStatePtr gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name);
+
+	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
+
+	t3d::Vec4<real> vrot = gameState->m_eulerCam->getRotation();
+
+	t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(keyboard, vrot.y, keyboard->isKeyDown(DIK_LSHIFT) ? 25 : 10);
+
+	if(!t3d::vec3IsZero(vvel))
+	{
+		m_character.body->addVelocity(vvel);
+
+		m_character.body->setAwake(true);
+	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
