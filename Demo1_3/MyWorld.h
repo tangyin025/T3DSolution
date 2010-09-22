@@ -41,9 +41,13 @@ public:
 
 	~MyWorld(void);
 
+	void startFrame(void);
+
 	void integrate(real duration);
 
 	unsigned generateContacts(my::Contact * contacts, unsigned limits);
+
+	void startFrameParticle(void);
 
 	void integrateParticle(real duration);
 

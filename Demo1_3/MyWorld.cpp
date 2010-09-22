@@ -52,6 +52,15 @@ MyWorld::~MyWorld(void)
 {
 }
 
+void MyWorld::startFrame(void)
+{
+	my::World::startFrame();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+}
+
 void MyWorld::integrate(real duration)
 {
 	my::World::integrate(duration);
@@ -79,6 +88,21 @@ unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
 	return used;
 }
 
+void MyWorld::startFrameParticle(void)
+{
+	my::ParticleWorld::startFrame();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	m_viewpoint.spring->setAnchor(m_character.body->getPosition());
+
+	m_viewpoint.cable->setAnchor(m_character.body->getPosition());
+
+	m_viewpoint.particle->setPosition(my::Vec4<real>(m_character.body->getPosition().x, m_viewpoint.particle->getPosition().y, m_character.body->getPosition().z));
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+}
+
 void MyWorld::integrateParticle(real duration)
 {
 	return my::ParticleWorld::integrate(duration);
@@ -93,7 +117,7 @@ void MyWorld::runPhysics(real duration)
 {
 	//my::World::runPhysics(duration);
 
-	my::World::startFrame();
+	startFrame();
 
 	my::World::registry.updateForces(duration);
 
@@ -109,17 +133,7 @@ void MyWorld::runPhysics(real duration)
 
 	//my::ParticleWorld::runPhysics(duration);
 
-	my::ParticleWorld::startFrame();
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	m_viewpoint.spring->setAnchor(m_character.body->getPosition());
-
-	m_viewpoint.cable->setAnchor(m_character.body->getPosition());
-
-	m_viewpoint.particle->setPosition(my::Vec4<real>(m_character.body->getPosition().x, m_viewpoint.particle->getPosition().y, m_character.body->getPosition().z));
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
+	startFrameParticle();
 
 	my::ParticleWorld::registry.updateForces(duration);
 
