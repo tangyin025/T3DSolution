@@ -468,358 +468,358 @@ namespace my
 		surface->releaseDC(hdc);
 	}
 
-	// /////////////////////////////////////////////////////////////////////////////////////
-	// MenuSystem
-	// /////////////////////////////////////////////////////////////////////////////////////
-
-	MenuItemArrow::MenuItemArrow(int width /*= ::GetSystemMetrics(SM_CYMENU)*/, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
-		: m_width(width)
-		, m_height(height)
-	{
-	}
-
-	void MenuItemArrow::setWidth(int width)
-	{
-		m_width = width;
-	}
-
-	int MenuItemArrow::getWidth(void) const
-	{
-		return m_width;
-	}
-
-	void MenuItemArrow::setHeight(int height)
-	{
-		m_height = height;
-	}
-
-	int MenuItemArrow::getHeight(void) const
-	{
-		return m_height;
-	}
-
-	void MenuItemArrow::draw(t3d::DDSurface * surface, int x, int y) const
-	{
-		CRect rect;
-		rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
-		rect.top = y + (m_height - ::GetSystemMetrics(SM_CYMENUCHECK)) / 2;
-		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
-		rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
-
-		HDC hdc = surface->getDC();
-
-		::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUARROW);
-
-		surface->releaseDC(hdc);
-	}
-
-	MenuItemCheck::MenuItemCheck(int width /*= ::GetSystemMetrics(SM_CYMENU)*/, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
-		: m_width(width)
-		, m_height(height)
-	{
-	}
-
-	void MenuItemCheck::setWidth(int width)
-	{
-		m_width = width;
-	}
-
-	int MenuItemCheck::getWidth(void) const
-	{
-		return m_width;
-	}
-
-	void MenuItemCheck::setHeight(int height)
-	{
-		m_height = height;
-	}
-
-	int MenuItemCheck::getHeight(void) const
-	{
-		return m_height;
-	}
-
-	void MenuItemCheck::draw(t3d::DDSurface * surface, int x, int y) const
-	{
-		CRect rect;
-		rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
-		rect.top = y + (m_height - ::GetSystemMetrics(SM_CYMENUCHECK)) / 2;
-		rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
-		rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
-
-		HDC hdc = surface->getDC();
-
-		::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUCHECK | DFCS_CHECKED);
-
-		surface->releaseDC(hdc);
-	}
-
-	MenuItem::MenuItem(const std::basic_string<charT> & text, int width, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
-		: m_arrow(height, height)
-		, m_check(height, height)
-		, m_text(text)
-		, m_width(width)
-		, m_height(height)
-	{
-	}
-
-	void MenuItem::setText(const std::basic_string<charT> & text)
-	{
-		m_text = text;
-	}
-
-	const std::basic_string<charT> & MenuItem::getText(void) const
-	{
-		return m_text;
-	}
-
-	void MenuItem::setWidth(int width)
-	{
-		m_width = width;
-	}
-
-	int MenuItem::getWidth(void) const
-	{
-		return m_width;
-	}
-
-	void MenuItem::setHeight(int height)
-	{
-		m_height = height;
-	}
-
-	int MenuItem::getHeight(void) const
-	{
-		return m_height;
-	}
-
-	void MenuItem::draw(t3d::DDSurface * surface, int x, int y, bool arrow /*= false*/, bool check /*= false*/) const
-	{
-		if(check)
-		{
-			m_check.draw(surface, x, y);
-		}
-
-		HDC hdc = surface->getDC();
-
-		::TextOut(hdc, x + m_check.getWidth(), y, m_text.c_str(), (int)m_text.length());
-
-		surface->releaseDC(hdc);
-
-		if(arrow)
-		{
-			m_arrow.draw(surface, x + getWidth() - m_arrow.getWidth(), y);
-		}
-	}
-
-	Menu::Menu(int width)
-		: m_width(width)
-	{
-	}
-
-	size_t Menu::createMenuItemNode(const std::basic_string<charT> & itemText, int itemHeight /*= ::GetSystemMetrics(SM_CYMENU)*/)
-	{
-		m_items.push_back(MenuItemNodePtr(new MenuItemNode(itemText, getWidth(), itemHeight)));
-
-		return m_items.size() - 1;
-	}
-
-	MenuItemNodePtr Menu::getMenuItemNode(size_t item_i) const
-	{
-		return m_items[item_i];
-	}
-
-	MenuItemNodePtr Menu::getMenuItemNode(const std::basic_string<charT> & itemText) const
-	{
-		MenuItemNodePtrList::const_iterator sub_item_iter = m_items.begin();
-		for(; sub_item_iter != m_items.end(); sub_item_iter++)
-		{
-			if(itemText == (*sub_item_iter)->getText())
-			{
-				return (*sub_item_iter);
-			}
-		}
-
-		_ASSERT(false);
-
-		return m_items.front();
-	}
-
-	size_t Menu::getMenuItemNodeCount(void) const
-	{
-		return m_items.size();
-	}
-
-	int Menu::getWidth(void) const
-	{
-		return m_width;
-	}
-
-	int Menu::getHeight(void) const
-	{
-		int height = 0;
-		MenuItemNodePtrList::const_iterator sub_item_iter = m_items.begin();
-		for(; sub_item_iter != m_items.end(); sub_item_iter++)
-		{
-			height += (*sub_item_iter)->getHeight();
-		}
-
-		return height;
-	}
-
-	void Menu::setCheckType(MenuCheckType checkType)
-	{
-		m_checkType = checkType;
-	}
-
-	Menu::MenuCheckType Menu::getCheckType(void) const
-	{
-		return m_checkType;
-	}
-
-	void Menu::singleCheckItemNode(size_t item_i)
-	{
-		_ASSERT(item_i < getMenuItemNodeCount());
-
-		_ASSERT(0 == getMenuItemNode(item_i)->getSubMenu().getMenuItemNodeCount());
-
-		size_t i = 0;
-		for(; i < getMenuItemNodeCount(); i++)
-		{
-			getMenuItemNode(i)->setCheck(false);
-		}
-
-		getMenuItemNode(item_i)->setCheck(true);
-	}
-
-	void Menu::draw(t3d::DDSurface * surface, int x, int y) const
-	{
-		size_t i = 0;
-		for(; i < getMenuItemNodeCount(); i++)
-		{
-			MenuItemNodePtr itemNode = getMenuItemNode(i);
-
-			itemNode->draw(surface, x, y);
-
-			y += itemNode->getHeight();
-		}
-	}
-
-	MenuItemNode::MenuItemNode(const std::basic_string<charT> & text, int width, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
-		: MenuItem(text, width, height)
-		, m_subMenu(width)
-		, m_checked(false)
-	{
-	}
-
-	Menu & MenuItemNode::getSubMenu(void)
-	{
-		return m_subMenu;
-	}
-
-	const Menu & MenuItemNode::getSubMenu(void) const
-	{
-		return m_subMenu;
-	}
-
-	void MenuItemNode::setCheck(bool checked)
-	{
-		m_checked = checked;
-	}
-
-	bool MenuItemNode::getCheck(void) const
-	{
-		return m_checked;
-	}
-
-	void MenuItemNode::draw(t3d::DDSurface * surface, int x, int y) const
-	{
-		MenuItem::draw(surface, x, y, 0 != m_subMenu.getMenuItemNodeCount(), getCheck());
-	}
-
-	MenuSystem::MenuSystem(int width)
-		: Menu(width)
-	{
-	}
-
-	void MenuSystem::selectMenuItemNode(size_t item_i)
-	{
-		_ASSERT(!m_menuStack.empty());
-
-		if(item_i < m_menuStack.back()->getMenuItemNodeCount())
-		{
-			if(0 != m_menuStack.back()->getMenuItemNode(item_i)->getSubMenu().getMenuItemNodeCount())
-			{
-				m_menuStack.push_back(&m_menuStack.back()->getMenuItemNode(item_i)->getSubMenu());
-			}
-			else if(Menu::SingleCheckType == m_menuStack.back()->getCheckType())
-			{
-				m_menuStack.back()->singleCheckItemNode(item_i);
-			}
-			else
-			{
-				m_menuStack.back()->getMenuItemNode(item_i)->setCheck(!m_menuStack.back()->getMenuItemNode(item_i)->getCheck());
-			}
-		}
-	}
-
-	void MenuSystem::onKeyRelease(UINT vkcode)
-	{
-		switch(vkcode)
-		{
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-			if(!m_menuStack.empty())
-			{
-				selectMenuItemNode(vkcode - '0');
-			}
-			break;
-
-		case VK_BACK:
-			if(!m_menuStack.empty())
-			{
-				m_menuStack.pop_back();
-			}
-			break;
-
-		case VK_OEM_3:
-			if(!m_menuStack.empty())
-			{
-				m_menuStack.clear();
-			}
-			else
-			{
-				m_menuStack.push_back(this);
-			}
-			break;
-		}
-	}
-
-	void MenuSystem::draw(t3d::DDSurface * surface, int x, int y) const
-	{
-		if(!m_menuStack.empty())
-		{
-			m_menuStack.back()->draw(surface, x, y);
-		}
-		else
-		{
-			HDC hdc = surface->getDC();
-
-			std::basic_string<charT> info = _T("[~] toggle menu");
-
-			::TextOut(hdc, x, y, info.c_str(), (int)info.length());
-
-			surface->releaseDC(hdc);
-		}
-	}
+	//// /////////////////////////////////////////////////////////////////////////////////////
+	//// MenuSystem
+	//// /////////////////////////////////////////////////////////////////////////////////////
+
+	//MenuItemArrow::MenuItemArrow(int width /*= ::GetSystemMetrics(SM_CYMENU)*/, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
+	//	: m_width(width)
+	//	, m_height(height)
+	//{
+	//}
+
+	//void MenuItemArrow::setWidth(int width)
+	//{
+	//	m_width = width;
+	//}
+
+	//int MenuItemArrow::getWidth(void) const
+	//{
+	//	return m_width;
+	//}
+
+	//void MenuItemArrow::setHeight(int height)
+	//{
+	//	m_height = height;
+	//}
+
+	//int MenuItemArrow::getHeight(void) const
+	//{
+	//	return m_height;
+	//}
+
+	//void MenuItemArrow::draw(t3d::DDSurface * surface, int x, int y) const
+	//{
+	//	CRect rect;
+	//	rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
+	//	rect.top = y + (m_height - ::GetSystemMetrics(SM_CYMENUCHECK)) / 2;
+	//	rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
+	//	rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
+
+	//	HDC hdc = surface->getDC();
+
+	//	::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUARROW);
+
+	//	surface->releaseDC(hdc);
+	//}
+
+	//MenuItemCheck::MenuItemCheck(int width /*= ::GetSystemMetrics(SM_CYMENU)*/, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
+	//	: m_width(width)
+	//	, m_height(height)
+	//{
+	//}
+
+	//void MenuItemCheck::setWidth(int width)
+	//{
+	//	m_width = width;
+	//}
+
+	//int MenuItemCheck::getWidth(void) const
+	//{
+	//	return m_width;
+	//}
+
+	//void MenuItemCheck::setHeight(int height)
+	//{
+	//	m_height = height;
+	//}
+
+	//int MenuItemCheck::getHeight(void) const
+	//{
+	//	return m_height;
+	//}
+
+	//void MenuItemCheck::draw(t3d::DDSurface * surface, int x, int y) const
+	//{
+	//	CRect rect;
+	//	rect.left = x + (m_width - ::GetSystemMetrics(SM_CXMENUCHECK)) / 2;
+	//	rect.top = y + (m_height - ::GetSystemMetrics(SM_CYMENUCHECK)) / 2;
+	//	rect.right = rect.left + ::GetSystemMetrics(SM_CXMENUCHECK);
+	//	rect.bottom = rect.top + ::GetSystemMetrics(SM_CYMENUCHECK);
+
+	//	HDC hdc = surface->getDC();
+
+	//	::DrawFrameControl(hdc, &rect, DFC_MENU, DFCS_MENUCHECK | DFCS_CHECKED);
+
+	//	surface->releaseDC(hdc);
+	//}
+
+	//MenuItem::MenuItem(const std::basic_string<charT> & text, int width, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
+	//	: m_arrow(height, height)
+	//	, m_check(height, height)
+	//	, m_text(text)
+	//	, m_width(width)
+	//	, m_height(height)
+	//{
+	//}
+
+	//void MenuItem::setText(const std::basic_string<charT> & text)
+	//{
+	//	m_text = text;
+	//}
+
+	//const std::basic_string<charT> & MenuItem::getText(void) const
+	//{
+	//	return m_text;
+	//}
+
+	//void MenuItem::setWidth(int width)
+	//{
+	//	m_width = width;
+	//}
+
+	//int MenuItem::getWidth(void) const
+	//{
+	//	return m_width;
+	//}
+
+	//void MenuItem::setHeight(int height)
+	//{
+	//	m_height = height;
+	//}
+
+	//int MenuItem::getHeight(void) const
+	//{
+	//	return m_height;
+	//}
+
+	//void MenuItem::draw(t3d::DDSurface * surface, int x, int y, bool arrow /*= false*/, bool check /*= false*/) const
+	//{
+	//	if(check)
+	//	{
+	//		m_check.draw(surface, x, y);
+	//	}
+
+	//	HDC hdc = surface->getDC();
+
+	//	::DrawText(hdc, m_text.c_str(), (int)m_text.length(), &CRect(x, y, x + m_width, y + m_height), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+
+	//	surface->releaseDC(hdc);
+
+	//	if(arrow)
+	//	{
+	//		m_arrow.draw(surface, x + getWidth() - m_arrow.getWidth(), y);
+	//	}
+	//}
+
+	//Menu::Menu(int width)
+	//	: m_width(width)
+	//{
+	//}
+
+	//size_t Menu::createMenuItemNode(const std::basic_string<charT> & itemText, int itemHeight /*= ::GetSystemMetrics(SM_CYMENU)*/)
+	//{
+	//	m_items.push_back(MenuItemNodePtr(new MenuItemNode(itemText, getWidth(), itemHeight)));
+
+	//	return m_items.size() - 1;
+	//}
+
+	//MenuItemNodePtr Menu::getMenuItemNode(size_t item_i) const
+	//{
+	//	return m_items[item_i];
+	//}
+
+	//MenuItemNodePtr Menu::getMenuItemNode(const std::basic_string<charT> & itemText) const
+	//{
+	//	MenuItemNodePtrList::const_iterator sub_item_iter = m_items.begin();
+	//	for(; sub_item_iter != m_items.end(); sub_item_iter++)
+	//	{
+	//		if(itemText == (*sub_item_iter)->getText())
+	//		{
+	//			return (*sub_item_iter);
+	//		}
+	//	}
+
+	//	_ASSERT(false);
+
+	//	return m_items.front();
+	//}
+
+	//size_t Menu::getMenuItemNodeCount(void) const
+	//{
+	//	return m_items.size();
+	//}
+
+	//int Menu::getWidth(void) const
+	//{
+	//	return m_width;
+	//}
+
+	//int Menu::getHeight(void) const
+	//{
+	//	int height = 0;
+	//	MenuItemNodePtrList::const_iterator sub_item_iter = m_items.begin();
+	//	for(; sub_item_iter != m_items.end(); sub_item_iter++)
+	//	{
+	//		height += (*sub_item_iter)->getHeight();
+	//	}
+
+	//	return height;
+	//}
+
+	//void Menu::setCheckType(MenuCheckType checkType)
+	//{
+	//	m_checkType = checkType;
+	//}
+
+	//Menu::MenuCheckType Menu::getCheckType(void) const
+	//{
+	//	return m_checkType;
+	//}
+
+	//void Menu::singleCheckItemNode(size_t item_i)
+	//{
+	//	_ASSERT(item_i < getMenuItemNodeCount());
+
+	//	_ASSERT(0 == getMenuItemNode(item_i)->getSubMenu().getMenuItemNodeCount());
+
+	//	size_t i = 0;
+	//	for(; i < getMenuItemNodeCount(); i++)
+	//	{
+	//		getMenuItemNode(i)->setCheck(false);
+	//	}
+
+	//	getMenuItemNode(item_i)->setCheck(true);
+	//}
+
+	//void Menu::draw(t3d::DDSurface * surface, int x, int y) const
+	//{
+	//	size_t i = 0;
+	//	for(; i < getMenuItemNodeCount(); i++)
+	//	{
+	//		MenuItemNodePtr itemNode = getMenuItemNode(i);
+
+	//		itemNode->draw(surface, x, y);
+
+	//		y += itemNode->getHeight();
+	//	}
+	//}
+
+	//MenuItemNode::MenuItemNode(const std::basic_string<charT> & text, int width, int height /*= ::GetSystemMetrics(SM_CYMENU)*/)
+	//	: MenuItem(text, width, height)
+	//	, m_subMenu(width)
+	//	, m_checked(false)
+	//{
+	//}
+
+	//Menu & MenuItemNode::getSubMenu(void)
+	//{
+	//	return m_subMenu;
+	//}
+
+	//const Menu & MenuItemNode::getSubMenu(void) const
+	//{
+	//	return m_subMenu;
+	//}
+
+	//void MenuItemNode::setCheck(bool checked)
+	//{
+	//	m_checked = checked;
+	//}
+
+	//bool MenuItemNode::getCheck(void) const
+	//{
+	//	return m_checked;
+	//}
+
+	//void MenuItemNode::draw(t3d::DDSurface * surface, int x, int y) const
+	//{
+	//	MenuItem::draw(surface, x, y, 0 != m_subMenu.getMenuItemNodeCount(), getCheck());
+	//}
+
+	//MenuSystem::MenuSystem(int width)
+	//	: Menu(width)
+	//{
+	//}
+
+	//void MenuSystem::selectMenuItemNode(size_t item_i)
+	//{
+	//	_ASSERT(!m_menuStack.empty());
+
+	//	if(item_i < m_menuStack.back()->getMenuItemNodeCount())
+	//	{
+	//		if(0 != m_menuStack.back()->getMenuItemNode(item_i)->getSubMenu().getMenuItemNodeCount())
+	//		{
+	//			m_menuStack.push_back(&m_menuStack.back()->getMenuItemNode(item_i)->getSubMenu());
+	//		}
+	//		else if(Menu::SingleCheckType == m_menuStack.back()->getCheckType())
+	//		{
+	//			m_menuStack.back()->singleCheckItemNode(item_i);
+	//		}
+	//		else
+	//		{
+	//			m_menuStack.back()->getMenuItemNode(item_i)->setCheck(!m_menuStack.back()->getMenuItemNode(item_i)->getCheck());
+	//		}
+	//	}
+	//}
+
+	//void MenuSystem::onKeyRelease(UINT vkcode)
+	//{
+	//	switch(vkcode)
+	//	{
+	//	case '0':
+	//	case '1':
+	//	case '2':
+	//	case '3':
+	//	case '4':
+	//	case '5':
+	//	case '6':
+	//	case '7':
+	//	case '8':
+	//	case '9':
+	//		if(!m_menuStack.empty())
+	//		{
+	//			selectMenuItemNode(vkcode - '0');
+	//		}
+	//		break;
+
+	//	case VK_BACK:
+	//		if(!m_menuStack.empty())
+	//		{
+	//			m_menuStack.pop_back();
+	//		}
+	//		break;
+
+	//	case VK_OEM_3:
+	//		if(!m_menuStack.empty())
+	//		{
+	//			m_menuStack.clear();
+	//		}
+	//		else
+	//		{
+	//			m_menuStack.push_back(this);
+	//		}
+	//		break;
+	//	}
+	//}
+
+	//void MenuSystem::draw(t3d::DDSurface * surface, int x, int y) const
+	//{
+	//	if(!m_menuStack.empty())
+	//	{
+	//		m_menuStack.back()->draw(surface, x, y);
+	//	}
+	//	else
+	//	{
+	//		HDC hdc = surface->getDC();
+
+	//		std::basic_string<charT> info = _T("[~] toggle menu");
+
+	//		::TextOut(hdc, x, y, info.c_str(), (int)info.length());
+
+	//		surface->releaseDC(hdc);
+	//	}
+	//}
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Grid

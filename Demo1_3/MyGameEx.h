@@ -24,6 +24,7 @@ public:
 
 class MyGame
 	: public my::Game
+	, public my::ErrorListener
 	, public MyStateChart
 {
 	friend class MyLoadState;
@@ -49,6 +50,9 @@ public:
 		return * getSingletonPtr();
 	}
 
+protected:
+	my::ConsoleSimulatorPtr m_consoleSim;
+
 public:
 	MyGame(void) throw();
 
@@ -58,6 +62,8 @@ public:
 	my::WindowPtr newWindow(void);
 
 	bool onInit(const my::Config & cfg);
+
+	void onReport(const std::basic_string<charT> & info);
 
 	bool onFrame(void);
 
@@ -95,10 +101,6 @@ protected:
 
 	my::CriticalSection m_exitFlagLock;
 
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
 public:
 	void setExitFlag(bool exitFlag = true)
 	{
@@ -134,11 +136,12 @@ class MyGameState
 {
 	friend class MyLoadState;
 
+	friend class MyWorld;
+
 public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	my::FPSManagerPtr m_fpsMgr;

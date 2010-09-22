@@ -45,9 +45,14 @@ my::WindowPtr MyGame::newWindow(void)
 
 bool MyGame::onInit(const my::Config & cfg)
 {
+	// create console simulate
+	m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(5));
+
+	// set self as error listener
+	my::ErrorReporter::getSingleton().addErrorListener(this);
+
 	// predefine config values
-	const int cfgWidth = m_rc->getSurfaceWidth();
-	const int cfgHeight = m_rc->getSurfaceHeight();
+	const CSize screen(m_rc->getSurfaceWidth(), m_rc->getSurfaceHeight());
 
 	// calculate aspect ratio
 	real aspect_ratio;
@@ -55,7 +60,7 @@ bool MyGame::onInit(const my::Config & cfg)
 	{
 	default:
 		_ASSERT(ASPECT_RATIO_STRETCHED == cfg.getInt(_T("aspectratio")));
-		aspect_ratio = (real)cfgWidth / cfgHeight;
+		aspect_ratio = (real)screen.cx / screen.cy;
 		break;
 
 	case ASPECT_RATIO_STANDARD:
@@ -70,21 +75,21 @@ bool MyGame::onInit(const my::Config & cfg)
 	// adjust clipper region by aspect ratio
 	LONG lWidth, lHeight;
 	CRect clipper;
-	if(aspect_ratio < (real)cfgWidth / (real)cfgHeight)
+	if(aspect_ratio < (real)screen.cx / (real)screen.cy)
 	{
-		lHeight = cfgHeight;
+		lHeight = screen.cy;
 		lWidth = (LONG)(lHeight * aspect_ratio + .5f);
-		clipper.left = (cfgWidth - lWidth) / 2;
+		clipper.left = (screen.cx - lWidth) / 2;
 		clipper.top = 0;
 		clipper.right = clipper.left + lWidth;
 		clipper.bottom = clipper.top + lHeight;
 	}
 	else
 	{
-		lWidth = cfgWidth;
+		lWidth = screen.cx;
 		lHeight = (LONG)(lWidth / aspect_ratio + .5f);
 		clipper.left = 0;
-		clipper.top = (cfgHeight - lHeight) / 2;
+		clipper.top = (screen.cy - lHeight) / 2;
 		clipper.right = clipper.left + lWidth;
 		clipper.bottom = clipper.top + lHeight;
 	}
@@ -112,6 +117,11 @@ bool MyGame::onInit(const my::Config & cfg)
 	return my::Game::onInit(cfg);
 }
 
+void MyGame::onReport(const std::basic_string<charT> & info)
+{
+	m_consoleSim->report(info);
+}
+
 bool MyGame::onFrame(void)
 {
 	// get current state and do frame
@@ -120,8 +130,16 @@ bool MyGame::onFrame(void)
 		return false;
 	}
 
-	// call default parent onFrame
-	return my::Game::onFrame();
+	//// call default parent onFrame
+	//if(!my::Game::onFrame())
+	//{
+	//	return false;
+	//}
+
+	// draw console simulator
+	m_consoleSim->draw(m_backSurface.get(), 10, 100);
+
+	return true;
 }
 
 void MyGame::onShutdown(void)
@@ -296,6 +314,12 @@ DWORD MyLoadState::onProc(void)
 		//	}
 		//	::Sleep(33);
 		//}
+
+		// //////////////////////////////////////////////////////////////////////////////////////////
+
+		::Sleep(1000);
+
+		// //////////////////////////////////////////////////////////////////////////////////////////
 	}
 	catch(t3d::Exception & e)
 	{
@@ -408,9 +432,6 @@ bool MyGameState::doFrame(void)
 	rc->setCameraNearZ(1);
 	rc->setCameraFarZ(10000);
 
-	// step physics world
-	m_world->runPhysics(elapsedTime);
-
 	// update euler cameras position and orientation by user input
 	if(keyboard->isKeyDown(DIK_LCONTROL))
 	{
@@ -419,6 +440,10 @@ bool MyGameState::doFrame(void)
 	else
 	{
 		m_eulerCam->addRotation(my::EulerCamera::buildRotOffset(MyGame::getSingleton().m_mouse.get()));
+
+		// step physics world
+		m_world->runPhysics(elapsedTime);
+
 		t3d::Mat4<real> matRotation = mat3RotXYZ(m_eulerCam->getRotation());
 		t3d::Mat4<real> matPosition = t3d::mat3Mov(my::Vec4<real>(0, 0, -30)) * matRotation * t3d::mat3Mov(m_world->m_viewpoint.particle->getPosition());
 		m_eulerCam->setPosition(my::Vec4<real>::ZERO * matPosition);
