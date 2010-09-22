@@ -6,25 +6,46 @@ MyWorld::MyWorld(void)
 	: my::World(256)
 	, my::ParticleWorld(256)
 {
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	// initialize ground plane attribute
 	m_groundPlane.normal = my::Vec4<real>::UNIT_Y;
 	m_groundPlane.distance = 0;
 
 	// create rigid body for character
-	m_characterBody = my::RigidBodyPtr(new my::RigidBody());
-	m_characterBody->setMass(my::calculateSphereMass<real>(5, 1));
-	m_characterBody->setInertialTensor(my::calculateSphereInertiaTensor<real>(5, m_characterBody->getMass()));
-	m_characterBody->setDamping(0.95f);
-	m_characterBody->setAngularDamping(0);
-	m_characterBody->setPosition(my::Vec4<real>(0, 10, 0));
-	m_characterBody->setAcceleration(my::Vec4<real>(0, -9.8 * 10, 0));
-	m_characterBody->setSleepEpsilon(10.4f); // ***
-	m_characterBody->setAwake(true); // must be call after setSleepEpsilon
+	m_character.body = my::RigidBodyPtr(new my::RigidBody());
+	m_character.body->setMass(my::calculateSphereMass<real>(5, 1));
+	m_character.body->setInertialTensor(my::calculateSphereInertiaTensor<real>(5, m_character.body->getMass()));
+	m_character.body->setDamping(0.95f);
+	m_character.body->setAngularDamping(0);
+	m_character.body->setPosition(my::Vec4<real>(0, 10, 0));
+	m_character.body->setAcceleration(my::Vec4<real>(0, -9.8 * 10, 0));
+	m_character.body->setSleepEpsilon(10.4f); // ***
+	m_character.body->setAwake(true); // must be call after setSleepEpsilon
 
 	// add rigid body to physical world
-	m_characterSphere.setRigidBody(m_characterBody.get());
-	m_characterSphere.setRadius(5);
-	bodyList.push_back(m_characterBody);
+	m_character.sphere.setRigidBody(m_character.body.get());
+	m_character.sphere.setRadius(5);
+	bodyList.push_back(m_character.body);
+
+	// create particle for camera view at character head
+	m_viewpoint.particle = my::ParticlePtr(new my::Particle());
+	m_viewpoint.particle->setMass(1);
+	m_viewpoint.particle->setPosition(t3d::vec3Add(m_character.body->getPosition(), my::Vec4<real>(0, 10, 0)));
+	m_viewpoint.particle->setVelocity(my::Vec4<real>::ZERO);
+	m_viewpoint.particle->setDamping(0.00001f); // ***
+	m_viewpoint.particle->setAcceleration(my::Vec4<real>::ZERO);
+	particleList.push_back(m_viewpoint.particle);
+
+	// create particle spring for view point
+	m_viewpoint.spring = my::ParticleAnchoredSpringPtr(new my::ParticleAnchoredSpring(m_character.body->getPosition(), 100, 10)); // ***
+	my::ParticleWorld::registry.add(m_viewpoint.particle.get(), m_viewpoint.spring.get());
+
+	// create particle spring cable
+	m_viewpoint.cable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_viewpoint.particle.get(), m_character.body->getPosition(), 13, 0.3f));
+	particleContactGeneratorList.push_back(m_viewpoint.cable);
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 MyWorld::~MyWorld(void)
@@ -35,14 +56,18 @@ void MyWorld::integrate(real duration)
 {
 	my::World::integrate(duration);
 
-	m_characterSphere.calculateInternals();
+	m_character.sphere.calculateInternals();
 }
 
 unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
 {
 	unsigned used = 0;
 
-	used += my::CollisionDetector::sphereAndHalfSpace(m_characterSphere, m_groundPlane.normal, m_groundPlane.distance, &contacts[used], limits - used);
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	used += my::CollisionDetector::sphereAndHalfSpace(m_character.sphere, m_groundPlane.normal, m_groundPlane.distance, &contacts[used], limits - used);
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	for(unsigned i = 0; i < used; i++)
 	{
@@ -85,6 +110,16 @@ void MyWorld::runPhysics(real duration)
 	//my::ParticleWorld::runPhysics(duration);
 
 	my::ParticleWorld::startFrame();
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	m_viewpoint.spring->setAnchor(m_character.body->getPosition());
+
+	m_viewpoint.cable->setAnchor(m_character.body->getPosition());
+
+	m_viewpoint.particle->setPosition(my::Vec4<real>(m_character.body->getPosition().x, m_viewpoint.particle->getPosition().y, m_character.body->getPosition().z));
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	my::ParticleWorld::registry.updateForces(duration);
 

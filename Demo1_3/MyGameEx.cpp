@@ -173,7 +173,7 @@ void MyLoadState::enterState(void)
 
 	//pushJob(MyJobPtr(new SimpleCreateObjJob<my::EulerCamera>(gameState->m_eulerCam)));
 
-	//pushJob(MyJobPtr(new SimpleCreateObjJob<MyWorld>(gameState->m_phyWorld)));
+	//pushJob(MyJobPtr(new SimpleCreateObjJob<MyWorld>(gameState->m_world)));
 
 	//// //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -344,12 +344,12 @@ void MyGameState::enterState(void)
 
 	// create eular camera
 	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
-	m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
-	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
+	//m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
+	//m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
 	m_eulerCam->reset();
 
 	// create physical world
-	m_phyWorld = MyWorldPtr(new MyWorld());
+	m_world = MyWorldPtr(new MyWorld());
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -408,33 +408,49 @@ bool MyGameState::doFrame(void)
 	rc->setCameraNearZ(1);
 	rc->setCameraFarZ(10000);
 
+	// step physics world
+	m_world->runPhysics(elapsedTime);
+
 	// update euler cameras position and orientation by user input
-	m_eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
+	if(keyboard->isKeyDown(DIK_LCONTROL))
+	{
+		m_eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
+	}
+	else
+	{
+		m_eulerCam->addRotation(my::EulerCamera::buildRotOffset(MyGame::getSingleton().m_mouse.get()));
+		t3d::Mat4<real> matRotation = mat3RotXYZ(m_eulerCam->getRotation());
+		t3d::Mat4<real> matPosition = t3d::mat3Mov(my::Vec4<real>(0, 0, -30)) * matRotation * t3d::mat3Mov(m_world->m_viewpoint.particle->getPosition());
+		m_eulerCam->setPosition(my::Vec4<real>::ZERO * matPosition);
+	}
 	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);
-	//l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
+	l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
 	rc->clearLightList();
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
 
 	// set render context material
-	rc->setAmbient(my::Color::WHITE);
-	rc->setDiffuse(my::Color::WHITE);
+	rc->setAmbient(my::Color::YELLOW);
+	rc->setDiffuse(my::Color::YELLOW);
 
 	// draw default grid, with use to test distance of the scene
 	m_grid->drawZBufferRW(rc);
 
-	// step physics world
-	m_phyWorld->runPhysics(elapsedTime);
-
 	// draw character body
 	drawSphereWireZBufferRW(
 		rc,
-		m_phyWorld->m_characterSphere.getRadius(),
-		m_phyWorld->m_characterBody->getAwake() ? my::Color::RED : t3d::vec3Mul(my::Color::RED, 0.7f),
-		m_phyWorld->m_characterBody->getTransform());
+		m_world->m_character.sphere.getRadius(),
+		m_world->m_character.body->getAwake() ? my::Color::RED : t3d::vec3Mul(my::Color::RED, 0.7f),
+		m_world->m_character.body->getTransform());
+
+	// draw viewpoint particle
+	drawSphereGouraudZBufferRW(
+		rc,
+		1,
+		t3d::mat3Mov(m_world->m_viewpoint.particle->getPosition()));
 
 	// general information output
 	std::basic_string<charT> strTmp;

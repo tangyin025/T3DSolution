@@ -255,6 +255,17 @@ namespace my
 		real restLength;
 
 	public:
+		void setAnchor(const t3d::Vec4<real> & _anchor)
+		{
+			anchor = _anchor;
+		}
+
+		const t3d::Vec4<real> & getAnchor(void) const
+		{
+			return anchor;
+		}
+
+	public:
 		ParticleAnchoredSpring(const t3d::Vec4<real> & _anchor, real _springConstant, real _restLength);
 
 		void updateForce(Particle * particle, real duration);
@@ -295,6 +306,17 @@ namespace my
 		real springConstant;
 
 		real restLength;
+
+	public:
+		void setAnchor(const t3d::Vec4<real> & _anchor)
+		{
+			anchor = _anchor;
+		}
+
+		const t3d::Vec4<real> & getAnchor(void) const
+		{
+			return anchor;
+		}
 
 	public:
 		ParticleAnchoredBungee(const t3d::Vec4<real> & _anchor, real _springConstant, real _restLength);
@@ -339,6 +361,17 @@ namespace my
 		real damping;
 
 	public:
+		void setAnchor(const t3d::Vec4<real> & _anchor)
+		{
+			anchor = _anchor;
+		}
+
+		const t3d::Vec4<real> & getAnchor(void) const
+		{
+			return anchor;
+		}
+
+	public:
 		ParticleFakeSpring(const t3d::Vec4<real> & _anchor, real _springConstant, real _damping);
 
 		void updateForce(Particle * particle, real duration);
@@ -352,8 +385,6 @@ namespace my
 
 	class ParticleContact
 	{
-		friend class ParticleContactResolver;
-
 	public:
 		Particle * particles[2];
 
@@ -363,7 +394,7 @@ namespace my
 
 		real penetration;
 
-	protected:
+	public:
 		void resolve(real duration);
 
 		real calculateSeparatingVelocity(void) const;
@@ -419,7 +450,7 @@ namespace my
 
 	class ParticleLink : public ParticleContactGenerator
 	{
-	public:
+	protected:
 		Particle * particles[2];
 
 	public:
@@ -437,7 +468,7 @@ namespace my
 
 	class ParticleCable : public ParticleLink
 	{
-	public:
+	protected:
 		real maxLength;
 
 		real restitution;
@@ -456,7 +487,7 @@ namespace my
 
 	class ParticleRod : public ParticleLink
 	{
-	public:
+	protected:
 		real length;
 
 	public:
@@ -473,10 +504,21 @@ namespace my
 
 	class ParticleConstraint : public ParticleContactGenerator
 	{
-	public:
+	protected:
 		Particle * particle;
 
 		t3d::Vec4<real> anchor;
+
+	public:
+		void setAnchor(const t3d::Vec4<real> & _anchor)
+		{
+			anchor = _anchor;
+		}
+
+		const t3d::Vec4<real> & getAnchor(void) const
+		{
+			return anchor;
+		}
 
 	public:
 		ParticleConstraint(Particle * _particle, const my::Vec4<real> & _anchor);
@@ -493,7 +535,7 @@ namespace my
 
 	class ParticleCableConstraint : public ParticleConstraint
 	{
-	public:
+	protected:
 		real maxLength;
 
 		real restitution;
@@ -512,7 +554,7 @@ namespace my
 
 	class ParticleRodConstraint : public ParticleConstraint
 	{
-	public:
+	protected:
 		real length;
 
 	public:
@@ -1048,8 +1090,6 @@ namespace my
 
 	class Contact
 	{
-		friend class ContactResolver;
-
 	public:
 		RigidBody * bodys[2];
 
@@ -1063,7 +1103,6 @@ namespace my
 
 		real penetration;
 
-	//protected:
 	public:
 		t3d::Mat4<real> contactToWorld;
 
@@ -1073,7 +1112,6 @@ namespace my
 
 		t3d::Vec4<real> relativeContactPositions[2];
 
-	//protected:
 	public:
 		void swapBodies(void);
 
@@ -1147,24 +1185,25 @@ namespace my
 			unsigned numContacts,
 			real duration);
 
-		//void _updateContactPenetration(
-		//	Contact & contact,
-		//	const t3d::Vec4<real> & relativeContactPosition,
-		//	const t3d::Vec4<real> & linearChange,
-		//	const t3d::Vec4<real> & angularChange,
-		//	unsigned bodyIndex);
+		static void _updateContactPenetration(
+			Contact & contact,
+			const t3d::Vec4<real> & relativeContactPosition,
+			const t3d::Vec4<real> & linearChange,
+			const t3d::Vec4<real> & angularChange,
+			unsigned bodyIndex);
 
 		void adjustPositions(
 			Contact * contacts,
 			unsigned numContacts,
 			real duration);
 
-		//void _updateContactVelocity(
-		//	Contact & contact,
-		//	const t3d::Vec4<real> & relativeContactPosition,
-		//	const t3d::Vec4<real> & velocityChange,
-		//	const t3d::Vec4<real> & rotationChange,
-		//	real duration);
+		static void _updateContactVelocity(
+			Contact & contact,
+			const t3d::Vec4<real> & relativeContactPosition,
+			const t3d::Vec4<real> & velocityChange,
+			const t3d::Vec4<real> & rotationChange,
+			unsigned bodyIndex,
+			real duration);
 
 		void adjustVelocities(
 			Contact * contacts,
@@ -1186,8 +1225,7 @@ namespace my
 
 	class World
 	{
-	//protected:
-	public:
+	protected:
 		RigidBodyPtrList bodyList;
 
 		ForceRegistry registry;
