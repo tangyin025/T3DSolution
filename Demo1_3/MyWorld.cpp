@@ -71,6 +71,29 @@ void MyWorld::startFrame(void)
 	{
 		m_character.body->addVelocity(vvel);
 
+		t3d::Vec4<real> vdir = my::Vec4<real>::UNIT_Z * m_character.body->getRotationTransform();
+
+		t3d::Vec4<real> vcro = t3d::vec3Cross(vdir, vvel);
+
+		real costheta = t3d::vec3CosTheta(vdir, t3d::vec3Normalize(vvel));
+
+		if(!IS_ZERO_FLOAT(t3d::vec3LengthSquare(vcro)))
+		{
+			real angle = std::max(DEG_TO_RAD(-10), std::min(DEG_TO_RAD(10), acos(costheta)));
+
+			t3d::Vec4<real> axis = t3d::vec3Normalize(vcro);
+
+			m_character.body->setOrientation(m_character.body->getOrientation() * t3d::buildQuatFromAngleAxis(angle, axis));
+		}
+		else if(costheta < 0)
+		{
+			real angle = DEG_TO_RAD(10);
+
+			t3d::Vec4<real> axis = my::Vec4<real>::UNIT_Y;
+
+			m_character.body->setOrientation(m_character.body->getOrientation() * t3d::buildQuatFromAngleAxis(angle, axis));
+		}
+
 		m_character.body->setAwake(true);
 	}
 

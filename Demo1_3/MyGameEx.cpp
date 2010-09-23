@@ -311,7 +311,7 @@ DWORD MyLoadState::onProc(void)
 
 		// //////////////////////////////////////////////////////////////////////////////////////////
 
-		::Sleep(1000);
+		//::Sleep(1000);
 
 		// //////////////////////////////////////////////////////////////////////////////////////////
 	}
@@ -470,6 +470,14 @@ bool MyGameState::doFrame(void)
 		rc,
 		1,
 		t3d::mat3Mov(m_world->m_viewpoint.particle->getPosition()));
+
+	// draw character direction
+	drawLinePointAndNormalZBufferRW(
+		rc,
+		my::Vec4<real>::ZERO,
+		my::Vec4<real>(0, 0, 10),
+		my::Color::BLUE,
+		m_world->m_character.body->getTransform());
 
 	// general information output
 	std::basic_string<charT> strTmp;
