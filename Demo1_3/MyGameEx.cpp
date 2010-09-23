@@ -46,7 +46,7 @@ my::WindowPtr MyGame::newWindow(void)
 bool MyGame::onInit(const my::Config & cfg)
 {
 	// create console simulate
-	m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(5));
+	m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
 
 	// set self as error listener
 	my::ErrorReporter::getSingleton().addErrorListener(this);
@@ -130,14 +130,8 @@ bool MyGame::onFrame(void)
 		return false;
 	}
 
-	//// call default parent onFrame
-	//if(!my::Game::onFrame())
-	//{
-	//	return false;
-	//}
-
 	// draw console simulator
-	m_consoleSim->draw(m_backSurface.get(), 10, 100);
+	m_consoleSim->draw(m_backSurface.get(), 10, 10);
 
 	return true;
 }

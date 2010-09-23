@@ -65,7 +65,7 @@ void MyWorld::startFrame(void)
 
 	t3d::Vec4<real> vrot = gameState->m_eulerCam->getRotation();
 
-	t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(keyboard, vrot.y, keyboard->isKeyDown(DIK_LSHIFT) ? 25 : 10);
+	t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(keyboard, vrot.y, keyboard->isKeyDown(DIK_LSHIFT) ? 20 : 10);
 
 	if(!t3d::vec3IsZero(vvel))
 	{
