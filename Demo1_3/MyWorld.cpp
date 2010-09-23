@@ -56,7 +56,10 @@ MyWorld::~MyWorld(void)
 void MyWorld::startFrame(void)
 {
 	my::World::startFrame();
+}
 
+void MyWorld::integrate(real duration)
+{
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	MyGameStatePtr gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name);
@@ -65,11 +68,11 @@ void MyWorld::startFrame(void)
 
 	t3d::Vec4<real> vrot = gameState->m_eulerCam->getRotation();
 
-	t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(keyboard, vrot.y, keyboard->isKeyDown(DIK_LSHIFT) ? 20 : 10);
+	t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(keyboard, vrot.y, keyboard->isKeyDown(DIK_LSHIFT) ? 90 : 30);
 
 	if(!t3d::vec3IsZero(vvel))
 	{
-		m_character.body->addVelocity(vvel);
+		m_character.body->setVelocity(my::Vec4<real>(vvel.x, m_character.body->getVelocity().y, vvel.z));
 
 		t3d::Vec4<real> vdir = my::Vec4<real>::UNIT_Z * m_character.body->getRotationTransform();
 
@@ -79,7 +82,7 @@ void MyWorld::startFrame(void)
 
 		if(!IS_ZERO_FLOAT(t3d::vec3LengthSquare(vcro)))
 		{
-			real angle = std::max(DEG_TO_RAD(-10), std::min(DEG_TO_RAD(10), acos(costheta)));
+			real angle = std::max(DEG_TO_RAD(-360 * duration), std::min(DEG_TO_RAD(360 * duration), acos(costheta)));
 
 			t3d::Vec4<real> axis = t3d::vec3Normalize(vcro);
 
@@ -98,10 +101,7 @@ void MyWorld::startFrame(void)
 	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
-}
 
-void MyWorld::integrate(real duration)
-{
 	my::World::integrate(duration);
 
 	m_character.sphere.calculateInternals();
