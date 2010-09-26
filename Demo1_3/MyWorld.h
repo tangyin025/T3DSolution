@@ -8,7 +8,7 @@ class MyWorld
 public:
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	struct
+	struct _Plane
 	{
 		my::Vec4<t3d::real> normal;
 
@@ -16,7 +16,7 @@ public:
 	}
 	m_groundPlane;
 
-	struct
+	struct _Character
 	{
 		my::RigidBodyPtr body;
 
@@ -24,7 +24,7 @@ public:
 	}
 	m_character;
 
-	struct
+	struct _Viewpoint
 	{
 		my::ParticlePtr particle;
 
@@ -33,6 +33,12 @@ public:
 		my::ParticleCableConstraintPtr cable;
 	}
 	m_viewpoint;
+
+	typedef std::vector<my::CollisionBox> CollisionBoxList;
+
+	CollisionBoxList m_boxList;
+
+	my::RigidBodyPtrList m_boxBodyList;
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 

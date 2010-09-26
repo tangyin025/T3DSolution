@@ -84,8 +84,8 @@ namespace my
 
 	CollisionPrimitive::CollisionPrimitive(
 		RigidBody * _body,
-		const t3d::Mat4<real> & _offset,
-		const t3d::Mat4<real> & _rotationOffset)
+		const t3d::Mat4<real> & _offset /*= my::Mat4<real>::IDENTITY*/,
+		const t3d::Mat4<real> & _rotationOffset /*= my::Mat4<real>::IDENTITY*/)
 		: body(_body)
 		, offset(_offset)
 		, rotationOffset(_rotationOffset)
@@ -112,8 +112,8 @@ namespace my
 	CollisionSphere::CollisionSphere(
 		real _radius,
 		RigidBody * _body,
-		const t3d::Mat4<real> & _offset,
-		const t3d::Mat4<real> & _rotationOffset)
+		const t3d::Mat4<real> & _offset /*= my::Mat4<real>::IDENTITY*/,
+		const t3d::Mat4<real> & _rotationOffset /*= my::Mat4<real>::IDENTITY*/)
 		: CollisionPrimitive(_body, _offset, _rotationOffset)
 		, radius(_radius)
 	{
@@ -132,8 +132,8 @@ namespace my
 	CollisionBox::CollisionBox(
 		const t3d::Vec4<real> & _halfSize,
 		RigidBody * _body,
-		const t3d::Mat4<real> & _offset,
-		const t3d::Mat4<real> & _rotationOffset)
+		const t3d::Mat4<real> & _offset /*= my::Mat4<real>::IDENTITY*/,
+		const t3d::Mat4<real> & _rotationOffset /*= my::Mat4<real>::IDENTITY*/)
 		: CollisionPrimitive(_body, _offset, _rotationOffset)
 		, halfSize(_halfSize)
 	{

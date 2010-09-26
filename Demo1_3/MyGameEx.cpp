@@ -436,7 +436,12 @@ bool MyGameState::doFrame(void)
 		m_eulerCam->addRotation(my::EulerCamera::buildRotOffset(MyGame::getSingleton().m_mouse.get()));
 
 		// step physics world
-		m_world->runPhysics(elapsedTime);
+		const unsigned count = 30;
+		unsigned decrement = count;
+		while(decrement--)
+		{
+			m_world->runPhysics(elapsedTime / count);
+		}
 
 		t3d::Mat4<real> matRotation = mat3RotXYZ(m_eulerCam->getRotation());
 		t3d::Mat4<real> matPosition = t3d::mat3Mov(my::Vec4<real>(0, 0, -30)) * matRotation * t3d::mat3Mov(m_world->m_viewpoint.particle->getPosition());
@@ -451,10 +456,6 @@ bool MyGameState::doFrame(void)
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Vec4<real>(1, 1, 1), l_pos); //my::Vec4<real>(100, 100, -100));
 
-	// set render context material
-	rc->setAmbient(my::Color::YELLOW);
-	rc->setDiffuse(my::Color::YELLOW);
-
 	// draw default grid, with use to test distance of the scene
 	m_grid->drawZBufferRW(rc);
 
@@ -466,6 +467,8 @@ bool MyGameState::doFrame(void)
 		m_world->m_character.body->getTransform());
 
 	// draw viewpoint particle
+	rc->setAmbient(my::Color::YELLOW);
+	rc->setDiffuse(my::Color::YELLOW);
 	drawSphereGouraudZBufferRW(
 		rc,
 		1,
@@ -478,6 +481,19 @@ bool MyGameState::doFrame(void)
 		my::Vec4<real>(0, 0, 10),
 		my::Color::BLUE,
 		m_world->m_character.body->getTransform());
+
+	// draw box
+	for(size_t i = 0; i < m_world->m_boxList.size(); i++)
+	{
+		t3d::Vec4<real> color(m_world->m_boxBodyList[i]->getAwake() ? my::Color::BLUE : t3d::vec3Mul(my::Color::BLUE, 0.7f));
+		rc->setAmbient(color);
+		rc->setDiffuse(color);
+		drawCubeGouraudZBufferRW(
+			rc,
+			m_world->m_boxList[i].getHalfSize(),
+			m_world->m_boxBodyList[i]->getTransform(),
+			m_world->m_boxBodyList[i]->getRotationTransform());
+	}
 
 	// general information output
 	std::basic_string<charT> strTmp;

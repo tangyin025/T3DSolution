@@ -23,6 +23,7 @@ MyWorld::MyWorld(void)
 	m_character.body->setAcceleration(my::Vec4<real>(0, -9.8 * 10, 0));
 	m_character.body->setSleepEpsilon(10.4f); // ***
 	m_character.body->setAwake(true); // must be call after setSleepEpsilon
+	m_character.body->calculateDerivedData(); // never forget this
 
 	// add rigid body to physical world
 	m_character.sphere.setRigidBody(m_character.body.get());
@@ -43,8 +44,37 @@ MyWorld::MyWorld(void)
 	my::ParticleWorld::registry.add(m_viewpoint.particle.get(), m_viewpoint.spring.get());
 
 	// create particle spring cable
-	m_viewpoint.cable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_viewpoint.particle.get(), m_character.body->getPosition(), 13, 0.3f));
+	m_viewpoint.cable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_viewpoint.particle.get(), m_character.body->getPosition(), 13, 0.0f));
 	particleContactGeneratorList.push_back(m_viewpoint.cable);
+
+	// create stack boxes
+	const int countx = 5 * 10 / 2;
+	const int county = 5 * 10 - 5;
+	for(int x = -countx + 5; x < countx + 5; x += 10)
+	{
+		for(int y = 5; y <= county; y += 10)
+		{
+			// create rigid body for box
+			my::Vec4<real> halfSize(5, 5, 5);
+			my::RigidBodyPtr body(new my::RigidBody());
+			body->setMass(my::calculateBoxVolume<real>(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2) * 0.4f);
+			body->setInertialTensor(my::calculateBlockInertiaTensor<real>(halfSize, body->getMass()));
+			body->setDamping(0.95f);
+			body->setAngularDamping(0.8f);
+			body->setPosition(my::Vec4<real>(x, y, 30));
+			body->setAcceleration(my::Vec4<real>(0, -9.8 * 10, 0));
+			body->setSleepEpsilon(10.4f);
+			body->setAwake(true);
+			body->calculateDerivedData();
+			m_boxBodyList.push_back(body);
+
+			// create collision box
+			m_boxList.push_back(my::CollisionBox(halfSize, body.get()));
+
+			// for parent maintained body list
+			bodyList.push_back(body);
+		}
+	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 }
@@ -104,7 +134,16 @@ void MyWorld::integrate(real duration)
 
 	my::World::integrate(duration);
 
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
 	m_character.sphere.calculateInternals();
+
+	for(size_t i = 0; i < m_boxList.size(); i++)
+	{
+		m_boxList[i].calculateInternals();
+	}
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 }
 
 unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
@@ -113,16 +152,52 @@ unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
 
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
-	used += my::CollisionDetector::sphereAndHalfSpace(m_character.sphere, m_groundPlane.normal, m_groundPlane.distance, &contacts[used], limits - used);
+	used += my::CollisionDetector::sphereAndHalfSpace(
+		m_character.sphere,
+		m_groundPlane.normal,
+		m_groundPlane.distance,
+		&contacts[used],
+		limits - used);
 
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	for(unsigned i = 0; i < used; i++)
+	unsigned i = 0;
+	for(; i < used; i++)
 	{
 		contacts[i].friction = 10.0f; //0.9f;
-
 		contacts[i].restitution = 0; //0.6f;
 	}
+
+	for(size_t j = 0; j < m_boxList.size(); j++)
+	{
+		for(size_t k = j + 1; k < m_boxList.size(); k++)
+		{
+			used += my::CollisionDetector::boxAndBox(
+				m_boxList[j],
+				m_boxList[k],
+				&contacts[used],
+				limits - used);
+		}
+
+		used += my::CollisionDetector::boxAndHalfSpace(
+			m_boxList[j],
+			m_groundPlane.normal,
+			m_groundPlane.distance,
+			&contacts[used],
+			limits - used);
+
+		used += my::CollisionDetector::boxAndSphere(
+			m_boxList[j],
+			m_character.sphere,
+			&contacts[used],
+			limits - used);
+	}
+
+	for(; i < used; i++)
+	{
+		contacts[i].friction = 0.9f;
+		contacts[i].restitution = 0.6f;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	return used;
 }
