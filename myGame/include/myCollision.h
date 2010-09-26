@@ -326,8 +326,8 @@ namespace my
 	public:
 		CollisionPrimitive(
 			RigidBody * _body,
-			const t3d::Mat4<real> & _offset,
-			const t3d::Mat4<real> & _rotationOffset);
+			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
+			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
 
 		virtual ~CollisionPrimitive(void);
 
@@ -363,8 +363,8 @@ namespace my
 		CollisionSphere(
 			real _radius,
 			RigidBody * _body,
-			const t3d::Mat4<real> & _offset,
-			const t3d::Mat4<real> & _rotationOffset);
+			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
+			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
 
 		CollisionSphere(void);
 	};
@@ -397,8 +397,8 @@ namespace my
 		CollisionBox(
 			const t3d::Vec4<real> & _halfSize,
 			RigidBody * _body,
-			const t3d::Mat4<real> & _offset,
-			const t3d::Mat4<real> & _rotationOffset);
+			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
+			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
 
 		CollisionBox(void);
 	};

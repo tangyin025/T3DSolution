@@ -1480,7 +1480,7 @@ namespace my
 		// We have the linear amount of movement required by turning
 		// the rigid body (in angularMove[i]). We now need to
 		// calculate the desired rotation to achieve that.
-		if(0 == angularMove)
+		if(0 == angularMove || 0 == body.getAngularDamping()) // *** angularDamping
 		{
 			// Easy case - no angular movement means no rotation.
 			angularChange = my::Vec4<real>::ZERO;
