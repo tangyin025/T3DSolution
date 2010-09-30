@@ -1,268 +1,252 @@
-﻿/* file: Demo1_1/main.cpp
- * define the basic framework of t3dlib, applicable for both win32 and MFC application
- */
+﻿/** FILE: main.cpp
+	定义了一个基本的 t3dlib 应用程序的框架，适用于 win32 或 mfc 应用程序
+*/
 
-#include <t3dlib1.h>
-#include <t3dlib9.h>
-#include <atlwin.h>
+#include <t3dlib1.h>	// ddraw 封装
+#include <t3dlib9.h>	// 渲染上下文
 
-#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "winmm.lib") // windows 媒体库
 
 using t3d::real;
 
-class CMyWindow
-	: public CWindowImpl<CMyWindow, CWindow, CWinTraits<WS_OVERLAPPEDWINDOW, 0> >
+#ifdef _DEBUG
+#define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
+#endif
+
+TCHAR szWindowClass[] = _T("SAMPLE");
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+void DoFrame(void);
+
+int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-protected:
-	t3d::DDrawPtr m_ddraw;
-
-	t3d::DDSurfacePtr m_ddsurface;
-
-	t3d::ZBufferPtr m_zbuffer;
-
-	t3d::RenderContextPtr m_rc;
-
-public:
-	DECLARE_WND_CLASS_EX(GetWndClassName(), CS_HREDRAW | CS_VREDRAW, -1)
-
-	BEGIN_MSG_MAP(CMyWindow)
-		MESSAGE_HANDLER(WM_CREATE, OnCreate)
-		MESSAGE_HANDLER(WM_SIZE, OnSize)
-		MESSAGE_HANDLER(WM_PAINT, OnPaint)
-	END_MSG_MAP()
-
-	LRESULT OnCreate(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
-	{
-		// create direct draw
-		m_ddraw = t3d::DDrawPtr(new t3d::DDraw());
-		m_ddraw->setCooperativeLevel(m_hWnd);
-
-		// gain current display mode
-		DDSURFACEDESC2 ddsd = m_ddraw->getDisplayMode();
-		if(!(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB))
-		{
-			T3D_CUSEXCEPT(_T("unsupported pixel format"));
-		}
-
-		// create the render context according to current pixel mode
-		// NOTE: it will crash the system when user changed current desktop
-		// color depth after this application runing
-		if(ddsd.ddpfPixelFormat.dwRGBBitCount == 16
-			&& ddsd.ddpfPixelFormat.dwRBitMask == RGB16_RED_MASK
-			&& ddsd.ddpfPixelFormat.dwGBitMask == RGB16_GREEN_MASK
-			&& ddsd.ddpfPixelFormat.dwBBitMask == RGB16_BLUE_MASK)
-		{
-			m_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
-		}
-		else if(ddsd.ddpfPixelFormat.dwRGBBitCount == 32
-			&& ddsd.ddpfPixelFormat.dwRBitMask == RGB32_RED_MASK
-			&& ddsd.ddpfPixelFormat.dwGBitMask == RGB32_GREEN_MASK
-			&& ddsd.ddpfPixelFormat.dwBBitMask == RGB32_BLUE_MASK)
-		{
-			m_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
-		}
-		else
-		{
-			T3D_CUSEXCEPT(_T("unsupported pixel format"));
-		}
-
-		bHandled = TRUE;
-		return 0;
-	}
-
-	LRESULT OnSize(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
-	{
-		if(SIZE_RESTORED == wParam || SIZE_MAXIMIZED == wParam)
-		{
-			// confirm ddraw & render context must be created
-			_ASSERT(NULL != m_ddraw);
-			_ASSERT(NULL != m_rc);
-
-			// gain new window size
-			int width = LOWORD(lParam);
-			int height = HIWORD(lParam);
-
-			// create background surface and attach to render context
-			m_ddsurface = m_ddraw->createMemorySurface(width, height);
-			CRect rectMem(0, 0, width, height);
-			m_ddsurface->setClipper(m_ddraw->createMemoryClipper(&rectMem, 1).get());
-			DDSURFACEDESC2 ddsd = m_ddsurface->lock(NULL);
-			m_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
-			m_ddsurface->unlock();
-
-			// create background zbuffer and attach to render context
-			m_zbuffer = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
-			m_rc->setZBufferBuffer(m_zbuffer->getBuffer(), m_zbuffer->getPitch(), width, height);
-
-			// set render clipper rect
-			m_rc->setClipperRect(rectMem);
-
-			// invalidate window client area to force a redraw action
-			InvalidateRect(NULL, FALSE);
-
-			bHandled = TRUE;
-		}
-		return 0;
-	}
-
-	LRESULT OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
-	{
-		// confirm the background surface must be created
-		_ASSERT(NULL != m_ddsurface);
-
-		// render a frame
-		DoRender();
-
-		// copy background surface to window dc
-		CRect clientRect;
-		GetClientRect(&clientRect);
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(&ps);
-		HDC hdcSrc = m_ddsurface->getDC();
-		BitBlt(hdc, clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(), hdcSrc, 0, 0, SRCCOPY);
-		m_ddsurface->releaseDC(hdcSrc);
-		EndPaint(&ps);
-
-		bHandled = TRUE;
-		return 0;
-	}
-
-	void OnFinalMessage(HWND hwnd)
-	{
-		// exit the application
-		::PostQuitMessage(0);
-	}
-
-	void DoRender(void)
-	{
-		// clear background surface & zbuffer
-		//m_rc->fillSurface(m_rc->getClipperRect(), t3d::vec3Build<t3d::real>(0.8f, 0.8f, 0.8f));
-		m_rc->fillSurface(m_rc->getClipperRect(), t3d::vec3Build<t3d::real>(0, 0, 0));
-		m_rc->fillZbuffer(m_rc->getClipperRect(), 0);
-
-		// definition set of fps utility
-		static DWORD last_time = ::timeGetTime();
-		static DWORD past_time = 0;
-		static DWORD past_frames = 0;
-		static t3d::real fps = 0;
-
-		// calculate fps by sampling per second
-		DWORD curr_time = ::timeGetTime();
-		past_time += curr_time - last_time;
-		past_frames += 1;
-		if(past_time > 1000)
-		{
-			fps = (t3d::real)past_frames / (t3d::real)past_time * 1000;
-			past_time = 0;
-			past_frames = 0;
-		}
-		last_time = curr_time;
-
-		// ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// NOTE: there are still far more process could be done,
-		// such as adjust camera's position, update camera's viewport & projection, ...
-		// for more information, please refer the project "Demo1_2"
-		int count = 100000;
-		t3d::real radius = 100;
-		//for(int i = 0; i < count; i++)
-		//for(int i = 62441; i < 62449; i++)
-		int i_arr[] = {62441, 62448};
-		for(int idx = 0; idx < sizeof(i_arr) / sizeof(i_arr[0]); idx++)
-		{
-			int i = i_arr[idx];
-			t3d::Vec4<t3d::real> v0, v1, v2;
-			v0.x = m_rc->getClipperRect().Width() / 2;
-			v0.y = m_rc->getClipperRect().Height() / 2;
-			v0.z = 100;
-			v1.x = v0.x + cos(DEG_TO_RAD((t3d::real)360 / count * i)) * radius;
-			v1.y = v0.y + sin(DEG_TO_RAD((t3d::real)360 / count * i)) * radius;
-			v1.z = v0.z;
-			v2.x = v0.x + cos(DEG_TO_RAD((t3d::real)360 / count * (i + 1))) * radius;
-			v2.y = v0.y + sin(DEG_TO_RAD((t3d::real)360 / count * (i + 1))) * radius;
-			v2.z = v0.z;
-			t3d::drawClippedTriangleZBufferRW32(
-				m_rc->getSurfaceRef32(),
-				m_rc->getClipperRect(),
-				m_rc->getZBufferRef28(),
-				v0,
-				v1,
-				v2,
-				i % 2 == 0 ? t3d::Vec4<t3d::real>(255, 0, 0, 255) : t3d::Vec4<t3d::real>(0, 255, 0, 255));
-		}
-
-		//t3d::Vec4<real> v0(100, 100, 100, 1);
-		//t3d::Vec4<real> v1(100, 400, 100, 1);
-		//t3d::Vec4<real> v2(400, 400, 100, 1);
-		//t3d::Vec4<real> v3(601, 600, 100, 1);
-		//t3d::Vec4<real> v4(400, 100, 100, 1);
-		//t3d::drawClippedTriangleZBufferRW32(m_rc->getSurfaceRef32(), m_rc->getClipperRect(), m_rc->getZBufferRef28(),
-		//	v0, v1, v2, t3d::Vec4<t3d::real>(0, 255, 0, 255));
-		//t3d::drawClippedTriangleZBufferRW32(m_rc->getSurfaceRef32(), m_rc->getClipperRect(), m_rc->getZBufferRef28(),
-		//	v0, v2, v3, t3d::Vec4<t3d::real>(255, 0, 0, 255));
-		//t3d::drawClippedTriangleZBufferRW32(m_rc->getSurfaceRef32(), m_rc->getClipperRect(), m_rc->getZBufferRef28(),
-		//	v0, v3, v4, t3d::Vec4<t3d::real>(0, 255, 0, 255));
-
-		// ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// text out the fps information
-		TCHAR buffer[MAX_PATH];
-		_stprintf_s(buffer, _T("fps: %.1f"), fps);
-		HDC hdc = m_ddsurface->getDC();
-		::TextOut(hdc, 10, 10, buffer, _tcslen(buffer));
-		m_ddsurface->releaseDC(hdc);
-	}
-};
-
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-					   HINSTANCE hPrevInstance,
-					   LPTSTR lpCmdLine,
-					   int nCmdShow)
-{
-	// check memory leak
+	// 运行时内存泄漏检查
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 
-	// declare main window
-	CMyWindow myWnd;
+	// 定义一个基本的 windows 类
+	WNDCLASSEX wcex;
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance;
+	wcex.hIcon = LoadIcon(NULL, IDC_ICON);
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = /*(HBRUSH)(COLOR_WINDOW+1)*/NULL;
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = szWindowClass;
+	wcex.hIconSm = LoadIcon(NULL, IDC_ICON);
+	RegisterClassEx(&wcex);
+
+	// 获得可执行文件名
+	TCHAR szModuleFileName[MAX_PATH];
+	GetModuleFileName(NULL, szModuleFileName, sizeof(szModuleFileName) / sizeof(szModuleFileName[0]));
+
 	try
 	{
-		// gain current mode file name
-		TCHAR szModuleFileName[MAX_PATH];
-		GetModuleFileName(NULL, szModuleFileName, sizeof(szModuleFileName) / sizeof(szModuleFileName[0]));
-
-		// create the main window
-		if(NULL == myWnd.Create(NULL, CMyWindow::rcDefault, szModuleFileName))
+		// 创建窗口
+		HWND hWnd = CreateWindow(szWindowClass, szModuleFileName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+		if(hWnd)
 		{
-			return -1;
-		}
+			// 显示及更新窗口
+			ShowWindow(hWnd, nCmdShow);
+			UpdateWindow(hWnd);
 
-		// update the main window
-		myWnd.ShowWindow(nCmdShow);
-		myWnd.UpdateWindow();
+			// 进入消息循环
+			MSG msg;
+			msg.message = ~(UINT)WM_QUIT;
+			while(msg.message != WM_QUIT)
+			{
+				// 取出一个消息
+				if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+				{
+					// 转换及分发消息
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+				else
+				{
+					// 渲染一帧
+					DoFrame();
 
-		// entering the main message looping
-		MSG msg;
-		msg.message = WM_NULL;
-		while(msg.message != WM_QUIT)
-		{
-			if(::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-			else
-			{
-				// invalid main window client if no message in the message queue
-				myWnd.InvalidateRect(NULL, FALSE);
-				myWnd.UpdateWindow();
+					// 告知窗口无效，需要更新 windows DC，然后参见 WM_PAINT
+					InvalidateRect(hWnd, NULL, FALSE);
+
+					//// 强制立即调用 WM_PAINT
+					//UpdateWindow(hWnd);
+				}
 			}
 		}
-		return (int)msg.wParam;
 	}
 	catch(t3d::Exception & e)
 	{
-		// report the exception information
+		// 报告异常信息
 		::MessageBox(NULL, e.getFullDesc().c_str(), _T("Exception"), MB_OK);
-		exit(-1);
 	}
+
+	return 0;
+	UNREFERENCED_PARAMETER(lpCmdLine);
+	UNREFERENCED_PARAMETER(hPrevInstance);
+}
+
+// direct draw
+t3d::DDrawPtr g_ddraw;
+
+// direct draw surface 用作后缓存
+t3d::DDSurfacePtr g_ddsurface;
+
+// zbuffer
+t3d::ZBufferPtr g_zbuffer;
+
+// 渲染上下文
+t3d::RenderContextPtr g_rc;
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_CREATE:
+		{
+			// 创建 direct draw
+			g_ddraw = t3d::DDrawPtr(new t3d::DDraw());
+			g_ddraw->setCooperativeLevel(hWnd);
+
+			// 获得当前显示模式
+			DDSURFACEDESC2 ddsd = g_ddraw->getDisplayMode();
+			if( !(ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) )
+			{
+				T3D_CUSEXCEPT(_T("unsupported pixel format"));
+			}
+
+			// 创建于当前显示模式兼容的渲染上下文
+			if(ddsd.ddpfPixelFormat.dwRGBBitCount == 16
+				&& ddsd.ddpfPixelFormat.dwRBitMask == RGB16_RED_MASK
+				&& ddsd.ddpfPixelFormat.dwGBitMask == RGB16_GREEN_MASK
+				&& ddsd.ddpfPixelFormat.dwBBitMask == RGB16_BLUE_MASK)
+			{
+				g_rc = t3d::RenderContextPtr(new t3d::RenderContext16());
+			}
+			else if(ddsd.ddpfPixelFormat.dwRGBBitCount == 32
+				&& ddsd.ddpfPixelFormat.dwRBitMask == RGB32_RED_MASK
+				&& ddsd.ddpfPixelFormat.dwGBitMask == RGB32_GREEN_MASK
+				&& ddsd.ddpfPixelFormat.dwBBitMask == RGB32_BLUE_MASK)
+			{
+				g_rc = t3d::RenderContextPtr(new t3d::RenderContext32());
+			}
+			else
+			{
+				T3D_CUSEXCEPT(_T("unsupported pixel format"));
+			}
+
+			return 0;
+		}
+
+	case WM_SIZE:
+		if((SIZE_RESTORED == wParam || SIZE_MAXIMIZED == wParam) && g_ddraw.get())
+		{
+			// 渲染上下文必须被创建
+			_ASSERT(g_ddraw);
+			_ASSERT(g_rc);
+
+			// 获得当前窗口宽度和高度
+			int width = LOWORD(lParam);
+			int height = HIWORD(lParam);
+
+			// “重新”创建对应的后缓存
+			g_ddsurface = g_ddraw->createMemorySurface(width, height);
+			CRect rectMem(0, 0, width, height);
+			g_ddsurface->setClipper(g_ddraw->createMemoryClipper(&rectMem, 1).get());
+
+			// 设置 surface buffer，其实 memory surface 只要设置一次就可以了
+			DDSURFACEDESC2 ddsd = g_ddsurface->lock(NULL);
+			g_rc->setSurfaceBuffer(ddsd.lpSurface, ddsd.lPitch, ddsd.dwWidth, ddsd.dwHeight);
+			g_ddsurface->unlock();
+
+			// “重新”创建 zbuffer
+			g_zbuffer = t3d::ZBufferPtr(new t3d::ZBuffer(width, height));
+
+			// 设置 zbuffer
+			g_rc->setZBufferBuffer(g_zbuffer->getBuffer(), g_zbuffer->getPitch(), width, height);
+
+			// 更新渲染上下文的 clipper rect
+			g_rc->setClipperRect(rectMem);
+
+			/** 注意：
+				其实在这个地方还有很多事情要做，如更新相机的 viewport 和 projection 等
+				详情参见 trunk/Demo1_2/main.cpp 的 MyGame::onFrame
+			*/
+
+			// 设置窗口区域无效，将有后缓存更新
+			InvalidateRect(hWnd, NULL, FALSE);
+			return 0;
+		}
+		break;
+
+	case WM_PAINT:
+		{
+			// 后缓存必须已经被创建
+			_ASSERT(g_ddsurface);
+
+			// 这里要做的是将后缓存更新到 windows DC 上
+			CRect clientRect;
+			GetClientRect(hWnd, &clientRect);
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			HDC hdcSrc = g_ddsurface->getDC();
+			BitBlt(hdc, clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(), hdcSrc, 0, 0, SRCCOPY);
+			g_ddsurface->releaseDC(hdcSrc);
+			EndPaint(hWnd, &ps);
+			return 0;
+		}
+
+	case WM_DESTROY:
+		{
+			// 退出应用程序指令
+			PostQuitMessage(0);
+			return 0;
+		}
+	}
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void DoFrame(void)
+{
+	// 清理后缓存
+	g_rc->fillSurface(g_rc->getClipperRect(), t3d::vec3Build<real>(0.8f, 0.8f, 0.8f));
+
+	// 清理 zbuffer
+	g_rc->fillZbuffer(g_rc->getClipperRect(), 0);
+
+	/** 注意：
+		由于本实例只使用了 t3dlib，没有使用 myGame，所以很多事情做起来十分麻烦
+		详情参见 Demo1_2/main.cpp 的 MyGame::onFrame
+	*/
+
+	// 用于计算 fps 的集合
+	static DWORD last_time = ::timeGetTime();
+	static DWORD past_time = 0;
+	static DWORD past_frames = 0;
+	static real fps = 0;
+
+	// 平均采样法计算 fps
+	DWORD curr_time = ::timeGetTime();
+	past_time += curr_time - last_time;
+	past_frames += 1;
+	if(past_time > 1000)
+	{
+		fps = (real)past_frames / (real)past_time * 1000;
+		past_time = 0;
+		past_frames = 0;
+	}
+	last_time = curr_time;
+
+	// 输出 fps
+	TCHAR buffer[MAX_PATH];
+	_stprintf_s(buffer, _T("fps: %.1f"), fps);
+	HDC hdc = g_ddsurface->getDC();
+	::TextOut(hdc, 10, 10, buffer, _tcslen(buffer));
+	g_ddsurface->releaseDC(hdc);
 }
