@@ -160,6 +160,8 @@ namespace my
 
 		DDPIXELFORMAT m_ddpf;
 
+		SCREEN_MODE m_screenMode;
+
 		t3d::RenderContextPtr m_rc;
 
 		ColorConversionPtr m_cc;
@@ -183,6 +185,8 @@ namespace my
 		int run(const Config & cfg);
 
 		void onIdle(void);
+
+		void blitBackSurface(HDC hdc);
 
 	public:
 		virtual bool onInit(const Config & cfg);

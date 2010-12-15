@@ -109,27 +109,10 @@ namespace my
 
 	LRESULT GameWnd::OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 	{
-		// obtain global application object
-		Game * game = dynamic_cast<Game *>(Application::getSingletonPtr());
-
-		// back surface must be created
-		_ASSERT(NULL != game->m_backSurface);
-
 		// update the attached back surface to client area
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(&ps);
-		HDC hdcSrc = game->m_backSurface->getDC();
-		BitBlt(
-			hdc,
-			game->m_backSurfaceRect.left,
-			game->m_backSurfaceRect.top,
-			game->m_backSurfaceRect.Width(),
-			game->m_backSurfaceRect.Height(),
-			hdcSrc,
-			0,
-			0,
-			SRCCOPY);
-		game->m_backSurface->releaseDC(hdcSrc);
+		Game::getSingleton().blitBackSurface(hdc);
 		EndPaint(&ps);
 
 		return 0;
@@ -158,13 +141,13 @@ namespace my
 		// predefine config values
 		const int cfgWidth = cfg.getIntOrDefault(_T("width"), 800);
 		const int cfgHeight = cfg.getIntOrDefault(_T("height"), 600);
-		const int cfgScreenmode = cfg.getIntOrDefault(_T("screenmode"), SCREEN_MODE_WINDOWED);
+		m_screenMode = (SCREEN_MODE)cfg.getIntOrDefault(_T("screenmode"), SCREEN_MODE_WINDOWED);
 
 		// set back surface rect
 		m_backSurfaceRect.SetRect(0, 0, cfgWidth, cfgHeight);
 
 		// create ddraw and adjust main window
-		switch(cfgScreenmode)
+		switch(m_screenMode)
 		{
 		case SCREEN_MODE_WINDOWED:
 			m_ddraw->setCooperativeLevel(m_wnd->m_hWnd, t3d::DDraw::CL_NORMAL);
@@ -199,7 +182,11 @@ namespace my
 		//// create primary surface
 		//m_primSurface = m_ddraw->createWindowSurface();
 
-		//m_primSurface->setClipper(m_ddraw->createWindowClipper(m_wnd->m_hWnd).get());
+		//// only set primary clipper under windowed mode
+		//if(SCREEN_MODE_WINDOWED == m_screenMode)
+		//{
+		//	m_primSurface->setClipper(m_ddraw->createWindowClipper(m_wnd->m_hWnd).get());
+		//}
 
 		//m_ddpf = m_primSurface->getPixelFormat();
 		m_ddpf = m_ddraw->getDisplayMode().ddpfPixelFormat;
@@ -366,8 +353,51 @@ namespace my
 			return;
 		}
 
-		// swap the backup and primary surface
-		VERIFY(m_wnd->InvalidateRect(&m_rc->getClipperRect(), FALSE));
+		//// swap the backup and primary surface
+		//if(SCREEN_MODE_WINDOWED == m_screenMode)
+		//{
+		//	m_wnd->GetWindowRect(&m_primSurfaceRect);
+		//	m_primSurface->blt(
+		//		&m_primSurfaceRect,
+		//		m_backSurface.get(),
+		//		&m_backSurfaceRect);
+		//}
+		//else
+		//{
+		//	m_primSurface->bltFast(
+		//		0,
+		//		0,
+		//		m_backSurface.get(),
+		//		&m_backSurfaceRect);
+		//}
+
+		//// use invalidate window rect to update window
+		//VERIFY(m_wnd->InvalidateRect(&m_rc->getClipperRect(), FALSE));
+
+		// use dc blt instead
+		HDC hdc = m_wnd->GetDC();
+		blitBackSurface(hdc);
+		m_wnd->ReleaseDC(hdc);
+	}
+
+	void Game::blitBackSurface(HDC hdc)
+	{
+		// back surface must be created
+		_ASSERT(NULL != m_backSurface);
+
+		// bite blit
+		HDC hdcSrc = m_backSurface->getDC();
+		BitBlt(
+			hdc,
+			m_backSurfaceRect.left,
+			m_backSurfaceRect.top,
+			m_backSurfaceRect.Width(),
+			m_backSurfaceRect.Height(),
+			hdcSrc,
+			0,
+			0,
+			SRCCOPY);
+		m_backSurface->releaseDC(hdcSrc);
 	}
 
 	bool Game::onInit(const Config & cfg)
