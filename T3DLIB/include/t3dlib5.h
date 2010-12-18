@@ -85,19 +85,19 @@ namespace t3d
 	class ConstSurfaceRef
 	{
 	public:
-		inline ConstSurfaceRef(elem_t * p, LONG pitch)
+		ConstSurfaceRef(elem_t * p, LONG pitch)
 			: _p(p), _pitch(pitch)
 		{
 			_ASSERT(NULL != _p);
 		}
 
 	public:
-		inline const elem_t * operator [] (int y) const
+		const elem_t * operator [] (int y) const
 		{
 			return (elem_t *)((byte *)_p + _pitch * y);
 		}
 
-		inline const elem_t * ptr(void) const
+		const elem_t * ptr(void) const
 		{
 			return _p;
 		}
@@ -112,18 +112,18 @@ namespace t3d
 	class SurfaceRef : public ConstSurfaceRef<elem_t>
 	{
 	public:
-		inline SurfaceRef(elem_t * p, LONG pitch)
+		SurfaceRef(elem_t * p, LONG pitch)
 			: ConstSurfaceRef<elem_t>(p, pitch)
 		{
 		}
 
 	public:
-		inline elem_t * operator [] (int y) const
+		elem_t * operator [] (int y) const
 		{
 			return (elem_t *)((byte *)_p + _pitch * y);
 		}
 
-		inline elem_t * ptr(void) const
+		elem_t * ptr(void) const
 		{
 			return _p;
 		}

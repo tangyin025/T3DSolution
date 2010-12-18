@@ -758,7 +758,7 @@ namespace my
 		calculateDerivedData();
 	}
 
-	static inline t3d::Mat4<real> _transformInertiaTensor(
+	static t3d::Mat4<real> _transformInertiaTensor(
 		const t3d::Mat4<real> & inertiaTensor,
 		const t3d::Mat4<real> & transformMat)
 	{
@@ -1419,7 +1419,7 @@ namespace my
 		return impulseContact;
 	}
 
-	static inline real _calculateBodyInertias(
+	static real _calculateBodyInertias(
 		const RigidBody & body,
 		const t3d::Vec4<real> & relativeContactPosition,
 		const t3d::Vec4<real> & contactNormal,
@@ -1439,7 +1439,7 @@ namespace my
 		return linearInertia + angularInertia;
 	}
 
-	static inline void _limitAngularMove(
+	static void _limitAngularMove(
 		const t3d::Vec4<real> & relativeContactPosition,
 		const t3d::Vec4<real> & contactNormal,
 		real & linearMove,
@@ -1463,7 +1463,7 @@ namespace my
 		linearMove = totalMove - angularMove;
 	}
 
-	static inline void _applyInertiaToBody(
+	static void _applyInertiaToBody(
 		RigidBody & body,
 		const t3d::Vec4<real> & relativeContactPosition,
 		const t3d::Vec4<real> & contactNormal,
