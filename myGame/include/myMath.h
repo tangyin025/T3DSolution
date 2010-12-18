@@ -16,7 +16,7 @@ namespace my
 		static const Mat4 IDENTITY;
 
 	public:
-		inline Mat4
+		Mat4
 			( const elem_t _m00, const elem_t _m01, const elem_t _m02, const elem_t _m03
 			, const elem_t _m10, const elem_t _m11, const elem_t _m12, const elem_t _m13
 			, const elem_t _m20, const elem_t _m21, const elem_t _m22, const elem_t _m23
@@ -30,18 +30,18 @@ namespace my
 		{
 		}
 
-		inline Mat4(const t3d::Mat4<elem_t> & other)
+		Mat4(const t3d::Mat4<elem_t> & other)
 			: t3d::Mat4<elem_t>(other)
 		{
 		}
 
-		inline Mat4(void)
+		Mat4(void)
 			: t3d::Mat4<elem_t>(my::Mat4<elem_t>::IDENTITY)
 		{
 		}
 
 	public:
-		friend inline std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Mat4 & rhs)
+		friend std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Mat4 & rhs)
 		{
 			ostr << rhs.m00 << _T(", ") << rhs.m01 << _T(", ") << rhs.m02 << _T(", ") << rhs.m03 << std::endl;
 			ostr << rhs.m10 << _T(", ") << rhs.m11 << _T(", ") << rhs.m12 << _T(", ") << rhs.m13 << std::endl;
@@ -68,28 +68,28 @@ namespace my
 		static const Vec2 UNIT_SCALE;
 
 	public:
-		inline Vec2(const elem_t _x, const elem_t _y)
+		Vec2(const elem_t _x, const elem_t _y)
 			: t3d::Vec2<elem_t>(_x, _y)
 		{
 		}
 
-		inline Vec2(const t3d::Vec2<elem_t> & other)
+		Vec2(const t3d::Vec2<elem_t> & other)
 			: t3d::Vec2<elem_t>(other)
 		{
 		}
 
-		inline Vec2(void)
+		Vec2(void)
 			: t3d::Vec2<elem_t>(my::Vec2<elem_t>::ZERO)
 		{
 		}
 
 	public:
-		friend inline std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Vec2 & rhs)
+		friend std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Vec2 & rhs)
 		{
 			return ostr << rhs.x << _T(", ") << rhs.y;
 		}
 
-		inline std::basic_string<charT> str(void) const
+		std::basic_string<charT> str(void) const
 		{
 			std::basic_ostringstream<charT> osstr;
 			osstr << *this;
@@ -124,28 +124,28 @@ namespace my
 		static const Vec4 NEGATIVE_UNIT_SCALE;
 
 	public:
-		inline Vec4(const elem_t _x, const elem_t _y, const elem_t _z = 0, const elem_t _w = 1)
+		Vec4(const elem_t _x, const elem_t _y, const elem_t _z = 0, const elem_t _w = 1)
 			: t3d::Vec4<elem_t>(_x, _y, _z, _w)
 		{
 		}
 
-		inline Vec4(const t3d::Vec4<elem_t> & other)
+		Vec4(const t3d::Vec4<elem_t> & other)
 			: t3d::Vec4<elem_t>(other)
 		{
 		}
 
-		inline Vec4()
+		Vec4()
 			: t3d::Vec4<elem_t>(my::Vec4<elem_t>::ZERO)
 		{
 		}
 
 	public:
-		friend inline std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Vec4 & rhs)
+		friend std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Vec4 & rhs)
 		{
 			return ostr << rhs.x << _T(", ") << rhs.y << _T(", ") << rhs.z << _T(", ") << rhs.w;
 		}
 
-		inline std::basic_string<charT> str(void) const
+		std::basic_string<charT> str(void) const
 		{
 			std::basic_ostringstream<charT> osstr;
 			osstr << *this;
@@ -162,23 +162,23 @@ namespace my
 		static const Quat IDENTITY;
 
 	public:
-		inline Quat(elem_t w, elem_t x, elem_t y, elem_t z)
+		Quat(elem_t w, elem_t x, elem_t y, elem_t z)
 			: t3d::Quat<elem_t>(w, x, y, z)
 		{
 		}
 
-		inline Quat(void)
+		Quat(void)
 			: t3d::Quat<elem_t>(my::Quat<elem_t>::IDENTITY)
 		{
 		}
 
 	public:
-		friend inline std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Quat & rhs)
+		friend std::basic_ostream<charT> & operator << (std::basic_ostream<charT> & ostr, const Quat & rhs)
 		{
 			return ostr << rhs.w << _T(", ") << rhs.x << _T(", ") << rhs.y << _T(", ") << rhs.z;
 		}
 
-		inline std::basic_string<charT> str(void) const
+		std::basic_string<charT> str(void) const
 		{
 			std::basic_ostringstream<charT> osstr;
 			osstr << *this;
@@ -202,63 +202,56 @@ namespace my
 		static const Color YELLOW;
 
 	public:
-		inline Color(real r, real g, real b, real a = 1)
+		Color(real r, real g, real b, real a = 1)
 			: my::Vec4<real>(r, g, b, a)
 		{
 		}
 
-		inline Color(void)
+		Color(void)
 			: my::Vec4<real>(my::Color::BLACK)
 		{
 		}
 	};
 
-	template <typename elem_t>
-	inline elem_t calculateBoxVolume(elem_t width, elem_t height, elem_t deepth)
+	inline real calculateBoxVolume(real width, real height, real deepth)
 	{
 		return width * height * deepth;
 	}
 
-	template <typename elem_t>
-	inline elem_t calculateBoxMass(elem_t width, elem_t height, elem_t deepth, elem_t density)
+	inline real calculateBoxMass(real width, real height, real deepth, real density)
 	{
 		return calculateBoxVolume(width, height, deepth) * density;
 	}
 
-	template <typename elem_t>
-	inline elem_t calculateSphereVolume(elem_t radius)
+	inline real calculateSphereVolume(real radius)
 	{
-		return (elem_t)4 / (elem_t)3 * (elem_t)PI * radius * radius * radius;
+		return (real)4 / (real)3 * (real)PI * radius * radius * radius;
 	}
 
-	template <typename elem_t>
-	inline elem_t calculateSphereMass(elem_t radius, elem_t density)
+	inline real calculateSphereMass(real radius, real density)
 	{
 		return calculateSphereVolume(radius) * density;
 	}
 
-	template <typename elem_t>
-	inline t3d::Mat4<elem_t> calculateInertiaTensor(elem_t Ixx, elem_t Iyy, elem_t Izz, elem_t Ixy = 0, elem_t Ixz = 0, elem_t Iyz = 0)
+	inline t3d::Mat4<real> calculateInertiaTensor(real Ixx, real Iyy, real Izz, real Ixy = 0, real Ixz = 0, real Iyz = 0)
 	{
-		return t3d::Mat4<elem_t>(
+		return t3d::Mat4<real>(
 			 Ixx,			-Ixy,			-Ixz,			0,
 			-Ixy,			 Iyy,			-Iyz,			0,
 			-Ixz,			-Iyz,			 Izz,			0,
 			0,				0,				0,				1);
 	}
 
-	template <typename elem_t>
-	inline t3d::Mat4<elem_t> calculateSphereInertiaTensor(elem_t radius, elem_t mass)
+	inline t3d::Mat4<real> calculateSphereInertiaTensor(real radius, real mass)
 	{
-		elem_t coeff = 0.4f * mass * radius * radius;
+		real coeff = 0.4f * mass * radius * radius;
 
 		return calculateInertiaTensor(coeff, coeff, coeff);
 	}
 
-	template <typename elem_t>
-	inline t3d::Mat4<elem_t> calculateBlockInertiaTensor(const t3d::Vec4<elem_t> & halfSizes, elem_t mass)
+	inline t3d::Mat4<real> calculateBlockInertiaTensor(const t3d::Vec4<real> & halfSizes, real mass)
 	{
-		Vec4<elem_t> squares = vec3Mul(halfSizes, halfSizes);
+		Vec4<real> squares = vec3Mul(halfSizes, halfSizes);
 
 		return calculateInertiaTensor(
 			0.3f * mass * (squares.y + squares.z),
@@ -266,45 +259,41 @@ namespace my
 			0.3f * mass * (squares.x + squares.y));
 	}
 
-	template <typename elem_t>
-	inline elem_t calculatePointPlaneDistance(
-		const t3d::Vec4<elem_t> & point,
-		const t3d::Vec4<elem_t> & planeNormal,
-		elem_t planeDistance)
+	inline real calculatePointPlaneDistance(
+		const t3d::Vec4<real> & point,
+		const t3d::Vec4<real> & planeNormal,
+		real planeDistance)
 	{
 		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
 		return t3d::vec3Dot(point, planeNormal) - planeDistance;
 	}
 
-	template <typename elem_t>
-	inline elem_t calculatePointPlaneDistance(
-		const t3d::Vec4<elem_t> & point,
-		const t3d::Vec4<elem_t> & planePoint,
-		const t3d::Vec4<elem_t> & planeNormal)
+	inline real calculatePointPlaneDistance(
+		const t3d::Vec4<real> & point,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal)
 	{
 		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
 		return t3d::vec3Dot(t3d::vec3Sub(point, planePoint), planeNormal);
 	}
 
-	template <typename elem_t>
-	inline elem_t calculatePointPlanePerpendicularPoint(
-		const t3d::Vec4<elem_t> & point,
-		const t3d::Vec4<elem_t> & planePoint,
-		const t3d::Vec4<elem_t> & planeNormal)
+	inline t3d::Vec4<real> calculatePointPlanePerpendicularPoint(
+		const t3d::Vec4<real> & point,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal)
 	{
 		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
 		return t3d::vec3Sub(point, t3d::vec3Mul(planeNormal, calculatePointPlaneDistance(point, planePoint, planeNormal)));
 	}
 
-	template <typename elem_t>
-	inline elem_t calculateLinePlaneIntersection(
-		const t3d::Vec4<elem_t> & linePoint,
-		const t3d::Vec4<elem_t> & lineDirection,
-		const t3d::Vec4<elem_t> & planePoint,
-		const t3d::Vec4<elem_t> & planeNormal)
+	inline real calculateLinePlaneIntersection(
+		const t3d::Vec4<real> & linePoint,
+		const t3d::Vec4<real> & lineDirection,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal)
 	{
 		_ASSERT(t3d::vec3IsNormalized(planeNormal));
 
@@ -313,62 +302,152 @@ namespace my
 		return -(t3d::vec3Dot(linePoint, planeNormal) - t3d::vec3Dot(planePoint, planeNormal)) / t3d::vec3Dot(lineDirection, planeNormal);
 	}
 
-	template <typename elem_t>
-	inline t3d::Vec4<elem_t> calculateLinePlaneIntersectionPoint(
-		const t3d::Vec4<elem_t> & linePoint,
-		const t3d::Vec4<elem_t> & lineDirection,
-		const t3d::Vec4<elem_t> & planePoint,
-		const t3d::Vec4<elem_t> & planeNormal)
+	inline t3d::Vec4<real> calculateLinePlaneIntersectionPoint(
+		const t3d::Vec4<real> & linePoint,
+		const t3d::Vec4<real> & lineDirection,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal)
 	{
-		elem_t intersection = calculateLinePlaneIntersection(linePoint, lineDirection, planePoint, planeNormal);
+		real intersection = calculateLinePlaneIntersection(linePoint, lineDirection, planePoint, planeNormal);
 
 		return t3d::vec3Add(linePoint, t3d::vec3Mul(lineDirection, intersection));
 	}
 
-	template <typename elem_t>
-	inline t3d::Vec4<elem_t> calculateTriangleDirection(
-		const t3d::Vec4<elem_t> & v0,
-		const t3d::Vec4<elem_t> & v1,
-		const t3d::Vec4<elem_t> & v2)
+	inline t3d::Vec4<real> calculateTriangleDirection(
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2)
 	{
 		return t3d::vec3Cross(t3d::vec3Sub(v1, v0), t3d::vec3Sub(v2, v0));
 	}
 
-	template <typename elem_t>
 	inline bool isValidTriangle(
-		const t3d::Vec4<elem_t> & v0,
-		const t3d::Vec4<elem_t> & v1,
-		const t3d::Vec4<elem_t> & v2)
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2)
 	{
 		return !IS_ZERO_FLOAT(t3d::vec3Length(calculateTriangleDirection(v0, v1, v2)));
 	}
 
-	template <typename elem_t>
-	inline t3d::Vec4<elem_t> calculateTriangleNormal(
-		const t3d::Vec4<elem_t> & v0,
-		const t3d::Vec4<elem_t> & v1,
-		const t3d::Vec4<elem_t> & v2)
+	inline t3d::Vec4<real> calculateTriangleNormal(
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2)
 	{
 		_ASSERT(isValidTriangle(v0, v1, v2));
 
 		return t3d::vec3Normalize(calculateTriangleDirection(v0, v1, v2));
 	}
 
-	template <typename elem_t>
-	inline elem_t isInsideTriangle(
-		const t3d::Vec4<elem_t> & point,
-		const t3d::Vec4<elem_t> & v0,
-		const t3d::Vec4<elem_t> & v1,
-		const t3d::Vec4<elem_t> & v2)
+	inline real isInsideTriangle(
+		const t3d::Vec4<real> & point,
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2)
 	{
 		_ASSERT(isValidTriangle(v0, v1, v2));
 
-		t3d::Vec4<elem_t> planeDir = calculateTriangleDirection(v0, v1, v2);
+		t3d::Vec4<real> planeDir = calculateTriangleDirection(v0, v1, v2);
 
 		return t3d::vec3Dot(planeDir, calculateTriangleDirection(point, v0, v1)) >= 0
 			&& t3d::vec3Dot(planeDir, calculateTriangleDirection(point, v1, v2)) >= 0
 			&& t3d::vec3Dot(planeDir, calculateTriangleDirection(point, v2, v0)) >= 0;
 	}
+
+	void splitTriangleVertexNormalUVUp(
+		t3d::VertexList & lVertexList,
+		t3d::NormalList & lNormalList,
+		t3d::UVList & lUVList,
+		t3d::VertexList & rVertexList,
+		t3d::NormalList & rNormalList,
+		t3d::UVList & rUVList,
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2,
+		const t3d::Vec4<real> & n0,
+		const t3d::Vec4<real> & n1,
+		const t3d::Vec4<real> & n2,
+		const t3d::Vec2<real> & t0,
+		const t3d::Vec2<real> & t1,
+		const t3d::Vec2<real> & t2,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal);
+
+	void splitTriangleVertexNormalUVDown(
+		t3d::VertexList & lVertexList,
+		t3d::NormalList & lNormalList,
+		t3d::UVList & lUVList,
+		t3d::VertexList & rVertexList,
+		t3d::NormalList & rNormalList,
+		t3d::UVList & rUVList,
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2,
+		const t3d::Vec4<real> & n0,
+		const t3d::Vec4<real> & n1,
+		const t3d::Vec4<real> & n2,
+		const t3d::Vec2<real> & t0,
+		const t3d::Vec2<real> & t1,
+		const t3d::Vec2<real> & t2,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal);
+
+	void splitTriangleVertexNormalUVLeft(
+		t3d::VertexList & lVertexList,
+		t3d::NormalList & lNormalList,
+		t3d::UVList & lUVList,
+		t3d::VertexList & rVertexList,
+		t3d::NormalList & rNormalList,
+		t3d::UVList & rUVList,
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2,
+		const t3d::Vec4<real> & n0,
+		const t3d::Vec4<real> & n1,
+		const t3d::Vec4<real> & n2,
+		const t3d::Vec2<real> & t0,
+		const t3d::Vec2<real> & t1,
+		const t3d::Vec2<real> & t2,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal);
+
+	void splitTriangleVertexNormalUVRight(
+		t3d::VertexList & lVertexList,
+		t3d::NormalList & lNormalList,
+		t3d::UVList & lUVList,
+		t3d::VertexList & rVertexList,
+		t3d::NormalList & rNormalList,
+		t3d::UVList & rUVList,
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2,
+		const t3d::Vec4<real> & n0,
+		const t3d::Vec4<real> & n1,
+		const t3d::Vec4<real> & n2,
+		const t3d::Vec2<real> & t0,
+		const t3d::Vec2<real> & t1,
+		const t3d::Vec2<real> & t2,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal);
+
+	bool splitTriangleVertexNormalUV(
+		t3d::VertexList & lVertexList,
+		t3d::NormalList & lNormalList,
+		t3d::UVList & lUVList,
+		t3d::VertexList & rVertexList,
+		t3d::NormalList & rNormalList,
+		t3d::UVList & rUVList,
+		const t3d::Vec4<real> & v0,
+		const t3d::Vec4<real> & v1,
+		const t3d::Vec4<real> & v2,
+		const t3d::Vec4<real> & n0,
+		const t3d::Vec4<real> & n1,
+		const t3d::Vec4<real> & n2,
+		const t3d::Vec2<real> & t0,
+		const t3d::Vec2<real> & t1,
+		const t3d::Vec2<real> & t2,
+		const t3d::Vec4<real> & planePoint,
+		const t3d::Vec4<real> & planeNormal);
 }
 
 #endif // __MYMATH_H__

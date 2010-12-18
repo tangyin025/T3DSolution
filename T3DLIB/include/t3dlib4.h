@@ -81,11 +81,11 @@ namespace t3d
 		};
 
 	public:
-		inline Mat4(void)
+		Mat4(void)
 		{
 		}
 
-		inline Mat4
+		Mat4
 			( const elem_t _m00, const elem_t _m01, const elem_t _m02, const elem_t _m03
 			, const elem_t _m10, const elem_t _m11, const elem_t _m12, const elem_t _m13
 			, const elem_t _m20, const elem_t _m21, const elem_t _m22, const elem_t _m23
@@ -99,7 +99,7 @@ namespace t3d
 		}
 
 	public:
-		inline Mat4 operator - (void) const
+		Mat4 operator - (void) const
 		{
 			return Mat4(
 				-m00, -m01, -m02, -m03,
@@ -108,7 +108,7 @@ namespace t3d
 				-m30, -m31, -m32, -m33);
 		}
 
-		inline bool operator == (const Mat4 & rhs) const
+		bool operator == (const Mat4 & rhs) const
 		{
 			return m00 == rhs.m00 && m01 == rhs.m01 && m02 == rhs.m02 && m03 == rhs.m03
 				&& m10 == rhs.m10 && m11 == rhs.m11 && m12 == rhs.m12 && m13 == rhs.m13
@@ -116,7 +116,7 @@ namespace t3d
 				&& m30 == rhs.m30 && m31 == rhs.m31 && m32 == rhs.m32 && m33 == rhs.m33;
 		}
 
-		inline Mat4 operator + (const Mat4 & rhs) const
+		Mat4 operator + (const Mat4 & rhs) const
 		{
 			return Mat4(
 				m00 + rhs.m00, m01 + rhs.m01, m02 + rhs.m02, m03 + rhs.m03,
@@ -125,7 +125,7 @@ namespace t3d
 				m30 + rhs.m30, m31 + rhs.m31, m32 + rhs.m32, m33 + rhs.m33);
 		}
 
-		inline Mat4 operator + (elem_t scaler) const
+		Mat4 operator + (elem_t scaler) const
 		{
 			return Mat4(
 				m00 + scaler, m01 + scaler, m02 + scaler, m03 + scaler,
@@ -134,7 +134,7 @@ namespace t3d
 				m30 + scaler, m31 + scaler, m32 + scaler, m33 + scaler);
 		}
 
-		inline Mat4 & operator +=(const Mat4 & rhs)
+		Mat4 & operator +=(const Mat4 & rhs)
 		{
 			m00 += rhs.m00; m01 += rhs.m01; m02 += rhs.m02; m03 += rhs.m03;
 			m10 += rhs.m10; m11 += rhs.m11; m12 += rhs.m12; m13 += rhs.m13;
@@ -143,7 +143,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Mat4 & operator +=(elem_t scaler)
+		Mat4 & operator +=(elem_t scaler)
 		{
 			m00 += scaler; m01 += scaler; m02 += scaler; m03 += scaler;
 			m10 += scaler; m11 += scaler; m12 += scaler; m13 += scaler;
@@ -152,7 +152,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Mat4 operator - (const Mat4 & rhs) const
+		Mat4 operator - (const Mat4 & rhs) const
 		{
 			return Mat4(
 				m00 - rhs.m00, m01 - rhs.m01, m02 - rhs.m02, m03 - rhs.m03,
@@ -161,7 +161,7 @@ namespace t3d
 				m30 - rhs.m30, m31 - rhs.m31, m32 - rhs.m32, m33 - rhs.m33);
 		}
 
-		inline Mat4 operator - (elem_t scaler) const
+		Mat4 operator - (elem_t scaler) const
 		{
 			return Mat4(
 				m00 - scaler, m01 - scaler, m02 - scaler, m03 - scaler,
@@ -170,7 +170,7 @@ namespace t3d
 				m30 - scaler, m31 - scaler, m32 - scaler, m33 - scaler);
 		}
 
-		inline Mat4 & operator -=(const Mat4 & rhs)
+		Mat4 & operator -=(const Mat4 & rhs)
 		{
 			m00 -= rhs.m00; m01 -= rhs.m01; m02 -= rhs.m02; m03 -= rhs.m03;
 			m10 -= rhs.m10; m11 -= rhs.m11; m12 -= rhs.m12; m13 -= rhs.m13;
@@ -179,7 +179,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Mat4 & operator -=(elem_t scaler)
+		Mat4 & operator -=(elem_t scaler)
 		{
 			m00 -= scaler; m01 -= scaler; m02 -= scaler; m03 -= scaler;
 			m10 -= scaler; m11 -= scaler; m12 -= scaler; m13 -= scaler;
@@ -188,7 +188,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Mat4 operator * (const Mat4 & rhs) const
+		Mat4 operator * (const Mat4 & rhs) const
 		{
 			return Mat4(
 				m00 * rhs.m00 + m01 * rhs.m10 + m02 * rhs.m20 + m03 * rhs.m30,
@@ -212,7 +212,7 @@ namespace t3d
 				m30 * rhs.m03 + m31 * rhs.m13 + m32 * rhs.m23 + m33 * rhs.m33);
 		}
 
-		inline Mat4 operator * (elem_t scaler) const
+		Mat4 operator * (elem_t scaler) const
 		{
 			return Mat4(
 				m00 * scaler, m01 * scaler, m02 * scaler, m03 * scaler,
@@ -221,12 +221,12 @@ namespace t3d
 				m30 * scaler, m31 * scaler, m32 * scaler, m33 * scaler);
 		}
 
-		inline Mat4 & operator *=(const Mat4 & rhs)
+		Mat4 & operator *=(const Mat4 & rhs)
 		{
 			return *this = *this * rhs;
 		}
 
-		inline Mat4 & operator *=(elem_t scaler)
+		Mat4 & operator *=(elem_t scaler)
 		{
 			m00 *= scaler; m01 *= scaler; m02 *= scaler; m03 *= scaler;
 			m10 *= scaler; m11 *= scaler; m12 *= scaler; m13 *= scaler;
@@ -235,12 +235,12 @@ namespace t3d
 			return *this;
 		}
 
-		//inline Mat4 operator / (const Mat4 & rhs) const
+		//Mat4 operator / (const Mat4 & rhs) const
 		//{
 		//	return *this * rhs.inverse();
 		//}
 
-		//inline Mat4 operator / (elem_t scaler) const
+		//Mat4 operator / (elem_t scaler) const
 		//{
 		//	return Mat4(
 		//		m00 / scaler, m01 / scaler, m02 / scaler, m03 / scaler,
@@ -249,12 +249,12 @@ namespace t3d
 		//		m30 / scaler, m31 / scaler, m32 / scaler, m33 / scaler);
 		//}
 
-		//inline Mat4 & operator /=(const Mat4 & rhs)
+		//Mat4 & operator /=(const Mat4 & rhs)
 		//{
 		//	return *this = *this / rhs;
 		//}
 
-		//inline Mat4 & operator /=(elem_t scaler)
+		//Mat4 & operator /=(elem_t scaler)
 		//{
 		//	m00 /= scaler; m01 /= scaler; m02 /= scaler; m03 /= scaler;
 		//	m10 /= scaler; m11 /= scaler; m12 /= scaler; m13 /= scaler;
@@ -264,7 +264,7 @@ namespace t3d
 		//}
 
 	public:
-		inline elem_t a00(void) const
+		elem_t a00(void) const
 		{
 			return m11 * m22 * m33
 				 + m12 * m23 * m31
@@ -274,7 +274,7 @@ namespace t3d
 				 - m13 * m22 * m31;
 		}
 
-		inline elem_t a01(void) const
+		elem_t a01(void) const
 		{
 			return m12 * m23 * m30
 				 + m13 * m20 * m32
@@ -284,7 +284,7 @@ namespace t3d
 				 - m10 * m23 * m32;
 		}
 
-		inline elem_t a02(void) const
+		elem_t a02(void) const
 		{
 			return m13 * m20 * m31
 				 + m10 * m21 * m33
@@ -294,7 +294,7 @@ namespace t3d
 				 - m11 * m20 * m33;
 		}
 
-		inline elem_t a03(void) const
+		elem_t a03(void) const
 		{
 			return m10 * m21 * m32
 				 + m11 * m22 * m30
@@ -304,7 +304,7 @@ namespace t3d
 				 - m12 * m21 * m30;
 		}
 
-		inline elem_t a10(void) const
+		elem_t a10(void) const
 		{
 			return m21 * m32 * m03
 				 + m22 * m33 * m01
@@ -314,7 +314,7 @@ namespace t3d
 				 - m23 * m32 * m01;
 		}
 
-		inline elem_t a11(void) const
+		elem_t a11(void) const
 		{
 			return m22 * m33 * m00
 				 + m23 * m30 * m02
@@ -324,7 +324,7 @@ namespace t3d
 				 - m20 * m33 * m02;
 		}
 
-		inline elem_t a12(void) const
+		elem_t a12(void) const
 		{
 			return m23 * m30 * m01
 				 + m20 * m31 * m03
@@ -334,7 +334,7 @@ namespace t3d
 				 - m21 * m30 * m03;
 		}
 
-		inline elem_t a13(void) const
+		elem_t a13(void) const
 		{
 			return m20 * m31 * m02
 				 + m21 * m32 * m00
@@ -344,7 +344,7 @@ namespace t3d
 				 - m22 * m31 * m00;
 		}
 
-		inline elem_t a20(void) const
+		elem_t a20(void) const
 		{
 			return m31 * m02 * m13
 				 + m32 * m03 * m11
@@ -354,7 +354,7 @@ namespace t3d
 				 - m33 * m02 * m11;
 		}
 
-		inline elem_t a21(void) const
+		elem_t a21(void) const
 		{
 			return m32 * m03 * m10
 				 + m33 * m00 * m12
@@ -364,7 +364,7 @@ namespace t3d
 				 - m30 * m03 * m12;
 		}
 
-		inline elem_t a22(void) const
+		elem_t a22(void) const
 		{
 			return m33 * m00 * m11
 				 + m30 * m01 * m13
@@ -374,7 +374,7 @@ namespace t3d
 				 - m31 * m00 * m13;
 		}
 
-		inline elem_t a23(void) const
+		elem_t a23(void) const
 		{
 			return m30 * m01 * m12
 				 + m31 * m02 * m10
@@ -384,7 +384,7 @@ namespace t3d
 				 - m32 * m01 * m10;
 		}
 
-		inline elem_t a30(void) const
+		elem_t a30(void) const
 		{
 			return m01 * m12 * m23
 				 + m02 * m13 * m21
@@ -394,7 +394,7 @@ namespace t3d
 				 - m03 * m12 * m21;
 		}
 
-		inline elem_t a31(void) const
+		elem_t a31(void) const
 		{
 			return m02 * m13 * m20
 				 + m03 * m10 * m22
@@ -404,7 +404,7 @@ namespace t3d
 				 - m00 * m13 * m22;
 		}
 
-		inline elem_t a32(void) const
+		elem_t a32(void) const
 		{
 			return m03 * m10 * m21
 				 + m00 * m11 * m23
@@ -414,7 +414,7 @@ namespace t3d
 				 - m01 * m10 * m23;
 		}
 
-		inline elem_t a33(void) const
+		elem_t a33(void) const
 		{
 			return m00 * m11 * m22
 				 + m01 * m12 * m20
@@ -424,7 +424,7 @@ namespace t3d
 				 - m02 * m11 * m20;
 		}
 
-		inline Mat4 adjoint(void) const
+		Mat4 adjoint(void) const
 		{
 			return Mat4(
 				 a00(), -a10(),  a20(), -a30(),
@@ -433,24 +433,24 @@ namespace t3d
 				-a03(),  a13(), -a23(),  a33());
 		}
 
-		inline elem_t determinant(void) const
+		elem_t determinant(void) const
 		{
 			return m00 * a00() - m01 * a01() + m02 * a02() - m03 * a03();
 		}
 
-		inline Mat4 inverse(void) const
+		Mat4 inverse(void) const
 		{
 			//_ASSERT(!IS_ZERO_FLOAT(determinant()));
 
 			return adjoint() * (1 / determinant());
 		}
 
-		inline Mat4 & inverseSelf(void)
+		Mat4 & inverseSelf(void)
 		{
 			return *this = inverse();
 		}
 
-		inline Mat4 transpose(void) const
+		Mat4 transpose(void) const
 		{
 			return Mat4(
 				m00, m10, m20, m30,
@@ -459,22 +459,22 @@ namespace t3d
 				m03, m13, m23, m33);
 		}
 
-		inline Mat4 & transposeSelf(void)
+		Mat4 & transposeSelf(void)
 		{
 			return *this = transpose();
 		}
 
-		inline Mat4 transform(const Mat4<elem_t> & rhs) const
+		Mat4 transform(const Mat4<elem_t> & rhs) const
 		{
 			return *this * rhs;
 		}
 
-		inline Mat4 & transformSelf(const Mat4<elem_t> & rhs)
+		Mat4 & transformSelf(const Mat4<elem_t> & rhs)
 		{
 			return *this = transform(rhs);
 		}
 
-		inline Mat4 transformTranspose(const Mat4<elem_t> & rhs) const
+		Mat4 transformTranspose(const Mat4<elem_t> & rhs) const
 		{
 			return Mat4(
 				m00 * rhs.m00 + m01 * rhs.m01 + m02 * rhs.m02 + m03 * rhs.m03,
@@ -498,7 +498,7 @@ namespace t3d
 				m30 * rhs.m30 + m31 * rhs.m31 + m32 * rhs.m32 + m33 * rhs.m33);
 		}
 
-		inline Mat4 & transformTransposeSelf(const Mat4<elem_t> & rhs)
+		Mat4 & transformTransposeSelf(const Mat4<elem_t> & rhs)
 		{
 			return *this = transformTranspose(rhs);
 		}
@@ -520,136 +520,136 @@ namespace t3d
 		};
 
 	public:
-		inline Vec2(void)
+		Vec2(void)
 		{
 		}
 
-		inline Vec2(elem_t _x, elem_t _y)
+		Vec2(elem_t _x, elem_t _y)
 			: x(_x)
 			, y(_y)
 		{
 		}
 
 	public:
-		inline Vec2 operator - (void) const
+		Vec2 operator - (void) const
 		{
 			return Vec2(
 				-x,
 				-y);
 		}
 
-		inline bool operator == (const Vec2 & rhs) const
+		bool operator == (const Vec2 & rhs) const
 		{
 			return x == rhs.x
 				&& y == rhs.y;
 		}
 
-		inline Vec2 operator + (const Vec2 & rhs) const
+		Vec2 operator + (const Vec2 & rhs) const
 		{
 			return Vec2(
 				x + rhs.x,
 				y + rhs.y);
 		}
 
-		inline Vec2 operator + (elem_t scaler) const
+		Vec2 operator + (elem_t scaler) const
 		{
 			return Vec2(
 				x + scaler,
 				y + scaler);
 		}
 
-		inline Vec2 & operator +=(const Vec2 & rhs)
+		Vec2 & operator +=(const Vec2 & rhs)
 		{
 			x += rhs.x;
 			y += rhs.y;
 			return *this;
 		}
 
-		inline Vec2 & operator +=(elem_t scaler)
+		Vec2 & operator +=(elem_t scaler)
 		{
 			x += scaler;
 			y += scaler;
 			return *this;
 		}
 
-		inline Vec2 operator - (const Vec2 & rhs) const
+		Vec2 operator - (const Vec2 & rhs) const
 		{
 			return Vec2(
 				x - rhs.x,
 				y - rhs.y);
 		}
 
-		inline Vec2 operator - (elem_t scaler) const
+		Vec2 operator - (elem_t scaler) const
 		{
 			return Vec2(
 				x - scaler,
 				y - scaler);
 		}
 
-		inline Vec2 & operator -=(const Vec2 & rhs)
+		Vec2 & operator -=(const Vec2 & rhs)
 		{
 			x -= rhs.x;
 			y -= rhs.y;
 			return *this;
 		}
 
-		inline Vec2 & operator -=(elem_t scaler)
+		Vec2 & operator -=(elem_t scaler)
 		{
 			x -= scaler;
 			y -= scaler;
 			return *this;
 		}
 
-		inline Vec2 operator * (const Vec2 & rhs) const
+		Vec2 operator * (const Vec2 & rhs) const
 		{
 			return Vec2(
 				x * rhs.x,
 				y * rhs.y);
 		}
 
-		inline Vec2 operator * (elem_t scaler) const
+		Vec2 operator * (elem_t scaler) const
 		{
 			return Vec2(
 				x * scaler,
 				y * scaler);
 		}
 
-		inline Vec2 & operator *=(const Vec2 & rhs)
+		Vec2 & operator *=(const Vec2 & rhs)
 		{
 			x *= rhs.x;
 			y *= rhs.y;
 			return *this;
 		}
 
-		inline Vec2 & operator *=(elem_t scaler)
+		Vec2 & operator *=(elem_t scaler)
 		{
 			x *= scaler;
 			y *= scaler;
 			return *this;
 		}
 
-		inline Vec2 operator / (const Vec2 & rhs) const
+		Vec2 operator / (const Vec2 & rhs) const
 		{
 			return Vec2(
 				x / rhs.x,
 				y / rhs.y);
 		}
 
-		inline Vec2 operator / (elem_t scaler) const
+		Vec2 operator / (elem_t scaler) const
 		{
 			return Vec2(
 				x / scaler,
 				y / scaler);
 		}
 
-		inline Vec2 & operator /=(const Vec2 & rhs)
+		Vec2 & operator /=(const Vec2 & rhs)
 		{
 			x /= rhs.x;
 			y /= rhs.y;
 			return *this;
 		}
 
-		inline Vec2 & operator /=(elem_t scaler)
+		Vec2 & operator /=(elem_t scaler)
 		{
 			x /= scaler;
 			y /= scaler;
@@ -675,11 +675,11 @@ namespace t3d
 		};
 
 	public:
-		inline Vec4(void)
+		Vec4(void)
 		{
 		}
 
-		inline Vec4(elem_t _x, elem_t _y, elem_t _z, elem_t _w)
+		Vec4(elem_t _x, elem_t _y, elem_t _z, elem_t _w)
 			: x(_x)
 			, y(_y)
 			, z(_z)
@@ -688,7 +688,7 @@ namespace t3d
 		}
 
 	public:
-		inline Vec4 operator - (void) const
+		Vec4 operator - (void) const
 		{
 			return Vec4(
 				-x,
@@ -697,7 +697,7 @@ namespace t3d
 				-w);
 		}
 
-		inline bool operator == (const Vec4 & rhs) const
+		bool operator == (const Vec4 & rhs) const
 		{
 			return x == rhs.x
 				&& y == rhs.y
@@ -705,7 +705,7 @@ namespace t3d
 				&& w == rhs.w;
 		}
 
-		inline Vec4 operator + (const Vec4 & rhs) const
+		Vec4 operator + (const Vec4 & rhs) const
 		{
 			return Vec4(
 				x + rhs.x,
@@ -714,7 +714,7 @@ namespace t3d
 				w + rhs.w);
 		}
 
-		inline Vec4 operator + (elem_t scaler) const
+		Vec4 operator + (elem_t scaler) const
 		{
 			return Vec4(
 				x + scaler,
@@ -723,7 +723,7 @@ namespace t3d
 				w + scaler);
 		}
 
-		inline Vec4 & operator +=(const Vec4 & rhs)
+		Vec4 & operator +=(const Vec4 & rhs)
 		{
 			x += rhs.x;
 			y += rhs.y;
@@ -732,7 +732,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 & operator +=(elem_t scaler)
+		Vec4 & operator +=(elem_t scaler)
 		{
 			x += scaler;
 			y += scaler;
@@ -741,7 +741,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 operator - (const Vec4 & rhs) const
+		Vec4 operator - (const Vec4 & rhs) const
 		{
 			return Vec4(
 				x - rhs.x,
@@ -750,7 +750,7 @@ namespace t3d
 				w - rhs.w);
 		}
 
-		inline Vec4 operator - (elem_t scaler) const
+		Vec4 operator - (elem_t scaler) const
 		{
 			return Vec4(
 				x - scaler,
@@ -759,7 +759,7 @@ namespace t3d
 				w - scaler);
 		}
 
-		inline Vec4 & operator -=(const Vec4 & rhs)
+		Vec4 & operator -=(const Vec4 & rhs)
 		{
 			x -= rhs.x;
 			y -= rhs.y;
@@ -768,7 +768,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 & operator -=(elem_t scaler)
+		Vec4 & operator -=(elem_t scaler)
 		{
 			x -= scaler;
 			y -= scaler;
@@ -777,7 +777,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 operator * (const Vec4 & rhs) const
+		Vec4 operator * (const Vec4 & rhs) const
 		{
 			return Vec4(
 				x * rhs.x,
@@ -786,7 +786,7 @@ namespace t3d
 				w * rhs.w);
 		}
 
-		inline Vec4 operator * (elem_t scaler) const
+		Vec4 operator * (elem_t scaler) const
 		{
 			return Vec4(
 				x * scaler,
@@ -795,7 +795,7 @@ namespace t3d
 				w * scaler);
 		}
 
-		inline Vec4 & operator *=(const Vec4 & rhs)
+		Vec4 & operator *=(const Vec4 & rhs)
 		{
 			x *= rhs.x;
 			y *= rhs.y;
@@ -804,7 +804,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 & operator *=(elem_t scaler)
+		Vec4 & operator *=(elem_t scaler)
 		{
 			x *= scaler;
 			y *= scaler;
@@ -813,7 +813,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 operator / (const Vec4 & rhs) const
+		Vec4 operator / (const Vec4 & rhs) const
 		{
 			return Vec4(
 				x / rhs.x,
@@ -822,7 +822,7 @@ namespace t3d
 				w / rhs.w);
 		}
 
-		inline Vec4 operator / (elem_t scaler) const
+		Vec4 operator / (elem_t scaler) const
 		{
 			return Vec4(
 				x / scaler,
@@ -831,7 +831,7 @@ namespace t3d
 				w / scaler);
 		}
 
-		inline Vec4 & operator /=(const Vec4 & rhs)
+		Vec4 & operator /=(const Vec4 & rhs)
 		{
 			x /= rhs.x;
 			y /= rhs.y;
@@ -840,7 +840,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Vec4 & operator /=(elem_t scaler)
+		Vec4 & operator /=(elem_t scaler)
 		{
 			x /= scaler;
 			y /= scaler;
@@ -850,7 +850,7 @@ namespace t3d
 		}
 
 	public:
-		inline Vec4 operator * (const Mat4<elem_t> & rhs) const
+		Vec4 operator * (const Mat4<elem_t> & rhs) const
 		{
 			return Vec4(
 				x * rhs.m00 + y * rhs.m10 + z * rhs.m20 + w * rhs.m30,
@@ -859,22 +859,22 @@ namespace t3d
 				x * rhs.m03 + y * rhs.m13 + z * rhs.m23 + w * rhs.m33);
 		}
 
-		inline Vec4 & operator *=(const Mat4<elem_t> & rhs)
+		Vec4 & operator *=(const Mat4<elem_t> & rhs)
 		{
 			return *this = *this * rhs;
 		}
 
-		inline Vec4 transform(const Mat4<elem_t> & rhs) const
+		Vec4 transform(const Mat4<elem_t> & rhs) const
 		{
 			return *this * rhs;
 		}
 
-		inline Vec4 & transformSelf(const Mat4<elem_t> & rhs)
+		Vec4 & transformSelf(const Mat4<elem_t> & rhs)
 		{
 			return *this = transform(rhs);
 		}
 
-		inline Vec4 transformTranspose(const Mat4<elem_t> & rhs) const
+		Vec4 transformTranspose(const Mat4<elem_t> & rhs) const
 		{
 			return Vec4(
 				x * rhs.m00 + y * rhs.m01 + z * rhs.m02 + w * rhs.m03,
@@ -883,7 +883,7 @@ namespace t3d
 				x * rhs.m30 + y * rhs.m31 + z * rhs.m32 + w * rhs.m33);
 		}
 
-		inline Vec4 & transformTransposeSelf(const Mat4<elem_t> & rhs)
+		Vec4 & transformTransposeSelf(const Mat4<elem_t> & rhs)
 		{
 			return *this = transformTranspose(rhs);
 		}
@@ -907,11 +907,11 @@ namespace t3d
 		};
 
 	public:
-		inline Quat(void)
+		Quat(void)
 		{
 		}
 
-		inline Quat(elem_t _w, elem_t _x, elem_t _y, elem_t _z)
+		Quat(elem_t _w, elem_t _x, elem_t _y, elem_t _z)
 			: w(_w)
 			, x(_x)
 			, y(_y)
@@ -920,7 +920,7 @@ namespace t3d
 		}
 
 	public:
-		inline Quat operator + (const Quat & rhs) const
+		Quat operator + (const Quat & rhs) const
 		{
 			return Quat(
 				w + rhs.w,
@@ -929,7 +929,7 @@ namespace t3d
 				z + rhs.z);
 		}
 
-		inline Quat operator + (elem_t scaler) const
+		Quat operator + (elem_t scaler) const
 		{
 			return Quat(
 				w + scaler,
@@ -938,7 +938,7 @@ namespace t3d
 				z + scaler);
 		}
 
-		inline Quat & operator +=(const Quat & rhs)
+		Quat & operator +=(const Quat & rhs)
 		{
 			w += rhs.w;
 			x += rhs.x;
@@ -947,7 +947,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Quat & operator +=(elem_t scaler)
+		Quat & operator +=(elem_t scaler)
 		{
 			w += scaler;
 			x += scaler;
@@ -956,7 +956,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Quat operator - (const Quat & rhs) const
+		Quat operator - (const Quat & rhs) const
 		{
 			return Quat(
 				w - rhs.w,
@@ -965,7 +965,7 @@ namespace t3d
 				z - rhs.z);
 		}
 
-		inline Quat operator - (elem_t scaler) const
+		Quat operator - (elem_t scaler) const
 		{
 			return Quat(
 				w - scaler,
@@ -974,7 +974,7 @@ namespace t3d
 				z - scaler);
 		}
 
-		inline Quat & operator -=(const Quat & rhs)
+		Quat & operator -=(const Quat & rhs)
 		{
 			w -= rhs.w;
 			x -= rhs.x;
@@ -983,7 +983,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Quat & operator -=(elem_t scaler)
+		Quat & operator -=(elem_t scaler)
 		{
 			w -= scaler;
 			x -= scaler;
@@ -992,7 +992,7 @@ namespace t3d
 			return *this;
 		}
 
-		inline Quat operator * (const Quat & rhs) const
+		Quat operator * (const Quat & rhs) const
 		{
 			return Quat(
 				w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z,
@@ -1001,7 +1001,7 @@ namespace t3d
 				w * rhs.z + z * rhs.w + x * rhs.y - y * rhs.x);
 		}
 
-		inline Quat operator * (elem_t scaler) const
+		Quat operator * (elem_t scaler) const
 		{
 			return Quat(
 				w * scaler,
@@ -1010,12 +1010,12 @@ namespace t3d
 				z * scaler);
 		}
 
-		inline Quat & operator *= (const Quat & rhs)
+		Quat & operator *= (const Quat & rhs)
 		{
 			return *this = *this * rhs;
 		}
 
-		inline Quat & operator *=(elem_t scaler)
+		Quat & operator *=(elem_t scaler)
 		{
 			w *= scaler;
 			x *= scaler;
@@ -1024,23 +1024,23 @@ namespace t3d
 			return *this;
 		}
 
-		//inline Quat operator / (const Quat & rhs) const
+		//Quat operator / (const Quat & rhs) const
 		//{
 		//	return *this * rhs.inverse();
 		//}
 
-		//inline Quat operator / (elem_t scaler) const
+		//Quat operator / (elem_t scaler) const
 		//{
 		//	return Quat(
 		//		w / scaler, x / scaler, y / scaler, z / scaler);
 		//}
 
-		//inline Quat & operator /=(const Quat & rhs)
+		//Quat & operator /=(const Quat & rhs)
 		//{
 		//	return *this = *this / rhs;
 		//}
 
-		//inline Quat & operator /=(elem_t scaler)
+		//Quat & operator /=(elem_t scaler)
 		//{
 		//	w /= scaler;
 		//	x /= scaler;
@@ -1050,7 +1050,7 @@ namespace t3d
 		//}
 
 	public:
-		inline Quat scale(elem_t scaler) const
+		Quat scale(elem_t scaler) const
 		{
 			return Quat(
 				w * scaler,
@@ -1059,7 +1059,7 @@ namespace t3d
 				z * scaler);
 		}
 
-		inline Quat & scaleSelf(elem_t scaler)
+		Quat & scaleSelf(elem_t scaler)
 		{
 			w *= scaler;
 			x *= scaler;
@@ -1068,13 +1068,13 @@ namespace t3d
 			return *this;
 		}
 
-		inline Quat conjugate(void) const
+		Quat conjugate(void) const
 		{
 			return Quat(
 				w, -x, -y, -z);
 		}
 
-		inline Quat & conjugateSelf(void)
+		Quat & conjugateSelf(void)
 		{
 			x = -x;
 			y = -y;
@@ -1082,43 +1082,43 @@ namespace t3d
 			return *this;
 		}
 
-		inline elem_t norm2(void) const
+		elem_t norm2(void) const
 		{
 			return w * w + x * x + y * y + z * z;
 		}
 
-		inline elem_t norm(void) const
+		elem_t norm(void) const
 		{
 			return sqrt(norm2());
 		}
 
-		inline Quat inverse(void) const
+		Quat inverse(void) const
 		{
 			_ASSERT(!IS_ZERO_FLOAT(norm()));
 
 			return conjugate().scale(1 / norm());
 		}
 
-		inline Quat & inverseSelf(void)
+		Quat & inverseSelf(void)
 		{
 			return *this = inverse();
 		}
 
-		inline Quat unitInverse(void) const
+		Quat unitInverse(void) const
 		{
 			_ASSERT(IS_ZERO_FLOAT(norm() - 1));
 
 			return conjugate();
 		}
 
-		inline Quat & unitInverseSelf(void)
+		Quat & unitInverseSelf(void)
 		{
 			_ASSERT(IS_ZERO_FLOAT(norm() - 1));
 
 			return conjugateSelf();
 		}
 
-		inline Quat normalize(void) const
+		Quat normalize(void) const
 		{
 			_ASSERT(!IS_ZERO_FLOAT(norm()));
 
@@ -1130,7 +1130,7 @@ namespace t3d
 				z * length_inv);
 		}
 
-		inline Quat & normalizeSelf(void)
+		Quat & normalizeSelf(void)
 		{
 			_ASSERT(!IS_ZERO_FLOAT(norm()));
 
@@ -1352,19 +1352,19 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Build(elem_t x, elem_t y, elem_t z)
+	Vec4<elem_t> vec3Build(elem_t x, elem_t y, elem_t z)
 	{
 		return Vec4<elem_t>(x, y, z, 1);
 	}
 
 	template <typename elem_t>
-	inline bool vec3IsZero(const Vec4<elem_t> & rhs)
+	bool vec3IsZero(const Vec4<elem_t> & rhs)
 	{
 		return IS_ZERO_FLOAT(rhs.x) && IS_ZERO_FLOAT(rhs.y) && IS_ZERO_FLOAT(rhs.z);
 	}
 
 	template <typename elem_t>
-	inline bool vec3IsEqual(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	bool vec3IsEqual(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return lhs.x == rhs.x
 			&& lhs.y == rhs.y
@@ -1372,7 +1372,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Neg(const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Neg(const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			-rhs.x,
@@ -1382,7 +1382,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3NegSelf(Vec4<elem_t> & res)
+	Vec4<elem_t> & vec3NegSelf(Vec4<elem_t> & res)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1393,7 +1393,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Inverse(const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Inverse(const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			1 / rhs.x,
@@ -1403,7 +1403,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3InverseSelf(Vec4<elem_t> & res)
+	Vec4<elem_t> & vec3InverseSelf(Vec4<elem_t> & res)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1414,7 +1414,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Add(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Add(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			lhs.x + rhs.x,
@@ -1424,7 +1424,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3AddSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> & vec3AddSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1435,7 +1435,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Add(const Vec4<elem_t> & lhs, elem_t scaler)
+	Vec4<elem_t> vec3Add(const Vec4<elem_t> & lhs, elem_t scaler)
 	{
 		return Vec4<elem_t>(
 			lhs.x + scaler,
@@ -1445,7 +1445,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3AddSelf(Vec4<elem_t> & res, elem_t scaler)
+	Vec4<elem_t> & vec3AddSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1456,7 +1456,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Sub(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Sub(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			lhs.x - rhs.x,
@@ -1466,7 +1466,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3SubSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> & vec3SubSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1477,7 +1477,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Sub(const Vec4<elem_t> & lhs, elem_t scaler)
+	Vec4<elem_t> vec3Sub(const Vec4<elem_t> & lhs, elem_t scaler)
 	{
 		return Vec4<elem_t>(
 			lhs.x - scaler,
@@ -1487,7 +1487,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3SubSelf(Vec4<elem_t> & res, elem_t scaler)
+	Vec4<elem_t> & vec3SubSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1498,7 +1498,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Mul(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Mul(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			lhs.x * rhs.x,
@@ -1508,7 +1508,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3MulSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> & vec3MulSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1519,7 +1519,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Mul(const Vec4<elem_t> & lhs, elem_t scaler)
+	Vec4<elem_t> vec3Mul(const Vec4<elem_t> & lhs, elem_t scaler)
 	{
 		return Vec4<elem_t>(
 			lhs.x * scaler,
@@ -1529,7 +1529,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3MulSelf(Vec4<elem_t> & res, elem_t scaler)
+	Vec4<elem_t> & vec3MulSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1540,7 +1540,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Div(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Div(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			lhs.x / rhs.x,
@@ -1550,7 +1550,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3DivSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> & vec3DivSelf(Vec4<elem_t> & res, const Vec4<elem_t> & rhs)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1561,7 +1561,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Div(const Vec4<elem_t> & lhs, elem_t scaler)
+	Vec4<elem_t> vec3Div(const Vec4<elem_t> & lhs, elem_t scaler)
 	{
 		return Vec4<elem_t>(
 			lhs.x / scaler,
@@ -1571,7 +1571,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3DivSelf(Vec4<elem_t> & res, elem_t scaler)
+	Vec4<elem_t> & vec3DivSelf(Vec4<elem_t> & res, elem_t scaler)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1582,25 +1582,25 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline elem_t vec3LengthSquare(const Vec4<elem_t> & rhs)
+	elem_t vec3LengthSquare(const Vec4<elem_t> & rhs)
 	{
 		return rhs.x * rhs.x + rhs.y * rhs.y + rhs.z * rhs.z;
 	}
 
 	template <typename elem_t>
-	inline elem_t vec3Length(const Vec4<elem_t> & rhs)
+	elem_t vec3Length(const Vec4<elem_t> & rhs)
 	{
 		return sqrt(vec3LengthSquare(rhs));
 	}
 
 	template <typename elem_t>
-	inline bool vec3IsNormalized(const Vec4<elem_t> & rhs)
+	bool vec3IsNormalized(const Vec4<elem_t> & rhs)
 	{
 		return IS_ZERO_FLOAT(vec3Length(rhs) - 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Normalize(const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Normalize(const Vec4<elem_t> & rhs)
 	{
 		_ASSERT(!IS_ZERO_FLOAT(vec3Length(rhs)));
 
@@ -1613,7 +1613,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & vec3NormalizeSelf(Vec4<elem_t> & res)
+	Vec4<elem_t> & vec3NormalizeSelf(Vec4<elem_t> & res)
 	{
 		_ASSERT(1 == res.w);
 
@@ -1625,13 +1625,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline elem_t vec3Dot(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	elem_t vec3Dot(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Cross(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	Vec4<elem_t> vec3Cross(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(
 			lhs.y * rhs.z - lhs.z * rhs.y,
@@ -1641,7 +1641,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline elem_t vec3CosTheta(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	elem_t vec3CosTheta(const Vec4<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		_ASSERT(!IS_ZERO_FLOAT(vec3Length(lhs) * vec3Length(rhs)));
 
@@ -1649,7 +1649,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3Build(
+	Mat4<elem_t> mat3Build(
 			const elem_t _m00, const elem_t _m01, const elem_t _m02,
 			const elem_t _m10, const elem_t _m11, const elem_t _m12,
 			const elem_t _m20, const elem_t _m21, const elem_t _m22)
@@ -1662,31 +1662,31 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetRow0(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetRow0(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m00, rhs.m01, rhs.m02, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetRow1(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetRow1(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m10, rhs.m11, rhs.m12, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetRow2(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetRow2(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m20, rhs.m21, rhs.m22, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetRow3(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetRow3(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m30, rhs.m31, rhs.m32, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetRowN(const Mat4<elem_t> & rhs, size_t row_i)
+	Vec4<elem_t> mat3GetRowN(const Mat4<elem_t> & rhs, size_t row_i)
 	{
 		switch(row_i)
 		{
@@ -1707,31 +1707,31 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetColumn0(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetColumn0(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m00, rhs.m10, rhs.m20, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetColumn1(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetColumn1(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m01, rhs.m11, rhs.m21, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetColumn2(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetColumn2(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m02, rhs.m12, rhs.m22, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetColumn3(const Mat4<elem_t> & rhs)
+	Vec4<elem_t> mat3GetColumn3(const Mat4<elem_t> & rhs)
 	{
 		return Vec4<elem_t>(rhs.m03, rhs.m13, rhs.m23, 1);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> mat3GetColumn(const Mat4<elem_t> & rhs, size_t column_i)
+	Vec4<elem_t> mat3GetColumn(const Mat4<elem_t> & rhs, size_t column_i)
 	{
 		switch(column_i)
 		{
@@ -1752,7 +1752,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3Scale(const Vec4<elem_t> & scaler)
+	Mat4<elem_t> mat3Scale(const Vec4<elem_t> & scaler)
 	{
 		return Mat4<elem_t>(
 			scaler.x,		0,				0,				0,
@@ -1762,13 +1762,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseScale(const Vec4<elem_t> & scaler)
+	Mat4<elem_t> mat3InverseScale(const Vec4<elem_t> & scaler)
 	{
 		return mat3Scale(vec3Inverse(scaler));
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3Mov(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3Mov(const Vec4<elem_t> & rhs)
 	{
 		return Mat4<elem_t>(
 			1,				0,				0,				0,
@@ -1778,13 +1778,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseMov(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseMov(const Vec4<elem_t> & rhs)
 	{
 		return mat3Mov(vec3Neg(rhs));
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotX(elem_t radian)
+	Mat4<elem_t> mat3RotX(elem_t radian)
 	{
 		return Mat4<elem_t>(
 			1,				0,				0,				0,
@@ -1794,13 +1794,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotX(elem_t radian)
+	Mat4<elem_t> mat3InverseRotX(elem_t radian)
 	{
 		return mat3RotX(-radian);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotY(elem_t radian)
+	Mat4<elem_t> mat3RotY(elem_t radian)
 	{
 		return Mat4<elem_t>(
 			cos(radian),	0,				-sin(radian),	0,
@@ -1810,13 +1810,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotY(elem_t radian)
+	Mat4<elem_t> mat3InverseRotY(elem_t radian)
 	{
 		return mat3RotY(-radian);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotZ(elem_t radian)
+	Mat4<elem_t> mat3RotZ(elem_t radian)
 	{
 		return Mat4<elem_t>(
 			cos(radian),	sin(radian),	0,				0,
@@ -1826,85 +1826,85 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotZ(elem_t radian)
+	Mat4<elem_t> mat3InverseRotZ(elem_t radian)
 	{
 		return mat3RotZ(-radian);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotXYZ(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3RotXYZ(const Vec4<elem_t> & rhs)
 	{
 		return mat3RotX(rhs.x) * mat3RotY(rhs.y) * mat3RotZ(rhs.z);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotXYZ(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseRotXYZ(const Vec4<elem_t> & rhs)
 	{
 		return mat3InverseRotZ(rhs.z) * mat3InverseRotY(rhs.y) * mat3InverseRotX(rhs.x);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotYXZ(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3RotYXZ(const Vec4<elem_t> & rhs)
 	{
 		return mat3RotY(rhs.y) * mat3RotX(rhs.x) * mat3RotZ(rhs.z);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotYXZ(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseRotYXZ(const Vec4<elem_t> & rhs)
 	{
 		return mat3InverseRotZ(rhs.z) * mat3InverseRotX(rhs.x) * mat3InverseRotY(rhs.y);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotXZY(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3RotXZY(const Vec4<elem_t> & rhs)
 	{
 		return mat3RotX(rhs.x) * mat3RotZ(rhs.z) * mat3RotY(rhs.y);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotXZY(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseRotXZY(const Vec4<elem_t> & rhs)
 	{
 		return mat3InverseRotY(rhs.y) * mat3InverseRotZ(rhs.z) * mat3InverseRotX(rhs.x);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotZXY(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3RotZXY(const Vec4<elem_t> & rhs)
 	{
 		return mat3RotZ(rhs.z) * mat3RotX(rhs.x) * mat3RotY(rhs.y);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotZXY(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseRotZXY(const Vec4<elem_t> & rhs)
 	{
 		return mat3InverseRotY(rhs.y) * mat3InverseRotX(rhs.x) * mat3InverseRotZ(rhs.z);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotYZX(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3RotYZX(const Vec4<elem_t> & rhs)
 	{
 		return mat3RotY(rhs.y) * mat3RotZ(rhs.z) * mat3RotX(rhs.x);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotYZX(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseRotYZX(const Vec4<elem_t> & rhs)
 	{
 		return mat3InverseRotX(rhs.x) * mat3InverseRotZ(rhs.z) * mat3InverseRotY(rhs.y);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3RotZYX(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3RotZYX(const Vec4<elem_t> & rhs)
 	{
 		return mat3RotZ(rhs.z) * mat3RotY(rhs.y) * mat3RotX(rhs.x);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3InverseRotZYX(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> mat3InverseRotZYX(const Vec4<elem_t> & rhs)
 	{
 		return mat3InverseRotX(rhs.x) * mat3InverseRotY(rhs.y) * mat3InverseRotZ(rhs.z);
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3Uvn(const Vec4<elem_t> & u, const Vec4<elem_t> & v, const Vec4<elem_t> & n)
+	Mat4<elem_t> mat3Uvn(const Vec4<elem_t> & u, const Vec4<elem_t> & v, const Vec4<elem_t> & n)
 	{
 		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, v)));
 		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, n)));
@@ -1918,7 +1918,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3TransposUvn(const Vec4<elem_t> & u, const Vec4<elem_t> & v, const Vec4<elem_t> & n)
+	Mat4<elem_t> mat3TransposUvn(const Vec4<elem_t> & u, const Vec4<elem_t> & v, const Vec4<elem_t> & n)
 	{
 		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, v)));
 		_ASSERT(IS_ZERO_FLOAT(vec3Dot(u, n)));
@@ -1932,7 +1932,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat3LookAt(const Vec4<elem_t> & pos, const Vec4<elem_t> & target, const Vec4<elem_t> & up)
+	Mat4<elem_t> mat3LookAt(const Vec4<elem_t> & pos, const Vec4<elem_t> & target, const Vec4<elem_t> & up)
 	{
 		Vec4<elem_t> n(vec3Sub(target, pos));
 		Vec4<elem_t> u(vec3Cross(up, n));
@@ -1942,7 +1942,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat4GetRotationScalePart(const Mat4<elem_t> & rhs)
+	Mat4<elem_t> mat4GetRotationScalePart(const Mat4<elem_t> & rhs)
 	{
 		return Mat4<elem_t>(
 			rhs.m00,		rhs.m01,		rhs.m02,		0,
@@ -1952,13 +1952,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Quat<elem_t> buildQuatFromAngularVelocity(const Vec4<elem_t> & angularVelocity)
+	Quat<elem_t> buildQuatFromAngularVelocity(const Vec4<elem_t> & angularVelocity)
 	{
 		return Quat<elem_t>(0, angularVelocity.x, angularVelocity.y, angularVelocity.z);
 	}
 
 	template <typename elem_t>
-	inline Quat<elem_t> quatAddAngularVelocity(const Quat<elem_t> & lhs, const Vec4<elem_t> & rhs)
+	Quat<elem_t> quatAddAngularVelocity(const Quat<elem_t> & lhs, const Vec4<elem_t> & rhs)
 	{
 		return lhs + buildQuatFromAngularVelocity(rhs) * lhs * 0.5f;
 	}
@@ -1970,7 +1970,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Quat<elem_t> buildQuatFromEulerZYX(elem_t z, elem_t y, elem_t x)
+	Quat<elem_t> buildQuatFromEulerZYX(elem_t z, elem_t y, elem_t x)
 	{
 		return Quat<elem_t>(
 			cos(z / 2) * cos(y / 2) * cos(x / 2) + sin(z / 2) * sin(y / 2) * sin(x / 2),
@@ -1980,7 +1980,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Quat<elem_t> buildQuatFromAngleAxis(elem_t angle, const Vec4<elem_t> & axis)
+	Quat<elem_t> buildQuatFromAngleAxis(elem_t angle, const Vec4<elem_t> & axis)
 	{
 		_ASSERT(IS_ZERO_FLOAT(vec3Length(axis) - 1));
 
@@ -1992,7 +1992,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> buildRotationMatrixFromQuatLH(const Quat<elem_t> & quat)
+	Mat4<elem_t> buildRotationMatrixFromQuatLH(const Quat<elem_t> & quat)
 	{
 		_ASSERT(IS_ZERO_FLOAT(quat.norm() - 1));
 
@@ -2004,7 +2004,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> buildInverseRotationMatrixFromQuatLH(const Quat<elem_t> & quat)
+	Mat4<elem_t> buildInverseRotationMatrixFromQuatLH(const Quat<elem_t> & quat)
 	{
 		_ASSERT(IS_ZERO_FLOAT(quat.norm() - 1));
 
@@ -2012,7 +2012,7 @@ namespace t3d
 	}
 
 	//template <typename elem_t>
-	//inline Mat4<elem_t> buildTransformMatrixLH(
+	//Mat4<elem_t> buildTransformMatrixLH(
 	//	const Vec4<elem_t> & pos,
 	//	const Quat<elem_t> & ori,
 	//	const Vec4<elem_t> & scaler)
@@ -2021,7 +2021,7 @@ namespace t3d
 	//}
 
 	//template <typename elem_t>
-	//inline void buildTransformMatrixLH(
+	//void buildTransformMatrixLH(
 	//	Mat4<elem_t> & mmat,
 	//	Mat4<elem_t> & mrot,
 	//	const Vec4<elem_t> & pos,
@@ -2034,7 +2034,7 @@ namespace t3d
 	//}
 
 	//template <typename elem_t>
-	//inline Mat4<elem_t> buildInverseTransformMatrixLH(
+	//Mat4<elem_t> buildInverseTransformMatrixLH(
 	//	const Vec4<elem_t> & pos,
 	//	const Quat<elem_t> & ori,
 	//	const Vec4<elem_t> & scaler)
@@ -2043,7 +2043,7 @@ namespace t3d
 	//}
 
 	//template <typename elem_t>
-	//inline void buildInverseTransformMatrixLH(
+	//void buildInverseTransformMatrixLH(
 	//	Mat4<elem_t> & mInverseMat,
 	//	Mat4<elem_t> & mInverseRot,
 	//	const Vec4<elem_t> & pos,
@@ -2056,7 +2056,7 @@ namespace t3d
 	//}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> removeTranslationMatrix(const Mat4<elem_t> & mmat)
+	Mat4<elem_t> removeTranslationMatrix(const Mat4<elem_t> & mmat)
 	{
 		return Mat4<elem_t>(
 			mmat.m00,		mmat.m01,		mmat.m02,		0,
@@ -2066,7 +2066,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> buildSkewSymmetricMatrxi(const Vec4<elem_t> & rhs)
+	Mat4<elem_t> buildSkewSymmetricMatrxi(const Vec4<elem_t> & rhs)
 	{
 		return Mat4<elem_t>(
 			0,				 rhs.z,			-rhs.y,			0,
@@ -2077,7 +2077,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec2<elem_t> vec2Intersect(const Vec2<elem_t> & v0, const Vec2<elem_t> & v1, elem_t a0, elem_t a1, elem_t ca)
+	Vec2<elem_t> vec2Intersect(const Vec2<elem_t> & v0, const Vec2<elem_t> & v1, elem_t a0, elem_t a1, elem_t ca)
 	{
 		return Vec2<elem_t>(
 			LINE2D_INTERSECT(ca, a0, a1, v0.x, v1.x),
@@ -2085,13 +2085,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec2<elem_t> vec2Mid(const Vec2<elem_t> & v0, const Vec2<elem_t> & v1)
+	Vec2<elem_t> vec2Mid(const Vec2<elem_t> & v0, const Vec2<elem_t> & v1)
 	{
 		return vec2Intersect<elem_t>(v0, v1, -1, 1, 0);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Intersect(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t a0, elem_t a1, elem_t ca)
+	Vec4<elem_t> vec3Intersect(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t a0, elem_t a1, elem_t ca)
 	{
 		return Vec4<elem_t>(
 			LINE2D_INTERSECT(ca, a0, a1, v0.x, v1.x),
@@ -2101,13 +2101,13 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3Mid(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1)
+	Vec4<elem_t> vec3Mid(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1)
 	{
 		return vec3Intersect<elem_t>(v0, v1, -1, 1, 0);
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3ClipX(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipx)
+	Vec4<elem_t> vec3ClipX(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipx)
 	{
 		return vec3Build(
 			clipx,
@@ -2116,7 +2116,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3ClipY(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipy)
+	Vec4<elem_t> vec3ClipY(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipy)
 	{
 		return vec3Build(
 			LINE2D_INTERSECT(clipy, v0.y, v1.y, v0.x, v1.x),
@@ -2125,7 +2125,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> vec3ClipZ(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipz)
+	Vec4<elem_t> vec3ClipZ(const Vec4<elem_t> & v0, const Vec4<elem_t> & v1, elem_t clipz)
 	{
 		return vec3Build(
 			LINE2D_INTERSECT(clipz, v0.z, v1.z, v0.x, v1.x),
@@ -2134,7 +2134,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Mat4<elem_t> mat4Intersect(const Mat4<elem_t> & m0, const Mat4<elem_t> & m1, elem_t a0, elem_t a1, elem_t ca)
+	Mat4<elem_t> mat4Intersect(const Mat4<elem_t> & m0, const Mat4<elem_t> & m1, elem_t a0, elem_t a1, elem_t ca)
 	{
 		return Mat4<elem_t>(
 			LINE2D_INTERSECT(ca, a0, a1, m0.m00, m1.m00),
@@ -2159,7 +2159,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Quat<elem_t> quatIntersect(const Quat<elem_t> & q0, const Quat<elem_t> & q1, elem_t a0, elem_t a1, elem_t ca)
+	Quat<elem_t> quatIntersect(const Quat<elem_t> & q0, const Quat<elem_t> & q1, elem_t a0, elem_t a1, elem_t ca)
 	{
 		return Quat<elem_t>(
 			LINE2D_INTERSECT(ca, a0, a1, q0.w, q1.w),
@@ -2169,7 +2169,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline bool rgbaIsValid(const Vec4<elem_t> & rhs, elem_t min, elem_t max)
+	bool rgbaIsValid(const Vec4<elem_t> & rhs, elem_t min, elem_t max)
 	{
 		return rhs.x >= min && rhs.x <= max
 			&& rhs.y >= min && rhs.y <= max
@@ -2177,7 +2177,7 @@ namespace t3d
 	}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> rgbaSaturate(const Vec4<elem_t> & rhs, elem_t intensity = 1.0f)
+	Vec4<elem_t> rgbaSaturate(const Vec4<elem_t> & rhs, elem_t intensity = 1.0f)
 	{
 		return Vec4<elem_t>(
 			limit(rhs.x, elem_t(0), intensity),
@@ -2187,7 +2187,7 @@ namespace t3d
 	}
 
 	//template <typename elem_t>
-	//inline Vec4<elem_t> rgbaSaturate(const Vec4<elem_t> & rhs, const Vec4<elem_t> & intensity)
+	//Vec4<elem_t> rgbaSaturate(const Vec4<elem_t> & rhs, const Vec4<elem_t> & intensity)
 	//{
 	//	return Vec4<elem_t>(
 	//		limit(rhs.x, elem_t(0), intensity.x),
@@ -2197,7 +2197,7 @@ namespace t3d
 	//}
 
 	template <typename elem_t>
-	inline Vec4<elem_t> & rgbaSaturateSelf(Vec4<elem_t> & res, elem_t intensity = 1.0f)
+	Vec4<elem_t> & rgbaSaturateSelf(Vec4<elem_t> & res, elem_t intensity = 1.0f)
 	{
 		res.x = limit(res.x, elem_t(0), intensity);
 		res.y = limit(res.y, elem_t(0), intensity);
@@ -2207,7 +2207,7 @@ namespace t3d
 	}
 
 	//template <typename elem_t>
-	//inline Vec4<elem_t> & rgbaSaturateSelf(Vec4<elem_t> & res, const Vec4<elem_t> & intensity)
+	//Vec4<elem_t> & rgbaSaturateSelf(Vec4<elem_t> & res, const Vec4<elem_t> & intensity)
 	//{
 	//	res.x = limit(res.x, elem_t(0), intensity.x);
 	//	res.y = limit(res.y, elem_t(0), intensity.y);

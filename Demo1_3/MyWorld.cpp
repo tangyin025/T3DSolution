@@ -15,8 +15,8 @@ MyWorld::MyWorld(void)
 
 	// create rigid body for character
 	m_character.body = my::RigidBodyPtr(new my::RigidBody());
-	m_character.body->setMass(my::calculateSphereMass<real>(5, 1));
-	m_character.body->setInertialTensor(my::calculateSphereInertiaTensor<real>(5, m_character.body->getMass()));
+	m_character.body->setMass(my::calculateSphereMass(5, 1));
+	m_character.body->setInertialTensor(my::calculateSphereInertiaTensor(5, m_character.body->getMass()));
 	m_character.body->setDamping(0.95f);
 	m_character.body->setAngularDamping(0);
 	m_character.body->setPosition(my::Vec4<real>(0, 10, 0));
@@ -57,8 +57,8 @@ MyWorld::MyWorld(void)
 			// create rigid body for box
 			my::Vec4<real> halfSize(5, 5, 5);
 			my::RigidBodyPtr body(new my::RigidBody());
-			body->setMass(my::calculateBoxVolume<real>(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2) * 0.4f);
-			body->setInertialTensor(my::calculateBlockInertiaTensor<real>(halfSize, body->getMass()));
+			body->setMass(my::calculateBoxVolume(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2) * 0.4f);
+			body->setInertialTensor(my::calculateBlockInertiaTensor(halfSize, body->getMass()));
 			body->setDamping(0.95f);
 			body->setAngularDamping(0.8f);
 			body->setPosition(my::Vec4<real>(x, y, 30));

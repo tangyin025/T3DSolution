@@ -244,7 +244,7 @@ namespace my
 			_zeroAxisOrOverlapOnAxis(box0, box1, t3d::vec3Cross(box0.getTransformAxis2(), box1.getTransformAxis2()), toCentre); // ***
 	}
 
-	//static inline real _caculateInternalAngles(
+	//static real _caculateInternalAngles(
 	//	const t3d::Vec4<real> & v0,
 	//	const t3d::Vec4<real> & v1,
 	//	const t3d::Vec4<real> & v2,
@@ -284,7 +284,7 @@ namespace my
 	//	return angles += acos(t3d::vec3CosTheta(ldir, rdir));
 	//}
 
-	static inline real _caculateNearestDistance(
+	static real _caculateNearestDistance(
 		const t3d::Vec4<real> & point,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1)
@@ -816,7 +816,7 @@ namespace my
 		return 1;
 	}
 
-	//static inline real _penetrationOnAxis(
+	//static real _penetrationOnAxis(
 	//	const CollisionBox & box0,
 	//	const CollisionBox & box1,
 	//	const t3d::Vec4<real> & axis,
@@ -825,7 +825,7 @@ namespace my
 	//	return _transformToAxis(box0, axis) + _transformToAxis(box1, axis) - abs(t3d::vec3Dot(toCentre, axis)); // ***
 	//}
 
-	//static inline bool _tryAxis(
+	//static bool _tryAxis(
 	//	const CollisionBox & box0,
 	//	const CollisionBox & box1,
 	//	const t3d::Vec4<real> & axis,
@@ -852,7 +852,7 @@ namespace my
 	//	return true;
 	//}
 
-	//static inline bool _zeroAxisOrTryAxis(
+	//static bool _zeroAxisOrTryAxis(
 	//	const CollisionBox & box0,
 	//	const CollisionBox & box1,
 	//	const t3d::Vec4<real> & axis,
@@ -869,7 +869,7 @@ namespace my
 	//	return _tryAxis(box0, box1, t3d::vec3Normalize(axis), toCentre, index, smallestPenetration, smallestIndex);
 	//}
 
-	//static inline t3d::Vec4<real> _getBoxAxisByIndex(const CollisionBox & box, unsigned index)
+	//static t3d::Vec4<real> _getBoxAxisByIndex(const CollisionBox & box, unsigned index)
 	//{
 	//	switch(index)
 	//	{
@@ -886,7 +886,7 @@ namespace my
 	//	_ASSERT(false); return my::Vec4<real>::ZERO;
 	//}
 
-	//static inline unsigned _detectorPointFaceBoxAndBox(
+	//static unsigned _detectorPointFaceBoxAndBox(
 	//	const CollisionBox & box0,
 	//	const CollisionBox & box1,
 	//	const t3d::Vec4<real> & axis,
@@ -919,7 +919,7 @@ namespace my
 	//	UNREFERENCED_PARAMETER(box0);
 	//}
 
-	static inline t3d::Vec4<real> _contactPoint(
+	static t3d::Vec4<real> _contactPoint(
 		const t3d::Vec4<real> & pOne,
 		const t3d::Vec4<real> & dOne,
 		real oneSize,
@@ -1178,7 +1178,7 @@ namespace my
 		return 1;
 	}
 
-	//static inline real calculateBoxAxisAndTrianglePenetration(
+	//static real calculateBoxAxisAndTrianglePenetration(
 	//	const CollisionBox & box,
 	//	const t3d::Vec4<real> & axis,
 	//	const t3d::Vec4<real> & v0,
@@ -1197,7 +1197,7 @@ namespace my
 	//	return calculateBoxAxisHalfProjection(box, axis) - smallestDistance;
 	//}
 
-	//static inline t3d::Vec4<real> findPointFromTriangleByDirection(
+	//static t3d::Vec4<real> findPointFromTriangleByDirection(
 	//	const t3d::Vec4<real> & v0,
 	//	const t3d::Vec4<real> & v1,
 	//	const t3d::Vec4<real> & v2,
@@ -1225,7 +1225,7 @@ namespace my
 	//	return v2;
 	//}
 
-	//static inline bool _tryBoxAxisAndTriangle(
+	//static bool _tryBoxAxisAndTriangle(
 	//	const CollisionBox & box,
 	//	const t3d::Vec4<real> & axis,
 	//	const t3d::Vec4<real> & v0,
@@ -1253,7 +1253,7 @@ namespace my
 	//	return true;
 	//}
 
-	//static inline bool _zeroAxisOrTryBoxAxisAndTriangle(
+	//static bool _zeroAxisOrTryBoxAxisAndTriangle(
 	//	const CollisionBox & box,
 	//	const t3d::Vec4<real> & axis,
 	//	const t3d::Vec4<real> & v0,

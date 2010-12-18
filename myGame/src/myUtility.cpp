@@ -2550,7 +2550,7 @@ namespace my
 	// IndexPlaneObject
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	static int inline _calculateVertexIndex(int x_size, int y_size, int x_index, int y_index, int offset = 0)
+	static int _calculateVertexIndex(int x_size, int y_size, int x_index, int y_index, int offset = 0)
 	{
 		_ASSERT(x_index < x_size);
 		_ASSERT(y_index < y_size);
