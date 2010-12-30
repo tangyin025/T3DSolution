@@ -355,8 +355,8 @@ namespace my
 	}
 
 	void splitTriangleVertexUp(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -364,8 +364,8 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexDown(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -373,8 +373,8 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexLeft(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -382,8 +382,8 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexRight(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -391,8 +391,8 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	bool splitTriangleVertex(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -400,10 +400,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalUp(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -414,10 +414,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalDown(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -428,10 +428,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalLeft(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -442,10 +442,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalRight(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -456,10 +456,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	bool splitTriangleVertexNormal(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -470,10 +470,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexUVUp(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -484,10 +484,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexUVDown(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -498,10 +498,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexUVLeft(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -512,10 +512,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexUVRight(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -526,10 +526,10 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	bool splitTriangleVertexUV(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -540,12 +540,12 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalUVUp(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -559,12 +559,12 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalUVDown(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -578,12 +578,12 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalUVLeft(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -597,12 +597,12 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	void splitTriangleVertexNormalUVRight(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -616,12 +616,12 @@ namespace my
 		const t3d::Vec4<real> & planeNormal);
 
 	bool splitTriangleVertexNormalUV(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,

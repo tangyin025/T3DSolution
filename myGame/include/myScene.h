@@ -508,6 +508,69 @@ namespace my
 		const t3d::NormalList & normalList,
 		const t3d::UVList & uvList,
 		real levelDistance);
+
+	class CustomShaderObject
+	{
+	public:
+		virtual ~CustomShaderObject(void)
+		{
+		}
+
+	public:
+		virtual void draw(t3d::RenderContext * rc) const = 0;
+
+		virtual void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const = 0;
+	};
+
+	typedef boost::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
+
+	class CustomShaderObjectPtrList
+		: public CustomShaderObject
+		, public std::vector<CustomShaderObjectPtr>
+	{
+	public:
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectWireZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		t3d::Vec4<real> m_color;
+
+	public:
+		CustomShaderObjectWireZBufferRW(
+			const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectWireZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		t3d::Vec4<real> m_color;
+
+	public:
+		CustomShaderObjectWireZBufferRWWithBackface(
+			const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 }
 
 #endif // __MYSCENE_H__
