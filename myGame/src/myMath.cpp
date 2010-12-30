@@ -68,21 +68,21 @@ namespace my
 
 #define INSERT_VERTEX_TO_UP(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		lVertexList.push_back(v##index0); \
-		lVertexList.push_back(v##index1); \
-		lVertexList.push_back(v##index2); \
+		frontVertexList.push_back(v##index0); \
+		frontVertexList.push_back(v##index1); \
+		frontVertexList.push_back(v##index2); \
 	}
 
 #define INSERT_VERTEX_TO_DOWN(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		rVertexList.push_back(v##index0); \
-		rVertexList.push_back(v##index1); \
-		rVertexList.push_back(v##index2); \
+		backVertexList.push_back(v##index0); \
+		backVertexList.push_back(v##index1); \
+		backVertexList.push_back(v##index2); \
 	}
 
 	void splitTriangleVertexUp(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -118,8 +118,8 @@ namespace my
 	}
 
 	void splitTriangleVertexDown(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -155,8 +155,8 @@ namespace my
 	}
 
 	void splitTriangleVertexLeft(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -183,8 +183,8 @@ namespace my
 	}
 
 	void splitTriangleVertexRight(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -212,8 +212,8 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_UP(index0, index1, index2) \
 	splitTriangleVertexUp( \
-		lVertexList, \
-		rVertexList, \
+		frontVertexList, \
+		backVertexList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -222,8 +222,8 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_DOWN(index0, index1, index2) \
 	splitTriangleVertexDown( \
-		lVertexList, \
-		rVertexList, \
+		frontVertexList, \
+		backVertexList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -232,8 +232,8 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_LEFT(index0, index1, index2) \
 	splitTriangleVertexLeft( \
-		lVertexList, \
-		rVertexList, \
+		frontVertexList, \
+		backVertexList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -242,8 +242,8 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_RIGHT(index0, index1, index2) \
 	splitTriangleVertexRight( \
-		lVertexList, \
-		rVertexList, \
+		frontVertexList, \
+		backVertexList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -251,8 +251,8 @@ namespace my
 		planeNormal);
 
 	bool splitTriangleVertex(
-		t3d::VertexList & lVertexList,
-		t3d::VertexList & rVertexList,
+		t3d::VertexList & frontVertexList,
+		t3d::VertexList & backVertexList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -413,29 +413,29 @@ namespace my
 
 #define INSERT_VERTEX_NORMAL_TO_UP(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		lVertexList.push_back(v##index0); \
-		lVertexList.push_back(v##index1); \
-		lVertexList.push_back(v##index2); \
-		lNormalList.push_back(n##index0); \
-		lNormalList.push_back(n##index1); \
-		lNormalList.push_back(n##index2); \
+		frontVertexList.push_back(v##index0); \
+		frontVertexList.push_back(v##index1); \
+		frontVertexList.push_back(v##index2); \
+		frontNormalList.push_back(n##index0); \
+		frontNormalList.push_back(n##index1); \
+		frontNormalList.push_back(n##index2); \
 	}
 
 #define INSERT_VERTEX_NORMAL_TO_DOWN(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		rVertexList.push_back(v##index0); \
-		rVertexList.push_back(v##index1); \
-		rVertexList.push_back(v##index2); \
-		rNormalList.push_back(n##index0); \
-		rNormalList.push_back(n##index1); \
-		rNormalList.push_back(n##index2); \
+		backVertexList.push_back(v##index0); \
+		backVertexList.push_back(v##index1); \
+		backVertexList.push_back(v##index2); \
+		backNormalList.push_back(n##index0); \
+		backNormalList.push_back(n##index1); \
+		backNormalList.push_back(n##index2); \
 	}
 
 	void splitTriangleVertexNormalUp(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -477,10 +477,10 @@ namespace my
 	}
 
 	void splitTriangleVertexNormalDown(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -522,10 +522,10 @@ namespace my
 	}
 
 	void splitTriangleVertexNormalLeft(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -557,10 +557,10 @@ namespace my
 	}
 
 	void splitTriangleVertexNormalRight(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -593,10 +593,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_UP(index0, index1, index2) \
 	splitTriangleVertexNormalUp( \
-		lVertexList, \
-		lNormalList, \
-		rVertexList, \
-		rNormalList, \
+		frontVertexList, \
+		frontNormalList, \
+		backVertexList, \
+		backNormalList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -607,10 +607,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_DOWN(index0, index1, index2) \
 	splitTriangleVertexNormalDown( \
-		lVertexList, \
-		lNormalList, \
-		rVertexList, \
-		rNormalList, \
+		frontVertexList, \
+		frontNormalList, \
+		backVertexList, \
+		backNormalList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -621,10 +621,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_LEFT(index0, index1, index2) \
 	splitTriangleVertexNormalLeft( \
-		lVertexList, \
-		lNormalList, \
-		rVertexList, \
-		rNormalList, \
+		frontVertexList, \
+		frontNormalList, \
+		backVertexList, \
+		backNormalList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -635,10 +635,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_RIGHT(index0, index1, index2) \
 	splitTriangleVertexNormalRight( \
-		lVertexList, \
-		lNormalList, \
-		rVertexList, \
-		rNormalList, \
+		frontVertexList, \
+		frontNormalList, \
+		backVertexList, \
+		backNormalList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -648,10 +648,10 @@ namespace my
 		planePoint, planeNormal);
 
 	bool splitTriangleVertexNormal(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -815,29 +815,29 @@ namespace my
 
 #define INSERT_VERTEX_UV_TO_UP(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		lVertexList.push_back(v##index0); \
-		lVertexList.push_back(v##index1); \
-		lVertexList.push_back(v##index2); \
-		lUVList.push_back(t##index0); \
-		lUVList.push_back(t##index1); \
-		lUVList.push_back(t##index2); \
+		frontVertexList.push_back(v##index0); \
+		frontVertexList.push_back(v##index1); \
+		frontVertexList.push_back(v##index2); \
+		frontUVList.push_back(t##index0); \
+		frontUVList.push_back(t##index1); \
+		frontUVList.push_back(t##index2); \
 	}
 
 #define INSERT_VERTEX_UV_TO_DOWN(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		rVertexList.push_back(v##index0); \
-		rVertexList.push_back(v##index1); \
-		rVertexList.push_back(v##index2); \
-		rUVList.push_back(t##index0); \
-		rUVList.push_back(t##index1); \
-		rUVList.push_back(t##index2); \
+		backVertexList.push_back(v##index0); \
+		backVertexList.push_back(v##index1); \
+		backVertexList.push_back(v##index2); \
+		backUVList.push_back(t##index0); \
+		backUVList.push_back(t##index1); \
+		backUVList.push_back(t##index2); \
 	}
 
 	void splitTriangleVertexUVUp(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -879,10 +879,10 @@ namespace my
 	}
 
 	void splitTriangleVertexUVDown(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -924,10 +924,10 @@ namespace my
 	}
 
 	void splitTriangleVertexUVLeft(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -959,10 +959,10 @@ namespace my
 	}
 
 	void splitTriangleVertexUVRight(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -995,10 +995,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_UV_UP(index0, index1, index2) \
 	splitTriangleVertexUVUp( \
-		lVertexList, \
-		lUVList, \
-		rVertexList, \
-		rUVList, \
+		frontVertexList, \
+		frontUVList, \
+		backVertexList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1010,10 +1010,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_UV_DOWN(index0, index1, index2) \
 	splitTriangleVertexUVDown( \
-		lVertexList, \
-		lUVList, \
-		rVertexList, \
-		rUVList, \
+		frontVertexList, \
+		frontUVList, \
+		backVertexList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1025,10 +1025,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_UV_LEFT(index0, index1, index2) \
 	splitTriangleVertexUVLeft( \
-		lVertexList, \
-		lUVList, \
-		rVertexList, \
-		rUVList, \
+		frontVertexList, \
+		frontUVList, \
+		backVertexList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1040,10 +1040,10 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_UV_RIGHT(index0, index1, index2) \
 	splitTriangleVertexUVRight( \
-		lVertexList, \
-		lUVList, \
-		rVertexList, \
-		rUVList, \
+		frontVertexList, \
+		frontUVList, \
+		backVertexList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1054,10 +1054,10 @@ namespace my
 		planeNormal);
 
 	bool splitTriangleVertexUV(
-		t3d::VertexList & lVertexList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -1221,37 +1221,37 @@ namespace my
 
 #define INSERT_VERTEX_NORMAL_UV_TO_UP(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		lVertexList.push_back(v##index0); \
-		lVertexList.push_back(v##index1); \
-		lVertexList.push_back(v##index2); \
-		lNormalList.push_back(n##index0); \
-		lNormalList.push_back(n##index1); \
-		lNormalList.push_back(n##index2); \
-		lUVList.push_back(t##index0); \
-		lUVList.push_back(t##index1); \
-		lUVList.push_back(t##index2); \
+		frontVertexList.push_back(v##index0); \
+		frontVertexList.push_back(v##index1); \
+		frontVertexList.push_back(v##index2); \
+		frontNormalList.push_back(n##index0); \
+		frontNormalList.push_back(n##index1); \
+		frontNormalList.push_back(n##index2); \
+		frontUVList.push_back(t##index0); \
+		frontUVList.push_back(t##index1); \
+		frontUVList.push_back(t##index2); \
 	}
 
 #define INSERT_VERTEX_NORMAL_UV_TO_DOWN(index0, index1, index2) \
 	if(isValidTriangle(v##index0, v##index1, v##index2)) { \
-		rVertexList.push_back(v##index0); \
-		rVertexList.push_back(v##index1); \
-		rVertexList.push_back(v##index2); \
-		rNormalList.push_back(n##index0); \
-		rNormalList.push_back(n##index1); \
-		rNormalList.push_back(n##index2); \
-		rUVList.push_back(t##index0); \
-		rUVList.push_back(t##index1); \
-		rUVList.push_back(t##index2); \
+		backVertexList.push_back(v##index0); \
+		backVertexList.push_back(v##index1); \
+		backVertexList.push_back(v##index2); \
+		backNormalList.push_back(n##index0); \
+		backNormalList.push_back(n##index1); \
+		backNormalList.push_back(n##index2); \
+		backUVList.push_back(t##index0); \
+		backUVList.push_back(t##index1); \
+		backUVList.push_back(t##index2); \
 	}
 
 	void splitTriangleVertexNormalUVUp(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -1299,12 +1299,12 @@ namespace my
 	}
 
 	void splitTriangleVertexNormalUVDown(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -1352,12 +1352,12 @@ namespace my
 	}
 
 	void splitTriangleVertexNormalUVLeft(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -1394,12 +1394,12 @@ namespace my
 	}
 
 	void splitTriangleVertexNormalUVRight(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
@@ -1437,12 +1437,12 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_UV_UP(index0, index1, index2) \
 	splitTriangleVertexNormalUVUp( \
-		lVertexList, \
-		lNormalList, \
-		lUVList, \
-		rVertexList, \
-		rNormalList, \
-		rUVList, \
+		frontVertexList, \
+		frontNormalList, \
+		frontUVList, \
+		backVertexList, \
+		backNormalList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1457,12 +1457,12 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_UV_DOWN(index0, index1, index2) \
 	splitTriangleVertexNormalUVDown( \
-		lVertexList, \
-		lNormalList, \
-		lUVList, \
-		rVertexList, \
-		rNormalList, \
-		rUVList, \
+		frontVertexList, \
+		frontNormalList, \
+		frontUVList, \
+		backVertexList, \
+		backNormalList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1477,12 +1477,12 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_UV_LEFT(index0, index1, index2) \
 	splitTriangleVertexNormalUVLeft( \
-		lVertexList, \
-		lNormalList, \
-		lUVList, \
-		rVertexList, \
-		rNormalList, \
-		rUVList, \
+		frontVertexList, \
+		frontNormalList, \
+		frontUVList, \
+		backVertexList, \
+		backNormalList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1497,12 +1497,12 @@ namespace my
 
 #define INSERT_TRIANGLE_VERTEX_NORMAL_UV_RIGHT(index0, index1, index2) \
 	splitTriangleVertexNormalUVRight( \
-		lVertexList, \
-		lNormalList, \
-		lUVList, \
-		rVertexList, \
-		rNormalList, \
-		rUVList, \
+		frontVertexList, \
+		frontNormalList, \
+		frontUVList, \
+		backVertexList, \
+		backNormalList, \
+		backUVList, \
 		v##index0, \
 		v##index1, \
 		v##index2, \
@@ -1516,12 +1516,12 @@ namespace my
 		planeNormal);
 
 	bool splitTriangleVertexNormalUV(
-		t3d::VertexList & lVertexList,
-		t3d::NormalList & lNormalList,
-		t3d::UVList & lUVList,
-		t3d::VertexList & rVertexList,
-		t3d::NormalList & rNormalList,
-		t3d::UVList & rUVList,
+		t3d::VertexList & frontVertexList,
+		t3d::NormalList & frontNormalList,
+		t3d::UVList & frontUVList,
+		t3d::VertexList & backVertexList,
+		t3d::NormalList & backNormalList,
+		t3d::UVList & backUVList,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,

@@ -825,13 +825,13 @@ namespace my
 
 		BSPNodePtr node(new BSPNode());
 
-		t3d::VertexList lVertexList;
-		t3d::NormalList lNormalList;
-		t3d::UVList lUVList;
+		t3d::VertexList frontVertexList;
+		t3d::NormalList frontNormalList;
+		t3d::UVList frontUVList;
 
-		t3d::VertexList rVertexList;
-		t3d::NormalList rNormalList;
-		t3d::UVList rUVList;
+		t3d::VertexList backVertexList;
+		t3d::NormalList backNormalList;
+		t3d::UVList backUVList;
 
 		node->planePoint = vertexList[0];
 
@@ -842,12 +842,12 @@ namespace my
 		for(size_t i = 0; i < vertexList.size(); i += 3)
 		{
 			if(!splitTriangleVertexNormalUV(
-				lVertexList,
-				lNormalList,
-				lUVList,
-				rVertexList,
-				rNormalList,
-				rUVList,
+				frontVertexList,
+				frontNormalList,
+				frontUVList,
+				backVertexList,
+				backNormalList,
+				backUVList,
 				vertexList[i + 0],
 				vertexList[i + 1],
 				vertexList[i + 2],
@@ -878,9 +878,9 @@ namespace my
 
 		node->m_obj = obj;
 
-		node->front = buildBSPScene(lVertexList, lNormalList, lUVList);
+		node->front = buildBSPScene(frontVertexList, frontNormalList, frontUVList);
 
-		node->back = buildBSPScene(rVertexList, rNormalList, rUVList);
+		node->back = buildBSPScene(backVertexList, backNormalList, backUVList);
 
 		return node;
 	}
@@ -933,13 +933,13 @@ namespace my
 
 	//	BSPNodePtr node(new BSPNode());
 
-	//	t3d::VertexList lVertexList;
-	//	t3d::NormalList lNormalList;
-	//	t3d::UVList lUVList;
+	//	t3d::VertexList frontVertexList;
+	//	t3d::NormalList frontNormalList;
+	//	t3d::UVList frontUVList;
 
-	//	t3d::VertexList rVertexList;
-	//	t3d::NormalList rNormalList;
-	//	t3d::UVList rUVList;
+	//	t3d::VertexList backVertexList;
+	//	t3d::NormalList backNormalList;
+	//	t3d::UVList backUVList;
 
 	//	node->planePoint = vertexList[0];
 
@@ -948,12 +948,12 @@ namespace my
 	//	for(size_t i = 0; i < vertexList.size(); i += 3)
 	//	{
 	//		if(!splitTriangleVertexNormalUV(
-	//			lVertexList,
-	//			lNormalList,
-	//			lUVList,
-	//			rVertexList,
-	//			rNormalList,
-	//			rUVList,
+	//			frontVertexList,
+	//			frontNormalList,
+	//			frontUVList,
+	//			backVertexList,
+	//			backNormalList,
+	//			backUVList,
 	//			vertexList[i + 0],
 	//			vertexList[i + 1],
 	//			vertexList[i + 2],
@@ -983,10 +983,10 @@ namespace my
 	//	_ASSERT(!node->m_obj.getVertexList().empty());
 
 	//	int l_deepth;
-	//	node->front = buildBalanceBSPScene(l_deepth, lVertexList, lNormalList, lUVList);
+	//	node->front = buildBalanceBSPScene(l_deepth, frontVertexList, frontNormalList, frontUVList);
 
 	//	int r_deepth;
-	//	node->back = buildBalanceBSPScene(r_deepth, rVertexList, rNormalList, rUVList);
+	//	node->back = buildBalanceBSPScene(r_deepth, backVertexList, backNormalList, backUVList);
 
 	//	if(l_deepth != r_deepth)
 	//	{
@@ -2220,13 +2220,13 @@ namespace my
 
 		BSPNodePtr node(new BSPNode());
 
-		t3d::VertexList lVertexList;
-		t3d::NormalList lNormalList;
-		t3d::UVList lUVList;
+		t3d::VertexList frontVertexList;
+		t3d::NormalList frontNormalList;
+		t3d::UVList frontUVList;
 
-		t3d::VertexList rVertexList;
-		t3d::NormalList rNormalList;
-		t3d::UVList rUVList;
+		t3d::VertexList backVertexList;
+		t3d::NormalList backNormalList;
+		t3d::UVList backUVList;
 
 		node->planePoint = vertexList[0];
 
@@ -2237,12 +2237,12 @@ namespace my
 		for(size_t i = 0; i < vertexList.size(); i += 3)
 		{
 			if(!splitTriangleVertexNormalUV(
-				lVertexList,
-				lNormalList,
-				lUVList,
-				rVertexList,
-				rNormalList,
-				rUVList,
+				frontVertexList,
+				frontNormalList,
+				frontUVList,
+				backVertexList,
+				backNormalList,
+				backUVList,
 				vertexList[i + 0],
 				vertexList[i + 1],
 				vertexList[i + 2],
@@ -2273,10 +2273,48 @@ namespace my
 
 		node->m_obj = lodTriList;
 
-		node->front = buildBSPSceneWithLODTriNode(lVertexList, lNormalList, lUVList, levelDistance);
+		node->front = buildBSPSceneWithLODTriNode(frontVertexList, frontNormalList, frontUVList, levelDistance);
 
-		node->back = buildBSPSceneWithLODTriNode(rVertexList, rNormalList, rUVList, levelDistance);
+		node->back = buildBSPSceneWithLODTriNode(backVertexList, backNormalList, backUVList, levelDistance);
 
 		return node;
+	}
+
+	void CustomShaderObjectPtrList::draw(t3d::RenderContext * rc) const
+	{
+		const_iterator obj_iter = begin();
+		for(; obj_iter != end(); obj_iter++)
+		{
+			(*obj_iter)->draw(rc);
+		}
+	}
+
+	void CustomShaderObjectPtrList::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		const_iterator obj_iter = begin();
+		for(; obj_iter != end(); obj_iter++)
+		{
+			(*obj_iter)->draw(rc, mmat, mrot);
+		}
+	}
+
+	void CustomShaderObjectWireZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		drawWireZBufferRW(rc, m_color);
+	}
+
+	void CustomShaderObjectWireZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		drawWireZBufferRW(rc, m_color, mmat);
+	}
+
+	void CustomShaderObjectWireZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		drawWireZBufferRWWithBackface(rc, m_color);
+	}
+
+	void CustomShaderObjectWireZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		drawWireZBufferRWWithBackface(rc, m_color, mmat);
 	}
 }
