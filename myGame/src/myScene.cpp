@@ -2279,42 +2279,4 @@ namespace my
 
 		return node;
 	}
-
-	void CustomShaderObjectPtrList::draw(t3d::RenderContext * rc) const
-	{
-		const_iterator obj_iter = begin();
-		for(; obj_iter != end(); obj_iter++)
-		{
-			(*obj_iter)->draw(rc);
-		}
-	}
-
-	void CustomShaderObjectPtrList::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
-	{
-		const_iterator obj_iter = begin();
-		for(; obj_iter != end(); obj_iter++)
-		{
-			(*obj_iter)->draw(rc, mmat, mrot);
-		}
-	}
-
-	void CustomShaderObjectWireZBufferRW::draw(t3d::RenderContext * rc) const
-	{
-		drawWireZBufferRW(rc, m_color);
-	}
-
-	void CustomShaderObjectWireZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
-	{
-		drawWireZBufferRW(rc, m_color, mmat);
-	}
-
-	void CustomShaderObjectWireZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
-	{
-		drawWireZBufferRWWithBackface(rc, m_color);
-	}
-
-	void CustomShaderObjectWireZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
-	{
-		drawWireZBufferRWWithBackface(rc, m_color, mmat);
-	}
 }
