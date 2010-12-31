@@ -529,48 +529,120 @@ namespace my
 		, public std::vector<CustomShaderObjectPtr>
 	{
 	public:
-		void draw(t3d::RenderContext * rc) const;
-
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
-	};
-
-	class CustomShaderObjectWireZBufferRW
-		: public CustomShaderObject
-		, public Object
-	{
-	protected:
-		t3d::Vec4<real> m_color;
-
-	public:
-		CustomShaderObjectWireZBufferRW(
-			const t3d::Vec4<real> & color)
-			: m_color(color)
+		void draw(t3d::RenderContext * rc) const
 		{
+			const_iterator obj_iter = begin();
+			for(; obj_iter != end(); obj_iter++)
+			{
+				(*obj_iter)->draw(rc);
+			}
 		}
 
-		void draw(t3d::RenderContext * rc) const;
-
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
-	};
-
-	class CustomShaderObjectWireZBufferRWWithBackface
-		: public CustomShaderObject
-		, public Object
-	{
-	protected:
-		t3d::Vec4<real> m_color;
-
-	public:
-		CustomShaderObjectWireZBufferRWWithBackface(
-			const t3d::Vec4<real> & color)
-			: m_color(color)
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
 		{
+			const_iterator obj_iter = begin();
+			for(; obj_iter != end(); obj_iter++)
+			{
+				(*obj_iter)->draw(rc, mmat, mrot);
+			}
 		}
-
-		void draw(t3d::RenderContext * rc) const;
-
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
+
+#define DEFINE_CUSTOM_SHADER_OBJECT_RCM(expr) \
+	class CustomShaderObject##expr \
+		: public CustomShaderObject \
+		, public Object \
+	{ \
+	protected: \
+		t3d::Vec4<real> m_color; \
+	public: \
+		CustomShaderObject##expr(const t3d::Vec4<real> & color) \
+			: m_color(color) \
+		{ \
+		} \
+		void draw(t3d::RenderContext * rc) const \
+		{ \
+			draw##expr(rc, m_color); \
+		} \
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const \
+		{ \
+			draw##expr(rc, m_color, mmat); mrot; \
+		} \
+	}
+
+#define DEFINE_CUSTOM_SHADER_OBJECT_RMM(expr) \
+	class CustomShaderObject##expr \
+		: public CustomShaderObject \
+		, public Object \
+	{ \
+	public: \
+		CustomShaderObject##expr(void) \
+		{ \
+		} \
+		void draw(t3d::RenderContext * rc) const \
+		{ \
+			draw##expr(rc); \
+		} \
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const \
+		{ \
+			draw##expr(rc, mmat, mrot); \
+		} \
+	}
+
+#define DEFINE_CUSTOM_SHADER_OBJECT_RM(expr) \
+	class CustomShaderObject##expr \
+		: public CustomShaderObject \
+		, public Object \
+	{ \
+	public: \
+		CustomShaderObject##expr(void) \
+		{ \
+		} \
+		void draw(t3d::RenderContext * rc) const \
+		{ \
+			draw##expr(rc); \
+		} \
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const \
+		{ \
+			draw##expr(rc, mmat); mrot; \
+		} \
+	}
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RCM(WireZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RCM(WireZBufferRWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RCM(ZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RCM(ZBufferRWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudZBufferRWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferRWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferRWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTextureZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTextureZBufferRWWithBackface);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTexturePerspectiveLPZBufferRW);
+
+	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTexturePerspectiveLPZBufferRWWithBackface);
 }
 
 #endif // __MYSCENE_H__
