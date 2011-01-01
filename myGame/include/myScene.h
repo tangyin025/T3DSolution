@@ -643,6 +643,62 @@ namespace my
 	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTexturePerspectiveLPZBufferRW);
 
 	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTexturePerspectiveLPZBufferRWWithBackface);
+
+	class CustomShaderBSPNode
+		: public CustomShaderObject
+	{
+	protected:
+		t3d::Vec4<real> planePoint;
+
+		t3d::Vec4<real> planeNormal;
+
+		CustomShaderObjectPtr front;
+
+		CustomShaderObjectPtr self;
+
+		CustomShaderObjectPtr back;
+
+	public:
+		CustomShaderBSPNode(
+			const t3d::Vec4<real> & _planePoint,
+			const t3d::Vec4<real> & _planeNormal)
+			: planePoint(_planePoint)
+			, planeNormal(_planeNormal)
+		{
+		}
+	};
+
+	class BackToFrontCustomShaderBSPNode
+		: public CustomShaderBSPNode
+	{
+	public:
+		BackToFrontCustomShaderBSPNode(
+			const t3d::Vec4<real> & _planePoint,
+			const t3d::Vec4<real> & _planeNormal)
+			: CustomShaderBSPNode(_planePoint, _planeNormal)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class FrontToBackCustomShaderBSPNode
+		: public CustomShaderBSPNode
+	{
+	public:
+		FrontToBackCustomShaderBSPNode(
+			const t3d::Vec4<real> & _planePoint,
+			const t3d::Vec4<real> & _planeNormal)
+			: CustomShaderBSPNode(_planePoint, _planeNormal)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 }
 
 #endif // __MYSCENE_H__

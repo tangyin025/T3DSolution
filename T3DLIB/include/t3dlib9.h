@@ -922,6 +922,8 @@ namespace t3d
 
 			Vec4<real> cameraDir;
 
+			real maxHalfFov;
+
 		} m_opt;
 
 	public:
@@ -970,6 +972,8 @@ namespace t3d
 		void setCameraProjection(const Vec2<real> & proj)
 		{
 			m_camera.proj = proj;
+
+			m_opt.maxHalfFov = calculateCameraMaxHalfFov(proj);
 		}
 
 		const Vec2<real> & getCameraProjection(void) const
@@ -1015,6 +1019,11 @@ namespace t3d
 		const Vec4<real> & getCameraDirection(void) const
 		{
 			return m_opt.cameraDir;
+		}
+
+		real getCameraMaxHalfFov(void) const
+		{
+			return m_opt.maxHalfFov;
 		}
 
 		const CAMERA & getCamera(void) const
