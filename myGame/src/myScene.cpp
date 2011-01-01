@@ -2279,4 +2279,196 @@ namespace my
 
 		return node;
 	}
+
+	void BackToFrontCustomShaderBSPNode::draw(t3d::RenderContext * rc) const
+	{
+		const t3d::Vec4<real> & cameraPos = rc->getCameraPosition();
+
+		const t3d::Vec4<real> & cameraDir = rc->getCameraDirection();
+
+		real distance = calculatePointPlaneDistance(cameraPos, planePoint, planeNormal);
+
+		real angle = acos(t3d::vec3CosTheta(cameraDir, planeNormal));
+
+		real cameraHalfFov = rc->getCameraMaxHalfFov();
+
+		if(distance > 0)
+		{
+			if(angle + cameraHalfFov > DEG_TO_RAD(90))
+			{
+				if(back)
+				{
+					back->draw(rc);
+				}
+			}
+
+			self->draw(rc);
+
+			if(front)
+			{
+				front->draw(rc);
+			}
+		}
+		else
+		{
+			if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			{
+				if(front)
+				{
+					front->draw(rc);
+				}
+			}
+
+			self->draw(rc);
+
+			if(back)
+			{
+				back->draw(rc);
+			}
+		}
+	}
+
+	void BackToFrontCustomShaderBSPNode::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		const t3d::Vec4<real> & cameraPos = rc->getCameraPosition();
+
+		const t3d::Vec4<real> & cameraDir = rc->getCameraDirection();
+
+		real distance = calculatePointPlaneDistance(cameraPos, planePoint, planeNormal);
+
+		real angle = acos(t3d::vec3CosTheta(cameraDir, planeNormal));
+
+		real cameraHalfFov = rc->getCameraMaxHalfFov();
+
+		if(distance > 0)
+		{
+			if(angle + cameraHalfFov > DEG_TO_RAD(90))
+			{
+				if(back)
+				{
+					back->draw(rc, mmat, mrot);
+				}
+			}
+
+			self->draw(rc, mmat, mrot);
+
+			if(front)
+			{
+				front->draw(rc, mmat, mrot);
+			}
+		}
+		else
+		{
+			if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			{
+				if(front)
+				{
+					front->draw(rc, mmat, mrot);
+				}
+			}
+
+			self->draw(rc, mmat, mrot);
+
+			if(back)
+			{
+				back->draw(rc, mmat, mrot);
+			}
+		}
+	}
+
+	void FrontToBackCustomShaderBSPNode::draw(t3d::RenderContext * rc) const
+	{
+		const t3d::Vec4<real> & cameraPos = rc->getCameraPosition();
+
+		const t3d::Vec4<real> & cameraDir = rc->getCameraDirection();
+
+		real distance = calculatePointPlaneDistance(cameraPos, planePoint, planeNormal);
+
+		real angle = acos(t3d::vec3CosTheta(cameraDir, planeNormal));
+
+		real cameraHalfFov = rc->getCameraMaxHalfFov();
+
+		if(distance > 0)
+		{
+			if(front)
+			{
+				front->draw(rc);
+			}
+
+			self->draw(rc);
+
+			if(angle + cameraHalfFov > DEG_TO_RAD(90))
+			{
+				if(back)
+				{
+					back->draw(rc);
+				}
+			}
+		}
+		else
+		{
+			if(back)
+			{
+				back->draw(rc);
+			}
+
+			self->draw(rc);
+
+			if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			{
+				if(front)
+				{
+					front->draw(rc);
+				}
+			}
+		}
+	}
+
+	void FrontToBackCustomShaderBSPNode::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		const t3d::Vec4<real> & cameraPos = rc->getCameraPosition();
+
+		const t3d::Vec4<real> & cameraDir = rc->getCameraDirection();
+
+		real distance = calculatePointPlaneDistance(cameraPos, planePoint, planeNormal);
+
+		real angle = acos(t3d::vec3CosTheta(cameraDir, planeNormal));
+
+		real cameraHalfFov = rc->getCameraMaxHalfFov();
+
+		if(distance > 0)
+		{
+			if(front)
+			{
+				front->draw(rc, mmat, mrot);
+			}
+
+			self->draw(rc, mmat, mrot);
+
+			if(angle + cameraHalfFov > DEG_TO_RAD(90))
+			{
+				if(back)
+				{
+					back->draw(rc, mmat, mrot);
+				}
+			}
+		}
+		else
+		{
+			if(back)
+			{
+				back->draw(rc, mmat, mrot);
+			}
+
+			self->draw(rc, mmat, mrot);
+
+			if(angle - cameraHalfFov < DEG_TO_RAD(90))
+			{
+				if(front)
+				{
+					front->draw(rc, mmat, mrot);
+				}
+			}
+		}
+	}
 }
