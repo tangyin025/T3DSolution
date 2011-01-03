@@ -2622,6 +2622,330 @@ namespace my
 		drawGouraudTexturePerspectiveLPZBufferRWWithBackface(rc, mmat, mrot);
 	}
 
+	void CustomShaderIndexObjectWireZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		drawWireZBufferRW(rc, m_color);
+	}
+
+	void CustomShaderIndexObjectWireZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		drawWireZBufferRW(rc, m_color, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectWireZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		drawWireZBufferRWWithBackface(rc, m_color);
+	}
+
+	void CustomShaderIndexObjectWireZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		drawWireZBufferRWWithBackface(rc, m_color, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		drawZBufferRW(rc, m_color);
+	}
+
+	void CustomShaderIndexObjectZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		drawZBufferRW(rc, m_color, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		drawZBufferRWWithBackface(rc, m_color);
+	}
+
+	void CustomShaderIndexObjectZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		drawZBufferRWWithBackface(rc, m_color, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectGouraudZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		drawGouraudZBufferRW(rc);
+	}
+
+	void CustomShaderIndexObjectGouraudZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		drawGouraudZBufferRW(rc, mmat, mrot);
+	}
+
+	void CustomShaderIndexObjectGouraudZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		drawGouraudZBufferRWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectGouraudZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		drawGouraudZBufferRWWithBackface(rc, mmat, mrot);
+	}
+
+	void CustomShaderIndexObjectTextureZBufferW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferW(rc);
+	}
+
+	void CustomShaderIndexObjectTextureZBufferW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferW(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTextureZBufferWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectTextureZBufferWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferWWithBackface(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferW(rc);
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferW(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferWWithBackface(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTextureZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferRW(rc);
+	}
+
+	void CustomShaderIndexObjectTextureZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferRW(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTextureZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferRWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectTextureZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTextureZBufferRWWithBackface(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferRW(rc);
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferRW(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferRWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectTexturePerspectiveLPZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawTexturePerspectiveLPZBufferRWWithBackface(rc, mmat); mrot;
+	}
+
+	void CustomShaderIndexObjectGouraudTextureZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTextureZBufferRW(rc);
+	}
+
+	void CustomShaderIndexObjectGouraudTextureZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTextureZBufferRW(rc, mmat, mrot);
+	}
+
+	void CustomShaderIndexObjectGouraudTextureZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTextureZBufferRWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectGouraudTextureZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTextureZBufferRWWithBackface(rc, mmat, mrot);
+	}
+
+	void CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRW::draw(t3d::RenderContext * rc) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTexturePerspectiveLPZBufferRW(rc);
+	}
+
+	void CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRW::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTexturePerspectiveLPZBufferRW(rc, mmat, mrot);
+	}
+
+	void CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRWWithBackface::draw(t3d::RenderContext * rc) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTexturePerspectiveLPZBufferRWWithBackface(rc);
+	}
+
+	void CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRWWithBackface::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	{
+		rc->setAmbient(m_material->getAmbient());
+		rc->setDiffuse(m_material->getDiffuse());
+		rc->setTextureBuffer(
+			m_texture->getBits(),
+			m_texture->getPitch(),
+			m_texture->getWidth(),
+			m_texture->getHeight());
+		drawGouraudTexturePerspectiveLPZBufferRWWithBackface(rc, mmat, mrot);
+	}
+
 	void BackToFrontCustomShaderBSPNode::draw(t3d::RenderContext * rc) const
 	{
 		const t3d::Vec4<real> & cameraPos = rc->getCameraPosition();

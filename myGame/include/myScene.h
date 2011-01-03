@@ -870,6 +870,342 @@ namespace my
 		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
 
+	class CustomShaderIndexObjectWireZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		t3d::Vec4<real> m_color;
+
+	public:
+		CustomShaderIndexObjectWireZBufferRW(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectWireZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		t3d::Vec4<real> m_color;
+
+	public:
+		CustomShaderIndexObjectWireZBufferRWWithBackface(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		t3d::Vec4<real> m_color;
+
+	public:
+		CustomShaderIndexObjectZBufferRW(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		t3d::Vec4<real> m_color;
+
+	public:
+		CustomShaderIndexObjectZBufferRWWithBackface(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectGouraudZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		MaterialPtr m_material;
+
+	public:
+		CustomShaderIndexObjectGouraudZBufferRW(MaterialPtr material)
+			: m_material(material)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectGouraudZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		MaterialPtr m_material;
+
+	public:
+		CustomShaderIndexObjectGouraudZBufferRWWithBackface(MaterialPtr material)
+			: m_material(material)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTextureZBufferW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTextureZBufferW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTextureZBufferWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTextureZBufferWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTexturePerspectiveLPZBufferW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTexturePerspectiveLPZBufferW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTexturePerspectiveLPZBufferWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTexturePerspectiveLPZBufferWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTextureZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTextureZBufferRW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTextureZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTextureZBufferRWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTexturePerspectiveLPZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTexturePerspectiveLPZBufferRW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectTexturePerspectiveLPZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectTexturePerspectiveLPZBufferRWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectGouraudTextureZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectGouraudTextureZBufferRW(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectGouraudTextureZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectGouraudTextureZBufferRWWithBackface(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRW
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRW(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRWWithBackface
+		: public CustomShaderObject
+		, public IndexObject
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRWWithBackface(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
 	class CustomShaderBSPNode
 		: public CustomShaderObject
 	{
