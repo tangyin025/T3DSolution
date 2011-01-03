@@ -400,16 +400,55 @@ namespace my
 	// Material
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	class Material
+	class Material : protected t3d::MATERIAL
 	{
 	public:
-		t3d::Vec4<real> ambient;
-		t3d::Vec4<real> diffuse;
-		t3d::Vec4<real> specular;
-		t3d::Vec4<real> emissive;
+		void setAmbient(const t3d::Vec4<real> & _ambient)
+		{
+			ambient = _ambient;
+		}
+
+		const t3d::Vec4<real> & getAmbient(void) const
+		{
+			return ambient;
+		}
+
+		void setDiffuse(const t3d::Vec4<real> & _diffuse)
+		{
+			diffuse = _diffuse;
+		}
+
+		const t3d::Vec4<real> & getDiffuse(void) const
+		{
+			return diffuse;
+		}
+
+		void setSpecular(const t3d::Vec4<real> & _specular)
+		{
+			specular = _specular;
+		}
+
+		const t3d::Vec4<real> & getSpecular(void) const
+		{
+			return specular;
+		}
+
+		void setEmissive(const t3d::Vec4<real> & _emissive)
+		{
+			emissive = _emissive;
+		}
+
+		const t3d::Vec4<real> & getEmissive(void) const
+		{
+			return emissive;
+		}
 
 	public:
-		Material(void);
+		Material(
+			const t3d::Vec4<real> & _ambient = Color::WHITE,
+			const t3d::Vec4<real> & _diffuse = Color::WHITE,
+			const t3d::Vec4<real> & _specular = Color::WHITE,
+			const t3d::Vec4<real> & _emissive = Color::WHITE);
 
 		~Material(void);
 	};

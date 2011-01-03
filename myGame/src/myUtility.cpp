@@ -882,12 +882,16 @@ namespace my
 	// Material
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	Material::Material(void)
-		: ambient(my::Vec4<real>::UNIT_SCALE)
-		, diffuse(my::Vec4<real>::UNIT_SCALE)
-		, specular(my::Vec4<real>::UNIT_SCALE)
-		, emissive(my::Vec4<real>::UNIT_SCALE)
+	Material::Material(
+		const t3d::Vec4<real> & _ambient /*= Color::WHITE*/,
+		const t3d::Vec4<real> & _diffuse /*= Color::WHITE*/,
+		const t3d::Vec4<real> & _specular /*= Color::WHITE*/,
+		const t3d::Vec4<real> & _emissive /*= Color::WHITE*/)
 	{
+		setAmbient(_ambient);
+		setDiffuse(_diffuse);
+		setSpecular(_specular);
+		setEmissive(_emissive);
 	}
 
 	Material::~Material(void)
