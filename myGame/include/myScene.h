@@ -529,120 +529,346 @@ namespace my
 		, public std::vector<CustomShaderObjectPtr>
 	{
 	public:
-		void draw(t3d::RenderContext * rc) const
-		{
-			const_iterator obj_iter = begin();
-			for(; obj_iter != end(); obj_iter++)
-			{
-				(*obj_iter)->draw(rc);
-			}
-		}
+		void draw(t3d::RenderContext * rc) const;
 
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
-		{
-			const_iterator obj_iter = begin();
-			for(; obj_iter != end(); obj_iter++)
-			{
-				(*obj_iter)->draw(rc, mmat, mrot);
-			}
-		}
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
 
-#define DEFINE_CUSTOM_SHADER_OBJECT_RCM(expr) \
-	class CustomShaderObject##expr \
-		: public CustomShaderObject \
-		, public Object \
-	{ \
-	protected: \
-		t3d::Vec4<real> m_color; \
-	public: \
-		CustomShaderObject##expr(const t3d::Vec4<real> & color) \
-			: m_color(color) \
-		{ \
-		} \
-		void draw(t3d::RenderContext * rc) const \
-		{ \
-			draw##expr(rc, m_color); \
-		} \
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const \
-		{ \
-			draw##expr(rc, m_color, mmat); mrot; \
-		} \
-	}
+	class CustomShaderObjectWireZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		t3d::Vec4<real> m_color;
 
-#define DEFINE_CUSTOM_SHADER_OBJECT_RMM(expr) \
-	class CustomShaderObject##expr \
-		: public CustomShaderObject \
-		, public Object \
-	{ \
-	public: \
-		CustomShaderObject##expr(void) \
-		{ \
-		} \
-		void draw(t3d::RenderContext * rc) const \
-		{ \
-			draw##expr(rc); \
-		} \
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const \
-		{ \
-			draw##expr(rc, mmat, mrot); \
-		} \
-	}
+	public:
+		CustomShaderObjectWireZBufferRW(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
 
-#define DEFINE_CUSTOM_SHADER_OBJECT_RM(expr) \
-	class CustomShaderObject##expr \
-		: public CustomShaderObject \
-		, public Object \
-	{ \
-	public: \
-		CustomShaderObject##expr(void) \
-		{ \
-		} \
-		void draw(t3d::RenderContext * rc) const \
-		{ \
-			draw##expr(rc); \
-		} \
-		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const \
-		{ \
-			draw##expr(rc, mmat); mrot; \
-		} \
-	}
+		void draw(t3d::RenderContext * rc) const;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RCM(WireZBufferRW);
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RCM(WireZBufferRWWithBackface);
+	class CustomShaderObjectWireZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		t3d::Vec4<real> m_color;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RCM(ZBufferRW);
+	public:
+		CustomShaderObjectWireZBufferRWWithBackface(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RCM(ZBufferRWWithBackface);
+		void draw(t3d::RenderContext * rc) const;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudZBufferRW);
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudZBufferRWWithBackface);
+	class CustomShaderObjectZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		t3d::Vec4<real> m_color;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferW);
+	public:
+		CustomShaderObjectZBufferRW(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferWWithBackface);
+		void draw(t3d::RenderContext * rc) const;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferW);
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferWWithBackface);
+	class CustomShaderObjectZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		t3d::Vec4<real> m_color;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferRW);
+	public:
+		CustomShaderObjectZBufferRWWithBackface(const t3d::Vec4<real> & color)
+			: m_color(color)
+		{
+		}
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TextureZBufferRWWithBackface);
+		void draw(t3d::RenderContext * rc) const;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferRW);
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RM(TexturePerspectiveLPZBufferRWWithBackface);
+	class CustomShaderObjectGouraudZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		MaterialPtr m_material;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTextureZBufferRW);
+	public:
+		CustomShaderObjectGouraudZBufferRW(MaterialPtr material)
+			: m_material(material)
+		{
+		}
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTextureZBufferRWWithBackface);
+		void draw(t3d::RenderContext * rc) const;
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTexturePerspectiveLPZBufferRW);
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 
-	DEFINE_CUSTOM_SHADER_OBJECT_RMM(GouraudTexturePerspectiveLPZBufferRWWithBackface);
+	class CustomShaderObjectGouraudZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		MaterialPtr m_material;
+
+	public:
+		CustomShaderObjectGouraudZBufferRWWithBackface(MaterialPtr material)
+			: m_material(material)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTextureZBufferW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTextureZBufferW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTextureZBufferWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTextureZBufferWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTexturePerspectiveLPZBufferW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTexturePerspectiveLPZBufferW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTexturePerspectiveLPZBufferWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTexturePerspectiveLPZBufferWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTextureZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTextureZBufferRW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTextureZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTextureZBufferRWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTexturePerspectiveLPZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTexturePerspectiveLPZBufferRW(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectTexturePerspectiveLPZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectTexturePerspectiveLPZBufferRWWithBackface(ImagePtr texture)
+			: m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectGouraudTextureZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectGouraudTextureZBufferRW(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectGouraudTextureZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectGouraudTextureZBufferRWWithBackface(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectGouraudTexturePerspectiveLPZBufferRW
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectGouraudTexturePerspectiveLPZBufferRW(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
+
+	class CustomShaderObjectGouraudTexturePerspectiveLPZBufferRWWithBackface
+		: public CustomShaderObject
+		, public Object
+	{
+	protected:
+		MaterialPtr m_material;
+
+		ImagePtr m_texture;
+
+	public:
+		CustomShaderObjectGouraudTexturePerspectiveLPZBufferRWWithBackface(MaterialPtr material, ImagePtr texture)
+			: m_material(material)
+			, m_texture(texture)
+		{
+		}
+
+		void draw(t3d::RenderContext * rc) const;
+
+		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
+	};
 
 	class CustomShaderBSPNode
 		: public CustomShaderObject
