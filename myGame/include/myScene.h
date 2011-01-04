@@ -509,10 +509,10 @@ namespace my
 		const t3d::UVList & uvList,
 		real levelDistance);
 
-	class CustomShaderObject
+	class CustomShaderBase
 	{
 	public:
-		virtual ~CustomShaderObject(void)
+		virtual ~CustomShaderBase(void)
 		{
 		}
 
@@ -522,11 +522,11 @@ namespace my
 		virtual void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const = 0;
 	};
 
-	typedef boost::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
+	typedef boost::shared_ptr<CustomShaderBase> CustomShaderBasePtr;
 
-	class CustomShaderObjectPtrList
-		: public CustomShaderObject
-		, public std::vector<CustomShaderObjectPtr>
+	class CustomShaderBasePtrList
+		: public CustomShaderBase
+		, public std::vector<CustomShaderBasePtr>
 	{
 	public:
 		void draw(t3d::RenderContext * rc) const;
@@ -534,9 +534,14 @@ namespace my
 		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
 
+	class CustomShaderObject
+		: public CustomShaderBase
+		, public Object
+	{
+	};
+
 	class CustomShaderObjectWireZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -554,7 +559,6 @@ namespace my
 
 	class CustomShaderObjectWireZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -572,7 +576,6 @@ namespace my
 
 	class CustomShaderObjectZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -590,7 +593,6 @@ namespace my
 
 	class CustomShaderObjectZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -608,7 +610,6 @@ namespace my
 
 	class CustomShaderObjectGouraudZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		MaterialPtr m_material;
@@ -626,7 +627,6 @@ namespace my
 
 	class CustomShaderObjectGouraudZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		MaterialPtr m_material;
@@ -644,7 +644,6 @@ namespace my
 
 	class CustomShaderObjectTextureZBufferW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -662,7 +661,6 @@ namespace my
 
 	class CustomShaderObjectTextureZBufferWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -680,7 +678,6 @@ namespace my
 
 	class CustomShaderObjectTexturePerspectiveLPZBufferW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -698,7 +695,6 @@ namespace my
 
 	class CustomShaderObjectTexturePerspectiveLPZBufferWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -716,7 +712,6 @@ namespace my
 
 	class CustomShaderObjectTextureZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -734,7 +729,6 @@ namespace my
 
 	class CustomShaderObjectTextureZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -752,7 +746,6 @@ namespace my
 
 	class CustomShaderObjectTexturePerspectiveLPZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -770,7 +763,6 @@ namespace my
 
 	class CustomShaderObjectTexturePerspectiveLPZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		ImagePtr m_texture;
@@ -788,7 +780,6 @@ namespace my
 
 	class CustomShaderObjectGouraudTextureZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		MaterialPtr m_material;
@@ -809,7 +800,6 @@ namespace my
 
 	class CustomShaderObjectGouraudTextureZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		MaterialPtr m_material;
@@ -830,7 +820,6 @@ namespace my
 
 	class CustomShaderObjectGouraudTexturePerspectiveLPZBufferRW
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		MaterialPtr m_material;
@@ -851,7 +840,6 @@ namespace my
 
 	class CustomShaderObjectGouraudTexturePerspectiveLPZBufferRWWithBackface
 		: public CustomShaderObject
-		, public Object
 	{
 	protected:
 		MaterialPtr m_material;
@@ -870,9 +858,14 @@ namespace my
 		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
 
-	class CustomShaderIndexObjectWireZBufferRW
-		: public CustomShaderObject
+	class CustomShaderIndexObject
+		: public CustomShaderBase
 		, public IndexObject
+	{
+	};
+
+	class CustomShaderIndexObjectWireZBufferRW
+		: public CustomShaderIndexObject
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -889,8 +882,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectWireZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -907,8 +899,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectZBufferRW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -925,8 +916,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		t3d::Vec4<real> m_color;
@@ -943,8 +933,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectGouraudZBufferRW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		MaterialPtr m_material;
@@ -961,8 +950,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectGouraudZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		MaterialPtr m_material;
@@ -979,8 +967,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTextureZBufferW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -997,8 +984,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTextureZBufferWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1015,8 +1001,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTexturePerspectiveLPZBufferW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1033,8 +1018,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTexturePerspectiveLPZBufferWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1051,8 +1035,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTextureZBufferRW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1069,8 +1052,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTextureZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1087,8 +1069,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTexturePerspectiveLPZBufferRW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1105,8 +1086,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectTexturePerspectiveLPZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		ImagePtr m_texture;
@@ -1123,8 +1103,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectGouraudTextureZBufferRW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		MaterialPtr m_material;
@@ -1144,8 +1123,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectGouraudTextureZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		MaterialPtr m_material;
@@ -1165,8 +1143,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRW
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		MaterialPtr m_material;
@@ -1186,8 +1163,7 @@ namespace my
 	};
 
 	class CustomShaderIndexObjectGouraudTexturePerspectiveLPZBufferRWWithBackface
-		: public CustomShaderObject
-		, public IndexObject
+		: public CustomShaderIndexObject
 	{
 	protected:
 		MaterialPtr m_material;
@@ -1207,18 +1183,18 @@ namespace my
 	};
 
 	class CustomShaderBSPNode
-		: public CustomShaderObject
+		: public CustomShaderBase
 	{
 	protected:
 		t3d::Vec4<real> planePoint;
 
 		t3d::Vec4<real> planeNormal;
 
-		CustomShaderObjectPtr front;
+		CustomShaderBasePtr front;
 
-		CustomShaderObjectPtr self;
+		CustomShaderBasePtr self;
 
-		CustomShaderObjectPtr back;
+		CustomShaderBasePtr back;
 
 	public:
 		CustomShaderBSPNode(
