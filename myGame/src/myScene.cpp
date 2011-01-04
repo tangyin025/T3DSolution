@@ -2280,7 +2280,7 @@ namespace my
 		return node;
 	}
 
-	void CustomShaderObjectPtrList::draw(t3d::RenderContext * rc) const
+	void CustomShaderBasePtrList::draw(t3d::RenderContext * rc) const
 	{
 		const_iterator obj_iter = begin();
 		for(; obj_iter != end(); obj_iter++)
@@ -2289,7 +2289,7 @@ namespace my
 		}
 	}
 
-	void CustomShaderObjectPtrList::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
+	void CustomShaderBasePtrList::draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const
 	{
 		const_iterator obj_iter = begin();
 		for(; obj_iter != end(); obj_iter++)
