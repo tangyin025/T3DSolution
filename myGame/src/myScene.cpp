@@ -322,12 +322,12 @@ namespace my
 
 			if(angle + cameraHalfFov > DEG_TO_RAD(90))
 			{
+				drawer.draw(rc, node.m_obj.get());
+
 				if(NULL != node.back)
 				{
 					drawBSPSceneFrontToBack(rc, *node.back, cameraPos, cameraDir, cameraHalfFov, drawer);
 				}
-
-				drawer.draw(rc, node.m_obj.get());
 			}
 		}
 		else
@@ -2958,7 +2958,7 @@ namespace my
 
 		real cameraHalfFov = rc->getCameraMaxHalfFov();
 
-		_ASSERT(NULL != self);
+		_ASSERT(self);
 
 		if(distance > 0)
 		{
@@ -2968,9 +2968,9 @@ namespace my
 				{
 					back->draw(rc);
 				}
-			}
 
-			self->draw(rc);
+				self->draw(rc);
+			}
 
 			if(front)
 			{
@@ -2986,8 +2986,6 @@ namespace my
 					front->draw(rc);
 				}
 			}
-
-			self->draw(rc);
 
 			if(back)
 			{
@@ -3008,7 +3006,7 @@ namespace my
 
 		real cameraHalfFov = rc->getCameraMaxHalfFov();
 
-		_ASSERT(NULL != self);
+		_ASSERT(self);
 
 		if(distance > 0)
 		{
@@ -3018,9 +3016,9 @@ namespace my
 				{
 					back->draw(rc, mmat, mrot);
 				}
-			}
 
-			self->draw(rc, mmat, mrot);
+				self->draw(rc, mmat, mrot);
+			}
 
 			if(front)
 			{
@@ -3036,8 +3034,6 @@ namespace my
 					front->draw(rc, mmat, mrot);
 				}
 			}
-
-			self->draw(rc, mmat, mrot);
 
 			if(back)
 			{
@@ -3058,7 +3054,7 @@ namespace my
 
 		real cameraHalfFov = rc->getCameraMaxHalfFov();
 
-		_ASSERT(NULL != self);
+		_ASSERT(self);
 
 		if(distance > 0)
 		{
@@ -3067,10 +3063,10 @@ namespace my
 				front->draw(rc);
 			}
 
-			self->draw(rc);
-
 			if(angle + cameraHalfFov > DEG_TO_RAD(90))
 			{
+				self->draw(rc);
+
 				if(back)
 				{
 					back->draw(rc);
@@ -3083,8 +3079,6 @@ namespace my
 			{
 				back->draw(rc);
 			}
-
-			self->draw(rc);
 
 			if(angle - cameraHalfFov < DEG_TO_RAD(90))
 			{
@@ -3108,7 +3102,7 @@ namespace my
 
 		real cameraHalfFov = rc->getCameraMaxHalfFov();
 
-		_ASSERT(NULL != self);
+		_ASSERT(self);
 
 		if(distance > 0)
 		{
@@ -3117,10 +3111,10 @@ namespace my
 				front->draw(rc, mmat, mrot);
 			}
 
-			self->draw(rc, mmat, mrot);
-
 			if(angle + cameraHalfFov > DEG_TO_RAD(90))
 			{
+				self->draw(rc, mmat, mrot);
+
 				if(back)
 				{
 					back->draw(rc, mmat, mrot);
@@ -3134,8 +3128,6 @@ namespace my
 				back->draw(rc, mmat, mrot);
 			}
 
-			self->draw(rc, mmat, mrot);
-
 			if(angle - cameraHalfFov < DEG_TO_RAD(90))
 			{
 				if(front)
@@ -3144,5 +3136,92 @@ namespace my
 				}
 			}
 		}
+	}
+
+	FrontToBackCustomShaderBSPNodePtr buildFrontToBackBspSceneGouraudTexturePerspectiveLPZBufferRW(
+		const t3d::VertexList & vertexList,
+		const t3d::NormalList & normalList,
+		const t3d::UVList & uvList,
+		MaterialPtr material,
+		ImagePtr texture)
+	{
+		if(vertexList.empty())
+		{
+			return FrontToBackCustomShaderBSPNodePtr();
+		}
+
+		_ASSERT(vertexList.size() == normalList.size());
+		_ASSERT(vertexList.size() == uvList.size());
+		_ASSERT(0 == vertexList.size() % 3);
+
+		FrontToBackCustomShaderBSPNodePtr ret_node(
+			new FrontToBackCustomShaderBSPNode(vertexList[0], calculateTriangleNormal(vertexList[0], vertexList[1], vertexList[2])));
+
+		CustomShaderObjectPtr self_node(
+			new CustomShaderObjectGouraudTexturePerspectiveLPZBufferRW(material, texture));
+
+		t3d::VertexList frontVertexList;
+		t3d::NormalList frontNormalList;
+		t3d::UVList frontUVList;
+
+		t3d::VertexList backVertexList;
+		t3d::NormalList backNormalList;
+		t3d::UVList backUVList;
+
+		size_t i = 0;
+		for(; i < vertexList.size(); i+= 3)
+		{
+			if(!splitTriangleVertexNormalUV(
+				frontVertexList,
+				frontNormalList,
+				frontUVList,
+				backVertexList,
+				backNormalList,
+				backUVList,
+				vertexList[i + 0],
+				vertexList[i + 1],
+				vertexList[i + 2],
+				normalList[i + 0],
+				normalList[i + 1],
+				normalList[i + 2],
+				uvList[i + 0],
+				uvList[i + 1],
+				uvList[i + 2],
+				ret_node->planePoint,
+				ret_node->planeNormal))
+			{
+				self_node->pushVertex(vertexList[i + 0]);
+				self_node->pushVertex(vertexList[i + 1]);
+				self_node->pushVertex(vertexList[i + 2]);
+
+				self_node->pushNormal(normalList[i + 0]);
+				self_node->pushNormal(normalList[i + 1]);
+				self_node->pushNormal(normalList[i + 2]);
+
+				self_node->pushUV(uvList[i + 0]);
+				self_node->pushUV(uvList[i + 1]);
+				self_node->pushUV(uvList[i + 2]);
+			}
+		}
+
+		_ASSERT(!self_node->getVertexList().empty());
+
+		ret_node->self = self_node;
+
+		ret_node->front = buildFrontToBackBspSceneGouraudTexturePerspectiveLPZBufferRW(
+			frontVertexList,
+			frontNormalList,
+			frontUVList,
+			material,
+			texture);
+
+		ret_node->back = buildFrontToBackBspSceneGouraudTexturePerspectiveLPZBufferRW(
+			backVertexList,
+			backNormalList,
+			backUVList,
+			material,
+			texture);
+
+		return ret_node;
 	}
 }
