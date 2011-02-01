@@ -540,6 +540,8 @@ namespace my
 	{
 	};
 
+	typedef boost::shared_ptr<CustomShaderObject> CustomShaderObjectPtr;
+
 	class CustomShaderObjectWireZBufferRW
 		: public CustomShaderObject
 	{
@@ -864,6 +866,8 @@ namespace my
 	{
 	};
 
+	typedef boost::shared_ptr<CustomShaderIndexObject> CustomShaderIndexObjectPtr;
+
 	class CustomShaderIndexObjectWireZBufferRW
 		: public CustomShaderIndexObject
 	{
@@ -1182,19 +1186,23 @@ namespace my
 		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
 
+	class CustomShaderBSPNode;
+
+	typedef boost::shared_ptr<CustomShaderBSPNode> CustomShaderBSPNodePtr;
+
 	class CustomShaderBSPNode
 		: public CustomShaderBase
 	{
-	protected:
+	public:
 		t3d::Vec4<real> planePoint;
 
 		t3d::Vec4<real> planeNormal;
 
-		CustomShaderBasePtr front;
+		CustomShaderBSPNodePtr front;
 
-		CustomShaderBasePtr self;
+		CustomShaderObjectPtr self;
 
-		CustomShaderBasePtr back;
+		CustomShaderBSPNodePtr back;
 
 	public:
 		CustomShaderBSPNode(
@@ -1222,6 +1230,8 @@ namespace my
 		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
 
+	typedef boost::shared_ptr<BackToFrontCustomShaderBSPNode> BackToFrontCustomShaderBSPNodePtr;
+
 	class FrontToBackCustomShaderBSPNode
 		: public CustomShaderBSPNode
 	{
@@ -1237,6 +1247,15 @@ namespace my
 
 		void draw(t3d::RenderContext * rc, const t3d::Mat4<real> & mmat, const t3d::Mat4<real> & mrot) const;
 	};
+
+	typedef boost::shared_ptr<FrontToBackCustomShaderBSPNode> FrontToBackCustomShaderBSPNodePtr;
+
+	FrontToBackCustomShaderBSPNodePtr buildFrontToBackBspSceneGouraudTexturePerspectiveLPZBufferRW(
+		const t3d::VertexList & vertexList,
+		const t3d::NormalList & normalList,
+		const t3d::UVList & uvList,
+		MaterialPtr material,
+		ImagePtr texture);
 }
 
 #endif // __MYSCENE_H__
