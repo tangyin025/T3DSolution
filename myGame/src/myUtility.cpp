@@ -3743,7 +3743,7 @@ namespace my
 
 		getRootIndexList() = t3d::STreeNode::getRootIndexList(getOrigBoneNodeList());
 
-		t3d::updateBoneInverseTransformListFromBoneNodeList(
+		t3d::buildBoneInverseTransformListFromBoneNodeList(
 				getOrigBoneInverseTransformList(),
 				getOrigBoneNodeList(),
 				my::Mat4<real>::IDENTITY,
