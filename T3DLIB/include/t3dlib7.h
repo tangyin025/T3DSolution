@@ -198,15 +198,12 @@ namespace t3d
 		const BoneKeyFrameList & boneKeyFrameList,
 		real time);
 
-	class BoneAnimation
+	class BoneAnimation : public BoneKeyFrameList
 	{
-	protected:
-		t3d::BoneKeyFrameList m_boneKeyFrameList;
-
 	public:
 		void pushBoneKeyFrame(t3d::BoneKeyFrameList::const_reference boneKeyFrame);
 
-		void pushBoneKeyFrameList(t3d::BoneKeyFrameList::const_iterator begin, t3d::BoneKeyFrameList::const_iterator end);
+		void pushBoneKeyFrameList(t3d::BoneKeyFrameList::const_iterator _begin, t3d::BoneKeyFrameList::const_iterator _end);
 
 		t3d::BoneKeyFrameList::size_type getBoneKeyFrameListSize(void) const;
 
