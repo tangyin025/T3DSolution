@@ -23,35 +23,84 @@ namespace t3d
 		BoneIndexList m_childs;
 
 	public:
-		bool isRoot(void) const;
+		bool isRoot(void) const
+		{
+			return invalid_i == m_parent;
+		}
 
-		void setParent(size_t parent_i);
+		void setParent(size_t parent_i)
+		{
+			m_parent = parent_i;
+		}
 
-		size_t getParent(void) const;
+		size_t getParent(void) const
+		{
+			return m_parent;
+		}
 
-		void pushChild(size_t child_i);
+		void pushChild(size_t child_i)
+		{
+			m_childs.push_back(child_i);
+		}
 
-		void pushChildList(BoneIndexList::const_iterator begin, BoneIndexList::const_iterator end);
+		void pushChildList(BoneIndexList::const_iterator begin, BoneIndexList::const_iterator end)
+		{
+			m_childs.insert(m_childs.end(), begin, end);
+		}
 
-		BoneIndexList::size_type getChildListSize(void) const;
+		BoneIndexList::size_type getChildListSize(void) const
+		{
+			return m_childs.size();
+		}
 
-		BoneIndexList::reference childAt(BoneIndexList::size_type i);
+		BoneIndexList::reference childAt(BoneIndexList::size_type i)
+		{
+			_ASSERT(i < getChildListSize());
 
-		BoneIndexList::const_reference childAt(BoneIndexList::size_type i) const;
+			return m_childs[i];
+		}
 
-		BoneIndexList::iterator getChildListBegin(void);
+		BoneIndexList::const_reference childAt(BoneIndexList::size_type i) const
+		{
+			_ASSERT(i < getChildListSize());
 
-		BoneIndexList::const_iterator getChildListBegin(void) const;
+			return m_childs[i];
+		}
 
-		BoneIndexList::iterator getChildListEnd(void);
+		BoneIndexList::iterator getChildListBegin(void)
+		{
+			return m_childs.begin();
+		}
 
-		BoneIndexList::const_iterator getChildListEnd(void) const;
+		BoneIndexList::const_iterator getChildListBegin(void) const
+		{
+			return m_childs.begin();
+		}
 
-		BoneIndexList & getChildList(void);
+		BoneIndexList::iterator getChildListEnd(void)
+		{
+			return m_childs.end();
+		}
 
-		const BoneIndexList & getChildList(void) const;
+		BoneIndexList::const_iterator getChildListEnd(void) const
+		{
+			return m_childs.end();
+		}
 
-		STreeNode(size_t parent_i = invalid_i);
+		BoneIndexList & getChildList(void)
+		{
+			return m_childs;
+		}
+
+		const BoneIndexList & getChildList(void) const
+		{
+			return m_childs;
+		}
+
+		STreeNode(size_t parent_i = invalid_i)
+			: m_parent(parent_i)
+		{
+		}
 
 	public:
 		template <typename node_iter_type>
@@ -88,19 +137,37 @@ namespace t3d
 		Quat<real> m_ori;
 
 	public:
-		void setPosition(const Vec4<real> & pos);
+		void setPosition(const Vec4<real> & pos)
+		{
+			m_pos = pos;
+		}
 
-		const Vec4<real> & getPosition(void) const;
+		const Vec4<real> & getPosition(void) const
+		{
+			return m_pos;
+		}
 
-		void setOrientation(const Quat<real> & ori);
+		void setOrientation(const Quat<real> & ori)
+		{
+			m_ori = ori;
+		}
 
-		const Quat<real> & getOrientation(void) const;
+		const Quat<real> & getOrientation(void) const
+		{
+			return m_ori;
+		}
 
-		Bone(void);
+		Bone(void)
+		{
+		}
 
 		Bone(
 			const Vec4<real> & pos,
-			const Quat<real> & ori);
+			const Quat<real> & ori)
+			: m_pos(pos)
+			, m_ori(ori)
+		{
+		}
 	};
 
 	Bone & incrementBone(
@@ -121,12 +188,18 @@ namespace t3d
 		, public STreeNode
 	{
 	public:
-		BoneNode(void);
+		BoneNode(void)
+		{
+		}
 
 		BoneNode(
 			const Vec4<real> & pos,
 			const Quat<real> & ori,
-			size_t parent_i = invalid_i);
+			size_t parent_i = invalid_i)
+			: Bone(pos, ori)
+			, STreeNode(parent_i)
+		{
+		}
 	};
 
 	typedef std::vector<BoneNode> BoneNodeList;
@@ -169,16 +242,28 @@ namespace t3d
 		real m_time;
 
 	public:
-		void setTime(real time);
+		void setTime(real time)
+		{
+			m_time = time;
+		}
 
-		real getTime(void) const;
+		real getTime(void) const
+		{
+			return m_time;
+		}
 
-		BoneKeyFrame(void);
+		BoneKeyFrame(void)
+		{
+		}
 
 		BoneKeyFrame(
 			const Vec4<real> & pos,
 			const Quat<real> & ori,
-			real time);
+			real time)
+			: Bone(pos, ori)
+			, m_time(time)
+		{
+		}
 	};
 
 	Bone & intersectBoneKeyFrame(
@@ -201,27 +286,64 @@ namespace t3d
 	class BoneAnimation : public BoneKeyFrameList
 	{
 	public:
-		void pushBoneKeyFrame(t3d::BoneKeyFrameList::const_reference boneKeyFrame);
+		void pushBoneKeyFrame(t3d::BoneKeyFrameList::const_reference boneKeyFrame)
+		{
+			push_back(boneKeyFrame);
+		}
 
-		void pushBoneKeyFrameList(t3d::BoneKeyFrameList::const_iterator _begin, t3d::BoneKeyFrameList::const_iterator _end);
+		void pushBoneKeyFrameList(t3d::BoneKeyFrameList::const_iterator _begin, t3d::BoneKeyFrameList::const_iterator _end)
+		{
+			insert(end(), _begin, _end);
+		}
 
-		t3d::BoneKeyFrameList::size_type getBoneKeyFrameListSize(void) const;
+		t3d::BoneKeyFrameList::size_type getBoneKeyFrameListSize(void) const
+		{
+			return size();
+		}
 
-		void resizeBoneKeyFrameList(t3d::BoneKeyFrameList::size_type size);
+		void resizeBoneKeyFrameList(t3d::BoneKeyFrameList::size_type size)
+		{
+			resize(size);
+		}
 
-		void clearBoneKeyFrameList(void);
+		void clearBoneKeyFrameList(void)
+		{
+			clear();
+		}
 
-		t3d::BoneKeyFrameList::reference boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i);
+		t3d::BoneKeyFrameList::reference boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i)
+		{
+			_ASSERT(i < getBoneKeyFrameListSize());
 
-		t3d::BoneKeyFrameList::const_reference boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i) const;
+			return operator [](i);
+		}
 
-		t3d::BoneKeyFrameList & getBoneKeyFrameList(void);
+		t3d::BoneKeyFrameList::const_reference boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i) const
+		{
+			_ASSERT(i < getBoneKeyFrameListSize());
 
-		const t3d::BoneKeyFrameList & getBoneKeyFrameList(void) const;
+			return operator [](i);
+		}
 
-		real getMinTime(void) const;
+		t3d::BoneKeyFrameList & getBoneKeyFrameList(void)
+		{
+			return *this;
+		}
 
-		real getMaxTime(void) const;
+		const t3d::BoneKeyFrameList & getBoneKeyFrameList(void) const
+		{
+			return *this;
+		}
+
+		real getMinTime(void) const
+		{
+			return getBoneKeyFrameListMinTime(getBoneKeyFrameList());
+		}
+
+		real getMaxTime(void) const
+		{
+			return getBoneKeyFrameListMaxTime(getBoneKeyFrameList());
+		}
 	};
 
 	class BoneAnimationNode
@@ -229,7 +351,10 @@ namespace t3d
 		, public STreeNode
 	{
 	public:
-		BoneAnimationNode(size_t parent_i = invalid_i);
+		BoneAnimationNode(size_t parent_i = invalid_i)
+			: STreeNode(parent_i)
+		{
+		}
 	};
 
 	typedef std::vector<BoneAnimationNode> BoneAnimationNodeList;
@@ -254,19 +379,37 @@ namespace t3d
 		Mat4<real> m_mmat;
 
 	public:
-		void setRotationTransform(const Mat4<real> & mrot);
+		void setRotationTransform(const Mat4<real> & mrot)
+		{
+			m_mrot = mrot;
+		}
 
-		const Mat4<real> & getRotationTransform(void) const;
+		const Mat4<real> & getRotationTransform(void) const
+		{
+			return m_mrot;
+		}
 
-		void setTransform(const Mat4<real> & mmat);
+		void setTransform(const Mat4<real> & mmat)
+		{
+			m_mmat = mmat;
+		}
 
-		const Mat4<real> & getTransform(void) const;
+		const Mat4<real> & getTransform(void) const
+		{
+			return m_mmat;
+		}
 
-		BoneTransform(void);
+		BoneTransform(void)
+		{
+		}
 
 		BoneTransform(
 			const Mat4<real> & mrot,
-			const Mat4<real> & mmat);
+			const Mat4<real> & mmat)
+			: m_mrot(mrot)
+			, m_mmat(mmat)
+		{
+		}
 	};
 
 	typedef std::vector<BoneTransform> BoneTransformList;
@@ -341,10 +484,12 @@ namespace t3d
 		real weight;
 
 	public:
-		BoneAssignment(
-			size_t _vertex_i,
-			size_t _bone_i,
-			real _weight);
+		BoneAssignment(size_t _vertex_i, size_t _bone_i, real _weight)
+			: vertex_i(_vertex_i)
+			, bone_i(_bone_i)
+			, weight(_weight)
+		{
+		}
 	};
 
 	typedef std::vector<BoneAssignment> BoneAssignmentList;
