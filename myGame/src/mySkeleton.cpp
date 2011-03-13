@@ -90,7 +90,7 @@ namespace my
 		_ASSERT(boneNodeList[root_i].getParent() == boneAnimationNodeAt(root_i).getParent());
 		_ASSERT(boneNodeList[root_i].getChildList() == boneAnimationNodeAt(root_i).getChildList());
 
-		return t3d::updateBoneNodeListFromBoneAnimationNodeList(
+		return t3d::buildBoneNodeListFromBoneAnimationNodeList(
 			boneNodeList,
 			getBoneAnimationNodeList(),
 			root_i,

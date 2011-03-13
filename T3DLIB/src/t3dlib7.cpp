@@ -227,7 +227,7 @@ namespace t3d
 		return maxTime;
 	}
 
-	BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
+	BoneNodeList & buildBoneNodeListFromBoneAnimationNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneAnimationNodeList & boneAnimationNodeList,
 		size_t root_i,
@@ -243,7 +243,7 @@ namespace t3d
 		BoneIndexList::const_iterator bone_index_iter = boneNodeList[root_i].getChildListBegin();
 		for(; bone_index_iter != boneNodeList[root_i].getChildListEnd(); bone_index_iter++)
 		{
-			updateBoneNodeListFromBoneAnimationNodeList(
+			buildBoneNodeListFromBoneAnimationNodeList(
 				boneNodeList,
 				boneAnimationNodeList,
 				*bone_index_iter,
@@ -253,7 +253,7 @@ namespace t3d
 		return boneNodeList;
 	}
 
-	BoneTransform & updateBoneTransformFromBone(
+	BoneTransform & buildBoneTransformFromBone(
 		BoneTransform & boneTransform,
 		const Bone & bone,
 		const Mat4<real> & mrot,
@@ -268,7 +268,7 @@ namespace t3d
 		return boneTransform;
 	}
 
-	BoneTransformList & updateBoneTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mrot,
@@ -279,13 +279,13 @@ namespace t3d
 
 		_ASSERT(boneTransformList.size() == boneNodeList.size());
 
-		updateBoneTransformFromBone(
+		buildBoneTransformFromBone(
 			boneTransformList[root_i],
 			boneNodeList[root_i],
 			mrot,
 			mmat);
 
-		return updateBoneTransformListFromBoneNodeList(
+		return buildBoneTransformListFromBoneNodeList(
 			boneTransformList,
 			boneNodeList,
 			boneTransformList[root_i].getRotationTransform(),
@@ -294,7 +294,7 @@ namespace t3d
 			boneNodeList[root_i].getChildListEnd());
 	}
 
-	BoneTransformList & updateBoneTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mrot,
@@ -307,7 +307,7 @@ namespace t3d
 		BoneIndexList::const_iterator bone_index_iter = begin;
 		for(; bone_index_iter != end; bone_index_iter++)
 		{
-			updateBoneTransformListFromBoneNodeList(
+			buildBoneTransformListFromBoneNodeList(
 				boneTransformList,
 				boneNodeList,
 				mrot,
@@ -318,7 +318,7 @@ namespace t3d
 		return boneTransformList;
 	}
 
-	BoneTransform & updateBoneInverseTransformFromBone(
+	BoneTransform & buildBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
 		const Bone & bone,
 		const Mat4<real> & mInverseRot,
@@ -333,7 +333,7 @@ namespace t3d
 		return inverseBoneTransform;
 	}
 
-	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mInverseRot,
@@ -344,13 +344,13 @@ namespace t3d
 
 		_ASSERT(inverseBoneTransformList.size() == boneNodeList.size());
 
-		updateBoneInverseTransformFromBone(
+		buildBoneInverseTransformFromBone(
 			inverseBoneTransformList[root_i],
 			boneNodeList[root_i],
 			mInverseRot,
 			mInverseMat);
 
-		return updateBoneInverseTransformListFromBoneNodeList(
+		return buildBoneInverseTransformListFromBoneNodeList(
 			inverseBoneTransformList,
 			boneNodeList,
 			inverseBoneTransformList[root_i].getRotationTransform(),
@@ -359,7 +359,7 @@ namespace t3d
 			boneNodeList[root_i].getChildListEnd());
 	}
 
-	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mInverseRot,
@@ -372,7 +372,7 @@ namespace t3d
 		BoneIndexList::const_iterator bone_index_iter = begin;
 		for(; bone_index_iter != end; bone_index_iter++)
 		{
-			updateBoneInverseTransformListFromBoneNodeList(
+			buildBoneInverseTransformListFromBoneNodeList(
 				inverseBoneTransformList,
 				boneNodeList,
 				mInverseRot,
@@ -432,7 +432,7 @@ namespace t3d
 		return res;
 	}
 
-	Vec4<real> buildVertexFromBoneTransform(
+	Vec4<real> bindVertexFromBoneTransform(
 		const Vec4<real> & vertex,
 		const BoneTransform & boneTransform,
 		real weight)
@@ -442,7 +442,7 @@ namespace t3d
 		return vertex * boneTransform.getTransform() * weight;
 	}
 
-	Vec4<real> buildNormalFromBoneTransform(
+	Vec4<real> bindNormalFromBoneTransform(
 		const Vec4<real> & normal,
 		const BoneTransform & boneTransform,
 		real weight)
@@ -469,7 +469,7 @@ namespace t3d
 			_ASSERT(assignment_iter->bone_i < boneTransformList.size());
 
 			vec3AddSelf(vertexList[assignment_iter->vertex_i],
-				buildVertexFromBoneTransform(
+				bindVertexFromBoneTransform(
 					origVertexList[assignment_iter->vertex_i], boneTransformList[assignment_iter->bone_i], assignment_iter->weight));
 		}
 	}
@@ -498,11 +498,11 @@ namespace t3d
 			_ASSERT(assignment_iter->bone_i < boneTransformList.size());
 
 			vec3AddSelf(vertexList[assignment_iter->vertex_i],
-				buildVertexFromBoneTransform(
+				bindVertexFromBoneTransform(
 					origVertexList[assignment_iter->vertex_i], boneTransformList[assignment_iter->bone_i], assignment_iter->weight));
 
 			vec3AddSelf(normalList[assignment_iter->vertex_i],
-				buildNormalFromBoneTransform(
+				bindNormalFromBoneTransform(
 					origNormalList[assignment_iter->vertex_i], boneTransformList[assignment_iter->bone_i], assignment_iter->weight));
 		}
 

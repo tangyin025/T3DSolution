@@ -365,7 +365,7 @@ namespace t3d
 	real getBoneAnimationNodeListMaxTime(
 		const BoneAnimationNodeList & boneAnimationNodeList);
 
-	BoneNodeList & updateBoneNodeListFromBoneAnimationNodeList(
+	BoneNodeList & buildBoneNodeListFromBoneAnimationNodeList(
 		BoneNodeList & boneNodeList,
 		const BoneAnimationNodeList & boneAnimationNodeList,
 		size_t root_i,
@@ -414,20 +414,20 @@ namespace t3d
 
 	typedef std::vector<BoneTransform> BoneTransformList;
 
-	BoneTransform & updateBoneTransformFromBone(
+	BoneTransform & buildBoneTransformFromBone(
 		BoneTransform & boneTransform,
 		const Bone & bone,
 		const Mat4<real> & mrot,
 		const Mat4<real> & mmat);
 
-	BoneTransformList & updateBoneTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mrot,
 		const Mat4<real> & mmat,
 		size_t root_i);
 
-	BoneTransformList & updateBoneTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mrot,
@@ -435,20 +435,20 @@ namespace t3d
 		BoneIndexList::const_iterator begin,
 		BoneIndexList::const_iterator end);
 
-	BoneTransform & updateBoneInverseTransformFromBone(
+	BoneTransform & buildBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
 		const Bone & bone,
 		const Mat4<real> & mInverseRot,
 		const Mat4<real> & mInverseMat);
 
-	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mInverseRot,
 		const Mat4<real> & mInverseMat,
 		size_t root_i);
 
-	BoneTransformList & updateBoneInverseTransformListFromBoneNodeList(
+	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
 		const Mat4<real> & mInverseRot,
@@ -494,12 +494,12 @@ namespace t3d
 
 	typedef std::vector<BoneAssignment> BoneAssignmentList;
 
-	Vec4<real> buildVertexFromBoneTransform(
+	Vec4<real> bindVertexFromBoneTransform(
 		const Vec4<real> & vertex,
 		const BoneTransform & boneTransform,
 		real weight);
 
-	Vec4<real> buildNormalFromBoneTransform(
+	Vec4<real> bindNormalFromBoneTransform(
 		const Vec4<real> & normal,
 		const BoneTransform & boneTransform,
 		real weight);
