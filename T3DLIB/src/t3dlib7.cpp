@@ -350,61 +350,61 @@ namespace t3d
 
 	void BoneAnimation::pushBoneKeyFrame(t3d::BoneKeyFrameList::const_reference boneKeyFrame)
 	{
-		m_boneKeyFrameList.push_back(boneKeyFrame);
+		push_back(boneKeyFrame);
 	}
 
-	void BoneAnimation::pushBoneKeyFrameList(t3d::BoneKeyFrameList::const_iterator begin, t3d::BoneKeyFrameList::const_iterator end)
+	void BoneAnimation::pushBoneKeyFrameList(t3d::BoneKeyFrameList::const_iterator _begin, t3d::BoneKeyFrameList::const_iterator _end)
 	{
-		m_boneKeyFrameList.insert(m_boneKeyFrameList.end(), begin, end);
+		insert(end(), _begin, _end);
 	}
 
 	t3d::BoneKeyFrameList::size_type BoneAnimation::getBoneKeyFrameListSize(void) const
 	{
-		return m_boneKeyFrameList.size();
+		return size();
 	}
 
 	void BoneAnimation::resizeBoneKeyFrameList(t3d::BoneKeyFrameList::size_type size)
 	{
-		m_boneKeyFrameList.resize(size);
+		resize(size);
 	}
 
 	void BoneAnimation::clearBoneKeyFrameList(void)
 	{
-		m_boneKeyFrameList.clear();
+		clear();
 	}
 
 	t3d::BoneKeyFrameList::reference BoneAnimation::boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i)
 	{
 		_ASSERT(i < getBoneKeyFrameListSize());
 
-		return m_boneKeyFrameList[i];
+		return operator [](i);
 	}
 
 	t3d::BoneKeyFrameList::const_reference BoneAnimation::boneKeyFrameAt(t3d::BoneKeyFrameList::size_type i) const
 	{
 		_ASSERT(i < getBoneKeyFrameListSize());
 
-		return m_boneKeyFrameList[i];
+		return operator [](i);
 	}
 
 	t3d::BoneKeyFrameList & BoneAnimation::getBoneKeyFrameList(void)
 	{
-		return m_boneKeyFrameList;
+		return *this;
 	}
 
 	const t3d::BoneKeyFrameList & BoneAnimation::getBoneKeyFrameList(void) const
 	{
-		return m_boneKeyFrameList;
+		return *this;
 	}
 
 	real BoneAnimation::getMinTime(void) const
 	{
-		return getBoneKeyFrameListMinTime(m_boneKeyFrameList);
+		return getBoneKeyFrameListMinTime(getBoneKeyFrameList());
 	}
 
 	real BoneAnimation::getMaxTime(void) const
 	{
-		return getBoneKeyFrameListMaxTime(m_boneKeyFrameList);
+		return getBoneKeyFrameListMaxTime(getBoneKeyFrameList());
 	}
 
 	BoneAnimationNode::BoneAnimationNode(size_t parent_i /*= invalid_i*/)
