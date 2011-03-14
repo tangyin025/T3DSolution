@@ -6,7 +6,7 @@
 #include <t3dlib1.h>
 #include <t3dlib2.h>
 #include <t3dlib3.h>
-#include <t3dlib9.h>
+#include <t3dlib8.h>
 #include "mySingleton.h"
 #include "myWindow.h"
 #include "myMath.h"

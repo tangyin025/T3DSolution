@@ -2,1271 +2,1260 @@
 #include "stdafx.h"
 #include "t3dlib8.h"
 
+#pragma warning(disable: 4244)
+
 namespace t3d
 {
-	void fillStencilBuffer(
-		SurfaceRef<int> stencilbuff,
-		const CRect & rect,
-		int value)
+	LIGHT LightListContext::buildLightAmbient(const Vec4<real> & ambient, LIGHT_STATE state /*= LS_ON*/)
 	{
-		for(LONG i = rect.top; i < rect.bottom; i++)
+		_ASSERT(rgbaIsValid(ambient, real(0), real(1)));
+
+		LIGHT light;
+		light.type = LT_AMBIENT;
+		light.state = state;
+		light.ambient = ambient;
+		return light;
+	}
+
+	LIGHT LightListContext::buildLightDirectional(const Vec4<real> & diffuse, const Vec4<real> & dir, LIGHT_STATE state /*= LS_ON*/)
+	{
+		_ASSERT(rgbaIsValid(diffuse, real(0), real(1)));
+
+		LIGHT light;
+		light.type = LT_DIRECTIONAL;
+		light.state = state;
+		light.dir = dir;
+		light.diffuse = diffuse;
+		return light;
+	}
+
+	LIGHT LightListContext::buildLightPoint(const Vec4<real> & diffuse, const Vec4<real> & pos, real kc /*= 1.0f*/, real kl /*= 0.001f*/, real kq /*= 0.00001f*/, LIGHT_STATE state /*= LS_ON*/)
+	{
+		_ASSERT(rgbaIsValid(diffuse, real(0), real(1)));
+
+		LIGHT light;
+		light.type = LT_POINT;
+		light.state = state;
+		light.pos = pos;
+		light.diffuse = diffuse;
+		light.kc = kc;
+		light.kl = kl;
+		light.kq = kq;
+		return light;
+	}
+
+	Vec4<real> LightListContext::lightVertexAmbient(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
+	{
+		_ASSERT(LT_AMBIENT == light.type);
+		_ASSERT(LS_ON == light.state);
+
+		// I(d)ambient = I0ambient * Clambient
+
+		return light.ambient * material.ambient;
+		UNREFERENCED_PARAMETER(vertex);
+		UNREFERENCED_PARAMETER(normal);
+	}
+
+	Vec4<real> LightListContext::lightVertexDirectional(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
+	{
+		_ASSERT(LT_DIRECTIONAL == light.type);
+		_ASSERT(LS_ON == light.state);
+
+		// I(d)dir = I0dir * Cldir (n . l)
+
+		real dot = vec3Dot(light.dir, normal);
+
+		if(dot < 0)
 		{
-			memSet32((int *)&stencilbuff[i][rect.left], value, rect.Width());
+			return light.diffuse * material.diffuse * -dot;
 		}
+
+		return Vec4<real>(0, 0, 0, 0);
+		UNREFERENCED_PARAMETER(vertex);
 	}
 
-	void countScanIncrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
+	Vec4<real> LightListContext::lightVertexPoint(const LIGHT & light, const MATERIAL & material, const Vec4<real> & vertex, const Vec4<real> & normal)
 	{
-#define __draw_behind_depth
-#define __draw_increment
-#include "count_scan.hpp"
-	}
+		_ASSERT(LT_POINT == light.type);
+		_ASSERT(LS_ON == light.state);
 
-	void countScanDecrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_behind_depth
-#define __draw_decrement
-#include "count_scan.hpp"
-	}
+		//               I0point * Clpoint
+		// I(d)point = --------------------- (n . l)
+		//             kc + kl * d + kq * d2
 
-	void countClippedScanIncrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_behind_depth
-#define __draw_increment
-#define __draw_clipped
-#include "count_scan.hpp"
-	}
+		Vec4<real> dir = vec3Sub(vertex, light.pos);
+		real dot = vec3Dot(normal, dir);
+		real len = vec3Length(dir);
 
-	void countClippedScanDecrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_behind_depth
-#define __draw_decrement
-#define __draw_clipped
-#include "count_scan.hpp"
-	}
-
-	void countScanIncrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_in_front_of_depth
-#define __draw_increment
-#include "count_scan.hpp"
-	}
-
-	void countScanDecrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_in_front_of_depth
-#define __draw_decrement
-#include "count_scan.hpp"
-	}
-
-	void countClippedScanIncrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_in_front_of_depth
-#define __draw_increment
-#define __draw_clipped
-#include "count_scan.hpp"
-	}
-
-	void countClippedScanDecrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		fixp16 lx,
-		fixp16 rx,
-		int y0,
-		fixp28 lz,
-		fixp28 rz)
-	{
-#define __draw_in_front_of_depth
-#define __draw_decrement
-#define __draw_clipped
-#include "count_scan.hpp"
-	}
-
-	void countTriangleIncrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_func countScanIncrementBehindDepth
-#include "count_triangle.hpp"
-	}
-
-	void countTriangleDecrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_func countScanDecrementBehindDepth
-#include "count_triangle.hpp"
-	}
-
-	void countClippedTriangleIncrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_clipped
-#define __draw_func countScanIncrementBehindDepth
-#define __draw_clipped_func countClippedScanIncrementBehindDepth
-#include "count_triangle.hpp"
-	}
-
-	void countClippedTriangleDecrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_clipped
-#define __draw_func countScanDecrementBehindDepth
-#define __draw_clipped_func countClippedScanDecrementBehindDepth
-#include "count_triangle.hpp"
-	}
-
-	void countTriangleIncrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_func countScanIncrementInFrontOfDepth
-#include "count_triangle.hpp"
-	}
-
-	void countTriangleDecrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_func countScanDecrementInFrontOfDepth
-#include "count_triangle.hpp"
-	}
-
-	void countClippedTriangleIncrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_clipped
-#define __draw_func countScanIncrementInFrontOfDepth
-#define __draw_clipped_func countClippedScanIncrementInFrontOfDepth
-#include "count_triangle.hpp"
-	}
-
-	void countClippedTriangleDecrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-#define __draw_clipped
-#define __draw_func countScanDecrementInFrontOfDepth
-#define __draw_clipped_func countClippedScanDecrementInFrontOfDepth
-#include "count_triangle.hpp"
-	}
-
-	void countTriangleListIncrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const ClipStateList & clipStateList)
-	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
+		if(dot < 0)
 		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleIncrementBehindDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleIncrementBehindDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-			}
+			return light.diffuse * material.diffuse * -dot / (len * (light.kc + light.kl * len + light.kq * len * len));
 		}
+
+		return Vec4<real>(0, 0, 0, 0);
 	}
 
-	void countTriangleListDecrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const ClipStateList & clipStateList)
+	Mat4<real> CameraContext::buildCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
+		switch(rot_seq)
 		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleDecrementBehindDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleDecrementBehindDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-			}
-		}
+		case RS_XYZ:
+			return mat3RotXYZ(rot) * mat3Mov(pos);
+		case RS_XZY:
+			return mat3RotXZY(rot) * mat3Mov(pos);
+		case RS_YXZ:
+			return mat3RotYXZ(rot) * mat3Mov(pos);
+		case RS_YZX:
+			return mat3RotYZX(rot) * mat3Mov(pos);
+		case RS_ZXY:
+			return mat3RotZXY(rot) * mat3Mov(pos);
+		case RS_ZYX:
+			return mat3RotZYX(rot) * mat3Mov(pos);
+		default:
+			_ASSERT(false); return Mat4<real>();
+		};
 	}
 
-	void countTriangleIndexListIncrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const ClipStateList & clipStateList)
+	Mat4<real> CameraContext::buildInverseCameraTransformEuler(const Vec4<real> & pos, const Vec4<real> & rot, DWORD rot_seq /*= RS_ZXY*/)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
+		switch(rot_seq)
 		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleIncrementBehindDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleIncrementBehindDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-			}
-		}
+		case RS_XYZ:
+			return mat3InverseMov(pos) * mat3InverseRotXYZ(rot);
+		case RS_XZY:
+			return mat3InverseMov(pos) * mat3InverseRotXZY(rot);
+		case RS_YXZ:
+			return mat3InverseMov(pos) * mat3InverseRotYXZ(rot);
+		case RS_YZX:
+			return mat3InverseMov(pos) * mat3InverseRotYZX(rot);
+		case RS_ZXY:
+			return mat3InverseMov(pos) * mat3InverseRotZXY(rot);
+		case RS_ZYX:
+			return mat3InverseMov(pos) * mat3InverseRotZYX(rot);
+		default:
+			_ASSERT(false); return Mat4<real>();
+		};
 	}
 
-	void countTriangleIndexListDecrementBehindDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const ClipStateList & clipStateList)
+	Mat4<real> CameraContext::buildInverseCameraTransformUVN(const Vec4<real> & pos, const Vec4<real> & target, const Vec4<real> & up)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
-		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleDecrementBehindDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleDecrementBehindDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-			}
-		}
+		return mat3InverseMov(pos) * mat3LookAt(pos, target, up);
 	}
 
-	void countTriangleListIncrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const ClipStateList & clipStateList)
+	Mat4<real> CameraContext::buildInverseCameraTransformQuat(const Vec4<real> & pos, const Quat<real> & ori)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
-		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleIncrementInFrontOfDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleIncrementInFrontOfDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-			}
-		}
+		return mat3InverseMov(pos) * buildInverseRotationMatrixFromQuatLH(ori);
 	}
 
-	void countTriangleListDecrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const ClipStateList & clipStateList)
+	Vec2<real> CameraContext::buildCameraProjectionFOVWidth(real fov, DWORD width, DWORD height)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
-		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleDecrementInFrontOfDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
+		//             width / 2                    height / 2
+		// proj.x = --------------, proj.y = -----------------------
+		//           tan(fov / 2)             tan(fov / 2) / aspect
 
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleDecrementInFrontOfDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]);
-				break;
-			}
-		}
+		real aspect = (real)width / (real)height;
+		real scale = 1 / tan(fov / 2);
+		return Vec2<real>(scale, scale * aspect);
 	}
 
-	void countTriangleIndexListIncrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const ClipStateList & clipStateList)
+	Vec2<real> CameraContext::buildCameraProjectionFOVHeight(real fov, DWORD width, DWORD height)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
-		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleIncrementInFrontOfDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
+		//                 width / 2                    height / 2
+		// proj.x = -----------------------, proj.y = --------------
+		//           tan(fov / 2) * aspect             tan(fov / 2)
 
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleIncrementInFrontOfDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-			}
-		}
+		real aspect = (real)width / (real)height;
+		real scale = 1 / tan(fov / 2);
+		return Vec2<real>(scale / aspect, scale);
 	}
 
-	void countTriangleIndexListDecrementInFrontOfDepth(
-		SurfaceRef<int> stencilbuff,
-		const RECT & clipper,
-		const SurfaceRef<fixp28> & zbuffer,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const ClipStateList & clipStateList)
+	Vec2<real> CameraContext::buildCameraProjectionFOVAuto(real fov, DWORD width, DWORD height)
 	{
-		for(size_t i = 0; i < clipStateList.size(); i++)
-		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				countTriangleDecrementInFrontOfDepth(
-					stencilbuff,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-
-			case CLIP_STATE_SCLIPPED:
-				countClippedTriangleDecrementInFrontOfDepth(
-					stencilbuff,
-					clipper,
-					zbuffer,
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]);
-				break;
-			}
-		}
-	}
-
-	void boundSurfaceStencilBufferColor16(
-		SurfaceRef<uint16> surface,
-		const CRect & rect,
-		SurfaceRef<int> stencilbuff,
-		const t3d::Vec4<real> & color)
-	{
-		for(int y = rect.top; y < rect.bottom; y++)
-		{
-			for(int x = rect.left; x < rect.right; x++)
-			{
-				if(stencilbuff[y][x] > 0)
-				{
-					surface[y][x] = _RGB16BIT_WITHOUT_RSHIFT(
-						_COLORMUL(_RGB16GETR(surface[y][x]), real_to_int(color.x * 255)),
-						_COLORMUL(_RGB16GETG(surface[y][x]), real_to_int(color.y * 255)),
-						_COLORMUL(_RGB16GETB(surface[y][x]), real_to_int(color.z * 255)));
-				}
-			}
-		}
-	}
-
-	void boundSurfaceStencilBufferColor32(
-		SurfaceRef<uint32> surface,
-		const CRect & rect,
-		SurfaceRef<int> stencilbuff,
-		const t3d::Vec4<real> & color)
-	{
-		for(int y = rect.top; y < rect.bottom; y++)
-		{
-			for(int x = rect.left; x < rect.right; x++)
-			{
-				if(stencilbuff[y][x] > 0)
-				{
-					surface[y][x] = _RGB32BIT(
-						_COLORMUL(_RGB32GETR(surface[y][x]), real_to_int(color.x * 255)),
-						_COLORMUL(_RGB32GETG(surface[y][x]), real_to_int(color.y * 255)),
-						_COLORMUL(_RGB32GETB(surface[y][x]), real_to_int(color.z * 255)));
-				}
-			}
-		}
-	}
-
-	bool cullTriangleBackfaceAtScreen(
-		const Vec4<real> & v0,
-		const Vec4<real> & v1,
-		const Vec4<real> & v2)
-	{
-		const Vec4<real> * pv0, * pv1, * pv2;
-
-		bool bflip = false;
-
-		if(v0.y < v1.y)
-		{
-			if(v1.y < v2.y)
-			{
-				pv0 = &v0; pv1 = &v1; pv2 = &v2;
-			}
-			else if(v0.y < v2.y)
-			{
-				pv0 = &v0; pv1 = &v2; pv2 = &v1; bflip = true;
-			}
-			else
-			{
-				pv0 = &v2; pv1 = &v0; pv2 = &v1;
-			}
-		}
+		if(width < height)
+			return buildCameraProjectionFOVWidth(fov, width, height);
 		else
-		{
-			if(v0.y < v2.y)
-			{
-				pv0 = &v1; pv1 = &v0; pv2 = &v2; bflip = true;
-			}
-			else if(v1.y < v2.y)
-			{
-				pv0 = &v1; pv1 = &v2; pv2 = &v0;
-			}
-			else
-			{
-				pv0 = &v2; pv1 = &v1; pv2 = &v0; bflip = true;
-			}
-		}
-
-		real x3 = LINE2D_INTERSECT(floor(pv1->y), floor(pv0->y), floor(pv2->y), pv0->x, pv2->x);
-
-		if(pv1->x < x3)
-		{
-			bflip = !bflip;
-		}
-
-		return bflip;
+			return buildCameraProjectionFOVHeight(fov, width, height);
 	}
 
-	void removeTriangleListBackfaceAtScreen(
-		const VertexList & vertexList,
-		ClipStateList & clipStateList)
+	real CameraContext::calculateCameraHalfFovX(const Vec2<real> & proj)
 	{
-		_ASSERT(vertexList.size() == clipStateList.size() * 3);
-
-		size_t i = 0;
-		for(; i < clipStateList.size(); i++)
-		{
-			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
-
-			_ASSERT(CLIP_STATE_CULLED_SCREEN != clipStateList[i]);
-
-			if(CLIP_STATE_NONE == clipStateList[i]
-				&& cullTriangleBackfaceAtScreen(
-					vertexList[i * 3 + 0],
-					vertexList[i * 3 + 1],
-					vertexList[i * 3 + 2]))
-			{
-				clipStateList[i] = CLIP_STATE_CULLED_SCREEN;
-			}
-		}
+		return atan(1 / proj.x);
 	}
 
-	void removeTriangleIndexListBackfaceAtScreen(
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		ClipStateList & clipStateList)
+	real CameraContext::calculateCameraHalfFovY(const Vec2<real> & proj)
 	{
-		_ASSERT(vertexIndexList.size() == clipStateList.size() * 3);
-
-		size_t i = 0;
-		for(; i < clipStateList.size(); i++)
-		{
-			_ASSERT(CLIP_STATE_SCLIPPED != clipStateList[i]);
-
-			_ASSERT(CLIP_STATE_CULLED_SCREEN != clipStateList[i]);
-
-			if(CLIP_STATE_NONE == clipStateList[i]
-				&& cullTriangleBackfaceAtScreen(
-					vertexList[vertexIndexList[i * 3 + 0]],
-					vertexList[vertexIndexList[i * 3 + 1]],
-					vertexList[vertexIndexList[i * 3 + 2]]))
-			{
-				clipStateList[i] = CLIP_STATE_CULLED_SCREEN;
-			}
-		}
+		return atan(1 / proj.y);
 	}
 
-	ClipStateList & reversalClipStateListScreenCulling(
-		ClipStateList & retClipStateList,
-		const ClipStateList & clipStateList)
+	real CameraContext::calculateCameraMinHalfFov(const Vec2<real> & proj)
 	{
-		retClipStateList.resize(clipStateList.size());
-
-		size_t i = 0;
-		for(; i < clipStateList.size(); i++)
-		{
-			switch(clipStateList[i])
-			{
-			case CLIP_STATE_NONE:
-				retClipStateList[i] = CLIP_STATE_CULLED_SCREEN;
-				break;
-
-			case CLIP_STATE_CULLED_SCREEN:
-				retClipStateList[i] = CLIP_STATE_NONE;
-				break;
-
-			default:
-				retClipStateList[i] = clipStateList[i];
-				break;
-			}
-		}
-
-		return retClipStateList;
+		return proj.x > proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
 	}
 
-	ConnectionEdgeList & buildConnectionEdgeListFromTriangleList(
-		ConnectionEdgeList & retConnectionEdgeList,
-		const VertexList & vertexList)
+	real CameraContext::calculateCameraMaxHalfFov(const Vec2<real> & proj)
 	{
-		_ASSERT(retConnectionEdgeList.empty());
-		_ASSERT(vertexList.size() % 3 == 0);
-
-		for(size_t i = 0; i < vertexList.size(); i += 3)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				const Vec4<real> & v0 = vertexList[i + (j + 0) % 3];
-				const Vec4<real> & v1 = vertexList[i + (j + 1) % 3];
-
-				ConnectionEdgeList::iterator connection_edge_iter = retConnectionEdgeList.begin();
-				for(; connection_edge_iter != retConnectionEdgeList.end(); connection_edge_iter++)
-				{
-					const Vec4<real> & ev0 = vertexList[connection_edge_iter->v0_i];
-					const Vec4<real> & ev1 = vertexList[connection_edge_iter->v1_i];
-
-					if(vec3IsEqual(v1, ev0) && vec3IsEqual(v0, ev1))
-					{
-						if(connection_edge_iter->tri1_i != SIZE_MAX)
-						{
-							_ASSERT(false); continue; // ***
-						}
-
-						connection_edge_iter->tri1_i = i / 3;
-						break;
-					}
-				}
-
-				if(retConnectionEdgeList.end() == connection_edge_iter)
-				{
-					ConnectionEdge silhouetteEdge;
-					silhouetteEdge.v0_i = i + (j + 0) % 3;
-					silhouetteEdge.v1_i = i + (j + 1) % 3;
-					silhouetteEdge.tri0_i = i / 3;
-					silhouetteEdge.tri1_i = SIZE_MAX;
-
-					retConnectionEdgeList.push_back(silhouetteEdge);
-				}
-			}
-		}
-
-		return retConnectionEdgeList;
+		return proj.x < proj.y ? calculateCameraHalfFovX(proj) : calculateCameraHalfFovY(proj);
 	}
 
-	ConnectionEdgeList & buildConnectionEdgeListFromTriangleIndexList(
-		ConnectionEdgeList & retConnectionEdgeList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList)
+	Vec4<real> CameraContext::calculateCameraPosition(const Mat4<real> & mcam)
 	{
-		_ASSERT(retConnectionEdgeList.empty());
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-
-		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				size_t v0_i = vertexIndexList[i + (j + 0) % 3];
-				size_t v1_i = vertexIndexList[i + (j + 1) % 3];
-
-				ConnectionEdgeList::iterator connection_edge_iter = retConnectionEdgeList.begin();
-				for(; connection_edge_iter != retConnectionEdgeList.end(); connection_edge_iter++)
-				{
-					if(v1_i == connection_edge_iter->v0_i && v0_i == connection_edge_iter->v1_i)
-					{
-						if(connection_edge_iter->tri1_i != SIZE_MAX)
-						{
-							_ASSERT(false); continue; // ***
-						}
-
-						connection_edge_iter->tri1_i = i / 3;
-						break;
-					}
-				}
-
-				if(retConnectionEdgeList.end() == connection_edge_iter)
-				{
-					ConnectionEdge silhouetteEdge;
-					silhouetteEdge.v0_i = v0_i;
-					silhouetteEdge.v1_i = v1_i;
-					silhouetteEdge.tri0_i = i / 3;
-					silhouetteEdge.tri1_i = SIZE_MAX;
-
-					retConnectionEdgeList.push_back(silhouetteEdge);
-				}
-			}
-		}
-
-		return retConnectionEdgeList;
+		return mat3GetRow3(mcam.inverse());
 	}
 
-	IndicatorList & buildIndicatorListFromTriangleListByPoint(
-		IndicatorList & retIndicatorList,
-		const VertexList & vertexList,
-		const Vec4<real> & point)
+	Vec4<real> CameraContext::calculateCameraDirection(const Mat4<real> & mcam)
 	{
-		_ASSERT(vertexList.size() % 3 == 0);
-
-		retIndicatorList.resize(vertexList.size() / 3);
-		for(size_t i = 0; i < vertexList.size(); i += 3)
-		{
-			const Vec4<real> & v0 = vertexList[i + 0];
-			const Vec4<real> & v1 = vertexList[i + 1];
-			const Vec4<real> & v2 = vertexList[i + 2];
-
-			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByPoint(v0, v1, v2, point);
-		}
-
-		return retIndicatorList;
+		return Vec4<real>(0, 0, 1, 1) * mat4GetRotationScalePart(mcam.inverse());
 	}
 
-	IndicatorList & buildIndicatorListFromTriangleIndexListByPoint(
-		IndicatorList & retIndicatorList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const Vec4<real> & point)
+	RenderContext::RenderContext(void)
 	{
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-
-		retIndicatorList.resize(vertexIndexList.size() / 3);
-		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
-		{
-			const Vec4<real> & v0 = vertexList[vertexIndexList[i + 0]];
-			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
-			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
-
-			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByPoint(v0, v1, v2, point);
-		}
-
-		return retIndicatorList;
 	}
 
-	IndicatorList & buildIndicatorListFromTriangleListByDirection(
-		IndicatorList & retIndicatorList,
-		const VertexList & vertexList,
-		const Vec4<real> & direction)
+	RenderContext::~RenderContext(void)
 	{
-		_ASSERT(vertexList.size() % 3 == 0);
-
-		retIndicatorList.resize(vertexList.size() / 3);
-		for(size_t i = 0; i < vertexList.size(); i += 3)
-		{
-			const Vec4<real> & v0 = vertexList[i + 0];
-			const Vec4<real> & v1 = vertexList[i + 1];
-			const Vec4<real> & v2 = vertexList[i + 2];
-
-			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByDirection(v0, v1, v2, direction);
-		}
-
-		return retIndicatorList;
 	}
 
-	IndicatorList & buildIndicatorListFromTriangleIndexListByDirection(
-		IndicatorList & retIndicatorList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const Vec4<real> & direction)
+	void RenderContext::fillZbuffer(const CRect & rect, real value_inv)
 	{
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-
-		retIndicatorList.resize(vertexIndexList.size() / 3);
-		for(size_t i = 0; i < vertexIndexList.size(); i += 3)
-		{
-			const Vec4<real> & v0 = vertexList[vertexIndexList[i + 0]];
-			const Vec4<real> & v1 = vertexList[vertexIndexList[i + 1]];
-			const Vec4<real> & v2 = vertexList[vertexIndexList[i + 2]];
-
-			retIndicatorList[i / 3] = IndicatorList::buildTriangleIndicatorByDirection(v0, v1, v2, direction);
-		}
-
-		return retIndicatorList;
+		fillZBuffer28(getZBufferRef28(), m_clipper & rect, value_inv);
 	}
 
-	VertexList & pushSilhouetteEdgeList(
-		VertexList & retSilhouetteEdgeList,
-		const ConnectionEdgeList & connectionEdgeList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList)
+	void RenderContext::fillStencilBuffer(const CRect & rect, int value)
 	{
-		//_ASSERT(retSilhouetteEdgeList.empty());
-
-		ConnectionEdgeList::const_iterator connection_edge_iter = connectionEdgeList.begin();
-		for(; connection_edge_iter != connectionEdgeList.end(); connection_edge_iter++)
-		{
-			if(IndicatorList::isBack(indicatorList[connection_edge_iter->tri0_i]))
-			{
-				if(SIZE_MAX != connection_edge_iter->tri1_i
-					&& !IndicatorList::isBack(indicatorList[connection_edge_iter->tri1_i]))
-				{
-					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
-					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
-				}
-			}
-			else
-			{
-				if(SIZE_MAX == connection_edge_iter->tri1_i
-					|| IndicatorList::isBack(indicatorList[connection_edge_iter->tri1_i]))
-				{
-					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v1_i]);
-					retSilhouetteEdgeList.push_back(vertexList[connection_edge_iter->v0_i]);
-				}
-			}
-		}
-
-		return retSilhouetteEdgeList;
+		t3d::fillStencilBuffer(getStencilBufferRef(), rect, value);
 	}
 
-	VertexList & pushUncappedShadowVolumeByPoint(
-		VertexList & retVertexList,
-		const VertexList & silhouetteEdgeList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::fillSurface(const CRect & rect, const Vec4<real> & color)
 	{
-		//_ASSERT(retVertexList.empty());
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
 
-		for(size_t i = 0; i < silhouetteEdgeList.size(); i += 2)
-		{
-			const Vec4<real> & v0 = silhouetteEdgeList[i + 0];
-			const Vec4<real> & v1 = silhouetteEdgeList[i + 1];
-
-			Vec4<real> v2 = vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance));
-			Vec4<real> v3 = vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance));
-
-			retVertexList.push_back(v0);
-			retVertexList.push_back(v1);
-			retVertexList.push_back(v2);
-
-			retVertexList.push_back(v2);
-			retVertexList.push_back(v3);
-			retVertexList.push_back(v0);
-		}
-
-		return retVertexList;
+		fillSurface16(getSurfaceRef16(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
 	}
 
-	VertexList & pushUncappedShadowVolumeByDirection(
-		VertexList & retVertexList,
-		const VertexList & silhouetteEdgeList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
 	{
-		//_ASSERT(retVertexList.empty());
-
-		_ASSERT(vec3IsNormalized(direction));
-
-		for(size_t i = 0; i < silhouetteEdgeList.size(); i += 2)
-		{
-			const Vec4<real> & v0 = silhouetteEdgeList[i + 0];
-			const Vec4<real> & v1 = silhouetteEdgeList[i + 1];
-
-			Vec4<real> v2 = vec3Add(v1, vec3Mul(direction, distance));
-			Vec4<real> v3 = vec3Add(v0, vec3Mul(direction, distance));
-
-			retVertexList.push_back(v0);
-			retVertexList.push_back(v1);
-			retVertexList.push_back(v2);
-
-			retVertexList.push_back(v2);
-			retVertexList.push_back(v3);
-			retVertexList.push_back(v0);
-		}
-
-		return retVertexList;
+		drawClippedHorizonLine16(getSurfaceRef16(), getClipperRect(), x0, y0, width, rgbaSaturate<real>(color * 255, 255));
 	}
 
-	VertexList & pushTriangleListFrontCapByPoint(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color)
 	{
-		_ASSERT(vertexList.size() % 3 == 0);
-		_ASSERT(vertexList.size() / 3 == indicatorList.size());
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(!IndicatorList::isBack(indicatorList[i]))
-			{
-				retVertexList.push_back(vertexList[i * 3 + 0]);
-				retVertexList.push_back(vertexList[i * 3 + 1]);
-				retVertexList.push_back(vertexList[i * 3 + 2]);
-			}
-		}
-
-		return retVertexList;
+		drawClippedVerticalLine16(getSurfaceRef16(), getClipperRect(), x0, y0, height, rgbaSaturate<real>(color * 255, 255));
 	}
 
-	VertexList & pushTriangleIndexListFrontCapByPoint(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::drawLineListZBufferRW(const Vec4<real> & color)
 	{
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(!IndicatorList::isBack(indicatorList[i]))
-			{
-				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 0]]);
-				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 1]]);
-				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 2]]);
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexListSize() / 2);
+		transformLineListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenLineList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawLineListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleListBackCapByPoint(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::drawLineIndexListZBufferRW(const Vec4<real> & color)
 	{
-		_ASSERT(vertexList.size() % 3 == 0);
-		_ASSERT(vertexList.size() / 3 == indicatorList.size());
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(IndicatorList::isBack(indicatorList[i]))
-			{
-				const Vec4<real> & v0 = vertexList[i * 3 + 0];
-				const Vec4<real> & v1 = vertexList[i * 3 + 1];
-				const Vec4<real> & v2 = vertexList[i * 3 + 2];
-
-				retVertexList.push_back(vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance)));
-				retVertexList.push_back(vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance)));
-				retVertexList.push_back(vec3Add(v2, vec3Mul(vec3Normalize(vec3Sub(v2, point)), distance)));
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 2);
+		transformLineIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenLineIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawLineIndexListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleIndexListBackCapByPoint(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::drawTriangleListWireZBufferRW(const Vec4<real> & color)
 	{
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(IndicatorList::isBack(indicatorList[i]))
-			{
-				const Vec4<real> & v0 = vertexList[vertexIndexList[i * 3 + 0]];
-				const Vec4<real> & v1 = vertexList[vertexIndexList[i * 3 + 1]];
-				const Vec4<real> & v2 = vertexList[vertexIndexList[i * 3 + 2]];
-
-				retVertexList.push_back(vec3Add(v0, vec3Mul(vec3Normalize(vec3Sub(v0, point)), distance)));
-				retVertexList.push_back(vec3Add(v1, vec3Mul(vec3Normalize(vec3Sub(v1, point)), distance)));
-				retVertexList.push_back(vec3Add(v2, vec3Mul(vec3Normalize(vec3Sub(v2, point)), distance)));
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListWireZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleListFrontCapByDirection(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawTriangleIndexListWireZBufferRW(const Vec4<real> & color)
 	{
-		_ASSERT(vertexList.size() % 3 == 0);
-		_ASSERT(vertexList.size() / 3 == indicatorList.size());
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(!IndicatorList::isBack(indicatorList[i]))
-			{
-				retVertexList.push_back(vertexList[i * 3 + 0]);
-				retVertexList.push_back(vertexList[i * 3 + 1]);
-				retVertexList.push_back(vertexList[i * 3 + 2]);
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListWireZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleIndexListFrontCapByDirection(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(!IndicatorList::isBack(indicatorList[i]))
-			{
-				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 0]]);
-				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 1]]);
-				retVertexList.push_back(vertexList[vertexIndexList[i * 3 + 2]]);
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListWireZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleListBackCapByDirection(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		_ASSERT(vertexList.size() % 3 == 0);
-		_ASSERT(vertexList.size() / 3 == indicatorList.size());
-
-		_ASSERT(vec3IsNormalized(direction));
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(IndicatorList::isBack(indicatorList[i]))
-			{
-				const Vec4<real> & v0 = vertexList[i * 3 + 0];
-				const Vec4<real> & v1 = vertexList[i * 3 + 1];
-				const Vec4<real> & v2 = vertexList[i * 3 + 2];
-
-				retVertexList.push_back(vec3Add(v0, vec3Mul(direction, distance)));
-				retVertexList.push_back(vec3Add(v1, vec3Mul(direction, distance)));
-				retVertexList.push_back(vec3Add(v2, vec3Mul(direction, distance)));
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListWireZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleIndexListBackCapByDirection(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const IndicatorList & indicatorList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawTriangleListZBufferRW(const Vec4<real> & color)
 	{
-		_ASSERT(vertexIndexList.size() % 3 == 0);
-		_ASSERT(vertexIndexList.size() / 3 == indicatorList.size());
-
-		_ASSERT(vec3IsNormalized(direction));
-
-		for(size_t i = 0; i < indicatorList.size(); i++)
-		{
-			if(IndicatorList::isBack(indicatorList[i]))
-			{
-				const Vec4<real> & v0 = vertexList[vertexIndexList[i * 3 + 0]];
-				const Vec4<real> & v1 = vertexList[vertexIndexList[i * 3 + 1]];
-				const Vec4<real> & v2 = vertexList[vertexIndexList[i * 3 + 2]];
-
-				retVertexList.push_back(vec3Add(v0, vec3Mul(direction, distance)));
-				retVertexList.push_back(vec3Add(v1, vec3Mul(direction, distance)));
-				retVertexList.push_back(vec3Add(v2, vec3Mul(direction, distance)));
-			}
-		}
-
-		return retVertexList;
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleListCappedShadowVolumeByPoint(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
-		const VertexList & silhouetteEdgeList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::drawTriangleIndexListZBufferRW(const Vec4<real> & color)
 	{
-		pushTriangleListFrontCapByPoint(
-			retVertexList,
-			vertexList,
-			indicatorList,
-			point,
-			distance);
-
-		pushUncappedShadowVolumeByPoint(
-			retVertexList,
-			silhouetteEdgeList,
-			point,
-			distance);
-
-		return pushTriangleListBackCapByPoint(
-			retVertexList,
-			vertexList,
-			indicatorList,
-			point,
-			distance);
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleIndexListCappedShadowVolumeByPoint(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const IndicatorList & indicatorList,
-		const VertexList & silhouetteEdgeList,
-		const Vec4<real> & point,
-		real distance)
+	void RenderContext16::drawTriangleListZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		pushTriangleIndexListFrontCapByPoint(
-			retVertexList,
-			vertexList,
-			vertexIndexList,
-			indicatorList,
-			point,
-			distance);
-
-		pushUncappedShadowVolumeByPoint(
-			retVertexList,
-			silhouetteEdgeList,
-			point,
-			distance);
-
-		return pushTriangleIndexListBackCapByPoint(
-			retVertexList,
-			vertexList,
-			vertexIndexList,
-			indicatorList,
-			point,
-			distance);
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleListCappedShadowVolumeByDirection(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const IndicatorList & indicatorList,
-		const VertexList & silhouetteEdgeList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color)
 	{
-		pushTriangleListFrontCapByDirection(
-			retVertexList,
-			vertexList,
-			indicatorList,
-			direction,
-			distance);
-
-		pushUncappedShadowVolumeByDirection(
-			retVertexList,
-			silhouetteEdgeList,
-			direction,
-			distance);
-
-		return pushTriangleListBackCapByDirection(
-			retVertexList,
-			vertexList,
-			indicatorList,
-			direction,
-			distance);
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
 	}
 
-	VertexList & pushTriangleIndexListCappedShadowVolumeByDirection(
-		VertexList & retVertexList,
-		const VertexList & vertexList,
-		const VertexIndexList & vertexIndexList,
-		const IndicatorList & indicatorList,
-		const VertexList & silhouetteEdgeList,
-		const Vec4<real> & direction,
-		real distance)
+	void RenderContext16::drawTriangleListGouraudZBufferRW(void)
 	{
-		pushTriangleIndexListFrontCapByDirection(
-			retVertexList,
-			vertexList,
-			vertexIndexList,
-			indicatorList,
-			direction,
-			distance);
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudAtCamera(getVertexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getColorList(), getClipStateList());
+	}
 
-		pushUncappedShadowVolumeByDirection(
-			retVertexList,
-			silhouetteEdgeList,
-			direction,
-			distance);
+	void RenderContext16::drawTriangleIndexListGouraudZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getColorList(), getClipStateList());
+	}
 
-		return pushTriangleIndexListBackCapByDirection(
-			retVertexList,
-			vertexList,
-			vertexIndexList,
-			indicatorList,
-			direction,
-			distance);
+	void RenderContext16::drawTriangleListGouraudZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudAtCamera(getVertexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getColorList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getColorList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListGouraudTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListGouraudTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTextureZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW16(getSurfaceRef16(), getClipperRect(), getZBufferRef28(), getTextureRef16(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext16::drawTriangleListShadowVolumeZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleListBackfaceAtScreen(getVertexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		countTriangleListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList());
+		sClipTriangleListAtScreen(getVertexList(), m_clipStateList2nd, getViewport());
+		countTriangleListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor16(getSurfaceRef16(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext16::drawTriangleIndexListShadowVolumeZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleIndexListBackfaceAtScreen(getVertexList(), getVertexIndexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		countTriangleIndexListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), m_clipStateList2nd, getViewport());
+		countTriangleIndexListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor16(getSurfaceRef16(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext16::drawTriangleListShadowVolumeZFail(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleListBackfaceAtScreen(getVertexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleListAtScreen(getVertexList(), m_clipStateList2nd, getViewport());
+		countTriangleListIncrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), m_clipStateList2nd);
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		countTriangleListDecrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList());
+		boundSurfaceStencilBufferColor16(getSurfaceRef16(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext16::drawTriangleIndexListShadowVolumeZFail(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleIndexListBackfaceAtScreen(getVertexList(), getVertexIndexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), m_clipStateList2nd, getViewport());
+		countTriangleIndexListIncrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), m_clipStateList2nd);
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		countTriangleIndexListDecrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList());
+		boundSurfaceStencilBufferColor16(getSurfaceRef16(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext32::fillSurface(const CRect & rect, const Vec4<real> & color)
+	{
+		_ASSERT(rgbaIsValid<real>(color, 0, 1));
+
+		fillSurface32(getSurfaceRef32(), m_clipper & rect, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext32::drawHorizonLine(int x0, int y0, int width, const Vec4<real> & color)
+	{
+		drawClippedHorizonLine32(getSurfaceRef32(), getClipperRect(), x0, y0, width, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext32::drawVerticalLine(int x0, int y0, int height, const Vec4<real> & color)
+	{
+		drawClippedVerticalLine32(getSurfaceRef32(), getClipperRect(), x0, y0, height, rgbaSaturate<real>(color * 255, 255));
+	}
+
+	void RenderContext32::drawLineListZBufferRW(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 2);
+		transformLineListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipLineListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenLineList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipLineListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawLineListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawLineIndexListZBufferRW(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 2);
+		transformLineIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipLineIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenLineIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipLineIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawLineIndexListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleListWireZBufferRW(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListWireZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListWireZBufferRW(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListWireZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleListWireZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListWireZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListWireZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListWireZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleListZBufferRW(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListZBufferRW(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleListZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListZBufferRWWithBackface(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList(), color);
+	}
+
+	void RenderContext32::drawTriangleListGouraudZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudAtCamera(getVertexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getColorList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getColorList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListGouraudZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudAtCamera(getVertexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getColorList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getColorList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListTextureAtCamera(getVertexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListTextureAtCamera(getVertexList(), getVertexIndexList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListGouraudTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTextureZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListGouraudTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTextureZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTextureZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		//removeTriangleListBackfaceAtWorld(getVertexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleListAtWorld(getVertexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListGouraudTextureAtCamera(getVertexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		drawTriangleListGouraudTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRWWithBackface(void)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		//removeTriangleIndexListBackfaceAtWorld(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraPosition());
+		resetColorList(getColorList(), getVertexListSize());
+		lightTriangleIndexListAtWorld(getVertexList(), getVertexIndexList(), getNormalList(), getClipStateList(), getLightList(), getMaterial(), getColorList());
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListGouraudTextureAtCamera(getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		drawTriangleIndexListGouraudTexturePerspectiveLPZBufferRW32(getSurfaceRef32(), getClipperRect(), getZBufferRef28(), getTextureRef32(), Vec2<real>(getTextureWidth() - 1, getTextureHeight() - 1), getVertexList(), getVertexIndexList(), getColorList(), getUVList(), getClipStateList());
+	}
+
+	void RenderContext32::drawTriangleListShadowVolumeZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleListBackfaceAtScreen(getVertexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		countTriangleListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList());
+		sClipTriangleListAtScreen(getVertexList(), m_clipStateList2nd, getViewport());
+		countTriangleListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor32(getSurfaceRef32(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListShadowVolumeZPass(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleIndexListBackfaceAtScreen(getVertexList(), getVertexIndexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		countTriangleIndexListIncrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), m_clipStateList2nd, getViewport());
+		countTriangleIndexListDecrementInFrontOfDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), m_clipStateList2nd);
+		boundSurfaceStencilBufferColor32(getSurfaceRef32(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext32::drawTriangleListShadowVolumeZFail(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexListSize() / 3);
+		transformTriangleListSelf(getVertexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleListAtCamera(getVertexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleList(getVertexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleListBackfaceAtScreen(getVertexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleListAtScreen(getVertexList(), m_clipStateList2nd, getViewport());
+		countTriangleListIncrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), m_clipStateList2nd);
+		sClipTriangleListAtScreen(getVertexList(), getClipStateList(), getViewport());
+		countTriangleListDecrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getClipStateList());
+		boundSurfaceStencilBufferColor32(getSurfaceRef32(), getClipperRect(), getStencilBufferRef(), color);
+	}
+
+	void RenderContext32::drawTriangleIndexListShadowVolumeZFail(const Vec4<real> & color)
+	{
+		resetClipStateList(getClipStateList(), getVertexIndexListSize() / 3);
+		transformTriangleIndexListSelf(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraMatrix());
+		zClipTriangleIndexListAtCamera(getVertexList(), getVertexIndexList(), getClipStateList(), getCamera());
+		cameraToScreenTriangleIndexList(getVertexList(), getVertexIndexList(), getClipStateList(), getCameraProjection(), getViewport());
+		removeTriangleIndexListBackfaceAtScreen(getVertexList(), getVertexIndexList(), getClipStateList());
+		reversalClipStateListScreenCulling(m_clipStateList2nd, getClipStateList());
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), m_clipStateList2nd, getViewport());
+		countTriangleIndexListIncrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), m_clipStateList2nd);
+		sClipTriangleIndexListAtScreen(getVertexList(), getVertexIndexList(), getClipStateList(), getViewport());
+		countTriangleIndexListDecrementBehindDepth(getStencilBufferRef(), getClipperRect(), getZBufferRef28(), getVertexList(), getVertexIndexList(), getClipStateList());
+		boundSurfaceStencilBufferColor32(getSurfaceRef32(), getClipperRect(), getStencilBufferRef(), color);
 	}
 }
