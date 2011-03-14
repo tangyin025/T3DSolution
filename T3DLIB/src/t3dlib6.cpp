@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 #include "t3dlib6.h"
+#include "t3dlib7.h"
 #include "t3dlib8.h"
-#include "t3dlib9.h"
 
 #define CLIP_MASK_V0	0x01
 #define CLIP_MASK_V1	0x02

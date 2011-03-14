@@ -3,7 +3,7 @@
 #define __MYSKELETON_H__
 
 #include "myCommon.h"
-#include <t3dlib7.h>
+#include <t3dlib9.h>
 #include <map>
 
 namespace my

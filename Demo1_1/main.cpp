@@ -3,7 +3,7 @@
 */
 
 #include <t3dlib1.h>	// ddraw 封装
-#include <t3dlib9.h>	// 渲染上下文
+#include <t3dlib8.h>	// 渲染上下文
 
 #pragma comment(lib, "winmm.lib") // windows 媒体库
 

@@ -9,7 +9,7 @@
 #include "myPhysics.h"			// 物理引擎
 #include "myCollision.h"		// 碰撞系统
 #include "myScene.h"			// 场景管理
-#include "t3dlib8.h"			// Shadow Volume 支持
+#include "t3dlib7.h"			// Shadow Volume 支持
 
 // 包含 resource
 #include "resource.h"
