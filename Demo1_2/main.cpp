@@ -246,6 +246,7 @@ protected:
 
 	my::ObjectPtr m_scene;							// 需要一个用来存储场景的容器
 	my::BSPNodePtr m_scene_bsp;						// 基于 BSP 的场景，强吧 ^O^！
+	my::CustomShaderBSPNodePtr m_scene_bsp2;		// 新的 BSP 场景，使用 CustomShader 渲染模式（只是编程时方便，视觉上没有变化）
 	my::ImagePtr m_scene_t;							// 场景的贴图
 	MyWorldPtr m_world;								// 物理引擎管理器
 	my::BoneAssignmentIndexObjectPtr m_character;	// 角色的身体模型
@@ -253,8 +254,10 @@ protected:
 	my::ImagePtr m_character_t;						// 角色的整个贴图
 
 	my::SkeletonAnimationsFromOgreSkeletonPtr m_character_skel; // 角色的骨骼动画集，里边可以藏有一整套动画，是一个以动画名为 key 的 map
+	t3d::BoneNodeList m_character_bone_node_list_combine;		// 用以暂存 bone node list
 	t3d::BoneNodeList m_character_bone_node_list;				// 用以暂存 bone node list
 	t3d::BoneTransformList m_character_bone_transform_list;		// 用以暂存 bone transform list
+	real m_character_bone_intersection_offset;					// 用以暂存 bone intersection offset，插值便宜时间
 
 	my::IndexSphereObjectPtr m_skySphere;			// 天空球
 	my::ImagePtr m_skySphere_t;						// 天空球的贴图
@@ -357,8 +360,14 @@ public:
 			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("office_texture.jpg")))));
 
 		// 创建 bsp 场景
-		m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
+		//m_scene_bsp = my::buildBSPScene(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList());
 		//m_scene_bsp = my::buildBSPSceneWithLODTriNode(m_scene->getVertexList(), m_scene->getNormalList(), m_scene->getUVList(), 10);
+		m_scene_bsp2 = my::buildFrontToBackBspSceneGouraudTexturePerspectiveLPZBufferRW(
+			m_scene->getVertexList(),
+			m_scene->getNormalList(),
+			m_scene->getUVList(),
+			my::MaterialPtr(new my::Material()),
+			m_scene_t);
 
 		// 构造物理引擎管理器
 		m_world = MyWorldPtr(new MyWorld(5.0f, 4.0f * 0.3333f * (real)PI * 5.0f * 5.0f * 5.0f, m_scene.get()));
@@ -383,8 +392,10 @@ public:
 		m_character_skel->setCurrentAnimationName("clip1");
 		m_character_skel->setCurrentAnimationTime(0);
 
+		m_character_bone_node_list_combine = m_character_skel->getOrigBoneNodeList();
 		m_character_bone_node_list = m_character_skel->getOrigBoneNodeList();
 		m_character_bone_transform_list.resize(m_character_skel->getOrigBoneNodeListSize());
+		m_character_bone_intersection_offset = 0;
 
 		// load 天空球
 		m_skySphere = my::IndexSphereObjectPtr(new my::IndexSphereObject(50000.0f, 20, 20, true));
@@ -537,8 +548,9 @@ public:
 			m_scene_t->getWidth(),
 			m_scene_t->getHeight());
 		//m_scene->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
-		m_scene_bsp->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
+		//m_scene_bsp->drawGouraudTexturePerspectiveLPZBufferRW(m_rc.get());
 		//m_scene_bsp->drawWireZBufferRW(m_rc.get(), my::Color::BLUE);
+		m_scene_bsp2->draw(m_rc.get());
 
 		//// 绘制角色球
 		//drawSphereWireZBufferRW(
@@ -548,6 +560,7 @@ public:
 		//	m_world->m_characterSphere.getTransform());
 
 		// 注意：由于 2009年12月12日 修改了骨骼系统的底层，所以原先支持各个动作间过渡的功能目前不能使用
+		const real max_character_bone_intersection_offset = 0.5f;
 		std::string current_anim_name = m_character_skel->getCurrentAnimationName();
 		if (t3d::vec3Length(m_world->m_characterBody->getVelocity()) > 1)
 		{
@@ -556,6 +569,7 @@ public:
 			{
 				m_character_skel->setCurrentAnimationName("clip3");
 				m_character_skel->setCurrentAnimationTime(0);
+				m_character_bone_intersection_offset = max_character_bone_intersection_offset;
 			}
 		}
 		else
@@ -565,6 +579,7 @@ public:
 			{
 				m_character_skel->setCurrentAnimationName("clip1");
 				m_character_skel->setCurrentAnimationTime(0);
+				m_character_bone_intersection_offset = max_character_bone_intersection_offset;
 			}
 		}
 
@@ -583,18 +598,42 @@ public:
 
 			// 和 banding position 叠加
 			t3d::incrementBoneNodeList(
-				m_character_bone_node_list,
+				m_character_bone_node_list_combine,
 				m_character_skel->getOrigBoneNodeList(),
 				boneNodeList,
 				*bone_index_iter);
 		}
 
+		// 和当前动作进行插值合并
+		if(m_character_bone_intersection_offset > 0)
+		{
+			t3d::intersectBoneNodeList(
+				m_character_bone_node_list,
+				m_character_bone_node_list,
+				m_character_bone_node_list_combine,
+				max_character_bone_intersection_offset,
+				0,
+				m_character_bone_intersection_offset,
+				m_character_skel->getRootIndexListBegin(),
+				m_character_skel->getRootIndexListEnd());
+
+			m_character_bone_intersection_offset -= elapsedTime;
+		}
+		else
+		{
+			m_character_bone_node_list = m_character_bone_node_list_combine;
+		}
+
+		// 获得角色球的相关变换信息，这些变换将直接作用在骨骼系统的根节点
+		t3d::Mat4<real> mrot = t3d::mat3RotY(m_world->m_characterRotation.y);
+		t3d::Mat4<real> mmat = mrot * t3d::mat3Mov(my::Vec4<real>(0, -5.0f, 0)) * m_world->m_characterSphere.getTransform();
+
 		// 获取当前动作的 transform matrix
-		t3d::updateBoneTransformListFromBoneNodeList(
+		t3d::buildBoneTransformListFromBoneNodeList(
 			m_character_bone_transform_list,
 			m_character_bone_node_list,
-			my::Mat4<real>::IDENTITY,
-			my::Mat4<real>::IDENTITY,
+			mrot,
+			mmat,
 			m_character_skel->getRootIndexListBegin(),
 			m_character_skel->getRootIndexListEnd());
 
@@ -621,10 +660,6 @@ public:
 			m_character_h->getBoneAssignmentList(),
 			m_character_bone_transform_list);
 
-		// 获得角色球的相关变换信息
-		t3d::Mat4<real> mrot = t3d::mat3RotY(m_world->m_characterRotation.y);
-		t3d::Mat4<real> mmat = mrot * t3d::mat3Mov(my::Vec4<real>(0, -5.0f, 0)) * m_world->m_characterSphere.getTransform();
-
 		// 设置角色贴图
 		m_rc->setTextureBuffer(
 			m_character_t->getBits(),
@@ -632,9 +667,9 @@ public:
 			m_character_t->getWidth(),
 			m_character_t->getHeight());
 
-		// 绘制角色
-		m_character->drawGouraudTextureZBufferRW(m_rc.get(), mmat, mrot);
-		m_character_h->drawGouraudTextureZBufferRWWithBackface(m_rc.get(), mmat, mrot);
+		// 绘制角色，由于骨骼系统已经处理了位移信息，所以不再需要 model -> world 变换
+		m_character->drawGouraudTextureZBufferRW(m_rc.get());
+		m_character_h->drawGouraudTextureZBufferRWWithBackface(m_rc.get());
 
 		//// 绘制角色阴影，hack 手法
 		//if(l_pos.y - m_world->m_characterBody->getPosition().y > 30.0f)
@@ -670,21 +705,18 @@ public:
 		//	m_rc->drawTriangleIndexListZBufferRW(my::Color(0.2f, 0.2f, 0.2f));
 		//}
 
-		// 注意光源点的 inverse matrix, 这些部分以后将在 render contaxt 中被优化
-		t3d::Vec4<real> l_pos_inv = l_pos.transform(mmat.inverse());
-
-		// 计算 Indicator List
+		// 计算 Indicator List，由于模型已经被定位到 world 空间，所以这里直接使用 world 空间的光源，而不再需要变换
 		t3d::buildIndicatorListFromTriangleIndexListByPoint(
 			m_indicatorList,
 			m_character->getVertexList(),
 			m_character->getVertexIndexList(),
-			l_pos_inv);
+			l_pos);
 
 		t3d::buildIndicatorListFromTriangleIndexListByPoint(
 			m_indicatorList2,
 			m_character_h->getVertexList(),
 			m_character_h->getVertexIndexList(),
-			l_pos_inv);
+			l_pos);
 
 		// 计算 Silhouette Edge
 		m_silhouetteEdgeList.clear();
@@ -702,7 +734,7 @@ public:
 
 		//// 渲染 Silhouette Edge
 		//m_rc->clearVertexList();
-		//m_rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end(), mmat);
+		//m_rc->pushVertexList(m_silhouetteEdgeList.begin(), m_silhouetteEdgeList.end());
 		//m_rc->drawLineListZBufferRW(my::Color::YELLOW);
 
 		// 计算 shadow volume
@@ -710,17 +742,17 @@ public:
 		t3d::pushUncappedShadowVolumeByPoint(
 			m_shadowVolume,
 			m_silhouetteEdgeList,
-			l_pos_inv,
+			l_pos,
 			300);
 
 		//// 渲染 Shadow Volume 线框
 		//m_rc->clearVertexList();
-		//m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
+		//m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end());
 		//m_rc->drawTriangleListWireZBufferRW(my::Color::RED);
 
 		// 绘制 Shadow Volume
 		m_rc->clearVertexList();
-		m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end(), mmat);
+		m_rc->pushVertexList(m_shadowVolume.begin(), m_shadowVolume.end());
 		m_rc->drawTriangleListShadowVolumeZPass(my::Color(0.39f, 0.39f, 0.39f));
 
 		// ======================================== TODO: END   ========================================
