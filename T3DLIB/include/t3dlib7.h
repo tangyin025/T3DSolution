@@ -417,42 +417,42 @@ namespace t3d
 	BoneTransform & buildBoneTransformFromBone(
 		BoneTransform & boneTransform,
 		const Bone & bone,
-		const Mat4<real> & mrot,
-		const Mat4<real> & mmat);
+		const Mat4<real> & mParentRot,
+		const Mat4<real> & mParentMat);
 
 	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mrot,
-		const Mat4<real> & mmat,
+		const Mat4<real> & mParentRot,
+		const Mat4<real> & mParentMat,
 		size_t root_i);
 
 	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mrot,
-		const Mat4<real> & mmat,
+		const Mat4<real> & mParentRot,
+		const Mat4<real> & mParentMat,
 		BoneIndexList::const_iterator begin,
 		BoneIndexList::const_iterator end);
 
 	BoneTransform & buildBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
 		const Bone & bone,
-		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat);
+		const Mat4<real> & mParentInverseRot,
+		const Mat4<real> & mParentInverseMat);
 
 	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat,
+		const Mat4<real> & mParentInverseRot,
+		const Mat4<real> & mParentInverseMat,
 		size_t root_i);
 
 	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat,
+		const Mat4<real> & mParentInverseRot,
+		const Mat4<real> & mParentInverseMat,
 		BoneIndexList::const_iterator begin,
 		BoneIndexList::const_iterator end);
 

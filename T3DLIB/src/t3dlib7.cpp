@@ -178,7 +178,7 @@ namespace t3d
 		const BoneKeyFrameList & boneKeyFrameList,
 		real time)
 	{
-		if(time <= getBoneKeyFrameListMinTime(boneKeyFrameList))
+		if(time < getBoneKeyFrameListMinTime(boneKeyFrameList))
 		{
 			return bone = boneKeyFrameList.front();
 		}
@@ -186,7 +186,7 @@ namespace t3d
 		BoneKeyFrameList::const_iterator boneKeyFrame_iter = boneKeyFrameList.begin() + 1;
 		for(; boneKeyFrame_iter != boneKeyFrameList.end(); boneKeyFrame_iter++)
 		{
-			if(time <= boneKeyFrame_iter->getTime())
+			if(time < boneKeyFrame_iter->getTime())
 			{
 				return intersectBoneKeyFrame(
 					bone,
@@ -196,7 +196,7 @@ namespace t3d
 			}
 		}
 
-		_ASSERT(time > getBoneKeyFrameListMaxTime(boneKeyFrameList));
+		_ASSERT(time >= getBoneKeyFrameListMaxTime(boneKeyFrameList));
 
 		return bone = boneKeyFrameList.back();
 	}
@@ -256,14 +256,14 @@ namespace t3d
 	BoneTransform & buildBoneTransformFromBone(
 		BoneTransform & boneTransform,
 		const Bone & bone,
-		const Mat4<real> & mrot,
-		const Mat4<real> & mmat)
+		const Mat4<real> & mParentRot,
+		const Mat4<real> & mParentMat)
 	{
-		Mat4<real> mtmp = buildRotationMatrixFromQuatLH(bone.getOrientation());
+		Mat4<real> mrot = buildRotationMatrixFromQuatLH(bone.getOrientation());
 
-		boneTransform.setRotationTransform(mtmp * mrot);
+		boneTransform.setRotationTransform(mrot * mParentRot);
 
-		boneTransform.setTransform(mtmp * mat3Mov(bone.getPosition()) * mmat);
+		boneTransform.setTransform(mrot * mat3Mov(bone.getPosition()) * mParentMat);
 
 		return boneTransform;
 	}
@@ -271,8 +271,8 @@ namespace t3d
 	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mrot,
-		const Mat4<real> & mmat,
+		const Mat4<real> & mParentRot,
+		const Mat4<real> & mParentMat,
 		size_t root_i)
 	{
 		_ASSERT(root_i < boneNodeList.size());
@@ -282,8 +282,8 @@ namespace t3d
 		buildBoneTransformFromBone(
 			boneTransformList[root_i],
 			boneNodeList[root_i],
-			mrot,
-			mmat);
+			mParentRot,
+			mParentMat);
 
 		return buildBoneTransformListFromBoneNodeList(
 			boneTransformList,
@@ -297,8 +297,8 @@ namespace t3d
 	BoneTransformList & buildBoneTransformListFromBoneNodeList(
 		BoneTransformList & boneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mrot,
-		const Mat4<real> & mmat,
+		const Mat4<real> & mParentRot,
+		const Mat4<real> & mParentMat,
 		BoneIndexList::const_iterator begin,
 		BoneIndexList::const_iterator end)
 	{
@@ -310,8 +310,8 @@ namespace t3d
 			buildBoneTransformListFromBoneNodeList(
 				boneTransformList,
 				boneNodeList,
-				mrot,
-				mmat,
+				mParentRot,
+				mParentMat,
 				*bone_index_iter);
 		}
 
@@ -321,14 +321,14 @@ namespace t3d
 	BoneTransform & buildBoneInverseTransformFromBone(
 		BoneTransform & inverseBoneTransform,
 		const Bone & bone,
-		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat)
+		const Mat4<real> & mParentInverseRot,
+		const Mat4<real> & mParentInverseMat)
 	{
-		Mat4<real> mtmp = buildInverseRotationMatrixFromQuatLH(bone.getOrientation());
+		Mat4<real> mrot = buildInverseRotationMatrixFromQuatLH(bone.getOrientation());
 
-		inverseBoneTransform.setRotationTransform(mInverseRot * mtmp);
+		inverseBoneTransform.setRotationTransform(mParentInverseRot * mrot);
 
-		inverseBoneTransform.setTransform(mInverseMat * mat3InverseMov(bone.getPosition()) * mtmp);
+		inverseBoneTransform.setTransform(mParentInverseMat * mat3InverseMov(bone.getPosition()) * mrot);
 
 		return inverseBoneTransform;
 	}
@@ -336,8 +336,8 @@ namespace t3d
 	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat,
+		const Mat4<real> & mParentInverseRot,
+		const Mat4<real> & mParentInverseMat,
 		size_t root_i)
 	{
 		_ASSERT(root_i < boneNodeList.size());
@@ -347,8 +347,8 @@ namespace t3d
 		buildBoneInverseTransformFromBone(
 			inverseBoneTransformList[root_i],
 			boneNodeList[root_i],
-			mInverseRot,
-			mInverseMat);
+			mParentInverseRot,
+			mParentInverseMat);
 
 		return buildBoneInverseTransformListFromBoneNodeList(
 			inverseBoneTransformList,
@@ -362,8 +362,8 @@ namespace t3d
 	BoneTransformList & buildBoneInverseTransformListFromBoneNodeList(
 		BoneTransformList & inverseBoneTransformList,
 		const BoneNodeList & boneNodeList,
-		const Mat4<real> & mInverseRot,
-		const Mat4<real> & mInverseMat,
+		const Mat4<real> & mParentInverseRot,
+		const Mat4<real> & mParentInverseMat,
 		BoneIndexList::const_iterator begin,
 		BoneIndexList::const_iterator end)
 	{
@@ -375,8 +375,8 @@ namespace t3d
 			buildBoneInverseTransformListFromBoneNodeList(
 				inverseBoneTransformList,
 				boneNodeList,
-				mInverseRot,
-				mInverseMat,
+				mParentInverseRot,
+				mParentInverseMat,
 				*bone_index_iter);
 		}
 
