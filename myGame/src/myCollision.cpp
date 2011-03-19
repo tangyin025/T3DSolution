@@ -119,12 +119,6 @@ namespace my
 	{
 	}
 
-	CollisionSphere::CollisionSphere(void)
-		: CollisionPrimitive(NULL, my::Mat4<real>::IDENTITY, my::Mat4<real>::IDENTITY)
-		, radius(0)
-	{
-	}
-
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// CollisionBox
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -139,9 +133,15 @@ namespace my
 	{
 	}
 
-	CollisionBox::CollisionBox(void)
-		: CollisionPrimitive(NULL, my::Mat4<real>::IDENTITY, my::Mat4<real>::IDENTITY)
-		, halfSize(my::Vec4<real>::ZERO)
+	// /////////////////////////////////////////////////////////////////////////////////////
+	// CollisionPlane
+	// /////////////////////////////////////////////////////////////////////////////////////
+
+	CollisionPlane::CollisionPlane(
+		const t3d::Vec4<real> & direction,
+		real _distance)
+		: normal(t3d::vec3Normalize(direction))
+		, distance(_distance)
 	{
 	}
 
