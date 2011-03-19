@@ -9,6 +9,7 @@
 #include <map>
 #include <Windows.h>
 #include <atltypes.h>
+#include <atlbase.h>
 #include <atlwin.h>
 #include <boost/shared_ptr.hpp>
 
