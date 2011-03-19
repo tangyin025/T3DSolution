@@ -1,4 +1,4 @@
-﻿/** FILE: main.cpp
+﻿/* FILE: main.cpp
 	定义了一个基本的 t3dlib 应用程序的框架，适用于 win32 或 mfc 应用程序
 */
 
@@ -13,11 +13,29 @@ using t3d::real;
 #define new new( _CLIENT_BLOCK, __FILE__, __LINE__ )
 #endif
 
-TCHAR szWindowClass[] = _T("SAMPLE");
+// ----------------------------------------------------------------------------------------------------
+// 全局变量
+// ----------------------------------------------------------------------------------------------------
+
+TCHAR szWindowClass[] = _T("SAMPLE");	// 窗口类
+t3d::DDrawPtr g_ddraw;					// direct draw
+t3d::DDSurfacePtr g_ddsurface;			// direct draw surface，用作后缓存
+t3d::ZBufferPtr g_zbuffer;				// zbuffer
+t3d::RenderContextPtr g_rc;				// 渲染上下文
+
+// ----------------------------------------------------------------------------------------------------
+// 预定义函数
+// ----------------------------------------------------------------------------------------------------
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-void DoFrame(void);
+void OnFrame(void);
+
+void BltBacksurfaceToDC(HDC hdc, const CRect & rect);
+
+// ----------------------------------------------------------------------------------------------------
+// _tWinMain
+// ----------------------------------------------------------------------------------------------------
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -34,7 +52,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(NULL, IDC_ICON);
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = /*(HBRUSH)(COLOR_WINDOW+1)*/NULL;
+	wcex.hbrBackground = NULL; // (HBRUSH)(COLOR_WINDOW+1)
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(NULL, IDC_ICON);
@@ -69,13 +87,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				else
 				{
 					// 渲染一帧
-					DoFrame();
+					OnFrame();
 
-					// 告知窗口无效，需要更新 windows DC，然后参见 WM_PAINT
-					InvalidateRect(hWnd, NULL, FALSE);
-
-					//// 强制立即调用 WM_PAINT
-					//UpdateWindow(hWnd);
+					// 直接更新窗口 client 区域，没有必要再弄个 OnPaint 了
+					HDC hdc = GetDC(hWnd);
+					CRect rect;
+					GetClientRect(hWnd, &rect);
+					BltBacksurfaceToDC(hdc, rect);
+					ReleaseDC(hWnd, hdc);
 				}
 			}
 		}
@@ -91,17 +110,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	UNREFERENCED_PARAMETER(hPrevInstance);
 }
 
-// direct draw
-t3d::DDrawPtr g_ddraw;
-
-// direct draw surface 用作后缓存
-t3d::DDSurfacePtr g_ddsurface;
-
-// zbuffer
-t3d::ZBufferPtr g_zbuffer;
-
-// 渲染上下文
-t3d::RenderContextPtr g_rc;
+// ----------------------------------------------------------------------------------------------------
+// WndProc
+// ----------------------------------------------------------------------------------------------------
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -173,10 +184,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// 更新渲染上下文的 clipper rect
 			g_rc->setClipperRect(rectMem);
 
-			/** 注意：
-				其实在这个地方还有很多事情要做，如更新相机的 viewport 和 projection 等
-				详情参见 trunk/Demo1_2/main.cpp 的 MyGame::onFrame
-			*/
+			// 注意：
+			// 其实在这个地方还有很多事情要做，如更新相机的 viewport 和 projection 等
+			// 详情参见 Demo1_2/main.cpp 的 MyGameBase::onFrame
 
 			// 设置窗口区域无效，将有后缓存更新
 			InvalidateRect(hWnd, NULL, FALSE);
@@ -190,13 +200,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_ASSERT(g_ddsurface);
 
 			// 这里要做的是将后缓存更新到 windows DC 上
-			CRect clientRect;
-			GetClientRect(hWnd, &clientRect);
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			HDC hdcSrc = g_ddsurface->getDC();
-			BitBlt(hdc, clientRect.left, clientRect.top, clientRect.Width(), clientRect.Height(), hdcSrc, 0, 0, SRCCOPY);
-			g_ddsurface->releaseDC(hdcSrc);
+			CRect rect;
+			GetClientRect(hWnd, &rect);
+			BltBacksurfaceToDC(hdc, rect);
 			EndPaint(hWnd, &ps);
 			return 0;
 		}
@@ -212,7 +220,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-void DoFrame(void)
+// ----------------------------------------------------------------------------------------------------
+// OnFrame
+// ----------------------------------------------------------------------------------------------------
+
+void OnFrame(void)
 {
 	// 清理后缓存
 	g_rc->fillSurface(g_rc->getClipperRect(), t3d::vec3Build<real>(0.8f, 0.8f, 0.8f));
@@ -220,10 +232,9 @@ void DoFrame(void)
 	// 清理 zbuffer
 	g_rc->fillZbuffer(g_rc->getClipperRect(), 0);
 
-	/** 注意：
-		由于本实例只使用了 t3dlib，没有使用 myGame，所以很多事情做起来十分麻烦
-		详情参见 Demo1_2/main.cpp 的 MyGame::onFrame
-	*/
+	// 注意：
+	// 由于本实例只使用了 t3dlib，没有使用 myGame，所以很多事情做起来十分麻烦
+	// 详情参见 Demo1_2/main.cpp 的 MyGameBase::onFrame
 
 	// 用于计算 fps 的集合
 	static DWORD last_time = ::timeGetTime();
@@ -249,4 +260,16 @@ void DoFrame(void)
 	HDC hdc = g_ddsurface->getDC();
 	::TextOut(hdc, 10, 10, buffer, _tcslen(buffer));
 	g_ddsurface->releaseDC(hdc);
+}
+
+// ----------------------------------------------------------------------------------------------------
+// BltBacksurfaceToDC
+// ----------------------------------------------------------------------------------------------------
+
+void BltBacksurfaceToDC(HDC hdc, const CRect & rect)
+{
+	// 将后缓存的内容复制到指定 dc
+	HDC hdcSrc = g_ddsurface->getDC();
+	BitBlt(hdc, rect.left, rect.top, rect.Width(), rect.Height(), hdcSrc, 0, 0, SRCCOPY);
+	g_ddsurface->releaseDC(hdcSrc);
 }
