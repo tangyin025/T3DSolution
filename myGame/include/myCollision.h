@@ -365,8 +365,6 @@ namespace my
 			RigidBody * _body,
 			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
-
-		CollisionSphere(void);
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -399,21 +397,47 @@ namespace my
 			RigidBody * _body,
 			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
-
-		CollisionBox(void);
 	};
 
-	//// /////////////////////////////////////////////////////////////////////////////////////
-	//// CollisionPlane
-	//// /////////////////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////////////////
+	// CollisionPlane
+	// /////////////////////////////////////////////////////////////////////////////////////
 
-	//class CollisionPlane //: public CollisionPrimitive
-	//{
-	//public:
-	//	t3d::Vec4<real> direction;
+	class CollisionPlane //: public CollisionPrimitive
+	{
+	protected:
+		t3d::Vec4<real> normal;
 
-	//	real distance;
-	//};
+		real distance;
+
+	public:
+		void setNormal(const t3d::Vec4<real> _normal)
+		{
+			_ASSERT(t3d::vec3IsNormalized(_normal));
+
+			normal = _normal;
+		}
+
+		const t3d::Vec4<real> & getNormal(void) const
+		{
+			return normal;
+		}
+
+		void setDistance(real _distance)
+		{
+			distance = _distance;
+		}
+
+		real getDistance(void) const
+		{
+			return distance;
+		}
+
+	public:
+		CollisionPlane(
+			const t3d::Vec4<real> & direction,
+			real _distance);
+	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// IntersectionTests

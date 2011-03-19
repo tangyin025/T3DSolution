@@ -1,5 +1,5 @@
 ﻿/** FILE: main.cpp
-	定义了一个基于 my::Game 类的复杂框架的应用
+	定义了一个基于 my::Game 类的复杂框架的应用，并实现了一个简单的物理引擎演示
 */
 
 #include <myGame.h>				// 应用程序封装
@@ -392,6 +392,8 @@ class MyGame
 	: public MyGameBase
 	, public my::DrawnHelper	// 绘图辅助类，可以使用简单的代码绘制一些基本形状
 {
+protected:
+
 public:
 	bool onInit(const my::Config & cfg)
 	{
