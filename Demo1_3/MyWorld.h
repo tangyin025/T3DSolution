@@ -21,12 +21,6 @@ public:
 		my::RigidBodyPtr body;
 
 		my::CollisionSphere sphere;
-
-		_Character(void)
-			: body()
-			, sphere(0, NULL)
-		{
-		}
 	}
 	m_character;
 

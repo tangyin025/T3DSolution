@@ -1,29 +1,32 @@
 ﻿/** FILE: main.cpp
-	定义了一个基于 my::Game 类的复杂框架的应用，并实现了一个简单的物理引擎演示
+	定义了一个基于 my::Game 类的复杂框架的应用，并实现了一个基本的物理引擎演示
 */
 
 #include <myGame.h>				// 应用程序封装
 #include <myUtility.h>			// 快速模型绘制
 #include <libc.h>				// 扩展 string 函数
+#include <myPhysics.h>			// 物理引擎支持
 #include "resource.h"			// resource
 
 using t3d::real;
 
 using t3d::charT;
 
+#pragma warning (disable : 4100) // warning C4100: 'xxx' : unreferenced formal parameter
+
 // ----------------------------------------------------------------------------------------------------
 // MyConfig
 // ----------------------------------------------------------------------------------------------------
 
-// 这个类主要用来保存配置信息，参见 MyDialog
-// 继承自 my::Config 类，已经封装了从配置文件读取选项的基本功能
 class MyConfig
 	: public my::Config
 {
 public:
-	real m_aspectRatio; // 为这个类增加一个成员用来支持“纵横比”
+	// 为这个类增加一个成员用来支持“纵横比”
+	real m_aspectRatio;
 
 public:
+	// 使用默认的 800x600，窗口模式来初始化设置
 	MyConfig(
 		int width = 800,
 		int height = 600,
@@ -41,7 +44,6 @@ public:
 // MyDialog
 // ----------------------------------------------------------------------------------------------------
 
-// 这里定义一个对话框，主要是为了，让用户来决定如何初始化应用程序，如分辨率，纵横比，是否全屏等
 class MyDialog
 	: public CDialogImpl<MyDialog, CWindow>
 {
@@ -193,8 +195,6 @@ public:
 // MyGameBase
 // ----------------------------------------------------------------------------------------------------
 
-// 这个类主定义了一个 3d 应用程序的基本框架，实现了一些常用操作，如显示帧速率，定义相机，绘制网格等
-// 继承者应当另开一个类继承，将一些实现细节和常规操作分开
 class MyGameBase
 	: public my::ErrorListener	// 实现接受错误信息的接口，这些错误信息通常来自于 my 的封装，这样就可以使用 REPORT_ERROR 宏对这个接口报错
 	, public my::Game			// 用以实现基于帧循环的基本应用程序框架，并已经实现了常见的 primary、back surface 结构
@@ -220,15 +220,12 @@ protected:
 	// 只有在框架调用 my::Game::onInit(...) 时，这些前提条件才成熟，所以通常是先使用 ptr，然后再在 onInit(...) 里边再构造
 
 public:
-	// 实现 my::ErrorListener 的 onReport 接口，
-	// 用以接收来自框架的错误 message，并将其打印到模拟控制台
 	void onReport(const std::basic_string<charT> & info)
 	{
+		// 用以接收来自框架的错误 message，并将其打印到模拟控制台
 		m_consoleSim->report(info);
 	}
 
-	// 实现 my::Game 的 onInit 结构
-	// 通常在应用程序初始化时，框架会掉用这个接口，所以应当在这里实现自定义的初始化操作
 	bool onInit(const my::Config & cfg)
 	{
 		// 初始化模拟控制台
@@ -290,14 +287,12 @@ public:
 		return true;
 	}
 
-	// 实现 my::Game 的 onShutdown 结构
-	// 框架会在退出应用程序时，调用这个接口，用于自定义的销毁，但是由于基层框架全部使用 smart_ptr，所以不再需要释放资源
 	void onShutdown(void)
 	{
+		// 框架会在退出应用程序时，调用这个接口，用于自定义的销毁，
+		// 但是由于基层框架全部使用 smart_ptr，所以不再需要释放资源
 	}
 
-	// 实现 my::Game 的 onFrame 结构
-	// 框架会在主线程没有消息处理的时候调用这个接口，应当在这里进行帧操作，如渲染，step 物理引擎等
 	bool onFrame(void)
 	{
 		// 如果用户输入 space 则 return false 结束应用程序
@@ -391,8 +386,30 @@ public:
 class MyGame
 	: public MyGameBase
 	, public my::DrawnHelper	// 绘图辅助类，可以使用简单的代码绘制一些基本形状
+	, public my::ParticleWorld	// 基于质点的物理引擎支持
+	, public my::World			// 刚体动力学支持
 {
 protected:
+	// 表示角色质量的刚体
+	my::RigidBodyPtr m_characterBody;
+
+	// 表示角色形状的碰撞球
+	my::CollisionSphere m_characterSphere;
+
+	// 用以表示地面的平面
+	my::CollisionPlane m_groundPlane;
+
+	// 一堆箱子
+	std::vector<my::CollisionBox> m_boxList;
+
+	// 用一个质点作为相机跟踪的手柄
+	my::ParticlePtr m_handleParticle;
+
+	// 用一个弹簧作为角色和相机手柄之间生成力
+	my::ParticleAnchoredSpringPtr m_handleSpring;
+
+	// 用一个线缆作为角色和相机手柄之间的约束
+	my::ParticleCableConstraintPtr m_handleCable;
 
 public:
 	bool onInit(const my::Config & cfg)
@@ -403,6 +420,79 @@ public:
 			return false;
 		}
 
+		// 重新定位一下相机
+		m_eulerCam->setDefaultPosition(my::Vec4<real>::ZERO);
+		m_eulerCam->setDefaultRotation(my::Vec4<real>::ZERO);
+		m_eulerCam->reset();
+
+		// 定义一些物理常量
+		const real damping = 0.95f;
+		const my::Vec4<real> gravity(0, -9.8f * 10, 0);
+		const real sleepEpsilon = 10.4f; // ***
+
+		// 初始化角色球
+		const real sphereRadius = 5.0f;
+		const real sphereMass = my::calculateSphereMass(sphereRadius, 1.0f);
+		const my::Vec4<real> spherePos(0, 10.0f, 0);
+		m_characterBody = my::RigidBodyPtr(new my::RigidBody());
+		m_characterBody->setMass(sphereMass);
+		m_characterBody->setInertialTensor(my::calculateSphereInertiaTensor(sphereRadius, sphereMass));
+		m_characterBody->setDamping(damping);
+		m_characterBody->setAngularDamping(0);
+		m_characterBody->setPosition(spherePos);
+		m_characterBody->setAcceleration(gravity);
+		m_characterBody->setSleepEpsilon(sleepEpsilon);
+		m_characterBody->setAwake(true); // must be call after setSleepEpsilon
+		m_characterBody->calculateDerivedData(); // never forget this
+		m_characterSphere.setRigidBody(m_characterBody.get());
+		m_characterSphere.setRadius(sphereRadius);
+		bodyList.push_back(m_characterBody);
+
+		// 初始化平面
+		m_groundPlane.setNormal(my::Vec4<real>::UNIT_Y);
+		m_groundPlane.setDistance(0);
+
+		// 初始化一堆箱子
+		const int boxCountAtX = 5 * 10 / 2;
+		const int boxCountAtY = 5 * 10 - 5;
+		for(int x = -boxCountAtX + 5; x < boxCountAtX + 5; x += 10)
+		{
+			for(int y = 5; y <= boxCountAtY; y += 10)
+			{
+				const my::Vec4<real> halfSize(5, 5, 5);
+				const real boxMass = my::calculateBoxVolume(halfSize.x * 2, halfSize.y * 2, halfSize.z * 2) * 0.4f;
+				const my::Vec4<real> boxPos((t3d::real)x, (t3d::real)y, 30);
+				my::RigidBodyPtr boxBody(new my::RigidBody());
+				boxBody->setMass(boxMass);
+				boxBody->setInertialTensor(my::calculateBlockInertiaTensor(halfSize, boxMass));
+				boxBody->setDamping(damping);
+				boxBody->setAngularDamping(0.8f);
+				boxBody->setPosition(boxPos);
+				boxBody->setAcceleration(gravity);
+				boxBody->setSleepEpsilon(sleepEpsilon);
+				boxBody->setAwake(true);
+				boxBody->calculateDerivedData();
+				m_boxList.push_back(my::CollisionBox(halfSize, boxBody.get()));
+				bodyList.push_back(boxBody);
+			}
+		}
+
+		// 初始化作为相机手柄的质点
+		m_handleParticle = my::ParticlePtr(new my::Particle());
+		m_handleParticle->setMass(1);
+		m_handleParticle->setPosition(t3d::vec3Add(m_characterBody->getPosition(), my::Vec4<real>(0, 10, 0)));
+		m_handleParticle->setVelocity(my::Vec4<real>::ZERO);
+		m_handleParticle->setDamping(0.00001f); // ***
+		m_handleParticle->setAcceleration(my::Vec4<real>::ZERO);
+		particleList.push_back(m_handleParticle);
+
+		// 初始化弹簧，并注册到质点动力引擎中
+		m_handleSpring = my::ParticleAnchoredSpringPtr(new my::ParticleAnchoredSpring(m_characterBody->getPosition(), 100, 10)); // ***
+		ParticleWorld::registry.add(m_handleParticle.get(), m_handleSpring.get());
+
+		// 初始化cable，并插入contact generator list中
+		m_handleCable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_handleParticle.get(), m_characterBody->getPosition(), 13, 0.0f));
+		particleContactGeneratorList.push_back(m_handleCable);
 		return true;
 	}
 
@@ -414,12 +504,205 @@ public:
 		// 清理 zbuffer
 		m_rc->fillZbuffer(m_rc->getClipperRect(), 0);
 
-		// 从用户输入来更新欧拉相机的坐标和方位
-		m_eulerCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
+		// 这里稍微做了下处理，当用户按着 ctrl 键时使用自由欧拉相机控制
+		if(m_keyboard->isKeyDown(DIK_LCONTROL))
+		{
+			// 从用户输入来更新欧拉相机的坐标和方位
+			m_eulerCam->update(m_keyboard.get(), m_mouse.get(), elapsedTime);
+		}
+		else
+		{
+			// 根据用户输入更新相机角度
+			m_eulerCam->addRotation(my::EulerCamera::buildRotOffset(m_mouse.get()));
+
+			// 使用 30 的倍率运行物理引擎
+			const unsigned count = 30;
+			for(unsigned i = 0; i < count; i++)
+			{
+				// 注意，runPhysics 中也会读取用户输入及 m_eulerCam 的信息，这样的封装似乎还不太合理
+				runPhysics(elapsedTime / count);
+			}
+
+			// 根据相机手柄更新相机位置
+			t3d::Mat4<real> matRotation = mat3RotXYZ(m_eulerCam->getRotation());
+			t3d::Mat4<real> matPosition = t3d::mat3Mov(my::Vec4<real>(0, 0, -30)) * matRotation * t3d::mat3Mov(m_handleParticle->getPosition());
+			m_eulerCam->setPosition(my::Vec4<real>::ZERO * matPosition);
+		}
+
+		// 设置相机矩阵
 		m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
+
+		// 设置光源
+		my::Vec4<real> l_pos(-30, 30, -30);
+		l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
+		m_rc->clearLightList();
+		m_rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
+		m_rc->pushLightPoint(my::Color::WHITE, l_pos);
+
+		// 渲染角色球
+		drawSphereWireZBufferRW(
+			m_rc.get(),
+			m_characterSphere.getRadius(),
+			m_characterBody->getAwake() ? my::Color::RED : t3d::vec3Mul(my::Color::RED, 0.7f),
+			m_characterBody->getTransform());
+
+		// 渲染相机手柄
+		m_rc->setAmbient(my::Color::YELLOW);
+		m_rc->setDiffuse(my::Color::YELLOW);
+		drawSphereGouraudZBufferRW(
+			m_rc.get(),
+			1,
+			t3d::mat3Mov(m_handleParticle->getPosition()));
+
+		// 画一条线作为角色的面向
+		drawLinePointAndNormalZBufferRW(
+			m_rc.get(),
+			my::Vec4<real>::ZERO,
+			my::Vec4<real>(0, 0, 10),
+			my::Color::BLUE,
+			m_characterBody->getTransform());
+
+		// 渲染一堆 box
+		for(size_t i = 0; i < m_boxList.size(); i++)
+		{
+			t3d::Vec4<real> color(bodyList[i + 1]->getAwake() ? my::Color::BLUE : t3d::vec3Mul(my::Color::BLUE, 0.7f));
+			m_rc->setAmbient(color);
+			m_rc->setDiffuse(color);
+			drawCubeGouraudZBufferRW(
+				m_rc.get(),
+				m_boxList[i].getHalfSize(),
+				bodyList[i + 1]->getTransform(),
+				bodyList[i + 1]->getRotationTransform());
+		}
 
 		// 渲染网格
 		m_grid->drawZBufferRW(m_rc.get());
+	}
+
+	void integrate(real duration)
+	{
+		// 根据用户输入更新角色运动状态
+		t3d::Vec4<real> vrot = m_eulerCam->getRotation();
+		t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(m_keyboard.get(), vrot.y, m_keyboard->isKeyDown(DIK_LSHIFT) ? 90.0f : 30.0f);
+		if(!t3d::vec3IsZero(vvel))
+		{
+			// 设置角色位移速度
+			m_characterBody->setVelocity(my::Vec4<real>(vvel.x, m_characterBody->getVelocity().y, vvel.z));
+
+			// 计算角色旋转角度，这里采用平滑过渡的方式旋转角色
+			t3d::Vec4<real> vdir = my::Vec4<real>::UNIT_Z * m_characterBody->getRotationTransform();
+			t3d::Vec4<real> vcro = t3d::vec3Cross(vdir, vvel);
+			real costheta = t3d::vec3CosTheta(vdir, t3d::vec3Normalize(vvel));
+			if(!IS_ZERO_FLOAT(t3d::vec3LengthSquare(vcro)))
+			{
+				real angle = std::max(DEG_TO_RAD(-360 * duration), std::min(DEG_TO_RAD(360 * duration), acos(costheta)));
+				t3d::Vec4<real> axis = t3d::vec3Normalize(vcro);
+				m_characterBody->setOrientation(m_characterBody->getOrientation() * t3d::buildQuatFromAngleAxis(angle, axis));
+			}
+			else if(costheta < 0)
+			{
+				real angle = DEG_TO_RAD(10);
+				t3d::Vec4<real> axis = my::Vec4<real>::UNIT_Y;
+				m_characterBody->setOrientation(m_characterBody->getOrientation() * t3d::buildQuatFromAngleAxis(angle, axis));
+			}
+			m_characterBody->setAwake(true);
+		}
+
+		// 计算刚体物体运动积分
+		my::World::integrate(duration);
+
+		// 更新角色球变换信息
+		m_characterSphere.calculateInternals();
+
+		// 更新bocies变换信息
+		for(size_t i = 0; i < m_boxList.size(); i++)
+		{
+			m_boxList[i].calculateInternals();
+		}
+	}
+
+	unsigned generateContacts(my::Contact * contacts, unsigned limits)
+	{
+		unsigned used = 0;
+
+		// 角色球和地面碰撞
+		used += my::CollisionDetector::sphereAndHalfSpace(
+			m_characterSphere,
+			m_groundPlane.getNormal(),
+			m_groundPlane.getDistance(),
+			&contacts[used],
+			limits - used);
+
+		// 更新摩擦力和弹性系数，由于是角色球的碰撞，所以应该是没有弹性的
+		unsigned i = 0;
+		for(; i < used; i++)
+		{
+			contacts[i].friction = 10.0f;
+			contacts[i].restitution = 0;
+		}
+
+		// 一堆 box 和地面的碰撞
+		for(size_t j = 0; j < m_boxList.size(); j++)
+		{
+			// box 与 box 的碰撞
+			for(size_t k = j + 1; k < m_boxList.size(); k++)
+			{
+				used += my::CollisionDetector::boxAndBox(
+					m_boxList[j],
+					m_boxList[k],
+					&contacts[used],
+					limits - used);
+			}
+
+			// box 与 地面 的碰撞
+			used += my::CollisionDetector::boxAndHalfSpace(
+				m_boxList[j],
+				m_groundPlane.getNormal(),
+				m_groundPlane.getDistance(),
+				&contacts[used],
+				limits - used);
+
+			// box 与 角色球 的碰撞
+			used += my::CollisionDetector::boxAndSphere(
+				m_boxList[j],
+				m_characterSphere,
+				&contacts[used],
+				limits - used);
+		}
+
+		// 再次更新摩擦力和弹性系数
+		for(; i < used; i++)
+		{
+			contacts[i].friction = 0.9f;
+			contacts[i].restitution = 0.6f;
+		}
+
+		return used;
+	}
+
+	void runPhysics(real duration)
+	{
+		// 刚体动力学处理
+		World::startFrame();
+		World::registry.updateForces(duration);
+		integrate(duration);
+		unsigned usedContacts = generateContacts(&contactList[0], World::maxContacts);
+		World::resolver.setPositionIterations(usedContacts * 4);
+		World::resolver.setVelocityIterations(usedContacts * 4);
+		World::resolver.resolveContacts(&contactList[0], usedContacts, duration);
+
+		// 由于刚体物体的位置发生了变化，所以这里要同步更新作为相机手柄的质点的状态
+		m_handleSpring->setAnchor(m_characterBody->getPosition());
+		m_handleCable->setAnchor(m_characterBody->getPosition());
+		m_handleParticle->setPosition(my::Vec4<real>(m_characterBody->getPosition().x, m_handleParticle->getPosition().y, m_characterBody->getPosition().z));
+
+		// 质点动力学处理
+		ParticleWorld::startFrame();
+		ParticleWorld::registry.updateForces(duration);
+		ParticleWorld::integrate(duration);
+		unsigned used = ParticleWorld::generateContacts(&particleContactArray[0], ParticleWorld::maxContacts);
+		ParticleWorld::resolver.setIterations(used * 2);
+		ParticleWorld::resolver.resolveContacts(&particleContactArray[0], used, duration);
 	}
 };
 
