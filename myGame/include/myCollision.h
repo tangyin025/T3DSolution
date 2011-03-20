@@ -365,6 +365,8 @@ namespace my
 			RigidBody * _body,
 			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
+
+		CollisionSphere(void);
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -397,6 +399,8 @@ namespace my
 			RigidBody * _body,
 			const t3d::Mat4<real> & _offset = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & _rotationOffset = my::Mat4<real>::IDENTITY);
+
+		CollisionBox(void);
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -437,6 +441,8 @@ namespace my
 		CollisionPlane(
 			const t3d::Vec4<real> & direction,
 			real _distance);
+
+		CollisionPlane(void);
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////
