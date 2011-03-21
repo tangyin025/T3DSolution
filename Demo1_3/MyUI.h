@@ -60,7 +60,7 @@ protected:
 	my::Color m_color;
 
 public:
-	void setText(const std::basic_string<t3d::charT> text)
+	void setText(const std::basic_string<t3d::charT> & text)
 	{
 		m_text = text;
 	}
@@ -81,7 +81,7 @@ public:
 	}
 
 public:
-	MyUIText(const CRect & rect, const std::basic_string<t3d::charT> text = _T(""), const my::Color & color = my::Color::WHITE);
+	MyUIText(const CRect & rect, const std::basic_string<t3d::charT> & text = _T(""), const my::Color & color = my::Color::WHITE);
 
 	void draw(t3d::RenderContext * rc);
 };
@@ -152,6 +152,16 @@ public:
 	MyUIProgressBar m_progressBar;
 
 public:
+	void setTitleText(const std::basic_string<t3d::charT> & text)
+	{
+		m_title.setText(text);
+	}
+
+	const std::basic_string<t3d::charT> & getTitleText(void) const
+	{
+		return m_title.getText();
+	}
+
 	void setPercent(real percent)
 	{
 		m_progressBar.setPercent(percent);

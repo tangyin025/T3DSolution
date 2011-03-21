@@ -22,7 +22,7 @@ void MyUIBox::draw(t3d::RenderContext * rc)
 	rc->fillSurface(getRect(), getColor());
 }
 
-MyUIText::MyUIText(const CRect & rect, const std::basic_string<t3d::charT> text /*= _T("")*/, const my::Color & color /*= my::Color::WHITE*/)
+MyUIText::MyUIText(const CRect & rect, const std::basic_string<t3d::charT> & text /*= _T("")*/, const my::Color & color /*= my::Color::WHITE*/)
 	: MyUIElement(rect)
 	, m_text(text)
 	, m_color(color)

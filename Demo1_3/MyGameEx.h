@@ -3,7 +3,6 @@
 
 #include "MyState.h"
 #include "MyUI.h"
-#include "MyProgress.h"
 #include <myPhysics.h>
 #include "MyWorld.h"
 
@@ -86,7 +85,6 @@ typedef boost::shared_ptr<MyFrameState> MyStateBasePtr;
 
 class MyLoadState
 	: public MyFrameState
-	, public MyProgress
 	, public my::Thread
 {
 public:
@@ -102,13 +100,13 @@ protected:
 	my::CriticalSection m_exitFlagLock;
 
 public:
-	void setExitFlag(bool exitFlag = true)
+	void setExitFlagSync(bool exitFlag = true)
 	{
 		my::CriticalSectionLock lock(m_exitFlagLock);
 		m_exitFlag = exitFlag;
 	}
 
-	bool getExitFlag(void)
+	bool getExitFlagSync(void)
 	{
 		my::CriticalSectionLock lock(m_exitFlagLock);
 		return m_exitFlag;
@@ -142,19 +140,13 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
 	my::FPSManagerPtr m_fpsMgr;
 
 	my::TimerPtr m_timer;
 
-	my::GridPtr m_grid;
-
 	my::EulerCameraPtr m_eulerCam;
 
-	MyWorldPtr m_world;
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
+	my::GridPtr m_grid;
 
 public:
 	MyGameState(void);
