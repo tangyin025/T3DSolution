@@ -185,10 +185,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MyProgress.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\MyState.cpp"
 				>
 			</File>
@@ -232,10 +228,6 @@
 			</File>
 			<File
 				RelativePath=".\MyGameEx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyProgress.h"
 				>
 			</File>
 			<File

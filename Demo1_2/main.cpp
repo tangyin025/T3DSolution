@@ -12,7 +12,7 @@ using t3d::real;
 
 using t3d::charT;
 
-#pragma warning (disable : 4100) // warning C4100: 'xxx' : unreferenced formal parameter
+#pragma warning (disable : 4100) // unreferenced formal parameter
 
 // ----------------------------------------------------------------------------------------------------
 // MyConfig

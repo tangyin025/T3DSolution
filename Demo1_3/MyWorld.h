@@ -6,43 +6,6 @@ class MyWorld
 	, public my::ParticleWorld
 {
 public:
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-	struct _Plane
-	{
-		my::Vec4<t3d::real> normal;
-
-		t3d::real distance;
-	}
-	m_groundPlane;
-
-	struct _Character
-	{
-		my::RigidBodyPtr body;
-
-		my::CollisionSphere sphere;
-	}
-	m_character;
-
-	struct _Viewpoint
-	{
-		my::ParticlePtr particle;
-
-		my::ParticleAnchoredSpringPtr spring;
-
-		my::ParticleCableConstraintPtr cable;
-	}
-	m_viewpoint;
-
-	typedef std::vector<my::CollisionBox> CollisionBoxList;
-
-	CollisionBoxList m_boxList;
-
-	my::RigidBodyPtrList m_boxBodyList;
-
-	// //////////////////////////////////////////////////////////////////////////////////////////
-
-public:
 	MyWorld(void);
 
 	~MyWorld(void);

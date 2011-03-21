@@ -266,8 +266,8 @@ namespace my
 		// show main window
 		m_wnd->ShowWindow(SW_SHOW);
 
-		// update window immediately
-		m_wnd->UpdateWindow();
+		//// update window immediately
+		//m_wnd->UpdateWindow();
 
 		return onInit(cfg);
 	}
