@@ -290,11 +290,10 @@ namespace my
 
 	EulerCamera::EulerCamera(void)
 		: m_posDefault(my::Vec4<real>::ZERO)
-		, m_pos(my::Vec4<real>::ZERO)
 		, m_rotDefault(my::Vec4<real>::ZERO)
-		, m_rot(my::Vec4<real>::ZERO)
 		, m_movSpeed(100)
 	{
+		reset();
 	}
 
 	EulerCamera::~EulerCamera(void)

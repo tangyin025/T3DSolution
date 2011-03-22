@@ -329,6 +329,30 @@ namespace my
 		}
 	}
 
+	Font::Font(int nHeight /*= 0*/, DWORD fdwCharSet /*= GB2312_CHARSET*/, LPCTSTR lpszFace /*= _T("NSimSun")*/)
+	{
+		m_hFont = CreateFont(
+			nHeight,
+			0,
+			0,
+			0,
+			FW_DONTCARE,
+			FALSE,
+			FALSE,
+			FALSE,
+			fdwCharSet,
+			OUT_DEFAULT_PRECIS,
+			CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY,
+			DEFAULT_PITCH,
+			lpszFace);
+	}
+
+	Font::~Font(void)
+	{
+		DeleteObject(m_hFont);
+	}
+
 	//DialogMap Dialog::s_dlgMap;
 
 	//INT_PTR CALLBACK Dialog::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)

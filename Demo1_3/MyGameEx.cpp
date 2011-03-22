@@ -1,4 +1,4 @@
-
+﻿
 #include "StdAfx.h"
 #include "MyGameEx.h"
 
@@ -45,6 +45,12 @@ my::WindowPtr MyGame::newWindow(void)
 
 bool MyGame::onInit(const my::Config & cfg)
 {
+	// call default parent onInit
+	if(!my::Game::onInit(cfg))
+	{
+		return false;
+	}
+
 	// create console simulate
 	m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
 
@@ -104,6 +110,23 @@ bool MyGame::onInit(const my::Config & cfg)
 	// and later the camera's viewport & projection will be recalculated by this clipper rect
 	m_rc->setClipperRect(clipper);
 
+	// create and start fps manager
+	m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
+	m_fpsMgr->start();
+
+	// create and start timer
+	m_timer = my::TimerPtr(new my::Timer());
+	m_timer->start();
+
+	// create eular camera
+	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
+	m_rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
+
+	// create common ui font
+	HDC hdc = m_backSurface->getDC();
+	m_font = my::FontPtr(new my::Font(-MulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72)));
+	m_backSurface->releaseDC(hdc);
+
 	// create and add load state
 	addState(MyLoadState::s_name, MyLoadStatePtr(new MyLoadState()));
 
@@ -113,8 +136,7 @@ bool MyGame::onInit(const my::Config & cfg)
 	// set current state to load state
 	setCurrentState(MyLoadState::s_name);
 
-	// call default parent onInit
-	return my::Game::onInit(cfg);
+	return true;
 }
 
 void MyGame::onReport(const std::basic_string<charT> & info)
@@ -124,14 +146,52 @@ void MyGame::onReport(const std::basic_string<charT> & info)
 
 bool MyGame::onFrame(void)
 {
+	// fps manager, witch calculated fps by incremented frame
+	// the precision of this fps manager witch depend on sampling second was low, but its enough
+	m_fpsMgr->addFrame();
+
+	// the high precision timer, witch calculate time interval between last frame by cpu count
+	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
+	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
+
 	// get current state and do frame
-	if(!getCurrentState<MyFrameState>()->doFrame())
+	if(!getCurrentState<MyFrameState>()->doFrame(elapsedTime))
 	{
 		return false;
 	}
 
+	// get the back buffer dc
+	HDC hdc = m_backSurface->getDC();
+	HANDLE oldFont = SelectObject(hdc, m_font->GetHandle());
+
+	// output fps
+	int textx = m_rc->getClipperRect().left + 10;
+	int texty = m_rc->getClipperRect().top + 10;
+	std::basic_string<charT> strTmp = str_printf(_T("fps: %.1f"), m_fpsMgr->getFPS());
+	::TextOut(hdc, textx, texty, strTmp.c_str(), (int)strTmp.length());
+	strTmp = str_printf(_T("fps: %.1f"), 1 / elapsedTime);
+	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
+
+	// output camera position
+	strTmp = str_printf(_T("cam.pos: %f, %f, %f"),
+		m_rc->getCameraPosition().x,
+		m_rc->getCameraPosition().y,
+		m_rc->getCameraPosition().z);
+	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
+
+	// output camera rotation
+	strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
+		RAD_TO_DEG(m_eulerCam->getRotation().x),
+		RAD_TO_DEG(m_eulerCam->getRotation().y),
+		RAD_TO_DEG(m_eulerCam->getRotation().z));
+	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
+
+	// release back buffer dc
+	SelectObject(hdc, oldFont);
+	m_backSurface->releaseDC(hdc);
+
 	// draw console simulator
-	m_consoleSim->draw(m_backSurface.get(), 10, 10);
+	m_consoleSim->draw(m_backSurface.get(), textx, texty += 20);
 
 	return true;
 }
@@ -153,7 +213,7 @@ MyFrameState::~MyFrameState(void)
 const std::basic_string<charT> MyLoadState::s_name(_T("MyLoadState"));
 
 MyLoadState::MyLoadState(void)
-	: m_exitFlag(false)
+: m_exitFlag(false)
 {
 }
 
@@ -169,7 +229,8 @@ void MyLoadState::enterState(void)
 	CRect clipper = MyGame::getSingleton().m_rc->getClipperRect();
 	int x = clipper.left + (clipper.Width() - barWidth) / 2;
 	int y = clipper.top + (clipper.Height() - barHeight) / 2;
-	m_progressBox = MyUIProgressBarBoxPtr(new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight))));
+	m_progressBox = MyUIProgressBarBoxPtr(
+		new MyUIProgressBarBox(CRect(CPoint(x, y), CSize(barWidth, barHeight)), MyGame::getSingleton().m_font));
 
 	// create loading thread
 	CreateThread();
@@ -184,7 +245,7 @@ void MyLoadState::leaveState(void)
 	_ASSERT(WaitForThreadStopped(0));
 }
 
-bool MyLoadState::doFrame(void)
+bool MyLoadState::doFrame(real elapsedTime)
 {
 	// exit application by return false with user input 'escape'
 	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
@@ -237,10 +298,17 @@ DWORD MyLoadState::onProc(void)
 	try
 	{
 		m_progressBoxLock.enter();
-		m_progressBox->setTitleText(_T("Loading ..."));
-		m_progressBox->setPercent(1.0f);
+		m_progressBox->setTitleText(_T("正在读取 ..."));
 		m_progressBoxLock.leave();
-		::Sleep(300);
+
+		const int loopCount = 5;
+		for(int i = 1; i <= loopCount; i++)
+		{
+			::Sleep(100);
+			m_progressBoxLock.enter();
+			m_progressBox->setPercent((real)i / loopCount);
+			m_progressBoxLock.leave();
+		}
 	}
 	catch(t3d::Exception & e)
 	{
@@ -263,19 +331,11 @@ MyGameState::~MyGameState(void)
 
 void MyGameState::enterState(void)
 {
-	// create and start fps manager
-	m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
-	m_fpsMgr->start();
-
-	// create and start timer
-	m_timer = my::TimerPtr(new my::Timer());
-	m_timer->start();
-
 	// create eular camera
-	m_eulerCam = my::EulerCameraPtr(new my::EulerCamera());
-	m_eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
-	m_eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
-	m_eulerCam->reset();
+	my::EulerCamera * eulerCam = MyGame::getSingleton().m_eulerCam.get();
+	eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
+	eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
+	eulerCam->reset();
 
 	// create grid
 	m_grid = my::GridPtr(new my::Grid(100, 10));
@@ -285,7 +345,7 @@ void MyGameState::leaveState(void)
 {
 }
 
-bool MyGameState::doFrame(void)
+bool MyGameState::doFrame(real elapsedTime)
 {
 	// obtain render context pointer
 	t3d::RenderContext * rc = MyGame::getSingleton().m_rc.get();
@@ -296,14 +356,6 @@ bool MyGameState::doFrame(void)
 	{
 		return false;
 	}
-
-	// fps manager, witch calculated fps by incremented frame
-	// the precision of this fps manager witch depend on sampling second was low, but its enough
-	m_fpsMgr->addFrame();
-
-	// the high precision timer, witch calculate time interval between last frame by cpu count
-	// to avoid to too many time interval that crash the physical engine, set the max interval as 30 / 1 second
-	const real elapsedTime = std::min((real)m_timer->getElapsedTime(), (real)0.033);
 
 	// clear back surface with gray color
 	rc->fillSurface(rc->getClipperRect(), my::Color(0.8f, 0.8f, 0.8f));
@@ -321,46 +373,19 @@ bool MyGameState::doFrame(void)
 	rc->setCameraFarZ(10000);
 
 	// update euler cameras position and orientation by user input
-	m_eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
-	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(m_eulerCam->getPosition(), m_eulerCam->getRotation()));
+	my::EulerCamera * eulerCam = MyGame::getSingleton().m_eulerCam.get();
+	eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
+	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(eulerCam->getPosition(), eulerCam->getRotation()));
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);
-	l_pos *= t3d::mat3RotZXY(m_eulerCam->getRotation()) * t3d::mat3Mov(m_eulerCam->getPosition());
+	l_pos *= t3d::mat3RotZXY(eulerCam->getRotation()) * t3d::mat3Mov(eulerCam->getPosition());
 	rc->clearLightList();
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Color::WHITE, l_pos);
 
 	// draw default grid, with use to test distance of the scene
 	m_grid->drawZBufferRW(rc);
-
-	// get the back buffer dc
-	HDC hdc = MyGame::getSingleton().m_backSurface->getDC();
-
-	// output fps
-	int textx = rc->getClipperRect().left + 10;
-	int texty = rc->getClipperRect().top + 10;
-	std::basic_string<charT> strTmp = str_printf(_T("fps: %.1f"), m_fpsMgr->getFPS());
-	::TextOut(hdc, textx, texty, strTmp.c_str(), (int)strTmp.length());
-	strTmp = str_printf(_T("fps: %.1f"), 1 / elapsedTime);
-	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
-
-	// output camera position
-	strTmp = str_printf(_T("cam.pos: %f, %f, %f"),
-		rc->getCameraPosition().x,
-		rc->getCameraPosition().y,
-		rc->getCameraPosition().z);
-	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
-
-	// output camera rotation
-	strTmp = str_printf(_T("cam.rot: %f, %f, %f"),
-		RAD_TO_DEG(m_eulerCam->getRotation().x),
-		RAD_TO_DEG(m_eulerCam->getRotation().y),
-		RAD_TO_DEG(m_eulerCam->getRotation().z));
-	::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
-
-	// release back buffer dc
-	MyGame::getSingleton().m_backSurface->releaseDC(hdc);
 
 	return true;
 }

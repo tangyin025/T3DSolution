@@ -59,6 +59,8 @@ protected:
 
 	my::Color m_color;
 
+	my::FontPtr m_font;
+
 public:
 	void setText(const std::basic_string<t3d::charT> & text)
 	{
@@ -81,7 +83,13 @@ public:
 	}
 
 public:
-	MyUIText(const CRect & rect, const std::basic_string<t3d::charT> & text = _T(""), const my::Color & color = my::Color::WHITE);
+	MyUIText(
+		const CRect & rect,
+		my::FontPtr font,
+		const std::basic_string<t3d::charT> & text = _T(""),
+		const my::Color & color = my::Color::WHITE);
+
+	~MyUIText(void);
 
 	void draw(t3d::RenderContext * rc);
 };
@@ -173,7 +181,7 @@ public:
 	}
 
 public:
-	MyUIProgressBarBox(const CRect & rect);
+	MyUIProgressBarBox(const CRect & rect, my::FontPtr font);
 
 	~MyUIProgressBarBox(void);
 
