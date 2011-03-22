@@ -50,7 +50,15 @@ public:
 	}
 
 protected:
+	my::FPSManagerPtr m_fpsMgr;
+
+	my::TimerPtr m_timer;
+
 	my::ConsoleSimulatorPtr m_consoleSim;
+
+	my::EulerCameraPtr m_eulerCam;
+
+	my::FontPtr m_font;
 
 public:
 	MyGame(void) throw();
@@ -78,7 +86,7 @@ public:
 	~MyFrameState(void);
 
 public:
-	virtual bool doFrame(void) = 0;
+	virtual bool doFrame(real elapsedTime) = 0;
 };
 
 typedef boost::shared_ptr<MyFrameState> MyStateBasePtr;
@@ -121,7 +129,7 @@ public:
 
 	void leaveState(void);
 
-	bool doFrame(void);
+	bool doFrame(real elapsedTime);
 
 	DWORD onProc(void);
 };
@@ -140,12 +148,6 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	my::FPSManagerPtr m_fpsMgr;
-
-	my::TimerPtr m_timer;
-
-	my::EulerCameraPtr m_eulerCam;
-
 	my::GridPtr m_grid;
 
 public:
@@ -157,7 +159,7 @@ public:
 
 	void leaveState(void);
 
-	bool doFrame(void);
+	bool doFrame(real elapsedTime);
 };
 
 typedef boost::shared_ptr<MyGameState> MyGameStatePtr;

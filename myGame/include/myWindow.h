@@ -226,6 +226,25 @@ namespace my
 		void save(const std::basic_string<charT> & fileName) const;
 	};
 
+	class Font
+	{
+	protected:
+		HFONT m_hFont;
+
+	public:
+		HFONT GetHandle(void) const
+		{
+			return m_hFont;
+		}
+
+	public:
+		Font(int nHeight = 0, DWORD fdwCharSet = GB2312_CHARSET, LPCTSTR lpszFace = _T("NSimSun"));
+
+		~Font(void);
+	};
+
+	typedef boost::shared_ptr<Font> FontPtr;
+
 	//class Dialog;
 
 	//typedef std::map<HWND, Dialog *> DialogMap;

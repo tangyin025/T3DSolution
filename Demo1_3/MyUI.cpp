@@ -22,10 +22,19 @@ void MyUIBox::draw(t3d::RenderContext * rc)
 	rc->fillSurface(getRect(), getColor());
 }
 
-MyUIText::MyUIText(const CRect & rect, const std::basic_string<t3d::charT> & text /*= _T("")*/, const my::Color & color /*= my::Color::WHITE*/)
-	: MyUIElement(rect)
-	, m_text(text)
-	, m_color(color)
+MyUIText::MyUIText(
+		const CRect & rect,
+		my::FontPtr font,
+		const std::basic_string<t3d::charT> & text /*= _T("")*/,
+		const my::Color & color /*= my::Color::WHITE*/)
+		: MyUIElement(rect)
+		, m_text(text)
+		, m_color(color)
+		, m_font(font)
+{
+}
+
+MyUIText::~MyUIText(void)
 {
 }
 
@@ -34,10 +43,15 @@ void MyUIText::draw(t3d::RenderContext * rc)
 	my::Vec4<int> vc = t3d::real_to_int(t3d::rgbaSaturate(m_color * 255, real(255)));
 	COLORREF color = RGB(vc.x, vc.y, vc.z);
 
+	// it havent the capability to draw font on a surface directly
+	// so use the window gdi to draw font, which should use ddraw surface to access dc
+	// ignoring the parameter rc, using my::Game::getSingleton instead
 	HDC hdc = my::Game::getSingleton().m_backSurface->getDC();
 	COLORREF oldColor = ::SetTextColor(hdc, color);
 	int oldMode = ::SetBkMode(hdc, TRANSPARENT);
+	HANDLE oldFont = ::SelectObject(hdc, m_font->GetHandle());
 	::DrawText(hdc, m_text.c_str(), m_text.length(), &m_rect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+	::SelectObject(hdc, oldFont);
 	::SetTextColor(hdc, oldColor);
 	::SetBkMode(hdc, oldMode);
 	my::Game::getSingleton().m_backSurface->releaseDC(hdc);
@@ -69,9 +83,9 @@ void MyUIProgressBar::draw(t3d::RenderContext * rc)
 	}
 }
 
-MyUIProgressBarBox::MyUIProgressBarBox(const CRect & rect)
+MyUIProgressBarBox::MyUIProgressBarBox(const CRect & rect, my::FontPtr font)
 	: MyUIBox(rect)
-	, m_title(CRect())
+	, m_title(CRect(), font)
 	, m_progressBar(CRect())
 {
 	setRect(rect);

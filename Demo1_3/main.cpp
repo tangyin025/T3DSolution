@@ -34,7 +34,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	dlg.m_cfg.addInt(_T("width"), 800);
 	dlg.m_cfg.addInt(_T("height"), 600);
 	dlg.m_cfg.addInt(_T("screenmode"), my::Game::SCREEN_MODE_WINDOWED);
-	dlg.m_cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_WIDESCREEN);
+	dlg.m_cfg.addInt(_T("aspectratio"), MyGame::ASPECT_RATIO_STRETCHED);
 	dlg.m_cfg.Load();
 
 	// initialize searching path
