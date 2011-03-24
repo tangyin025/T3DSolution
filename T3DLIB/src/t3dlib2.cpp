@@ -98,9 +98,20 @@ namespace t3d
 		FAILED_DIEXCEPT(m_didevice->SetProperty(rguidProp, pdiph));
 	}
 
-	void DIDevice::acquire(void)
+	bool DIDevice::acquire(void)
 	{
-		FAILED_DIEXCEPT(m_didevice->Acquire());
+		HRESULT hres = m_didevice->Acquire();
+
+		if(DIERR_OTHERAPPHASPRIO == hres)
+		{
+			return false;
+		}
+		else if(FAILED(hres))
+		{
+			T3D_DIEXCEPT(hres);
+		}
+
+		return true;
 	}
 
 	void DIDevice::getDeviceState(DWORD cbData, LPVOID lpvData)

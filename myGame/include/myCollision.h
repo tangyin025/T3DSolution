@@ -332,7 +332,7 @@ namespace my
 		virtual ~CollisionPrimitive(void);
 
 	public:
-		virtual void calculateInternals(void);
+		void calculateInternals(void);
 	};
 
 	// /////////////////////////////////////////////////////////////////////////////////////

@@ -248,22 +248,11 @@ namespace my
 	class ParticleAnchoredSpring : public ParticleForceGenerator
 	{
 	protected:
-		t3d::Vec4<real> anchor;
+		const t3d::Vec4<real> & anchor;
 
 		real springConstant;
 
 		real restLength;
-
-	public:
-		void setAnchor(const t3d::Vec4<real> & _anchor)
-		{
-			anchor = _anchor;
-		}
-
-		const t3d::Vec4<real> & getAnchor(void) const
-		{
-			return anchor;
-		}
 
 	public:
 		ParticleAnchoredSpring(const t3d::Vec4<real> & _anchor, real _springConstant, real _restLength);
@@ -301,22 +290,11 @@ namespace my
 	class ParticleAnchoredBungee : public ParticleForceGenerator
 	{
 	protected:
-		t3d::Vec4<real> anchor;
+		const t3d::Vec4<real> & anchor;
 
 		real springConstant;
 
 		real restLength;
-
-	public:
-		void setAnchor(const t3d::Vec4<real> & _anchor)
-		{
-			anchor = _anchor;
-		}
-
-		const t3d::Vec4<real> & getAnchor(void) const
-		{
-			return anchor;
-		}
 
 	public:
 		ParticleAnchoredBungee(const t3d::Vec4<real> & _anchor, real _springConstant, real _restLength);
@@ -354,22 +332,11 @@ namespace my
 	class ParticleFakeSpring : public ParticleForceGenerator
 	{
 	protected:
-		t3d::Vec4<real> anchor;
+		const t3d::Vec4<real> & anchor;
 
 		real springConstant;
 
 		real damping;
-
-	public:
-		void setAnchor(const t3d::Vec4<real> & _anchor)
-		{
-			anchor = _anchor;
-		}
-
-		const t3d::Vec4<real> & getAnchor(void) const
-		{
-			return anchor;
-		}
 
 	public:
 		ParticleFakeSpring(const t3d::Vec4<real> & _anchor, real _springConstant, real _damping);
@@ -505,23 +472,12 @@ namespace my
 	class ParticleConstraint : public ParticleContactGenerator
 	{
 	protected:
+		const t3d::Vec4<real> & anchor;
+
 		Particle * particle;
 
-		t3d::Vec4<real> anchor;
-
 	public:
-		void setAnchor(const t3d::Vec4<real> & _anchor)
-		{
-			anchor = _anchor;
-		}
-
-		const t3d::Vec4<real> & getAnchor(void) const
-		{
-			return anchor;
-		}
-
-	public:
-		ParticleConstraint(Particle * _particle, const my::Vec4<real> & _anchor);
+		ParticleConstraint(const t3d::Vec4<real> & _anchor, Particle * _particle);
 
 	protected:
 		real currentLength() const;
@@ -541,7 +497,7 @@ namespace my
 		real restitution;
 
 	public:
-		ParticleCableConstraint(Particle * particle, const my::Vec4<real> & anchor, real _maxLength, real _restitution);
+		ParticleCableConstraint(const t3d::Vec4<real> & _anchor, Particle * particle, real _maxLength, real _restitution);
 
 		unsigned addContact(ParticleContact * contacts, unsigned limits) const;
 	};
@@ -558,7 +514,7 @@ namespace my
 		real length;
 
 	public:
-		ParticleRodConstraint(Particle * particle, const my::Vec4<real> & anchor, real _length);
+		ParticleRodConstraint(const t3d::Vec4<real> & _anchor, Particle * particle, real _length);
 
 		unsigned addContact(ParticleContact * contacts, unsigned limits) const;
 	};
@@ -984,8 +940,7 @@ namespace my
 
 	class Aero : public ForceGenerator
 	{
-	//protected:
-	public:
+	protected:
 		t3d::Mat4<real> tensor;
 
 		t3d::Vec4<real> position;
@@ -1009,8 +964,7 @@ namespace my
 
 	class AeroControl : public Aero
 	{
-	//protected:
-	public:
+	protected:
 		t3d::Mat4<real> minTensor;
 
 		t3d::Mat4<real> maxTensor;

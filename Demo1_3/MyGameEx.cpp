@@ -124,7 +124,7 @@ bool MyGame::onInit(const my::Config & cfg)
 
 	// create common ui font
 	HDC hdc = m_backSurface->getDC();
-	m_font = my::FontPtr(new my::Font(-MulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72)));
+	m_font = my::FontPtr(new my::Font(my::Font::CalculateFontHeightByPointSize(hdc, 10)));
 	m_backSurface->releaseDC(hdc);
 
 	// create and add load state
@@ -301,6 +301,15 @@ DWORD MyLoadState::onProc(void)
 		m_progressBox->setTitleText(_T("正在读取 ..."));
 		m_progressBoxLock.leave();
 
+		MyGameState * gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name).get();
+		_ASSERT(NULL != gameState);
+
+		// create physics world for game state
+		gameState->m_phyWorld = MyWorldPtr(new MyWorld());
+
+		// create grid for game state
+		gameState->m_grid = my::GridPtr(new my::Grid(100, 10));
+
 		const int loopCount = 5;
 		for(int i = 1; i <= loopCount; i++)
 		{
@@ -337,8 +346,9 @@ void MyGameState::enterState(void)
 	eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
 	eulerCam->reset();
 
-	// create grid
-	m_grid = my::GridPtr(new my::Grid(100, 10));
+	// VERIFY specified date should be created
+	_ASSERT(NULL != m_phyWorld);
+	_ASSERT(NULL != m_grid);
 }
 
 void MyGameState::leaveState(void)
@@ -376,6 +386,13 @@ bool MyGameState::doFrame(real elapsedTime)
 	my::EulerCamera * eulerCam = MyGame::getSingleton().m_eulerCam.get();
 	eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
 	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(eulerCam->getPosition(), eulerCam->getRotation()));
+
+	// 30 frames per rendering frame for physics engine
+	const unsigned phyCount = 30;
+	for(unsigned i = 0; i < phyCount; i++)
+	{
+		m_phyWorld->runPhysics(elapsedTime / phyCount);
+	}
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);

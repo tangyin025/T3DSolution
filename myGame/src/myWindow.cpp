@@ -329,28 +329,48 @@ namespace my
 		}
 	}
 
-	Font::Font(int nHeight /*= 0*/, DWORD fdwCharSet /*= GB2312_CHARSET*/, LPCTSTR lpszFace /*= _T("NSimSun")*/)
+	Font::Font(
+		LONG lfHeight,
+		LONG lfWidth,
+		LONG lfEscapement,
+		LONG lfOrientation,
+		LONG lfWeight,
+		BYTE lfItalic,
+		BYTE lfUnderline,
+		BYTE lfStrikeOut,
+		BYTE lfCharSet,
+		BYTE lfOutPrecision,
+		BYTE lfClipPrecision,
+		BYTE lfQuality,
+		BYTE lfPitchAndFamily,
+		LPCTSTR lfFaceName)
 	{
-		m_hFont = CreateFont(
-			nHeight,
-			0,
-			0,
-			0,
-			FW_DONTCARE,
-			FALSE,
-			FALSE,
-			FALSE,
-			fdwCharSet,
-			OUT_DEFAULT_PRECIS,
-			CLIP_DEFAULT_PRECIS,
-			DEFAULT_QUALITY,
-			DEFAULT_PITCH,
-			lpszFace);
+		m_lf.lfHeight = lfHeight;
+		m_lf.lfWidth = lfWidth;
+		m_lf.lfEscapement = lfEscapement;
+		m_lf.lfOrientation = lfOrientation;
+		m_lf.lfWeight = lfWeight;
+		m_lf.lfItalic = lfItalic;
+		m_lf.lfUnderline = lfUnderline;
+		m_lf.lfStrikeOut = lfStrikeOut;
+		m_lf.lfCharSet = lfCharSet;
+		m_lf.lfOutPrecision = lfOutPrecision;
+		m_lf.lfClipPrecision = lfClipPrecision;
+		m_lf.lfQuality = lfQuality;
+		m_lf.lfPitchAndFamily = lfPitchAndFamily;
+		VERIFY(0 == _tcscpy_s(m_lf.lfFaceName, lfFaceName));
+
+		m_hFont = CreateFontIndirect(&m_lf);
 	}
 
 	Font::~Font(void)
 	{
 		DeleteObject(m_hFont);
+	}
+
+	LONG Font::CalculateFontHeightByPointSize(HDC hdc, int psize)
+	{
+		return -MulDiv(psize, GetDeviceCaps(hdc, LOGPIXELSY), 72);
 	}
 
 	//DialogMap Dialog::s_dlgMap;
