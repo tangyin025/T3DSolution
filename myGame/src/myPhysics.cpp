@@ -575,9 +575,9 @@ namespace my
 	// ParticleConstraint
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	ParticleConstraint::ParticleConstraint(Particle * _particle, const my::Vec4<real> & _anchor)
-		: particle(_particle)
-		, anchor(_anchor)
+	ParticleConstraint::ParticleConstraint(const t3d::Vec4<real> & _anchor, Particle * _particle)
+		: anchor(_anchor)
+		, particle(_particle)
 	{
 		_ASSERT(NULL != particle);
 	}
@@ -593,8 +593,8 @@ namespace my
 	// ParticleCableConstraint
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	ParticleCableConstraint::ParticleCableConstraint(Particle * particle, const my::Vec4<real> & anchor, real _maxLength, real _restitution)
-		: ParticleConstraint(particle, anchor)
+	ParticleCableConstraint::ParticleCableConstraint(const t3d::Vec4<real> & _anchor, Particle * particle, real _maxLength, real _restitution)
+		: ParticleConstraint(_anchor, particle)
 		, maxLength(_maxLength)
 		, restitution(_restitution)
 	{
@@ -625,8 +625,8 @@ namespace my
 	// ParticleRodConstraint
 	// /////////////////////////////////////////////////////////////////////////////////////
 
-	ParticleRodConstraint::ParticleRodConstraint(Particle * particle, const my::Vec4<real> & anchor, real _length)
-		: ParticleConstraint(particle, anchor)
+	ParticleRodConstraint::ParticleRodConstraint(const t3d::Vec4<real> & _anchor, Particle * particle, real _length)
+		: ParticleConstraint(_anchor, particle)
 		, length(_length)
 	{
 	}

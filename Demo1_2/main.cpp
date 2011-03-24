@@ -203,6 +203,9 @@ protected:
 	// 一个类似控制台的模拟器，可以在 surface 上输出控制台信息
 	my::ConsoleSimulatorPtr m_consoleSim;
 
+	// 用于在 surface 上输出的字体
+	my::FontPtr m_font;
+
 	// 基于采样的帧速率计算工具
 	my::FPSManagerPtr m_fpsMgr;
 
@@ -229,10 +232,15 @@ public:
 	bool onInit(const my::Config & cfg)
 	{
 		// 初始化模拟控制台
-		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(10));
+		m_consoleSim = my::ConsoleSimulatorPtr(new my::ConsoleSimulator(9));
 
 		// 将自己注册为 my::ErrorReporter 的监听者
 		my::ErrorReporter::getSingleton().addErrorListener(this);
+
+		// 初始化字体，默认使用 GB2312，新宋体（西方国家的计算机上无法显示）
+		HDC hdc = m_backSurface->getDC();
+		m_font = my::FontPtr(new my::Font(my::Font::CalculateFontHeightByPointSize(hdc, 10)));
+		m_backSurface->releaseDC(hdc);
 
 		// 初始化 fps 管理器
 		m_fpsMgr = my::FPSManagerPtr(new my::FPSManager());
@@ -326,6 +334,7 @@ public:
 
 		// 获取后缓存的 dc，用以使用 gui 来输出信息
 		HDC hdc = m_backSurface->getDC();
+		HGDIOBJ oldFont = SelectObject(hdc, m_font->GetHandle());
 
 		// 输出帧速率
 		int textx = m_rc->getClipperRect().left + 10;
@@ -350,6 +359,7 @@ public:
 		::TextOut(hdc, textx, texty += 20, strTmp.c_str(), (int)strTmp.length());
 
 		// 释放为输出字符串而分配的 dc
+		SelectObject(hdc, oldFont);
 		m_backSurface->releaseDC(hdc);
 
 		// 绘制控制台模拟器
@@ -395,6 +405,9 @@ protected:
 
 	// 表示角色形状的碰撞球
 	my::CollisionSphere m_characterSphere;
+
+	// 表示角色的速度
+	t3d::Vec4<real> m_characterVel;
 
 	// 用以表示地面的平面
 	my::CollisionPlane m_groundPlane;
@@ -491,7 +504,7 @@ public:
 		ParticleWorld::registry.add(m_handleParticle.get(), m_handleSpring.get());
 
 		// 初始化cable，并插入contact generator list中
-		m_handleCable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_handleParticle.get(), m_characterBody->getPosition(), 13, 0.0f));
+		m_handleCable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_characterBody->getPosition(), m_handleParticle.get(), 13, 0.0f));
 		particleContactGeneratorList.push_back(m_handleCable);
 		return true;
 	}
@@ -515,12 +528,15 @@ public:
 			// 根据用户输入更新相机角度
 			m_eulerCam->addRotation(my::EulerCamera::buildRotOffset(m_mouse.get()));
 
+			// 根据用户输入更新角色运动状态
+			m_characterVel = my::EulerCamera::buildMovOffset(
+				m_keyboard.get(), m_eulerCam->getRotation().y, m_keyboard->isKeyDown(DIK_LSHIFT) ? 90.0f : 30.0f);
+
 			// 使用 30 的倍率运行物理引擎
-			const unsigned count = 30;
-			for(unsigned i = 0; i < count; i++)
+			const unsigned phyCount = 30;
+			for(unsigned i = 0; i < phyCount; i++)
 			{
-				// 注意，runPhysics 中也会读取用户输入及 m_eulerCam 的信息，这样的封装似乎还不太合理
-				runPhysics(elapsedTime / count);
+				runPhysics(elapsedTime / phyCount);
 			}
 
 			// 根据相机手柄更新相机位置
@@ -581,18 +597,15 @@ public:
 
 	void integrate(real duration)
 	{
-		// 根据用户输入更新角色运动状态
-		t3d::Vec4<real> vrot = m_eulerCam->getRotation();
-		t3d::Vec4<real> vvel = my::EulerCamera::buildMovOffset(m_keyboard.get(), vrot.y, m_keyboard->isKeyDown(DIK_LSHIFT) ? 90.0f : 30.0f);
-		if(!t3d::vec3IsZero(vvel))
+		if(!t3d::vec3IsZero(m_characterVel))
 		{
 			// 设置角色位移速度
-			m_characterBody->setVelocity(my::Vec4<real>(vvel.x, m_characterBody->getVelocity().y, vvel.z));
+			m_characterBody->setVelocity(my::Vec4<real>(m_characterVel.x, m_characterBody->getVelocity().y, m_characterVel.z));
 
 			// 计算角色旋转角度，这里采用平滑过渡的方式旋转角色
 			t3d::Vec4<real> vdir = my::Vec4<real>::UNIT_Z * m_characterBody->getRotationTransform();
-			t3d::Vec4<real> vcro = t3d::vec3Cross(vdir, vvel);
-			real costheta = t3d::vec3CosTheta(vdir, t3d::vec3Normalize(vvel));
+			t3d::Vec4<real> vcro = t3d::vec3Cross(vdir, m_characterVel);
+			real costheta = t3d::vec3CosTheta(vdir, t3d::vec3Normalize(m_characterVel));
 			if(!IS_ZERO_FLOAT(t3d::vec3LengthSquare(vcro)))
 			{
 				real angle = std::max(DEG_TO_RAD(-360 * duration), std::min(DEG_TO_RAD(360 * duration), acos(costheta)));
@@ -692,8 +705,8 @@ public:
 		World::resolver.resolveContacts(&contactList[0], usedContacts, duration);
 
 		// 由于刚体物体的位置发生了变化，所以这里要同步更新作为相机手柄的质点的状态
-		m_handleSpring->setAnchor(m_characterBody->getPosition());
-		m_handleCable->setAnchor(m_characterBody->getPosition());
+		//m_handleSpring->setAnchor(m_characterBody->getPosition());
+		//m_handleCable->setAnchor(m_characterBody->getPosition());
 		m_handleParticle->setPosition(my::Vec4<real>(m_characterBody->getPosition().x, m_handleParticle->getPosition().y, m_characterBody->getPosition().z));
 
 		// 质点动力学处理

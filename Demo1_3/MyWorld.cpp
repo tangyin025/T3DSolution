@@ -4,8 +4,8 @@
 #include "MyGameEx.h"
 
 MyWorld::MyWorld(void)
-	: my::World(256)
-	, my::ParticleWorld(256)
+	: World(256)
+	, ParticleWorld(256)
 {
 }
 
@@ -13,65 +13,31 @@ MyWorld::~MyWorld(void)
 {
 }
 
-void MyWorld::startFrame(void)
-{
-	my::World::startFrame();
-}
-
-void MyWorld::integrate(real duration)
-{
-	my::World::integrate(duration);
-}
-
-unsigned MyWorld::generateContacts(my::Contact * contacts, unsigned limits)
-{
-	return my::World::generateContacts(contacts, limits);
-}
-
-void MyWorld::startFrameParticle(void)
-{
-	my::ParticleWorld::startFrame();
-}
-
-void MyWorld::integrateParticle(real duration)
-{
-	return my::ParticleWorld::integrate(duration);
-}
-
-unsigned MyWorld::generateContactsParticle(my::ParticleContact * contacts, unsigned limits)
-{
-	return my::ParticleWorld::generateContacts(contacts, limits);
-}
-
 void MyWorld::runPhysics(real duration)
 {
-	//my::World::runPhysics(duration);
+	World::startFrame();
 
-	startFrame();
+	World::registry.updateForces(duration);
 
-	my::World::registry.updateForces(duration);
+	World::integrate(duration);
 
-	integrate(duration);
+	unsigned usedContacts = World::generateContacts(&contactList[0], World::maxContacts);
 
-	unsigned usedContacts = generateContacts(&contactList[0], my::World::maxContacts);
+	World::resolver.setPositionIterations(usedContacts * 4);
 
-	my::World::resolver.setPositionIterations(usedContacts * 4);
+	World::resolver.setVelocityIterations(usedContacts * 4);
 
-	my::World::resolver.setVelocityIterations(usedContacts * 4);
+	World::resolver.resolveContacts(&contactList[0], usedContacts, duration);
 
-	my::World::resolver.resolveContacts(&contactList[0], usedContacts, duration);
+	ParticleWorld::startFrame();
 
-	//my::ParticleWorld::runPhysics(duration);
+	ParticleWorld::registry.updateForces(duration);
 
-	startFrameParticle();
+	ParticleWorld::integrate(duration);
 
-	my::ParticleWorld::registry.updateForces(duration);
+	unsigned used = ParticleWorld::generateContacts(&particleContactArray[0], ParticleWorld::maxContacts);
 
-	integrateParticle(duration);
+	ParticleWorld::resolver.setIterations(used * 2);
 
-	unsigned used = generateContactsParticle(&particleContactArray[0], my::ParticleWorld::maxContacts);
-
-	my::ParticleWorld::resolver.setIterations(used * 2);
-
-	my::ParticleWorld::resolver.resolveContacts(&particleContactArray[0], used, duration);
+	ParticleWorld::resolver.resolveContacts(&particleContactArray[0], used, duration);
 }

@@ -335,13 +335,9 @@ namespace my
 	void Game::onIdle(void)
 	{
 		// update keyboard state
-		m_keyboard->acquire();
-
 		m_keyboard->update();
 
 		// update mouse state
-		m_mouse->acquire();
-
 		m_mouse->update();
 
 		// do client's frame, if failed destroy main window

@@ -229,6 +229,8 @@ namespace my
 	class Font
 	{
 	protected:
+		LOGFONT m_lf;
+
 		HFONT m_hFont;
 
 	public:
@@ -238,9 +240,25 @@ namespace my
 		}
 
 	public:
-		Font(int nHeight = 0, DWORD fdwCharSet = GB2312_CHARSET, LPCTSTR lpszFace = _T("NSimSun"));
+		Font(
+			LONG lfHeight = 0,
+			LONG lfWidth = 0,
+			LONG lfEscapement = 0,
+			LONG lfOrientation = 0,
+			LONG lfWeight = FW_DONTCARE,
+			BYTE lfItalic = FALSE,
+			BYTE lfUnderline = FALSE,
+			BYTE lfStrikeOut = FALSE,
+			BYTE lfCharSet = GB2312_CHARSET,
+			BYTE lfOutPrecision = OUT_DEFAULT_PRECIS,
+			BYTE lfClipPrecision = CLIP_DEFAULT_PRECIS,
+			BYTE lfQuality = DEFAULT_QUALITY,
+			BYTE lfPitchAndFamily = DEFAULT_PITCH,
+			LPCTSTR lfFaceName = _T("NSimSun"));
 
 		~Font(void);
+
+		static LONG CalculateFontHeightByPointSize(HDC hdc, int psize);
 	};
 
 	typedef boost::shared_ptr<Font> FontPtr;

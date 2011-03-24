@@ -39,7 +39,7 @@ namespace t3d
 	public:
 		enum COOPERATIVE_LEVEL
 		{
-			CL_NORMAL = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND,
+			CL_NORMAL = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND,
 		};
 
 	public:
@@ -54,7 +54,7 @@ namespace t3d
 
 		void setProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph);
 
-		void acquire(void);
+		bool acquire(void);
 
 		void getDeviceState(DWORD cbData, LPVOID lpvData);
 	};
@@ -70,7 +70,14 @@ namespace t3d
 	public:
 		void update(void)
 		{
-			getDeviceState(sizeof(m_state), m_state);
+			if(acquire())
+			{
+				getDeviceState(sizeof(m_state), m_state);
+			}
+			else
+			{
+				memset(&m_state, 0, sizeof(m_state));
+			}
 		}
 
 		const BYTE * getKeyState(void) const
@@ -99,7 +106,14 @@ namespace t3d
 	public:
 		void update(void)
 		{
-			getDeviceState(sizeof(m_state), (LPVOID)&m_state);
+			if(acquire())
+			{
+				getDeviceState(sizeof(m_state), (LPVOID)&m_state);
+			}
+			else
+			{
+				memset(&m_state, 0, sizeof(m_state));
+			}
 		}
 
 		const DIMOUSESTATE & getMouseState(void) const

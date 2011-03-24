@@ -148,6 +148,8 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
+	MyWorldPtr m_phyWorld;
+
 	my::GridPtr m_grid;
 
 public:
