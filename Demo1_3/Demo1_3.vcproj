@@ -193,10 +193,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MyWorld.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -236,10 +232,6 @@
 			</File>
 			<File
 				RelativePath=".\MyUI.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MyWorld.h"
 				>
 			</File>
 			<File

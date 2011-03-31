@@ -4,7 +4,6 @@
 #include "MyState.h"
 #include "MyUI.h"
 #include <myPhysics.h>
-#include "MyWorld.h"
 
 class MyWindow
 	: public my::GameWnd
@@ -136,8 +135,30 @@ public:
 
 typedef boost::shared_ptr<MyLoadState> MyLoadStatePtr;
 
+class TPSCharacter
+{
+public:
+	t3d::Vec4<real> move;
+
+	my::RigidBodyPtr body;
+
+	my::CollisionSphere sphere;
+};
+
+class CharacterMonitorHander
+{
+public:
+	my::ParticlePtr particle;
+
+	my::ParticleAnchoredSpringPtr spring;
+
+	my::ParticleCableConstraintPtr cable;
+};
+
 class MyGameState
 	: public MyFrameState
+	, public my::ParticleWorld
+	, public my::World
 	, public my::DrawnHelper
 {
 	friend class MyLoadState;
@@ -148,7 +169,11 @@ public:
 	static const std::basic_string<charT> s_name;
 
 protected:
-	MyWorldPtr m_phyWorld;
+	TPSCharacter m_character;
+
+	CharacterMonitorHander m_hander;
+
+	my::CollisionPlane m_ground;
 
 	my::GridPtr m_grid;
 
@@ -160,6 +185,12 @@ public:
 	void enterState(void);
 
 	void leaveState(void);
+
+	void integrate(real duration);
+
+	unsigned generateContacts(my::Contact * contacts, unsigned limits);
+
+	void runPhysics(real duration);
 
 	bool doFrame(real elapsedTime);
 };

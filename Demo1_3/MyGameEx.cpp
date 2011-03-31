@@ -298,17 +298,13 @@ DWORD MyLoadState::onProc(void)
 	try
 	{
 		m_progressBoxLock.enter();
-		m_progressBox->setTitleText(_T("正在读取 ..."));
+		m_progressBox->setTitleText(_T("読み取っています ..."));
 		m_progressBoxLock.leave();
 
 		MyGameState * gameState = MyGame::getSingleton().getState<MyGameState>(MyGameState::s_name).get();
 		_ASSERT(NULL != gameState);
 
-		// create physics world for game state
-		gameState->m_phyWorld = MyWorldPtr(new MyWorld());
-
-		// create grid for game state
-		gameState->m_grid = my::GridPtr(new my::Grid(100, 10));
+		// HERE, INITIAL gameState objects that are time-consuming
 
 		const int loopCount = 5;
 		for(int i = 1; i <= loopCount; i++)
@@ -340,28 +336,156 @@ MyGameState::~MyGameState(void)
 
 void MyGameState::enterState(void)
 {
-	// create eular camera
+	// reset camera default position
 	my::EulerCamera * eulerCam = MyGame::getSingleton().m_eulerCam.get();
-	eulerCam->setDefaultPosition(my::Vec4<real>(50, 50, -50));
-	eulerCam->setDefaultRotation(my::Vec4<real>(DEG_TO_RAD(45), DEG_TO_RAD(-45), DEG_TO_RAD(0)));
+	eulerCam->setDefaultPosition(my::Vec4<real>::ZERO);
+	eulerCam->setDefaultRotation(my::Vec4<real>::ZERO);
 	eulerCam->reset();
 
-	// VERIFY specified date should be created
-	_ASSERT(NULL != m_phyWorld);
-	_ASSERT(NULL != m_grid);
+	// some physics const variables
+	const real damping = 0.95f;
+	const my::Vec4<real> gravity(0, -9.8f * 10, 0);
+	const real sleepEpsilon = 10.4f; // ***
+
+	// initial character rigid body
+	const real sphereRadius = 5.0f;
+	const real sphereMass = my::calculateSphereMass(sphereRadius, 1.0f);
+	const my::Vec4<real> spherePos(0, 10.0f, 0);
+	m_character.body = my::RigidBodyPtr(new my::RigidBody());
+	m_character.body->setMass(sphereMass);
+	m_character.body->setInertialTensor(my::calculateSphereInertiaTensor(sphereRadius, sphereMass));
+	m_character.body->setDamping(damping);
+	m_character.body->setAngularDamping(0);
+	m_character.body->setPosition(spherePos);
+	m_character.body->setAcceleration(gravity);
+	m_character.body->setSleepEpsilon(sleepEpsilon);
+	m_character.body->setAwake(true); // must be call after setSleepEpsilon
+	m_character.body->calculateDerivedData(); // never forget this
+	bodyList.push_back(m_character.body);
+
+	// initial character collision sphere
+	m_character.sphere.setRigidBody(m_character.body.get());
+	m_character.sphere.setRadius(sphereRadius);
+	m_character.move = my::Vec4<real>::ZERO;
+
+	// initial camera hander particle
+	m_hander.particle = my::ParticlePtr(new my::Particle());
+	m_hander.particle->setMass(1);
+	m_hander.particle->setPosition(t3d::vec3Add(m_character.body->getPosition(), my::Vec4<real>(0, 10, 0)));
+	m_hander.particle->setVelocity(my::Vec4<real>::ZERO);
+	m_hander.particle->setDamping(0.00001f); // ***
+	m_hander.particle->setAcceleration(my::Vec4<real>::ZERO);
+	particleList.push_back(m_hander.particle);
+
+	// initial camera hander spring
+	m_hander.spring = my::ParticleAnchoredSpringPtr(new my::ParticleAnchoredSpring(m_character.body->getPosition(), 100, 10)); // ***
+	ParticleWorld::registry.add(m_hander.particle.get(), m_hander.spring.get());
+
+	// initial camera hander cable
+	m_hander.cable = my::ParticleCableConstraintPtr(new my::ParticleCableConstraint(m_character.body->getPosition(), m_hander.particle.get(), 13, 0.0f));
+	particleContactGeneratorList.push_back(m_hander.cable);
+
+	// initial global physics ground
+	m_ground.setNormal(my::Vec4<real>::UNIT_Y);
+	m_ground.setDistance(0);
+
+	// create grid for game state
+	m_grid = my::GridPtr(new my::Grid(100, 10));
 }
 
 void MyGameState::leaveState(void)
 {
 }
 
+void MyGameState::integrate(real duration)
+{
+	if(!t3d::vec3IsZero(m_character.move))
+	{
+		// set character velocity
+		m_character.body->setVelocity(my::Vec4<real>(m_character.move.x, m_character.body->getVelocity().y, m_character.move.z));
+
+		// work out character rotation velocity
+		t3d::Vec4<real> vdir = my::Vec4<real>::UNIT_Z * m_character.body->getRotationTransform();
+		t3d::Vec4<real> vcro = t3d::vec3Cross(vdir, m_character.move);
+		real costheta = t3d::vec3CosTheta(vdir, t3d::vec3Normalize(m_character.move));
+		if(!IS_ZERO_FLOAT(t3d::vec3LengthSquare(vcro)))
+		{
+			real angle = std::max(DEG_TO_RAD(-360 * duration), std::min(DEG_TO_RAD(360 * duration), acos(costheta)));
+			t3d::Vec4<real> axis = t3d::vec3Normalize(vcro);
+			m_character.body->setOrientation(m_character.body->getOrientation() * t3d::buildQuatFromAngleAxis(angle, axis));
+		}
+		else if(costheta < 0)
+		{
+			real angle = DEG_TO_RAD(10);
+			t3d::Vec4<real> axis = my::Vec4<real>::UNIT_Y;
+			m_character.body->setOrientation(m_character.body->getOrientation() * t3d::buildQuatFromAngleAxis(angle, axis));
+		}
+		m_character.body->setAwake(true);
+	}
+
+	// integrate rigid world
+	my::World::integrate(duration);
+
+	// update character collision sphere's transform information
+	m_character.sphere.calculateInternals();
+}
+
+unsigned MyGameState::generateContacts(my::Contact * contacts, unsigned limits)
+{
+	unsigned used = 0;
+
+	// collision detect between character and ground
+	used += my::CollisionDetector::sphereAndHalfSpace(
+		m_character.sphere,
+		m_ground.getNormal(),
+		m_ground.getDistance(),
+		&contacts[used],
+		limits - used);
+
+	// update friction & restitution manually
+	unsigned i = 0;
+	for(; i < used; i++)
+	{
+		contacts[i].friction = 10.0f;
+		contacts[i].restitution = 0;
+	}
+
+	return used;
+}
+
+void MyGameState::runPhysics(real duration)
+{
+	// rigid body physics
+	World::startFrame();
+	World::registry.updateForces(duration);
+	integrate(duration);
+	unsigned usedContacts = generateContacts(&contactList[0], World::maxContacts);
+	World::resolver.setPositionIterations(usedContacts * 4);
+	World::resolver.setVelocityIterations(usedContacts * 4);
+	World::resolver.resolveContacts(&contactList[0], usedContacts, duration);
+
+	// the position of character body have already changed, so synchronized camera hander particle
+	m_hander.particle->setPosition(
+		my::Vec4<real>(m_character.body->getPosition().x, m_hander.particle->getPosition().y, m_character.body->getPosition().z));
+
+	// particle physics
+	ParticleWorld::startFrame();
+	ParticleWorld::registry.updateForces(duration);
+	ParticleWorld::integrate(duration);
+	unsigned used = ParticleWorld::generateContacts(&particleContactArray[0], ParticleWorld::maxContacts);
+	ParticleWorld::resolver.setIterations(used * 2);
+	ParticleWorld::resolver.resolveContacts(&particleContactArray[0], used, duration);
+}
+
 bool MyGameState::doFrame(real elapsedTime)
 {
-	// obtain render context pointer
+	// obtain global objects, such as render context pointer ..
 	t3d::RenderContext * rc = MyGame::getSingleton().m_rc.get();
+	my::EulerCamera * eulerCam = MyGame::getSingleton().m_eulerCam.get();
+	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
+	t3d::DIMouse * mouse = MyGame::getSingleton().m_mouse.get();
 
 	// exit application by return false with user input 'escape'
-	t3d::DIKeyboard * keyboard = MyGame::getSingleton().m_keyboard.get();
 	if(keyboard->isKeyDown(DIK_ESCAPE))
 	{
 		return false;
@@ -382,17 +506,35 @@ bool MyGameState::doFrame(real elapsedTime)
 	rc->setCameraNearZ(1);
 	rc->setCameraFarZ(10000);
 
-	// update euler cameras position and orientation by user input
-	my::EulerCamera * eulerCam = MyGame::getSingleton().m_eulerCam.get();
-	eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
-	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(eulerCam->getPosition(), eulerCam->getRotation()));
-
-	// 30 frames per rendering frame for physics engine
-	const unsigned phyCount = 30;
-	for(unsigned i = 0; i < phyCount; i++)
+	if(keyboard->isKeyDown(DIK_LCONTROL))
 	{
-		m_phyWorld->runPhysics(elapsedTime / phyCount);
+		// update euler cameras position and orientation by user input
+		eulerCam->update(keyboard, MyGame::getSingleton().m_mouse.get(), elapsedTime);
 	}
+	else
+	{
+		// update camera rotation according user mouse input
+		eulerCam->addRotation(my::EulerCamera::buildRotOffset(mouse));
+
+		// update character move according user keyboard input
+		m_character.move = my::EulerCamera::buildMovOffset(
+			keyboard, eulerCam->getRotation().y, keyboard->isKeyDown(DIK_LSHIFT) ? 90.0f : 30.0f);
+
+		// 30 frames per rendering frame for physics engine
+		const unsigned phyCount = 30;
+		for(unsigned i = 0; i < phyCount; i++)
+		{
+			runPhysics(elapsedTime / phyCount);
+		}
+
+		// update camera matrix according to the camera hander followed with character
+		t3d::Mat4<real> matRotation = mat3RotXYZ(eulerCam->getRotation());
+		t3d::Mat4<real> matPosition = t3d::mat3Mov(my::Vec4<real>(0, 0, -30)) * matRotation * t3d::mat3Mov(m_hander.particle->getPosition());
+		eulerCam->setPosition(my::Vec4<real>::ZERO * matPosition);
+	}
+
+	// set camera matrix (inversed matrix)
+	rc->setCameraMatrix(t3d::CameraContext::buildInverseCameraTransformEuler(eulerCam->getPosition(), eulerCam->getRotation()));
 
 	// set render context lights
 	my::Vec4<real> l_pos(-30, 30, -30);
@@ -400,6 +542,29 @@ bool MyGameState::doFrame(real elapsedTime)
 	rc->clearLightList();
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Color::WHITE, l_pos);
+
+	// 渲染角色球
+	drawSphereWireZBufferRW(
+		rc,
+		m_character.sphere.getRadius(),
+		m_character.body->getAwake() ? my::Color::RED : t3d::vec3Mul(my::Color::RED, 0.7f),
+		m_character.body->getTransform());
+
+	// 渲染相机手柄
+	rc->setAmbient(my::Color::YELLOW);
+	rc->setDiffuse(my::Color::YELLOW);
+	drawSphereGouraudZBufferRW(
+		rc,
+		1,
+		t3d::mat3Mov(m_hander.particle->getPosition()));
+
+	// 画一条线作为角色的面向
+	drawLinePointAndNormalZBufferRW(
+		rc,
+		my::Vec4<real>::ZERO,
+		my::Vec4<real>(0, 0, 10),
+		my::Color::BLUE,
+		m_character.body->getTransform());
 
 	// draw default grid, with use to test distance of the scene
 	m_grid->drawZBufferRW(rc);
