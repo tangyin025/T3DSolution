@@ -1339,31 +1339,26 @@ namespace my
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & p0,
 			const t3d::Vec4<real> & p1,
-			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
+			const t3d::Vec4<real> & color);
 
 		void drawLinePointAndNormalZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & point,
 			const t3d::Vec4<real> & normal,
-			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
+			const t3d::Vec4<real> & color);
 
 		void drawTriangleWireZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & v0,
 			const t3d::Vec4<real> & v1,
 			const t3d::Vec4<real> & v2,
-			const t3d::Vec4<real> & color,
-			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
+			const t3d::Vec4<real> & color);
 
 		void drawTriangleGouraudZBufferRW(
 			t3d::RenderContext * rc,
 			const t3d::Vec4<real> & v0,
 			const t3d::Vec4<real> & v1,
-			const t3d::Vec4<real> & v2,
-			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
-			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
+			const t3d::Vec4<real> & v2);
 
 		void drawTriangleGouraudTextureZBufferRW(
 			t3d::RenderContext * rc,
@@ -1372,20 +1367,7 @@ namespace my
 			const t3d::Vec4<real> & v2,
 			const t3d::Vec2<real> & t0,
 			const t3d::Vec2<real> & t1,
-			const t3d::Vec2<real> & t2,
-			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
-			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
-
-		void drawTriangleGouraudTexturePerspectiveLPZBufferRW(
-			t3d::RenderContext * rc,
-			const t3d::Vec4<real> & v0,
-			const t3d::Vec4<real> & v1,
-			const t3d::Vec4<real> & v2,
-			const t3d::Vec2<real> & t0,
-			const t3d::Vec2<real> & t1,
-			const t3d::Vec2<real> & t2,
-			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
-			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
+			const t3d::Vec2<real> & t2);
 
 		void drawSphereWireZBufferRW(
 			t3d::RenderContext * rc,
@@ -1425,29 +1407,41 @@ namespace my
 
 		void drawPlaneWireZBufferRW(
 			t3d::RenderContext * rc,
-			t3d::Vec4<real> direction,
-			real distance,
+			int width,
+			int height,
 			const t3d::Vec4<real> & color,
+			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
+
+		void drawPlaneTextureZBufferRW(
+			t3d::RenderContext * rc,
+			int width,
+			int height,
+			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
+
+		void drawPlaneTexturePerspectiveLPZBufferRW(
+			t3d::RenderContext * rc,
+			int width,
+			int height,
 			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY);
 
 		void drawPlaneGouraudZBufferRW(
 			t3d::RenderContext * rc,
-			t3d::Vec4<real> direction,
-			real distance,
+			int width,
+			int height,
 			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
 
 		void drawPlaneGouraudTextureZBufferRW(
 			t3d::RenderContext * rc,
-			t3d::Vec4<real> direction,
-			real distance,
+			int width,
+			int height,
 			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
 
 		void drawPlaneGouraudTexturePerspectiveLPZBufferRW(
 			t3d::RenderContext * rc,
-			t3d::Vec4<real> direction,
-			real distance,
+			int width,
+			int height,
 			const t3d::Mat4<real> & mmat = my::Mat4<real>::IDENTITY,
 			const t3d::Mat4<real> & mrot = my::Mat4<real>::IDENTITY);
 

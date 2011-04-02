@@ -177,6 +177,8 @@ protected:
 
 	my::GridPtr m_grid;
 
+	my::ImagePtr m_grassTexture;
+
 public:
 	MyGameState(void);
 

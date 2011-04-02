@@ -573,10 +573,9 @@ public:
 		// 画一条线作为角色的面向
 		drawLinePointAndNormalZBufferRW(
 			m_rc.get(),
-			my::Vec4<real>::ZERO,
-			my::Vec4<real>(0, 0, 10),
-			my::Color::BLUE,
-			m_characterBody->getTransform());
+			m_characterBody->getPosition(),
+			my::Vec4<real>(0, 0, 10) * m_characterBody->getRotationTransform(),
+			my::Color::BLUE);
 
 		// 渲染一堆 box
 		for(size_t i = 0; i < m_boxList.size(); i++)
