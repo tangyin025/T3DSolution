@@ -306,6 +306,10 @@ DWORD MyLoadState::onProc(void)
 
 		// HERE, INITIAL gameState objects that are time-consuming
 
+		// load grass texture for game state
+		gameState->m_grassTexture = my::ColorConversion::getSingleton().convertImage(
+			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("草地草坪014.jpg")))));
+
 		const int loopCount = 5;
 		for(int i = 1; i <= loopCount; i++)
 		{
@@ -391,6 +395,9 @@ void MyGameState::enterState(void)
 
 	// create grid for game state
 	m_grid = my::GridPtr(new my::Grid(100, 10));
+
+	// verify grass texture have been created
+	_ASSERT(NULL != m_grassTexture);
 }
 
 void MyGameState::leaveState(void)
@@ -502,8 +509,8 @@ bool MyGameState::doFrame(real elapsedTime)
 
 	// set render context camera
 	rc->setViewport(rc->getClipperRect());
-	rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(90), rc->getClipperRect().Width(), rc->getClipperRect().Height()));
-	rc->setCameraNearZ(1);
+	rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(72), rc->getClipperRect().Width(), rc->getClipperRect().Height()));
+	rc->setCameraNearZ(5);
 	rc->setCameraFarZ(10000);
 
 	if(keyboard->isKeyDown(DIK_LCONTROL))
@@ -543,31 +550,34 @@ bool MyGameState::doFrame(real elapsedTime)
 	rc->pushLightAmbient(my::Vec4<real>(0.2f, 0.2f, 0.2f));
 	rc->pushLightPoint(my::Color::WHITE, l_pos);
 
-	// 渲染角色球
+	// render character sphere
 	drawSphereWireZBufferRW(
 		rc,
 		m_character.sphere.getRadius(),
 		m_character.body->getAwake() ? my::Color::RED : t3d::vec3Mul(my::Color::RED, 0.7f),
 		m_character.body->getTransform());
 
-	// 渲染相机手柄
-	rc->setAmbient(my::Color::YELLOW);
-	rc->setDiffuse(my::Color::YELLOW);
-	drawSphereGouraudZBufferRW(
-		rc,
-		1,
-		t3d::mat3Mov(m_hander.particle->getPosition()));
+	// render camera hander particle
+	drawSphereWireZBufferRW(
+		rc, 1, my::Color::YELLOW, t3d::mat3Mov(m_hander.particle->getPosition()));
 
-	// 画一条线作为角色的面向
+	// render the direction of character body
 	drawLinePointAndNormalZBufferRW(
 		rc,
-		my::Vec4<real>::ZERO,
-		my::Vec4<real>(0, 0, 10),
-		my::Color::BLUE,
-		m_character.body->getTransform());
+		m_character.body->getPosition(),
+		my::Vec4<real>(0, 0, 10) * m_character.body->getRotationTransform(),
+		my::Color::BLUE);
 
-	// draw default grid, with use to test distance of the scene
-	m_grid->drawZBufferRW(rc);
+	//// draw default grid, with use to test distance of the scene
+	//m_grid->drawZBufferRW(rc);
+
+	// draw ground grass
+	rc->setTextureBuffer(
+		m_grassTexture->getBits(),
+		m_grassTexture->getPitch(),
+		m_grassTexture->getWidth(),
+		m_grassTexture->getHeight());
+	drawPlaneTexturePerspectiveLPZBufferRW(rc, 100, 100, my::Mat4<real>::IDENTITY);
 
 	return true;
 }

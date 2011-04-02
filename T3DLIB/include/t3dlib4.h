@@ -1152,7 +1152,7 @@ namespace t3d
 	{
 #ifdef T3DLIB_REPORT_PRECISION_ERROR
 		if(rval < INT_MIN || rval > INT_MAX)
-			std::cerr << "error: convert real value " << rval << " to int" << std::endl;
+			_RPT1(_CRT_WARN, "error: convert real value %f to int \n", rval);
 #endif
 		return int(rval);
 	}
@@ -1171,7 +1171,7 @@ namespace t3d
 	{
 #ifdef T3DLIB_REPORT_PRECISION_ERROR
 		if(rval < FIXP16_MIN || rval > FIXP16_MAX)
-			std::cerr << "error: convert real value " << rval << " to fixp16" << std::endl;
+			_RPT1(_CRT_WARN, "error: convert real value %f to fixp16 \n", rval);
 #endif
 		return fixp16(rval * (1 << 16));
 	}
@@ -1195,7 +1195,7 @@ namespace t3d
 	{
 #ifdef T3DLIB_REPORT_PRECISION_ERROR
 		if(rval < FIXP28_MIN || rval > FIXP28_MAX)
-			std::cerr << "error: convert real value " << rval << " to fixp28" << std::endl;
+			_RPT1(_CRT_WARN, "error: convert real value %f to fixp28 \n", rval);
 #endif
 		return fixp28(rval * (1 << 28));
 	}

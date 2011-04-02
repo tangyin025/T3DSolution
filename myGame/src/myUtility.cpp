@@ -3765,7 +3765,7 @@ namespace my
 
 	DrawnHelper::DrawnHelper(void)
 		: sphere0(1)
-		, plane(100, 100)
+		, plane(1, 1)
 		, cube(2, 2, 2)
 		, cone(1, 1)
 	{
@@ -3779,12 +3779,11 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & p0,
 		const t3d::Vec4<real> & p1,
-		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
+		const t3d::Vec4<real> & color)
 	{
 		rc->clearVertexList();
-		rc->pushVertex(p0, mmat);
-		rc->pushVertex(p1, mmat);
+		rc->pushVertex(p0);
+		rc->pushVertex(p1);
 		rc->drawLineListZBufferRW(color);
 	}
 
@@ -3792,10 +3791,9 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & point,
 		const t3d::Vec4<real> & normal,
-		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
+		const t3d::Vec4<real> & color)
 	{
-		drawLinePointAndPointZBufferRW(rc, point, t3d::vec3Add(point, normal), color, mmat);
+		drawLinePointAndPointZBufferRW(rc, point, t3d::vec3Add(point, normal), color);
 	}
 
 	void DrawnHelper::drawTriangleWireZBufferRW(
@@ -3803,13 +3801,12 @@ namespace my
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
 		const t3d::Vec4<real> & v2,
-		const t3d::Vec4<real> & color,
-		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
+		const t3d::Vec4<real> & color)
 	{
 		rc->clearVertexList();
-		rc->pushVertex(v0, mmat);
-		rc->pushVertex(v1, mmat);
-		rc->pushVertex(v2, mmat);
+		rc->pushVertex(v0);
+		rc->pushVertex(v1);
+		rc->pushVertex(v2);
 		rc->drawTriangleListWireZBufferRW(color);
 	}
 
@@ -3817,16 +3814,15 @@ namespace my
 		t3d::RenderContext * rc,
 		const t3d::Vec4<real> & v0,
 		const t3d::Vec4<real> & v1,
-		const t3d::Vec4<real> & v2,
-		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
-		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
+		const t3d::Vec4<real> & v2)
 	{
 		rc->clearVertexList();
-		rc->pushVertex(v0, mmat);
-		rc->pushVertex(v1, mmat);
-		rc->pushVertex(v2, mmat);
+		rc->pushVertex(v0);
+		rc->pushVertex(v1);
+		rc->pushVertex(v2);
 
-		t3d::Vec4<real> normal = calculateTriangleNormal(v0, v1, v2) * mrot;
+		t3d::Vec4<real> normal = calculateTriangleNormal(v0, v1, v2);
+
 		rc->clearNormalList();
 		rc->pushNormal(normal);
 		rc->pushNormal(normal);
@@ -3842,16 +3838,15 @@ namespace my
 		const t3d::Vec4<real> & v2,
 		const t3d::Vec2<real> & t0,
 		const t3d::Vec2<real> & t1,
-		const t3d::Vec2<real> & t2,
-		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
-		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
+		const t3d::Vec2<real> & t2)
 	{
 		rc->clearVertexList();
-		rc->pushVertex(v0, mmat);
-		rc->pushVertex(v1, mmat);
-		rc->pushVertex(v2, mmat);
+		rc->pushVertex(v0);
+		rc->pushVertex(v1);
+		rc->pushVertex(v2);
 
-		t3d::Vec4<real> normal = calculateTriangleNormal(v0, v1, v2) * mrot;
+		t3d::Vec4<real> normal = calculateTriangleNormal(v0, v1, v2);
+
 		rc->clearNormalList();
 		rc->pushNormal(normal);
 		rc->pushNormal(normal);
@@ -3863,36 +3858,6 @@ namespace my
 		rc->pushUV(t2);
 
 		rc->drawTriangleListGouraudTextureZBufferRW();
-	}
-
-	void DrawnHelper::drawTriangleGouraudTexturePerspectiveLPZBufferRW(
-		t3d::RenderContext * rc,
-		const t3d::Vec4<real> & v0,
-		const t3d::Vec4<real> & v1,
-		const t3d::Vec4<real> & v2,
-		const t3d::Vec2<real> & t0,
-		const t3d::Vec2<real> & t1,
-		const t3d::Vec2<real> & t2,
-		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
-		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
-	{
-		rc->clearVertexList();
-		rc->pushVertex(v0, mmat);
-		rc->pushVertex(v1, mmat);
-		rc->pushVertex(v2, mmat);
-
-		t3d::Vec4<real> normal = calculateTriangleNormal(v0, v1, v2) * mrot;
-		rc->clearNormalList();
-		rc->pushNormal(normal);
-		rc->pushNormal(normal);
-		rc->pushNormal(normal);
-
-		rc->clearUVList();
-		rc->pushUV(t0);
-		rc->pushUV(t1);
-		rc->pushUV(t2);
-
-		rc->drawTriangleListGouraudTexturePerspectiveLPZBufferRW();
 	}
 
 	void DrawnHelper::drawSphereWireZBufferRW(
@@ -3963,122 +3928,72 @@ namespace my
 
 	void DrawnHelper::drawPlaneWireZBufferRW(
 		t3d::RenderContext * rc,
-		t3d::Vec4<real> direction,
-		real distance,
+		int width,
+		int height,
 		const t3d::Vec4<real> & color,
 		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
 	{
-		real cosTheta = t3d::vec3CosTheta(my::Vec4<real>::UNIT_Y, direction);
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(width, 1, height));
 
-		t3d::Mat4<real> mRotation;
+		plane.drawWireZBufferRW(rc, color, mScaler * mmat);
+	}
 
-		if(cosTheta > 0 && IS_ZERO_FLOAT(cosTheta - 1))
-		{
-			mRotation = my::Mat4<real>::IDENTITY;
-		}
-		else if(cosTheta < 0 && IS_ZERO_FLOAT(cosTheta + 1))
-		{
-			mRotation = t3d::mat3RotX(DEG_TO_RAD(180));
-		}
-		else
-		{
-			mRotation = t3d::buildRotationMatrixFromQuatLH(
-				t3d::buildQuatFromAngleAxis(acos(cosTheta), t3d::vec3Normalize(t3d::vec3Cross(my::Vec4<real>::UNIT_Y, direction))));
-		}
+	void DrawnHelper::drawPlaneTextureZBufferRW(
+		t3d::RenderContext * rc,
+		int width,
+		int height,
+		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
+	{
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(width, 1, height));
 
-		t3d::Mat4<real> mTransform = t3d::mat3Mov(my::Vec4<real>(0, distance, 0));
+		plane.drawTextureZBufferRW(rc, mScaler * mmat);
+	}
 
-		plane.drawWireZBufferRW(rc, color, mTransform * mRotation * mmat);
+	void DrawnHelper::drawPlaneTexturePerspectiveLPZBufferRW(
+		t3d::RenderContext * rc,
+		int width,
+		int height,
+		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/)
+	{
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(width, 1, height));
+
+		plane.drawTexturePerspectiveLPZBufferRW(rc, mScaler * mmat);
 	}
 
 	void DrawnHelper::drawPlaneGouraudZBufferRW(
 		t3d::RenderContext * rc,
-		t3d::Vec4<real> direction,
-		real distance,
+		int width,
+		int height,
 		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
 		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
 	{
-		real cosTheta = t3d::vec3CosTheta(my::Vec4<real>::UNIT_Y, direction);
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(width, 1, height));
 
-		t3d::Mat4<real> mRotation;
-
-		if(cosTheta > 0 && IS_ZERO_FLOAT(cosTheta - 1))
-		{
-			mRotation = my::Mat4<real>::IDENTITY;
-		}
-		else if(cosTheta < 0 && IS_ZERO_FLOAT(cosTheta + 1))
-		{
-			mRotation = t3d::mat3RotX(DEG_TO_RAD(180));
-		}
-		else
-		{
-			mRotation = t3d::buildRotationMatrixFromQuatLH(
-				t3d::buildQuatFromAngleAxis(acos(cosTheta), t3d::vec3Normalize(t3d::vec3Cross(my::Vec4<real>::UNIT_Y, direction))));
-		}
-
-		t3d::Mat4<real> mTransform = t3d::mat3Mov(my::Vec4<real>(0, distance, 0));
-
-		plane.drawGouraudZBufferRW(rc, mTransform * mRotation * mmat, mRotation * mrot);
+		plane.drawGouraudZBufferRW(rc, mScaler * mmat, mrot);
 	}
 
 	void DrawnHelper::drawPlaneGouraudTextureZBufferRW(
 		t3d::RenderContext * rc,
-		t3d::Vec4<real> direction,
-		real distance,
+		int width,
+		int height,
 		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
 		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
 	{
-		real cosTheta = t3d::vec3CosTheta(my::Vec4<real>::UNIT_Y, direction);
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(width, 1, height));
 
-		t3d::Mat4<real> mRotation;
-
-		if(cosTheta > 0 && IS_ZERO_FLOAT(cosTheta - 1))
-		{
-			mRotation = my::Mat4<real>::IDENTITY;
-		}
-		else if(cosTheta < 0 && IS_ZERO_FLOAT(cosTheta + 1))
-		{
-			mRotation = t3d::mat3RotX(DEG_TO_RAD(180));
-		}
-		else
-		{
-			mRotation = t3d::buildRotationMatrixFromQuatLH(
-				t3d::buildQuatFromAngleAxis(acos(cosTheta), t3d::vec3Normalize(t3d::vec3Cross(my::Vec4<real>::UNIT_Y, direction))));
-		}
-
-		t3d::Mat4<real> mTransform = t3d::mat3Mov(my::Vec4<real>(0, distance, 0));
-
-		plane.drawGouraudTextureZBufferRW(rc, mTransform * mRotation * mmat, mRotation * mrot);
+		plane.drawGouraudTextureZBufferRW(rc, mScaler * mmat, mrot);
 	}
 
 	void DrawnHelper::drawPlaneGouraudTexturePerspectiveLPZBufferRW(
 		t3d::RenderContext * rc,
-		t3d::Vec4<real> direction,
-		real distance,
+		int width,
+		int height,
 		const t3d::Mat4<real> & mmat /*= my::Mat4<real>::IDENTITY*/,
 		const t3d::Mat4<real> & mrot /*= my::Mat4<real>::IDENTITY*/)
 	{
-		real cosTheta = t3d::vec3CosTheta(my::Vec4<real>::UNIT_Y, direction);
+		t3d::Mat4<real> mScaler = t3d::mat3Scale(my::Vec4<real>(width, 1, height));
 
-		t3d::Mat4<real> mRotation;
-
-		if(cosTheta > 0 && IS_ZERO_FLOAT(cosTheta - 1))
-		{
-			mRotation = my::Mat4<real>::IDENTITY;
-		}
-		else if(cosTheta < 0 && IS_ZERO_FLOAT(cosTheta + 1))
-		{
-			mRotation = t3d::mat3RotX(DEG_TO_RAD(180));
-		}
-		else
-		{
-			mRotation = t3d::buildRotationMatrixFromQuatLH(
-				t3d::buildQuatFromAngleAxis(acos(cosTheta), t3d::vec3Normalize(t3d::vec3Cross(my::Vec4<real>::UNIT_Y, direction))));
-		}
-
-		t3d::Mat4<real> mTransform = t3d::mat3Mov(my::Vec4<real>(0, distance, 0));
-
-		plane.drawGouraudTexturePerspectiveLPZBufferRW(rc, mTransform * mRotation * mmat, mRotation * mrot);
+		plane.drawGouraudTexturePerspectiveLPZBufferRW(rc, mScaler * mmat, mrot);
 	}
 
 	void DrawnHelper::drawConeWireZBufferRW(
