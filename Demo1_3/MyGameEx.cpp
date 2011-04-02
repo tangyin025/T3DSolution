@@ -306,10 +306,6 @@ DWORD MyLoadState::onProc(void)
 
 		// HERE, INITIAL gameState objects that are time-consuming
 
-		// load grass texture for game state
-		gameState->m_grassTexture = my::ColorConversion::getSingleton().convertImage(
-			my::ImagePtr(new my::Image(my::ResourceMgr::getSingleton().findFileOrException(_T("草地草坪014.jpg")))));
-
 		const int loopCount = 5;
 		for(int i = 1; i <= loopCount; i++)
 		{
@@ -392,12 +388,6 @@ void MyGameState::enterState(void)
 	// initial global physics ground
 	m_ground.setNormal(my::Vec4<real>::UNIT_Y);
 	m_ground.setDistance(0);
-
-	// create grid for game state
-	m_grid = my::GridPtr(new my::Grid(100, 10));
-
-	// verify grass texture have been created
-	_ASSERT(NULL != m_grassTexture);
 }
 
 void MyGameState::leaveState(void)
@@ -509,8 +499,8 @@ bool MyGameState::doFrame(real elapsedTime)
 
 	// set render context camera
 	rc->setViewport(rc->getClipperRect());
-	rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(72), rc->getClipperRect().Width(), rc->getClipperRect().Height()));
-	rc->setCameraNearZ(5);
+	rc->setCameraProjection(t3d::CameraContext::buildCameraProjectionFOVAuto(DEG_TO_RAD(90), rc->getClipperRect().Width(), rc->getClipperRect().Height()));
+	rc->setCameraNearZ(1);
 	rc->setCameraFarZ(10000);
 
 	if(keyboard->isKeyDown(DIK_LCONTROL))
@@ -568,16 +558,25 @@ bool MyGameState::doFrame(real elapsedTime)
 		my::Vec4<real>(0, 0, 10) * m_character.body->getRotationTransform(),
 		my::Color::BLUE);
 
-	//// draw default grid, with use to test distance of the scene
-	//m_grid->drawZBufferRW(rc);
+	// draw grids that always around character
+	static int gridStep = 10;
+	static int gridRange = 10;
+	int gridCentX = (int)floor(m_character.body->getPosition().x / gridStep);
+	int gridCentZ = (int)floor(m_character.body->getPosition().z / gridStep);
+	real gridStartX = (gridCentX - gridRange) * gridStep;
+	real gridStartZ = (gridCentZ - gridRange) * gridStep;
+	real gridEndX = (gridCentX + gridRange) * gridStep;
+	real gridEndZ = (gridCentZ + gridRange) * gridStep;
+	rc->clearVertexList();
+	for(int i = -gridRange; i <= gridRange; i++)
+	{
+		rc->pushVertex(my::Vec4<real>(gridStartX, 0, (gridCentZ + i) * gridStep));
+		rc->pushVertex(my::Vec4<real>(gridEndX, 0, (gridCentZ + i) * gridStep));
 
-	// draw ground grass
-	rc->setTextureBuffer(
-		m_grassTexture->getBits(),
-		m_grassTexture->getPitch(),
-		m_grassTexture->getWidth(),
-		m_grassTexture->getHeight());
-	drawPlaneTexturePerspectiveLPZBufferRW(rc, 100, 100, my::Mat4<real>::IDENTITY);
+		rc->pushVertex(my::Vec4<real>((gridCentX + i) * gridStep, 0, gridStartZ));
+		rc->pushVertex(my::Vec4<real>((gridCentX + i) * gridStep, 0, gridEndZ));
+	}
+	rc->drawLineListZBufferRW(my::Color(0.6f, 0.6f, 0.6f));
 
 	return true;
 }

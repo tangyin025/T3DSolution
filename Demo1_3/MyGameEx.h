@@ -175,10 +175,6 @@ protected:
 
 	my::CollisionPlane m_ground;
 
-	my::GridPtr m_grid;
-
-	my::ImagePtr m_grassTexture;
-
 public:
 	MyGameState(void);
 
