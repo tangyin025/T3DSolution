@@ -119,6 +119,18 @@ public:
 		return m_exitFlag;
 	}
 
+	void updateTitleSync(const std::basic_string<t3d::charT> & text)
+	{
+		my::CriticalSectionLock lock(m_progressBoxLock);
+		m_progressBox->setTitleText(text);
+	}
+
+	void updateProgressSync(real percent)
+	{
+		my::CriticalSectionLock lock(m_progressBoxLock);
+		m_progressBox->setPercent(percent);
+	}
+
 public:
 	MyLoadState(void);
 
@@ -174,6 +186,42 @@ protected:
 	CharacterMonitorHander m_hander;
 
 	my::CollisionPlane m_ground;
+
+protected:
+	my::FrontToBackCustomShaderBSPNodePtr m_scene_bsp;
+
+	typedef std::vector<my::BoneAssignmentIndexObjectFromOgreMeshPtr> BoneAssignmentIndexObjectFromOgreMeshPtrList;
+
+	BoneAssignmentIndexObjectFromOgreMeshPtrList m_jack_bone_assignments;
+
+	typedef std::vector<my::CustomShaderIndexObjectPtr> CustomShaderIndexObjectPtrList;
+
+	CustomShaderIndexObjectPtrList m_jack_meshs;
+
+	typedef std::vector<t3d::ConnectionEdgeList> ConnectionEdgeListList;
+
+	ConnectionEdgeListList m_jack_connection_edges;
+
+	my::SkeletonAnimationsFromOgreSkeletonPtr m_jack_skel;
+
+	my::IndexSphereObjectPtr m_sky_sphere;
+
+	my::ImagePtr m_sky_sphere_tex;
+
+	my::Mp3Ptr m_music;
+
+protected:
+	t3d::real m_jack_intersection_offset;
+
+	t3d::BoneNodeList m_jack_combine_bone_node_list;
+
+	t3d::BoneNodeList m_jack_bone_node_list;
+
+	t3d::BoneTransformList m_jack_bone_transform_list;
+
+	t3d::VertexList m_jack_silhouette_edge_list;
+
+	t3d::VertexList m_jack_shadow_volume;
 
 public:
 	MyGameState(void);
