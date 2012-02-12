@@ -188,6 +188,8 @@ protected:
 	my::CollisionPlane m_ground;
 
 protected:
+	my::ObjectFromOgreMeshPtr m_scene;
+
 	my::FrontToBackCustomShaderBSPNodePtr m_scene_bsp;
 
 	typedef std::vector<my::BoneAssignmentIndexObjectFromOgreMeshPtr> BoneAssignmentIndexObjectFromOgreMeshPtrList;

@@ -321,8 +321,8 @@ DWORD MyLoadState::onProc(void)
 		EXIT_OR_UPDATE_PROGRESS((real)current_step++ / total_step);
 
 		// load scene
-		my::ObjectFromOgreMesh scene_obj(
-			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("office_tri_list.mesh.xml")))));
+		gameState->m_scene = my::ObjectFromOgreMeshPtr(new my::ObjectFromOgreMesh(
+			my::IOStreamPtr(new my::FileStream(my::ResourceMgr::getSingleton().findFileOrException(_T("office_tri_list.mesh.xml"))))));
 
 		EXIT_OR_UPDATE_PROGRESS((real)current_step++ / total_step);
 
@@ -334,9 +334,9 @@ DWORD MyLoadState::onProc(void)
 
 		// build bsp scene
 		gameState->m_scene_bsp = my::buildFrontToBackBspSceneGouraudTexturePerspectiveLPZBufferRW(
-			scene_obj.getVertexList(),
-			scene_obj.getNormalList(),
-			scene_obj.getUVList(),
+			gameState->m_scene->getVertexList(),
+			gameState->m_scene->getNormalList(),
+			gameState->m_scene->getUVList(),
 			my::MaterialPtr(new my::Material(my::Color::WHITE, my::Color::WHITE)),
 			scene_tex);
 
@@ -510,7 +510,7 @@ void MyGameState::enterState(void)
 
 	// initial global physics ground
 	m_ground.setNormal(my::Vec4<real>::UNIT_Y);
-	m_ground.setDistance(0);
+	m_ground.setDistance(-50);
 
 	// check time-consuming resources are created
 	_ASSERT(NULL != m_scene_bsp);
@@ -578,6 +578,19 @@ unsigned MyGameState::generateContacts(my::Contact * contacts, unsigned limits)
 		m_ground.getDistance(),
 		&contacts[used],
 		limits - used);
+
+	// collision detect between character and scene
+	for(size_t i = 0; i < m_scene->getTriangleCount() && used < limits; i++)
+	{
+		used += my::CollisionDetector::sphereAndTriangle(
+			m_character.sphere,
+			m_scene->getTriangleVertex0(i),
+			m_scene->getTriangleVertex1(i),
+			m_scene->getTriangleVertex2(i),
+			NULL,
+			&contacts[used],
+			limits - used); // *** take care of contact overflow
+	}
 
 	// update friction & restitution manually
 	unsigned i = 0;
