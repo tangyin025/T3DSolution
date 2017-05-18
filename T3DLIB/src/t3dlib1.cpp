@@ -3,7 +3,7 @@
 #include "t3dlib1.h"
 #include <crtdbg.h>
 
-#pragma comment(lib, "DDraw.lib")
+//#pragma comment(lib, "DDraw.lib")
 #pragma comment(lib, "dxguid.lib")
 
 namespace t3d
