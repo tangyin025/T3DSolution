@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "t3dlib3.h"
 
-#pragma comment(lib, "dsound.lib")
+//#pragma comment(lib, "dsound.lib")
 
 namespace t3d
 {

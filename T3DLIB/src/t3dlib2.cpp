@@ -3,7 +3,7 @@
 #include "t3dlib2.h"
 #include "t3dlib4.h"
 
-#pragma comment(lib, "dinput8.lib")
+//#pragma comment(lib, "dinput8.lib")
 
 namespace t3d
 {

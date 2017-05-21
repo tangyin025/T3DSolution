@@ -39,6 +39,7 @@ int APIENTRY _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 
 	// initialize searching path
 	my::ResourceMgr::getSingleton().addDir(_T("Media"));
+	my::ResourceMgr::getSingleton().addDir(_T("..\\Demo1_3\\Media"));
 
 	// show configuration dialog
 	int ret = 0;
