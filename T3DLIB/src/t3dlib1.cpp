@@ -4,7 +4,7 @@
 #include <crtdbg.h>
 
 //#pragma comment(lib, "DDraw.lib")
-#pragma comment(lib, "dxguid.lib")
+//#pragma comment(lib, "dxguid.lib")
 
 namespace t3d
 {

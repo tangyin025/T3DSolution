@@ -7,7 +7,7 @@
 #include <id3tag.h>
 #include "libc.h"
 
-#pragma comment(lib, "winmm.lib")
+//#pragma comment(lib, "winmm.lib")
 
 namespace my
 {

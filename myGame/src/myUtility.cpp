@@ -5,7 +5,7 @@
 #include <atltypes.h>
 #include "myWindow.h"
 
-#pragma comment(lib, "winmm.lib")
+//#pragma comment(lib, "winmm.lib")
 
 namespace my
 {
