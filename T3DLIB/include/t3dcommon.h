@@ -133,4 +133,6 @@ namespace t3d
 #define DIRECTINPUT_VERSION 0x0800
 #endif
 
+#define _ATL_DISABLE_NOTHROW_NEW
+
 #endif // __T3DCOMMON_H__
