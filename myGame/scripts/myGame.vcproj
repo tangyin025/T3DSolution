@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)boost\include&quot;;..\include;&quot;$(SolutionDir)\tinyxml\include&quot;;&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\libid3tag\include&quot;;&quot;$(SolutionDir)\libmad\include&quot;;&quot;$(SolutionDir)\freetype\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include&quot;;&quot;D:\Games\boost_1_70_0&quot;;..\include;&quot;$(SolutionDir)\tinyxml\include&quot;;&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\libid3tag\include&quot;;&quot;$(SolutionDir)\libmad\include&quot;;&quot;$(SolutionDir)\freetype\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)boost\include&quot;;..\include;&quot;$(SolutionDir)\tinyxml\include&quot;;&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\libid3tag\include&quot;;&quot;$(SolutionDir)\libmad\include&quot;;&quot;$(SolutionDir)\freetype\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include&quot;;&quot;D:\Games\boost_1_70_0&quot;;..\include;&quot;$(SolutionDir)\tinyxml\include&quot;;&quot;$(SolutionDir)\T3DLIB\include&quot;;&quot;$(SolutionDir)\libid3tag\include&quot;;&quot;$(SolutionDir)\libmad\include&quot;;&quot;$(SolutionDir)\freetype\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"

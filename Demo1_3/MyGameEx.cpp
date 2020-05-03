@@ -426,7 +426,7 @@ DWORD MyLoadState::onProc(void)
 		EXIT_OR_UPDATE_PROGRESS((real)current_step++ / total_step);
 
 		// load & play mp3
-		std::basic_string<t3d::charT> mp3_path = my::ResourceMgr::getSingleton().findFile(_T("i am the wind.mp3"));
+		std::basic_string<t3d::charT> mp3_path = my::ResourceMgr::getSingleton().findFile(_T("castle1_34.mp3"));
 		if(!mp3_path.empty())
 		{
 			gameState->m_music = my::Mp3Ptr(new my::Mp3(MyGame::getSingleton().m_dsound, my::IOStreamPtr(new my::FileStream(mp3_path))));
