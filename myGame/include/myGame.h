@@ -142,9 +142,9 @@ namespace my
 
 		t3d::DDrawPtr m_ddraw;
 
-		//t3d::DDSurfacePtr m_primSurface;
+		t3d::DDSurfacePtr m_primSurface;
 
-		//CRect m_primSurfaceRect;
+		CRect m_primSurfaceRect;
 
 		t3d::DDSurfacePtr m_backSurface;
 
@@ -186,7 +186,7 @@ namespace my
 
 		void onIdle(void);
 
-		void blitBackSurface(HDC hdc);
+		void bltBackSurface(const CRect & rect);
 
 	public:
 		virtual bool onInit(const Config & cfg);
